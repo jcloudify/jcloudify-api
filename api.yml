@@ -1,0 +1,761 @@
+openapi: '3.0.2'
+info:
+  title: Poja Api
+  version: '1.0.0'
+servers:
+  - url: https://poja.app
+
+security:
+  - bearerAuth: []
+
+paths:
+  /ping:
+    get:
+      tags:
+        - Health
+      responses:
+        '200':
+          description: pong
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: pong
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /applications:
+    get:
+      parameters:
+        - name: name
+          in: query
+          description: Filter applications by name, case insensitive
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          description: Filter applications by the id of the user who owns it
+          schema:
+            type: string
+      tags:
+        - Application
+      summary: Get all applications
+      responses:
+        '200':
+          description: List of all applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Application
+      summary: Create or update applications
+      description: update if id is provided, create otherwise.
+      requestBody:
+        required: true
+        description: Application to create or update
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CrupdateApplication'
+      responses:
+        '200':
+          description: The created applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /applications/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - Application
+      summary: Get an application by identifier
+      responses:
+        '200':
+          description: Application object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - Application
+      summary: Delete an application by its identifier
+      responses:
+        '200':
+          description: The deleted application
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /applications/{id}/deployments:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      parameters:
+        - name: environment_id
+          in: query
+          description: Filter deployments by the id of the environment, case insensitive
+          schema:
+            type: string
+        - name: start_date_time
+          in: query
+          description: Filter deployments within a date and time range, must be used together with `end_date`
+          schema:
+            type: string
+            format: date-time
+        - name: end_date_time
+          in: query
+          description: Filter deployments within a date and time range, must be used together with `start_date`
+          schema:
+            type: string
+            format: date-time
+      tags:
+        - Application
+      summary: Get all deployments of an application
+      responses:
+        '200':
+          description: List of deployments of an application
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Deployment'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Application
+      summary: Create or update deployments
+      description: update if id is provided, create otherwise.
+      requestBody:
+        required: true
+        description: Deployment to create or update
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CrupdateDeployment'
+      responses:
+        '200':
+          description: The created deployments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Deployment'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /applications/{id}/env-vars:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      parameters:
+        - name: environment_id
+          in: query
+          description: Filter environment variables by the id of the environment, case insensitive
+          schema:
+            type: string
+      tags:
+        - Application
+      summary: Get environment variables of an application
+      responses:
+        '200':
+          description: List of environment variables
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnvironmentVariable'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Application
+      summary: Create or update environment variables
+      description: update if id is provided, create otherwise.
+      requestBody:
+        required: true
+        description: Environment variable to create or update
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CrupdateEnvironmentVariable'
+      responses:
+        '200':
+          description: The created environment variables
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnvironmentVariable'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /applications/{id}/logs:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      parameters:
+        - name: environment_id
+          in: query
+          description: Filter logs by the id of the environment, case insensitive
+          schema:
+            type: string
+        - name: log_type
+          in: query
+          description: Filter logs by log type, case insensitive
+          schema:
+            type: string
+        - name: start_date_time
+          in: query
+          description: Filter logs within a date and time range, must be used together with `end_date`
+          schema:
+            type: string
+            format: date-time
+        - name: end_date_time
+          in: query
+          description: Filter logs within a date and time range, must be used together with `start_date`
+          schema:
+            type: string
+            format: date-time
+      tags:
+        - Application
+      summary: Get the logs of an application
+      responses:
+        '200':
+          description: List of logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Log'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Application
+      summary: Create or update logs
+      description: update if id is provided, create otherwise.
+      requestBody:
+        required: true
+        description: Log to create or update
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CrupdateLog'
+      responses:
+        '200':
+          description: The created logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Log'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /deployments/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - Deployment
+      summary: Get a deployment by identifier
+      responses:
+        '200':
+          description: Deployment object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - Deployment
+      summary: Delete a deployment by its identifier
+      responses:
+        '200':
+          description: The deleted deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /logs/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - Log
+      summary: Get a logs by identifier
+      responses:
+        '200':
+          description: Log object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Log'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - Log
+      summary: Delete a log by its identifier
+      responses:
+        '200':
+          description: The deleted log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Log'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /env-vars/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      tags:
+        - EnvironmentVariable
+      summary: Get a environment variables by identifier
+      responses:
+        '200':
+          description: Environment variable object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentVariable'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - EnvironmentVariable
+      summary: Delete an environment variable by its identifier
+      responses:
+        '200':
+          description: The deleted environment variable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentVariable'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestException'
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthorizedException'
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResourceNotFoundException'
+    '429':
+      description: Too many requests to the API
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsException'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InternalServerException'
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+          example: Hajatiana
+        last_name:
+          type: string
+          example: Randrianary
+        email:
+          type: string
+          example: test@test.com
+        username:
+          type: string
+          example: leonardo
+        plan:
+          $ref: '#/components/schemas/Plan'
+    Application:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: poja-api
+        github_repository:
+          type: string
+          example: https://github.com/testUser/testRepo
+        creation_datetime:
+          type: string
+          format: date-time
+    CrupdateApplication:
+      allOf:
+        - $ref: '#/components/schemas/Application'
+      properties:
+        user_id:
+          type: string
+    Environment:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          enum:
+            - PROD
+            - PREPROD
+    DeploymentBase:
+      type: object
+      properties:
+        id:
+          type: string
+        deployment_datetime:
+          type: string
+          format: date-time
+        deployment_status:
+          type: string
+          enum:
+            - IN PROGRESS
+            - SUCCESS
+            - FAILED
+    CrupdateDeployment:
+      allOf:
+        - $ref: '#/components/schemas/DeploymentBase'
+      properties:
+        application_id:
+          type: string
+        environment_id:
+          type: string
+    Deployment:
+        allOf:
+          - $ref: '#/components/schemas/DeploymentBase'
+        properties:
+          environment:
+            $ref: '#/components/schemas/Environment'
+    EnvironmentVariableBase:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: ENV_EXAMPLE
+        value:
+          oneOf:
+            - type: string
+            - type: boolean
+            - type: number
+    CrupdateEnvironmentVariable:
+      allOf:
+        - $ref: '#/components/schemas/EnvironmentVariableBase'
+      properties:
+        application_id:
+          type: string
+        environment_id:
+          type: string
+    EnvironmentVariable:
+      allOf:
+        - $ref: '#/components/schemas/EnvironmentVariableBase'
+      properties:
+        environment:
+          $ref: '#/components/schemas/Environment'
+    LogBase:
+      type: object
+      properties:
+        id:
+          type: string
+        log_file_uri:
+          type: string
+          example: https://examplebucket.s3.eu-west-3.amazonaws.com/logfile
+        log_datetime:
+          type: string
+          format: date-time
+        log_type:
+          type: string
+          enum:
+            - DEPLOYMENT LOG
+            - APPLICATION LOG
+    CrupdateLog:
+      allOf:
+        - $ref: '#/components/schemas/LogBase'
+      properties:
+        application_id:
+          type: string
+        environment_id:
+          type: string
+    Log:
+      allOf:
+        - $ref: '#/components/schemas/LogBase'
+      properties:
+        environment:
+          $ref: '#/components/schemas/Environment'
+    Plan:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cost:
+          type: number
+    Exception:
+      type: object
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+    BadRequestException:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: BadRequestException
+        message: Bad request
+    NotAuthorizedException:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: NotAuthorizedException
+        message: Not authorized
+    ResourceNotFoundException:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: ResourceNotFoundException
+        message: Resource of type <T> identified by <I> not found
+    TooManyRequestsException:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: TooManyRequestsException
+        message: Too many requests
+    InternalServerException:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: InternalServerException
+        message: Unexpected error
