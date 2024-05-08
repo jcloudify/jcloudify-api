@@ -49,6 +49,32 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /signup:
+    post:
+      tags:
+        - User
+      summary: User signup
+      requestBody:
+        required: true
+        description: The user information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserBase'
+      responses:
+        '200':
+          description: The created user account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /applications:
     get:
       security:
@@ -551,11 +577,9 @@ components:
             - ADMIN
         bearer:
           type: string
-    User:
+    UserBase:
       type: object
       properties:
-        id:
-          type: string
         first_name:
           type: string
           example: Hajatiana
@@ -568,6 +592,14 @@ components:
         username:
           type: string
           example: leonardo
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+          example: leonardo
         role:
           type: string
           enum:
@@ -575,6 +607,8 @@ components:
             - ADMIN
         plan:
           $ref: '#/components/schemas/Plan'
+      allOf:
+        - $ref: '#/components/schemas/UserBase'
     ApplicationBase:
       type: object
       properties:
