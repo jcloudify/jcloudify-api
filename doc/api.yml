@@ -1,9 +1,9 @@
 openapi: '3.0.2'
 info:
-  title: Poja Api
+  title: JCloudify Api
   version: '1.0.0'
 servers:
-  - url: https://poja.app
+  - url: https://jcloudify-api.preprod.hei.school
 
 security:
   - bearerAuth: []
@@ -605,7 +605,7 @@ components:
           type: string
         name:
           type: string
-          example: poja-api
+          example: jcloudify-api
         github_repository:
           type: string
           example: https://github.com/testUser/testRepo

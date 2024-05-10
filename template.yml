@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: jcloudify-api - Computation and API
+
+Globals:
+  Function:
+    CodeUri: .
+    Runtime: java21
+    Tracing: Active
+    Architectures:
+      - x86_64
+    Timeout: 600
+    EventInvokeConfig:
+      MaximumRetryAttempts: 0
+    AutoPublishAlias: live
+    SnapStart:
+      ApplyOn: PublishedVersions
+    VpcConfig:
+      SecurityGroupIds:
+        - !Sub '{{resolve:ssm:/jcloudify-api/sg/id}}'
+      SubnetIds:
+        - !Sub '{{resolve:ssm:/jcloudify-api/private/subnet1/id}}'
+        - !Sub '{{resolve:ssm:/jcloudify-api/private/subnet2/id}}'
+    Environment:
+      Variables:
+        ENV: !Ref Env
+        AWS_SQS_QUEUE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/sqs/mailbox-queue-url}}'
+        AWS_EVENTBRIDGE_BUS: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/eventbridge/bus-name}}'
+        AWS_S3_BUCKET: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/s3/bucket-name}}'
+        AWS_SES_SOURCE: noreply@nowhere.com
+        
+        SPRING_DATASOURCE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/db/url}}'
+        SPRING_DATASOURCE_USERNAME: !Sub '{{resolve:ssm:/jcloudify/${Env}/db/user/username}}'
+        SPRING_DATASOURCE_PASSWORD: !Sub '{{resolve:ssm:/jcloudify/${Env}/db/user/password}}'
+        
+        
+
+Parameters:
+  Env:
+    Type: String
+
+Resources:
+  FrontalServerlessRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      BinaryMediaTypes:
+        - "*~1*"
+
+  FrontalFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api.jcloudify.app.ApiEventHandler::handleRequest
+      MemorySize: 2048
+      Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
+      
+      Events:
+        ApiCall:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId:
+              Ref: FrontalServerlessRestApi
+
+  WorkerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api.jcloudify.app.MailboxEventHandler::handleRequest
+      MemorySize: 1024
+      Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
+      
+      Events:
+        AllEvents:
+          Type: SQS
+          Properties:
+            Queue: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/sqs/mailbox-queue-arn}}'
+            BatchSize: 5
+
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName: !Ref ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+
+  ApiUrlSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join [ '', [ /jcloudify-api/, !Ref Env, /api/url ] ]
+      Type: String
+      Value: !Sub "https://${FrontalServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !GetAtt ApiUrlSSM.Value
