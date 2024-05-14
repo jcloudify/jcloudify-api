@@ -1,9 +1,9 @@
 openapi: '3.0.2'
 info:
-  title: Poja Api
+  title: JCloudify Api
   version: 'latest'
 servers:
-  - url: https://api-poja.preprod.hei.school
+  - url: https://api-jcloudify.preprod.hei.school
 
 paths:
   /ping:
@@ -180,7 +180,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{id}/env-vars:
+  /applications/{id}/environments:
     parameters:
       - name: id
         in: path
@@ -191,15 +191,44 @@ paths:
     get:
       security:
         - bearerAuth: []
-      parameters:
-        - name: environment_name
-          in: query
-          description: Filter environment variables by the name of the environment, case insensitive
-          schema:
-            type: string
       tags:
         - Application
-      summary: Get environment variables of an application
+      summary: Get environment list of an application
+      responses:
+        '200':
+          description: List of environments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Environment'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+
+  /environments/{id}/env-vars:
+    parameters:
+      - name: id
+        in: path
+        description: The identifier of the environment
+        schema:
+          type: string
+        required: true
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Environment
+      summary: Get environment variables of an environment
       responses:
         '200':
           description: List of environment variables
@@ -223,7 +252,7 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - Application
+        - Environment
       summary: Create or update environment variables
       description: update if id is provided, create otherwise.
       requestBody:
@@ -255,11 +284,11 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{id}/env-vars/{env_var_id}:
+  /environments/{id}/env-vars/{env_var_id}:
     parameters:
       - name: id
         in: path
-        description: The identifier of the application
+        description: The identifier of the environment
         schema:
           type: string
         required: true
@@ -273,7 +302,7 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - Application
+        - Environment
       summary: Get a environment variables by identifier
       responses:
         '200':
@@ -293,11 +322,11 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{id}/logs:
+  /environments/{id}/logs:
     parameters:
       - name: id
         in: path
-        description: The identifier of the application
+        description: The identifier of the environment
         schema:
           type: string
         required: true
@@ -305,11 +334,6 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: environment_name
-          in: query
-          description: Filter logs by the name of the environment, case insensitive
-          schema:
-            type: string
         - name: log_type
           in: query
           description: Filter logs by log type, case insensitive
@@ -328,8 +352,8 @@ paths:
             type: string
             format: date-time
       tags:
-        - Application
-      summary: Get the logs of an application
+        - Environment
+      summary: Get the logs of an environment
       responses:
         '200':
           description: List of logs
@@ -350,17 +374,17 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{id}/logs/{log_id}:
+  /environments/{id}/logs/{log_id}:
     parameters:
       - name: id
         in: path
-        description: The identifier of the application
+        description: The identifier of the environment
         schema:
           type: string
         required: true
       - name: log_id
         in: path
-        description: The identifier of the log of the specified application
+        description: The identifier of the log of the specified environment
         schema:
           type: string
         required: true
@@ -368,7 +392,7 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - Application
+        - Environment
       summary: Get a logs by identifier
       responses:
         '200':
@@ -482,11 +506,6 @@ components:
         archived:
           type: boolean
           default: false
-        state:
-          type: string
-          enum:
-            - HEALTHY
-            - UNHEALTHY
     Application:
       allOf:
         - $ref: '#/components/schemas/ApplicationBase'
@@ -497,6 +516,11 @@ components:
         creation_datetime:
           type: string
           format: date-time
+        state:
+          type: string
+          enum:
+            - HEALTHY
+            - UNHEALTHY
     CrupdateApplication:
       allOf:
         - $ref: '#/components/schemas/ApplicationBase'
@@ -527,8 +551,6 @@ components:
           example: ENV_EXAMPLE
         value:
           type: string
-        environment:
-          $ref: '#/components/schemas/Environment'
         archived:
           type: boolean
           default: false
@@ -536,7 +558,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/EnvironmentVariable'
       properties:
-        application_id:
+        environment_id:
           type: string
     Log:
       type: object
@@ -554,11 +576,6 @@ components:
           enum:
             - DEPLOYMENT_LOG
             - APPLICATION_LOG
-        environment:
-          $ref: '#/components/schemas/Environment'
-        archived:
-          type: boolean
-          default: false
     Plan:
       type: object
       properties:
