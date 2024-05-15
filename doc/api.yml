@@ -3,7 +3,7 @@ info:
   title: JCloudify Api
   version: 'latest'
 servers:
-  - url: https://api-jcloudify.preprod.hei.school
+  - url: https://jcloudify-api.preprod.hei.school
 
 paths:
   /ping:
