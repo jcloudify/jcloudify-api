@@ -194,5 +194,8 @@ dependencies {
     testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 
 implementation 'api.jcloudify:jcloudify-api-gen:latest'
+implementation 'org.springframework.boot:spring-boot-starter-validation'
+implementation 'org.springframework.boot:spring-boot-starter-security'
+implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.7.3'
 
 }
