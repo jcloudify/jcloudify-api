@@ -1,0 +1,1 @@
+implementation 'api.jcloudify:jcloudify-api-gen:latest'

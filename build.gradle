@@ -20,7 +20,7 @@ jacoco {
 
 
 repositories {
-
+mavenLocal()
     mavenCentral()
 }
 
@@ -193,6 +193,6 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter:1.19.1'
     testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 
-
+implementation 'api.jcloudify:jcloudify-api-gen:latest'
 
 }
