@@ -5,19 +5,24 @@ import static io.hypersistence.utils.hibernate.type.array.internal.AbstractArray
 import api.jcloudify.app.repository.model.enums.UserRole;
 import io.hypersistence.utils.hibernate.type.array.EnumArrayType;
 import jakarta.persistence.*;
+import java.io.Serializable;
 import lombok.*;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Table(name = "\"user\"")
-public class User {
-  @Id private String id;
+@EqualsAndHashCode
+@ToString
+public class User implements Serializable {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private String id;
 
   @Column(name = "first_name")
   private String firstName;
@@ -34,8 +39,8 @@ public class User {
   @Type(
       value = EnumArrayType.class,
       parameters = @Parameter(name = SQL_ARRAY_TYPE, value = "user_role"))
-  @Column(name = "role", columnDefinition = "user_role[]")
-  private UserRole[] role;
+  @Column(name = "roles", columnDefinition = "user_role[]")
+  private UserRole[] roles;
 
   @Column(name = "github_id")
   private String githubId;
