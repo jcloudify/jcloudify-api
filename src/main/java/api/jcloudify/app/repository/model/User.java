@@ -37,8 +37,8 @@ public class User implements Serializable {
   private String email;
 
   @Type(
-      value = EnumArrayType.class,
-      parameters = @Parameter(name = SQL_ARRAY_TYPE, value = "user_role"))
+          value = EnumArrayType.class,
+          parameters = @Parameter(name = SQL_ARRAY_TYPE, value = "user_role"))
   @Column(name = "roles", columnDefinition = "user_role[]")
   private UserRole[] roles;
 
