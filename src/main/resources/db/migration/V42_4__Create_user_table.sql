@@ -14,7 +14,7 @@ create table if not exists "user" (
     last_name varchar not null,
     username varchar not null,
     email varchar not null,
-    role user_role default 'USER',
+    roles user_role[] default '{}',
     github_id varchar,
     id_plan varchar,
     constraint fk_plan foreign key (id_plan) references "plan" (id)

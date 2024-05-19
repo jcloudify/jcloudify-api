@@ -21,7 +21,7 @@ public class Principal implements UserDetails {
     private final String bearer;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.stream(user.getRole())
+        return Arrays.stream(user.getRoles())
                 .map(role -> UserRole.valueOf(String.valueOf(role)))
                 .collect(Collectors.toList());
     }
