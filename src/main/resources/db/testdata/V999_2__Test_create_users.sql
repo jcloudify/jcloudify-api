@@ -1,0 +1,2 @@
+insert into "user"(id, first_name, last_name, username, email, roles, github_id, id_plan) values
+                                                                                              ('joe_doe_id', 'Joe', 'Doe', 'JoeDoe', 'joe@email.com', '{USER}', '1234', 'plan_1_id');
