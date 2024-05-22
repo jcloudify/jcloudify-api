@@ -1,9 +1,10 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
 import api.jcloudify.app.endpoint.rest.mapper.UserMapper;
+import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.model.User;
-import api.jcloudify.app.endpoint.rest.model.UserBase;
 import api.jcloudify.app.service.UserService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ public class UserController {
   private final UserMapper mapper;
 
   @PostMapping("/users")
-  public User signUp(@RequestBody UserBase user) {
-    return mapper.toRest(service.registerUser(user));
+  public List<User> signUp(@RequestBody List<CreateUser> toCreate) {
+    return service.createUsers(toCreate).stream().map(mapper::toRest).toList();
   }
 }
