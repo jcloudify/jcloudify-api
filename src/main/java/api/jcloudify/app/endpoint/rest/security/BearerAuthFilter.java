@@ -23,8 +23,7 @@ public class BearerAuthFilter extends AbstractAuthenticationProcessingFilter {
 
   @Override
   public Authentication attemptAuthentication(
-      HttpServletRequest request, HttpServletResponse response)
-      throws AuthenticationException, IOException, ServletException {
+      HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
     String bearer = request.getHeader(authorizationHeader);
     return getAuthenticationManager()
         .authenticate(new UsernamePasswordAuthenticationToken(bearer, bearer));

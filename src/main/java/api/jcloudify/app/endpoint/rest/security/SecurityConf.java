@@ -69,7 +69,8 @@ public class SecurityConf {
                         new AntPathRequestMatcher("/health/bucket", GET.name()),
                         new AntPathRequestMatcher("/health/db", GET.name()),
                         new AntPathRequestMatcher("/health/email", GET.name()),
-                        new AntPathRequestMatcher("/health/event", GET.name())))),
+                        new AntPathRequestMatcher("/health/event", GET.name()),
+                        new AntPathRequestMatcher("/token", GET.name())))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -77,6 +78,8 @@ public class SecurityConf {
                     .requestMatchers(OPTIONS, "/**")
                     .permitAll()
                     .requestMatchers(GET, "/ping")
+                    .permitAll()
+                    .requestMatchers(GET, "/token")
                     .permitAll()
                     .requestMatchers(GET, "/health/db")
                     .permitAll()
