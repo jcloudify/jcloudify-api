@@ -32,7 +32,10 @@ Globals:
         SPRING_DATASOURCE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/db/url}}'
         SPRING_DATASOURCE_USERNAME: !Sub '{{resolve:ssm:/jcloudify/${Env}/db/user/username}}'
         SPRING_DATASOURCE_PASSWORD: !Sub '{{resolve:ssm:/jcloudify/${Env}/db/user/password}}'
-        
+        GITHUB_CLIENT_ID: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/client/id}}'
+        GITHUB_CLIENT_SECRET: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/client/secret}}'
+        GITHUB_REDIRECT_URI: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/redirect/uri}}'
+        GITHUB_TOKEN_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/token/url}}'
         
 
 Parameters:

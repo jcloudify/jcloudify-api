@@ -1,0 +1,4 @@
+GITHUB_CLIENT_ID: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/client/id}}'
+GITHUB_CLIENT_SECRET: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/client/secret}}'
+GITHUB_REDIRECT_URI: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/redirect/uri}}'
+GITHUB_TOKEN_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/token/url}}'
