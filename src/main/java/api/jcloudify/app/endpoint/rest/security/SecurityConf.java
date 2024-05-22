@@ -1,18 +1,20 @@
 package api.jcloudify.app.endpoint.rest.security;
 
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 import api.jcloudify.app.model.exception.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -20,9 +22,6 @@ import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.OPTIONS;
 
 @EnableWebSecurity
 @Configuration
@@ -34,7 +33,7 @@ public class SecurityConf {
   private final HandlerExceptionResolver exceptionResolver;
 
   public SecurityConf(
-          AuthProvider authProvider,
+      AuthProvider authProvider,
       // InternalToExternalErrorHandler behind
       @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
     this.exceptionResolver = exceptionResolver;
@@ -59,33 +58,33 @@ public class SecurityConf {
                         (req, res, e) ->
                             exceptionResolver.resolveException(
                                 req, res, null, forbiddenWithRemoteInfo(e, req))))
-            .sessionManagement(
-                    session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authProvider)
-            .addFilterBefore(
-                    bearerFilter(
-                            new NegatedRequestMatcher(
-                                    new OrRequestMatcher(new AntPathRequestMatcher("/**", OPTIONS.toString()),
-                                            new AntPathRequestMatcher("/ping", GET.name()),
-                                            new AntPathRequestMatcher("/health/bucket", GET.name()),
-                                            new AntPathRequestMatcher("/health/db", GET.name()),
-                                            new AntPathRequestMatcher("/health/email", GET.name()),
-                                            new AntPathRequestMatcher("/health/event", GET.name())))),
-                    AnonymousAuthenticationFilter.class)
+        .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+        .authenticationProvider(authProvider)
+        .addFilterBefore(
+            bearerFilter(
+                new NegatedRequestMatcher(
+                    new OrRequestMatcher(
+                        new AntPathRequestMatcher("/**", OPTIONS.toString()),
+                        new AntPathRequestMatcher("/ping", GET.name()),
+                        new AntPathRequestMatcher("/health/bucket", GET.name()),
+                        new AntPathRequestMatcher("/health/db", GET.name()),
+                        new AntPathRequestMatcher("/health/email", GET.name()),
+                        new AntPathRequestMatcher("/health/event", GET.name())))),
+            AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
                 authorize
-                    .requestMatchers(HttpMethod.OPTIONS, "/**")
+                    .requestMatchers(OPTIONS, "/**")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/ping")
+                    .requestMatchers(GET, "/ping")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/health/db")
+                    .requestMatchers(GET, "/health/db")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/health/bucket")
+                    .requestMatchers(GET, "/health/bucket")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/health/event")
+                    .requestMatchers(GET, "/health/event")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/health/email")
+                    .requestMatchers(GET, "/health/email")
                     .permitAll()
                     .requestMatchers("/**")
                     .denyAll())
@@ -117,15 +116,15 @@ public class SecurityConf {
     BearerAuthFilter bearerFilter = new BearerAuthFilter(requestMatcher, AUTHORIZATION_HEADER);
     bearerFilter.setAuthenticationManager(authenticationManager());
     bearerFilter.setAuthenticationSuccessHandler(
-            (httpServletRequest, httpServletResponse, authentication) -> {});
+        (httpServletRequest, httpServletResponse, authentication) -> {});
     bearerFilter.setAuthenticationFailureHandler(
-            (req, res, e) ->
-                    // note(spring-exception)
-                    // issues like when a user is not found(i.e. UsernameNotFoundException)
-                    // or other exceptions thrown inside authentication provider.
-                    // In fact, this handles other authentication exceptions that are
-                    // not handled by AccessDeniedException and AuthenticationEntryPoint
-                    exceptionResolver.resolveException(req, res, null, forbiddenWithRemoteInfo(e, req)));
+        (req, res, e) ->
+            // note(spring-exception)
+            // issues like when a user is not found(i.e. UsernameNotFoundException)
+            // or other exceptions thrown inside authentication provider.
+            // In fact, this handles other authentication exceptions that are
+            // not handled by AccessDeniedException and AuthenticationEntryPoint
+            exceptionResolver.resolveException(req, res, null, forbiddenWithRemoteInfo(e, req)));
     return bearerFilter;
   }
 }
