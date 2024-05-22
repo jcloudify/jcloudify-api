@@ -24,7 +24,10 @@ public class UserService {
 
   public User findByEmail(String email) {
     return repository
-            .findByEmail(email)
-            .orElseThrow(() -> new NotFoundException("The user identified by the email " + email + " is not found"));
+        .findByEmail(email)
+        .orElseThrow(
+            () ->
+                new NotFoundException(
+                    "The user identified by the email " + email + " is not found"));
   }
 }
