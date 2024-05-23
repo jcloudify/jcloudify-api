@@ -87,7 +87,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserBase'
+              $ref: '#/components/schemas/CreateUser'
       responses:
         '200':
           description: The created user account
@@ -495,7 +495,7 @@ components:
           type: string
         token_type:
           type: string
-    UserBase:
+    CreateUser:
       type: object
       properties:
         first_name:
@@ -504,12 +504,6 @@ components:
         last_name:
           type: string
           example: Randrianary
-        email:
-          type: string
-          example: test@test.com
-        username:
-          type: string
-          example: leonardo
     User:
       type: object
       properties:
@@ -518,6 +512,9 @@ components:
         username:
           type: string
           example: leonardo
+        email:
+          type: string
+          example: test@test.com
         role:
           type: string
           enum:
@@ -528,7 +525,7 @@ components:
         github_id:
           type: string
       allOf:
-        - $ref: '#/components/schemas/UserBase'
+        - $ref: '#/components/schemas/CreateUser'
     ApplicationBase:
       type: object
       properties:
