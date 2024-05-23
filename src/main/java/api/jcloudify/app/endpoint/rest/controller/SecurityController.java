@@ -1,5 +1,6 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
+import api.jcloudify.app.endpoint.rest.mapper.UserMapper;
 import api.jcloudify.app.endpoint.rest.model.Token;
 import api.jcloudify.app.endpoint.rest.model.Whoami;
 import api.jcloudify.app.endpoint.rest.security.model.Principal;
@@ -14,10 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class SecurityController {
   private final GithubService githubService;
+  private final UserMapper userMapper;
 
   @GetMapping("/whoami")
   public Whoami whoami(@AuthenticationPrincipal Principal principal) {
-
+    return new Whoami().user(userMapper.toRest(principal.getUser()));
   }
 
   @GetMapping("/token")

@@ -1,10 +1,9 @@
 package api.jcloudify.app.integration.conf.utils;
 
+import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
+
 import api.jcloudify.app.endpoint.rest.model.Plan;
 import api.jcloudify.app.endpoint.rest.model.User;
-import java.math.BigDecimal;
-
-import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
 
 public class TestMocks {
   public static final String JOE_DOE_ID = "joe_doe_id";

@@ -2,6 +2,7 @@ package api.jcloudify.app.endpoint.rest.security;
 
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.endpoint.rest.security.model.Principal;
+import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.service.UserService;
 import java.util.Optional;
@@ -41,8 +42,12 @@ public class AuthProvider extends AbstractUserDetailsAuthenticationProvider {
     if (email.isEmpty()) {
       throw new UsernameNotFoundException("Bad credentials"); // NOSONAR
     }
-    User user = userService.findByEmail(String.valueOf(email));
-    return new Principal(user, bearer);
+    try {
+      User user = userService.findByEmail(email.get());
+      return new Principal(user, bearer);
+    } catch (NotFoundException e) {
+      throw new UsernameNotFoundException("User with email " + email.get() + " not found");
+    }
   }
 
   private String getBearerFromHeader(
