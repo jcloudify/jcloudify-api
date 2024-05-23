@@ -478,17 +478,6 @@ components:
             $ref: '#/components/schemas/InternalServerException'
 
   schemas:
-    Whoami:
-      properties:
-        id:
-          type: string
-        role:
-          type: string
-          enum:
-            - USER
-            - ADMIN
-        bearer:
-          type: string
     token:
       properties:
         access_token:
@@ -526,6 +515,10 @@ components:
           type: string
       allOf:
         - $ref: '#/components/schemas/CreateUser'
+    Whoami:
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
     ApplicationBase:
       type: object
       properties:
