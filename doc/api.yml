@@ -503,7 +503,7 @@ components:
           example: leonardo
         email:
           type: string
-          example: test@test.com
+          format: email
         role:
           type: string
           enum:
@@ -607,7 +607,7 @@ components:
         name:
           type: string
         cost:
-          type: number
+          type: double
     Exception:
       type: object
       properties:

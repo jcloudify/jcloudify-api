@@ -18,7 +18,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -61,16 +60,7 @@ public class SecurityConf {
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .authenticationProvider(authProvider)
         .addFilterBefore(
-            bearerFilter(
-                new NegatedRequestMatcher(
-                    new OrRequestMatcher(
-                        new AntPathRequestMatcher("/**", OPTIONS.toString()),
-                        new AntPathRequestMatcher("/ping", GET.name()),
-                        new AntPathRequestMatcher("/health/bucket", GET.name()),
-                        new AntPathRequestMatcher("/health/db", GET.name()),
-                        new AntPathRequestMatcher("/health/email", GET.name()),
-                        new AntPathRequestMatcher("/health/event", GET.name()),
-                        new AntPathRequestMatcher("/token", GET.name())))),
+            bearerFilter(new OrRequestMatcher(new AntPathRequestMatcher("/whoami", GET.name()))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -89,6 +79,8 @@ public class SecurityConf {
                     .permitAll()
                     .requestMatchers(GET, "/health/email")
                     .permitAll()
+                    .requestMatchers(GET, "/whoami")
+                    .authenticated()
                     .requestMatchers("/**")
                     .denyAll())
         // disable superfluous protections
