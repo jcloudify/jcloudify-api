@@ -3,11 +3,10 @@ package api.jcloudify.app.service;
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.model.exception.ForbiddenException;
-import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.UserRepository;
 import api.jcloudify.app.repository.model.User;
-import java.io.IOException;
+import api.jcloudify.app.repository.model.mapper.UserMapper;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHMyself;
@@ -18,32 +17,22 @@ import org.springframework.stereotype.Service;
 public class UserService {
   private final UserRepository repository;
   private final GithubComponent githubComponent;
+  private final UserMapper mapper;
 
   public List<User> createUsers(List<CreateUser> toCreate) {
-    return toCreate.stream()
-        .map(
-            user -> {
-              GHMyself githubUser =
-                  githubComponent
-                      .getCurrentUserByToken(user.getToken())
-                      .orElseThrow(() -> new ForbiddenException("Invalid token"));
+    List<User> toSave = toCreate.stream().map(this::createUserFrom).toList();
+    return repository.saveAll(toSave);
+  }
 
-              User.UserBuilder userBuilder = User.builder();
+  private User createUserFrom(CreateUser user) {
+    GHMyself githubUser = getUserByToken(user.getToken());
+    return mapper.toModel(user, githubUser);
+  }
 
-              userBuilder.firstName(user.getFirstName()).lastName(user.getLastName());
-
-              try {
-                userBuilder
-                    .email(githubUser.getEmail())
-                    .githubId(String.valueOf(githubUser.getId()))
-                    .email(githubUser.getEmail())
-                    .username(githubUser.getName());
-              } catch (IOException e) {
-                throw new InternalServerErrorException(e);
-              }
-              return repository.save(userBuilder.build());
-            })
-        .toList();
+  private GHMyself getUserByToken(String token) {
+    return githubComponent
+        .getCurrentUserByToken(token)
+        .orElseThrow(() -> new ForbiddenException("Invalid token"));
   }
 
   public User findByEmail(String email) {
