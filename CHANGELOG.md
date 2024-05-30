@@ -1,3 +1,13 @@
+# [1.3.0](https://github.com/jcloudify/jcloudify-api/compare/v1.2.0...v1.3.0) (2024-05-30)
+
+
+### Features
+
+* user registration at POST /users ([b3b079d](https://github.com/jcloudify/jcloudify-api/commit/b3b079dd10319536d8667edea40e6c7b2d6db384))
+* whoami endpoint ([866b901](https://github.com/jcloudify/jcloudify-api/commit/866b90109b06670a6a5230c944df343fa8376e8a))
+
+
+
 # [1.2.0](https://github.com/jcloudify/jcloudify-api/compare/v1.1.0...v1.2.0) (2024-05-23)
 
 
