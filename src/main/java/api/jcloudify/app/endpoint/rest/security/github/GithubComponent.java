@@ -39,6 +39,15 @@ public class GithubComponent {
     }
   }
 
+  public Optional<GHMyself> getCurrentUserByToken(String token) {
+    try {
+      GitHub gitHub = new GitHubBuilder().withOAuthToken(token).build();
+      return Optional.of(gitHub.getMyself());
+    } catch (IOException e) {
+      return Optional.empty();
+    }
+  }
+
   public Token exchangeCodeToToken(String code) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(APPLICATION_JSON);
