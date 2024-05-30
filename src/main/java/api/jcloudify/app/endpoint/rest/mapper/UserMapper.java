@@ -18,7 +18,6 @@ public class UserMapper {
         .githubId(domain.getGithubId())
         .firstName(domain.getFirstName())
         .lastName(domain.getLastName())
-        .role(userRoleMapper.toRest(domain.getRoles()[0]))
-        .plan(planMapper.toRest(domain.getPlan()));
+        .role(userRoleMapper.toRest(domain.getRoles()[0]));
   }
 }
