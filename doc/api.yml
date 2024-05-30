@@ -76,25 +76,29 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /signup:
+  /users:
     post:
       tags:
         - User
       summary: User signup
       requestBody:
         required: true
-        description: The user information
+        description: The users to create
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUser'
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateUser'
       responses:
         '200':
-          description: The created user account
+          description: The created user accounts
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
         '400':
           $ref: '#/components/responses/400'
         '429':
@@ -493,6 +497,8 @@ components:
         last_name:
           type: string
           example: Randrianary
+        token:
+          type: string
     User:
       type: object
       properties:

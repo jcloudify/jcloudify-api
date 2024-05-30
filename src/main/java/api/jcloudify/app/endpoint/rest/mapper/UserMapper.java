@@ -4,7 +4,7 @@ import api.jcloudify.app.endpoint.rest.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("restMapper")
 @AllArgsConstructor
 public class UserMapper {
   private final UserRoleMapper userRoleMapper;
