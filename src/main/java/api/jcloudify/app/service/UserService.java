@@ -2,6 +2,7 @@ package api.jcloudify.app.service;
 
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
+import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.ForbiddenException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.UserRepository;
@@ -24,9 +25,12 @@ public class UserService {
     return repository.saveAll(toSave);
   }
 
-  private User createUserFrom(CreateUser user) {
-    GHMyself githubUser = getUserByToken(user.getToken());
-    return mapper.toModel(user, githubUser);
+  private User createUserFrom(CreateUser createUser) {
+    GHMyself githubUser = getUserByToken(createUser.getToken());
+    User user = mapper.toModel(createUser, githubUser);
+    if (repository.existsByEmail(user.getEmail()))
+      throw new BadRequestException("An account with the same email already exists");
+    return user;
   }
 
   private GHMyself getUserByToken(String token) {
