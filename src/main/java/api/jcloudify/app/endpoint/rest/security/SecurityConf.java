@@ -2,6 +2,7 @@ package api.jcloudify.app.endpoint.rest.security;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import api.jcloudify.app.model.exception.ForbiddenException;
@@ -78,6 +79,8 @@ public class SecurityConf {
                     .requestMatchers(GET, "/health/event")
                     .permitAll()
                     .requestMatchers(GET, "/health/email")
+                    .permitAll()
+                    .requestMatchers(POST, "/users")
                     .permitAll()
                     .requestMatchers(GET, "/whoami")
                     .authenticated()

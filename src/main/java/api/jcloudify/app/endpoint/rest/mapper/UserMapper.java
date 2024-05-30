@@ -4,7 +4,7 @@ import api.jcloudify.app.endpoint.rest.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("restMapper")
 @AllArgsConstructor
 public class UserMapper {
   private final UserRoleMapper userRoleMapper;
@@ -18,7 +18,6 @@ public class UserMapper {
         .githubId(domain.getGithubId())
         .firstName(domain.getFirstName())
         .lastName(domain.getLastName())
-        .role(userRoleMapper.toRest(domain.getRoles()[0]))
-        .plan(planMapper.toRest(domain.getPlan()));
+        .role(userRoleMapper.toRest(domain.getRoles()[0]));
   }
 }
