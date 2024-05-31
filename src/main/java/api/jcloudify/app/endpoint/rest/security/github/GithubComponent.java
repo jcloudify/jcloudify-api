@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.kohsuke.github.GHEmail;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -33,7 +34,7 @@ public class GithubComponent {
     try {
       GitHub gitHub = new GitHubBuilder().withOAuthToken(token).build();
       currentUser = gitHub.getMyself();
-      return Optional.of(currentUser.getEmail());
+      return Optional.of(extractPrimaryEmail(currentUser.getEmails2()));
     } catch (IOException e) {
       return Optional.empty();
     }
@@ -46,6 +47,10 @@ public class GithubComponent {
     } catch (IOException e) {
       return Optional.empty();
     }
+  }
+
+  private String extractPrimaryEmail(List<GHEmail> ghEmails) {
+    return ghEmails.stream().filter(GHEmail::isPrimary).toList().getFirst().getEmail();
   }
 
   public Token exchangeCodeToToken(String code) {
