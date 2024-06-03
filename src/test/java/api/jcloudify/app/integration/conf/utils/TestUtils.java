@@ -31,5 +31,6 @@ public class TestUtils {
     when(githubUser.getEmail()).thenReturn("test@example.com");
     when(githubUser.getLogin()).thenReturn(JOE_DOE_USERNAME);
     when(githubUser.getId()).thenReturn(Long.valueOf(JOE_DOE_GITHUB_ID));
+    when(githubUser.getAvatarUrl()).thenReturn(JOE_DOE_AVATAR);
   }
 }

@@ -55,4 +55,7 @@ public class User implements Serializable {
 
   @Column(name = "github_id")
   private String githubId;
+
+  @Column(name = "avatar")
+  private String avatar;
 }

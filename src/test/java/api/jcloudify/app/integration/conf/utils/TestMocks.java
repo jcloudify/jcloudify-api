@@ -10,6 +10,8 @@ public class TestMocks {
   public static final String JOE_DOE_EMAIL = "joe@email.com";
   public static final String JOE_DOE_GITHUB_ID = "1234";
   public static final String JOE_DOE_USERNAME = "JoeDoe";
+  public static final String JOE_DOE_AVATAR =
+      "https://github.com/images/" + JOE_DOE_USERNAME + ".png";
 
   public static User joeDoeUser() {
     return new User()
@@ -19,6 +21,7 @@ public class TestMocks {
         .role(USER)
         .firstName("Joe")
         .lastName("Doe")
-        .githubId(JOE_DOE_GITHUB_ID);
+        .githubId(JOE_DOE_GITHUB_ID)
+        .avatar(JOE_DOE_AVATAR);
   }
 }

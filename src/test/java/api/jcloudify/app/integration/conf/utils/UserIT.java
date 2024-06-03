@@ -64,6 +64,7 @@ public class UserIT extends FacadeIT {
     User actual = api.usersPost(List.of(toCreate)).getFirst();
 
     assertEquals("test@example.com", actual.getEmail());
+    assertEquals(JOE_DOE_AVATAR, actual.getAvatar());
     assertEquals(JOE_DOE_GITHUB_ID, actual.getGithubId());
     assertEquals(JOE_DOE_USERNAME, actual.getUsername());
   }
