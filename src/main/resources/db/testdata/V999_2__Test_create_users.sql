@@ -1,2 +1,2 @@
-insert into "user"(id, first_name, last_name, username, email, roles, github_id) values
-                                                                                              ('joe_doe_id', 'Joe', 'Doe', 'JoeDoe', 'joe@email.com', '{USER}', '1234');
+insert into "user"(id, first_name, last_name, username, email, roles, github_id, avatar) values
+                                                                                              ('joe_doe_id', 'Joe', 'Doe', 'JoeDoe', 'joe@email.com', '{USER}', '1234', 'https://github.com/images/JoeDoe.png');

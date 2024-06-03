@@ -22,6 +22,7 @@ public class UserMapper {
           .githubId(String.valueOf(githubUser.getId()))
           .email(githubUser.getEmail())
           .username(githubUser.getLogin())
+          .avatar(githubUser.getAvatarUrl())
           .roles(roles)
           .build();
     } catch (IOException e) {

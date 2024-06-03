@@ -515,9 +515,9 @@ components:
           enum:
             - USER
             - ADMIN
-        plan:
-          $ref: '#/components/schemas/Plan'
         github_id:
+          type: string
+        avatar:
           type: string
       allOf:
         - $ref: '#/components/schemas/CreateUser'

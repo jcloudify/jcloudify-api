@@ -18,6 +18,7 @@ public class UserMapper {
         .githubId(domain.getGithubId())
         .firstName(domain.getFirstName())
         .lastName(domain.getLastName())
-        .role(userRoleMapper.toRest(domain.getRoles()[0]));
+        .role(userRoleMapper.toRest(domain.getRoles()[0]))
+        .avatar(domain.getAvatar());
   }
 }
