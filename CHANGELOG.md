@@ -1,3 +1,14 @@
+# [1.3.0](https://github.com/jcloudify/jcloudify-api/compare/v1.2.0...v1.3.0) (2024-06-04)
+
+
+### Features
+
+* avatar field to user data ([596a495](https://github.com/jcloudify/jcloudify-api/commit/596a4956bd0b4ce5a8391228c6597933be5b220d))
+* user sign up endpoint ([df971a6](https://github.com/jcloudify/jcloudify-api/commit/df971a688a7d024dc95a89f139d1c7efb0b1215d))
+* whoami endpoint ([866b901](https://github.com/jcloudify/jcloudify-api/commit/866b90109b06670a6a5230c944df343fa8376e8a))
+
+
+
 # [1.2.0](https://github.com/jcloudify/jcloudify-api/compare/v1.1.0...v1.2.0) (2024-05-23)
 
 
