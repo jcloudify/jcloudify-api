@@ -70,7 +70,7 @@ public class UserIT extends FacadeIT {
             .email("test@example.com")
             .token(JOE_DOE_TOKEN);
 
-    User actual = api.usersPost(List.of(toCreate)).getFirst();
+    User actual = api.createUser(List.of(toCreate)).getFirst();
 
     assertEquals("test@example.com", actual.getEmail());
     assertEquals(JOE_DOE_AVATAR, actual.getAvatar());

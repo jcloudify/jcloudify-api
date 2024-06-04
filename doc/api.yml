@@ -10,6 +10,7 @@ paths:
     get:
       tags:
         - Health
+      operationId: ping
       responses:
         '200':
           description: pong
@@ -81,6 +82,7 @@ paths:
       tags:
         - User
       summary: User signup
+      operationId: createUser
       requestBody:
         required: true
         description: The users to create
@@ -123,6 +125,7 @@ paths:
             type: string
       tags:
         - Application
+      operationId: getApplications
       summary: Get all applications
       responses:
         '200':
@@ -148,6 +151,7 @@ paths:
         - bearerAuth: []
       tags:
         - Application
+      operationId: crupdateApplications
       summary: Create or update applications
       description: update if id is provided, create otherwise.
       requestBody:
@@ -179,19 +183,15 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{id}:
+  /applications/{applicationId}:
     parameters:
-      - name: id
-        in: path
-        description: The identifier of the application
-        schema:
-          type: string
-        required: true
+      - $ref: '#/components/parameters/applicationId'
     get:
       security:
         - bearerAuth: []
       tags:
         - Application
+      operationId: getApplicationById
       summary: Get an application by identifier
       responses:
         '200':
@@ -211,19 +211,15 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{id}/environments:
+  /applications/{applicationId}/environments:
     parameters:
-      - name: id
-        in: path
-        description: The identifier of the application
-        schema:
-          type: string
-        required: true
+      - $ref: '#/components/parameters/applicationId'
     get:
       security:
         - bearerAuth: []
       tags:
         - Application
+      operationId: getApplicationEnvironments
       summary: Get environment list of an application
       responses:
         '200':
@@ -246,6 +242,9 @@ paths:
           $ref: '#/components/responses/500'
 
   /applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
+    parameters:
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
     post:
       security:
         - bearerAuth: []
@@ -253,19 +252,6 @@ paths:
         - Application
       summary: Initiate stack deployment
       operationId: InitiateStackDeployment
-      parameters:
-        - name: applicationId
-          in: path
-          description: The application identifier
-          schema:
-            type: string
-          required: true
-        - name: environmentId
-          in: path
-          description: The environment identifier
-          schema:
-            type: string
-          required: true
       requestBody:
         required: true
         content:
@@ -294,19 +280,16 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /environments/{id}/env-vars:
+  /applications/{applicationId}/environments/{environmentId}/variables:
     parameters:
-      - name: id
-        in: path
-        description: The identifier of the environment
-        schema:
-          type: string
-        required: true
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
     get:
       security:
         - bearerAuth: []
       tags:
-        - Environment
+        - Application
+      operationId: getApplicationEnvironmentVariables
       summary: Get environment variables of an environment
       responses:
         '200':
@@ -331,8 +314,9 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - Environment
-      summary: Create or update environment variables
+        - Application
+      operationId: crupdateApplicationEnvironmentVariables
+      summary: Crupdate environment variables
       description: update if id is provided, create otherwise.
       requestBody:
         required: true
@@ -363,25 +347,17 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /environments/{id}/env-vars/{env_var_id}:
+  /applications/{applicationId}/environments/{environmentId}/variables/{variableId}:
     parameters:
-      - name: id
-        in: path
-        description: The identifier of the environment
-        schema:
-          type: string
-        required: true
-      - name: env_var_id
-        in: path
-        description: The identifier of the environment variable of the specified application
-        schema:
-          type: string
-        required: true
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/variableId'
     get:
       security:
         - bearerAuth: []
       tags:
-        - Environment
+        - Application
+      operationId: getApplicationEnvironmentVariableById
       summary: Get a environment variables by identifier
       responses:
         '200':
@@ -401,14 +377,10 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /environments/{id}/logs:
+  /applications/{applicationId}/environments/{environmentId}/logs:
     parameters:
-      - name: id
-        in: path
-        description: The identifier of the environment
-        schema:
-          type: string
-        required: true
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
     get:
       security:
         - bearerAuth: []
@@ -431,7 +403,8 @@ paths:
             type: string
             format: date-time
       tags:
-        - Environment
+        - Application
+      operationId: getEnvironmentLogs
       summary: Get the logs of an environment
       responses:
         '200':
@@ -453,25 +426,17 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /environments/{id}/logs/{log_id}:
+  /applications/{applicationId}/environments/{environmentId}/logs/{logId}:
     parameters:
-      - name: id
-        in: path
-        description: The identifier of the environment
-        schema:
-          type: string
-        required: true
-      - name: log_id
-        in: path
-        description: The identifier of the log of the specified environment
-        schema:
-          type: string
-        required: true
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/logId'
     get:
       security:
         - bearerAuth: []
       tags:
-        - Environment
+        - Application
+      operationId: getEnvironmentLogById
       summary: Get a logs by identifier
       responses:
         '200':
@@ -496,6 +461,36 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+
+  parameters:
+    applicationId:
+      name: applicationId
+      in: path
+      description: The identifier of the application
+      schema:
+        type: string
+      required: true
+    environmentId:
+      name: environmentId
+      in: path
+      description: The identifier of the environment
+      schema:
+        type: string
+      required: true
+    logId:
+      name: logId
+      in: path
+      description: The identifier of the log of the specified environment
+      schema:
+        type: string
+      required: true
+    variableId:
+      name: variableId
+      in: path
+      description: The identifier of the environment variable of the specified application
+      schema:
+        type: string
+      required: true
 
   responses:
     '400':
@@ -580,9 +575,21 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+    CrupdateApplication:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        archived:
+          type: boolean
+          default: false
+        user_id:
+          type: string
     Application:
       allOf:
-        - $ref: '#/components/schemas/ApplicationBase'
+        - $ref: '#/components/schemas/CrupdateApplication'
       properties:
         github_repository:
           type: string
@@ -610,6 +617,95 @@ components:
       enum:
         - PROD
         - PREPROD
+    PojaMetadata:
+      type: object
+      properties:
+        app_name:
+          type: string
+          example: 'poja-sqlite'
+        ses_source:
+          type: string
+          example: 'noreply@nowhere.com'
+        with_swagger_ui:
+          type: boolean
+          example: false
+        package_full_name:
+          type: string
+          example: 'school.hei'
+        custom_java_repositories:
+          type: string
+          format: binary
+        custom_java_deps:
+          type: string
+          format: binary
+        custom_java_env_vars:
+          type: string
+          format: binary
+        java_facade_it:
+          type: string
+          example: 'FacadeIT'
+        with_gen_clients:
+          type: boolean
+          example: false
+        with_database:
+          type: string
+          example: 'sqlite'
+        output_dir:
+          type: string
+        jacoco_min_coverage:
+          type: number
+          example: 0.8
+        with_publish_to_npm_registry:
+          type: boolean
+          example: false
+        ts_client_default_openapi_server_url:
+          type: string
+        ts_client_api_url_env_var_name:
+          type: string
+        frontal_memory:
+          type: number
+          example: 2048
+        worker_memory:
+          type: number
+          example: 1024
+        worker_batch:
+          type: number
+          example: 5
+        frontal_reserved_concurrent_executions_nb:
+          type: string
+        worker_reserved_concurrent_executions_nb:
+          type: string
+        with_snapstart:
+          type: boolean
+          example: false
+        aurora_min_capacity:
+          type: number
+        aurora_max_capacity:
+          type: number
+        aurora_scale_point:
+          type: number
+        aurora_sleep:
+          type: number
+          example: 300
+        aurora_auto_pause:
+          type: boolean
+          example: false
+        database_non_root_username:
+          type: string
+        database_non_root_password:
+          type: string
+        with_sentry:
+          type: boolean
+          example: false
+        with_sonar:
+          type: boolean
+          example: false
+        with_codeql:
+          type: boolean
+          example: false
+        prod_db_cluster_timeout:
+          type: number
+          example: 300
     Environment:
       type: object
       properties:
@@ -622,6 +718,13 @@ components:
           enum:
             - HEALTHY
             - UNHEALTHY
+        metadata:
+          $ref: '#/components/schemas/PojaMetadata'
+        plan:
+          $ref: '#/components/schemas/Plan'
+        archived:
+          type: boolean
+          default: false
     EnvironmentVariable:
       type: object
       properties:
@@ -639,7 +742,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/EnvironmentVariable'
       properties:
-        environment_id:
+        environmentId:
           type: string
     Log:
       type: object
@@ -664,8 +767,10 @@ components:
           type: string
         name:
           type: string
-        cost:
-          type: double
+        monthly_cost:
+          type: number
+        yearly_cost:
+          type: number
     InitiateDeployment:
       type: object
       properties:

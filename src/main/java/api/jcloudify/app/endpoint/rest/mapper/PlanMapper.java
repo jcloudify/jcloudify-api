@@ -1,11 +1,16 @@
 package api.jcloudify.app.endpoint.rest.mapper;
 
-import api.jcloudify.app.endpoint.rest.model.Plan;
+import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PlanMapper {
-  public Plan toRest(api.jcloudify.app.repository.model.Plan domain) {
-    return new Plan().id(domain.getId()).name(domain.getName()).cost(domain.getCost());
+  public api.jcloudify.app.endpoint.rest.model.Plan toRest(
+      api.jcloudify.app.repository.model.Plan domain) {
+    return new api.jcloudify.app.endpoint.rest.model.Plan()
+        .id(domain.getId())
+        .name(domain.getName())
+        .monthlyCost(BigDecimal.valueOf(domain.getMonthlyCost()))
+        .yearlyCost(BigDecimal.valueOf(domain.getYearlyCost()));
   }
 }

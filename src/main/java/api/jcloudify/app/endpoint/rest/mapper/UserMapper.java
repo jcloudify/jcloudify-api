@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class UserMapper {
   private final UserRoleMapper userRoleMapper;
-  private final PlanMapper planMapper;
 
   public User toRest(api.jcloudify.app.repository.model.User domain) {
     return new User()

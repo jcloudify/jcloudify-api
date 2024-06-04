@@ -17,5 +17,6 @@ import lombok.Setter;
 public class Plan {
   @Id private String id;
   private String name;
-  private double cost;
+  private double monthlyCost;
+  private double yearlyCost;
 }
