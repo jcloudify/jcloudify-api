@@ -1,7 +1,7 @@
 package api.jcloudify.app.service.event;
 
 import api.jcloudify.app.PojaGenerated;
-import api.jcloudify.app.endpoint.event.gen.UuidCreated;
+import api.jcloudify.app.endpoint.event.model.UuidCreated;
 import api.jcloudify.app.repository.DummyUuidRepository;
 import api.jcloudify.app.repository.model.DummyUuid;
 import java.util.function.Consumer;

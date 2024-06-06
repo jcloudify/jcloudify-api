@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import api.jcloudify.app.PojaGenerated;
 import api.jcloudify.app.conf.FacadeIT;
-import api.jcloudify.app.endpoint.event.gen.UuidCreated;
+import api.jcloudify.app.endpoint.event.consumer.EventConsumer;
+import api.jcloudify.app.endpoint.event.consumer.model.ConsumableEvent;
+import api.jcloudify.app.endpoint.event.consumer.model.TypedEvent;
+import api.jcloudify.app.endpoint.event.model.UuidCreated;
 import api.jcloudify.app.repository.DummyUuidRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,9 +31,10 @@ class EventConsumerIT extends FacadeIT {
 
     subject.accept(
         List.of(
-            new EventConsumer.AcknowledgeableTypedEvent(
-                new EventConsumer.TypedEvent(
-                    "api.jcloudify.app.endpoint.event.gen.UuidCreated", payloadReceived),
+            new ConsumableEvent(
+                new TypedEvent(
+                    "api.jcloudify.app.endpoint.event.model.UuidCreated", payloadReceived),
+                () -> {},
                 () -> {})));
 
     Thread.sleep(2_000);
