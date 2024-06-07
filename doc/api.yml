@@ -519,8 +519,12 @@ components:
           type: string
         avatar:
           type: string
-      allOf:
-        - $ref: '#/components/schemas/CreateUser'
+        first_name:
+          type: string
+          example: Hajatiana
+        last_name:
+          type: string
+          example: Randrianary
     Whoami:
       properties:
         user:
