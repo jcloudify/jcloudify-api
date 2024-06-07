@@ -59,7 +59,11 @@ public class UserIT extends FacadeIT {
     UserApi api = new UserApi(joeDoeClient);
 
     CreateUser toCreate =
-        new CreateUser().firstName("firstName").lastName("lastName").token(JOE_DOE_TOKEN);
+        new CreateUser()
+            .firstName("firstName")
+            .lastName("lastName")
+            .email("test@example.com")
+            .token(JOE_DOE_TOKEN);
 
     User actual = api.usersPost(List.of(toCreate)).getFirst();
 
