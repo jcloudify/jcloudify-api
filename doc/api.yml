@@ -497,6 +497,9 @@ components:
         last_name:
           type: string
           example: Randrianary
+        email:
+          type: string
+          format: email
         token:
           type: string
     User:
