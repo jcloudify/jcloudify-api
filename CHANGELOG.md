@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/jcloudify/jcloudify-api/compare/v1.3.0...v1.4.0) (2024-06-11)
+
+
+### Features
+
+* user must provide email adress during signup ([c02f97d](https://github.com/jcloudify/jcloudify-api/commit/c02f97db67c5ca5c4baf387a2ff55a4534db55fd))
+
+
+
 # [1.3.0](https://github.com/jcloudify/jcloudify-api/compare/v1.2.0...v1.3.0) (2024-06-04)
 
 
