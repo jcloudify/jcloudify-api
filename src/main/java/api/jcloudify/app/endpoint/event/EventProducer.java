@@ -2,9 +2,11 @@ package api.jcloudify.app.endpoint.event;
 
 import api.jcloudify.app.PojaGenerated;
 import api.jcloudify.app.datastructure.ListGrouper;
+import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
@@ -22,20 +24,20 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsResultEntry;
 @PojaGenerated
 @Component
 @Slf4j
-public class EventProducer implements Consumer<List<Object>> {
+public class EventProducer<T extends PojaEvent> implements Consumer<Collection<T>> {
   private static final String EVENT_SOURCE = "api.jcloudify.app";
   private final ObjectMapper om;
   private final String eventBusName;
   private final EventBridgeClient eventBridgeClient;
 
   private static final int MAX_EVENTS_FOR_PUT_REQUEST = 10;
-  private final ListGrouper<Object> listGrouper;
+  private final ListGrouper<T> listGrouper;
 
   public EventProducer(
       ObjectMapper om,
       @Value("${aws.eventBridge.bus}") String eventBusName,
       EventBridgeClient eventBridgeClient,
-      ListGrouper<Object> listGrouper) {
+      ListGrouper<T> listGrouper) {
     this.om = om;
     this.eventBusName = eventBusName;
     this.eventBridgeClient = eventBridgeClient;
@@ -43,15 +45,15 @@ public class EventProducer implements Consumer<List<Object>> {
   }
 
   @Override
-  public void accept(List<Object> events) {
-    for (var batch : listGrouper.apply(events, MAX_EVENTS_FOR_PUT_REQUEST)) {
+  public void accept(Collection<T> events) {
+    for (var batch : listGrouper.apply(events.stream().toList(), MAX_EVENTS_FOR_PUT_REQUEST)) {
       log.info("Events to send: {}", batch);
       PutEventsResponse response = sendRequest(batch);
       checkResponse(response);
     }
   }
 
-  private PutEventsRequest toEventsRequest(List<Object> events) {
+  private PutEventsRequest toEventsRequest(List<T> events) {
     return PutEventsRequest.builder()
         .entries(events.stream().map(this::toRequestEntry).toList())
         .build();
@@ -71,18 +73,18 @@ public class EventProducer implements Consumer<List<Object>> {
     }
   }
 
-  private PutEventsResponse sendRequest(List<Object> events) {
+  private PutEventsResponse sendRequest(List<T> events) {
     checkPayload(events);
     PutEventsRequest eventsRequest = toEventsRequest(events);
     return eventBridgeClient.putEvents(eventsRequest);
   }
 
-  private boolean isPayloadValid(List<Object> events) {
+  private boolean isPayloadValid(List<T> events) {
     PutEventsRequest eventsRequest = toEventsRequest(events);
     return eventsRequest.entries().size() <= Conf.MAX_PUT_EVENT_ENTRIES;
   }
 
-  private void checkPayload(List<Object> events) {
+  private void checkPayload(List<T> events) {
     if (!isPayloadValid(events)) {
       throw new RuntimeException("Request entries must be <= " + Conf.MAX_PUT_EVENT_ENTRIES);
     }
