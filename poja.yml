@@ -5,7 +5,7 @@ aurora_min_capacity: 2
 aurora_scale_point: 60
 aurora_sleep: 900
 aws_account_id: 057045785189
-cli_version: 13.5.0
+cli_version: 13.8.0
 codeartifact_domain_name: npm-jcloudify-app
 codeartifact_repository_name: jcloudify-store
 custom_java_deps: poja-custom-java-deps.txt
@@ -13,6 +13,7 @@ custom_java_env_vars: poja-custom-java-env-vars.txt
 custom_java_repositories: poja-custom-java-repositories.txt
 database_non_root_password: /jcloudify/${Env}/db/user/password
 database_non_root_username: /jcloudify/${Env}/db/user/username
+frontal_function_timeout: 30
 frontal_memory: 2048
 frontal_reserved_concurrent_executions_nb: null
 jacoco_min_coverage: '0.2'
@@ -39,5 +40,6 @@ with_snapstart: 'true'
 with_sonar: 'false'
 with_swagger_ui: 'false'
 worker_batch: 5
+worker_function_timeout: 600
 worker_memory: 1024
 worker_reserved_concurrent_executions_nb: null

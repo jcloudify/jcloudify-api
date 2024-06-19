@@ -27,19 +27,14 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsResultEntry;
 public class EventProducer<T extends PojaEvent> implements Consumer<Collection<T>> {
   private static final String EVENT_SOURCE = "api.jcloudify.app";
   private final ObjectMapper om;
-  private final String eventBusName;
   private final EventBridgeClient eventBridgeClient;
 
   private static final int MAX_EVENTS_FOR_PUT_REQUEST = 10;
   private final ListGrouper<T> listGrouper;
 
   public EventProducer(
-      ObjectMapper om,
-      @Value("${aws.eventBridge.bus}") String eventBusName,
-      EventBridgeClient eventBridgeClient,
-      ListGrouper<T> listGrouper) {
+      ObjectMapper om, EventBridgeClient eventBridgeClient, ListGrouper<T> listGrouper) {
     this.om = om;
-    this.eventBusName = eventBusName;
     this.eventBridgeClient = eventBridgeClient;
     this.listGrouper = listGrouper;
   }
@@ -59,14 +54,14 @@ public class EventProducer<T extends PojaEvent> implements Consumer<Collection<T
         .build();
   }
 
-  private PutEventsRequestEntry toRequestEntry(Object event) {
+  private PutEventsRequestEntry toRequestEntry(PojaEvent event) {
     try {
       String eventAsString = om.writeValueAsString(event);
       return PutEventsRequestEntry.builder()
           .source(EVENT_SOURCE)
           .detailType(event.getClass().getTypeName())
           .detail(eventAsString)
-          .eventBusName(eventBusName)
+          .eventBusName(event.getEventStack().getBusName())
           .build();
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
