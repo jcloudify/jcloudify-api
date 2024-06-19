@@ -1,6 +1,9 @@
 package api.jcloudify.app.endpoint.event.model;
 
+import static api.jcloudify.app.endpoint.event.EventStack.EVENT_STACK_1;
+
 import api.jcloudify.app.PojaGenerated;
+import api.jcloudify.app.endpoint.event.EventStack;
 import java.io.Serializable;
 import java.time.Duration;
 
@@ -20,5 +23,9 @@ public abstract class PojaEvent implements Serializable {
         eventHandlerInitMaxDuration.toSeconds()
             + maxConsumerDuration().toSeconds()
             + randomConsumerBackoffBetweenRetries().toSeconds());
+  }
+
+  public EventStack getEventStack() {
+    return EVENT_STACK_1;
   }
 }
