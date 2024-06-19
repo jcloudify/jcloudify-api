@@ -12,6 +12,9 @@ public class TestMocks {
   public static final String JOE_DOE_USERNAME = "JoeDoe";
   public static final String JOE_DOE_AVATAR =
       "https://github.com/images/" + JOE_DOE_USERNAME + ".png";
+  public static final String POJA_CREATED_STACK_ID = "poja_created_stack_id";
+  public static final String POJA_APPLICATION_ID = "poja_application_id";
+  public static final String POJA_APPLICATION_ENVIRONMENT_ID = "poja_application_environment_id";
 
   public static User joeDoeUser() {
     return new User()

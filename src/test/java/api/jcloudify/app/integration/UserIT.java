@@ -1,4 +1,4 @@
-package api.jcloudify.app.integration.conf.utils;
+package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.integration.conf.utils.TestMocks.*;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
@@ -14,6 +14,8 @@ import api.jcloudify.app.endpoint.rest.model.User;
 import api.jcloudify.app.endpoint.rest.model.Whoami;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import java.util.List;
+
+import api.jcloudify.app.integration.conf.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHMyself;

@@ -251,7 +251,8 @@ paths:
         - bearerAuth: []
       tags:
         - Application
-      summary: Initiate event-stack deployment
+      summary: Initiate stack deployment
+      operationId: InitiateStackDeployment
       parameters:
         - name: applicationId
           in: path
@@ -682,7 +683,7 @@ components:
         - $ref: '#/components/schemas/InitiateDeployment'
       type: object
       properties:
-        message:
+        stack_id:
           type: string
     StackType:
       type: string
