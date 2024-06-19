@@ -245,6 +245,53 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Application
+      summary: Initiate event-stack deployment
+      parameters:
+        - name: applicationId
+          in: path
+          description: The application identifier
+          schema:
+            type: string
+          required: true
+        - name: environmentId
+          in: path
+          description: The environment identifier
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/InitiateDeployment'
+      responses:
+        '200':
+          description: Deployment successfully initiated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeploymentInitiated'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
   /environments/{id}/env-vars:
     parameters:
@@ -621,6 +668,29 @@ components:
           type: string
         cost:
           type: double
+    InitiateDeployment:
+      type: object
+      properties:
+        application_name:
+          type: string
+        environment_type:
+          $ref: '#/components/schemas/EnvironmentType'
+        stack:
+          $ref: '#/components/schemas/StackType'
+    DeploymentInitiated:
+      allOf:
+        - $ref: '#/components/schemas/InitiateDeployment'
+      type: object
+      properties:
+        message:
+          type: string
+    StackType:
+      type: string
+      enum:
+        - EVENT
+        - COMPUTE_PERMISSION
+        - STORAGE_BUCKET
+        - STORAGE_DATABASE
     Exception:
       type: object
       properties:
