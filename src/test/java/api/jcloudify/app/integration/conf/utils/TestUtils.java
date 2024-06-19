@@ -1,8 +1,10 @@
 package api.jcloudify.app.integration.conf.utils;
 
 import static api.jcloudify.app.integration.conf.utils.TestMocks.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import java.util.Optional;
@@ -32,5 +34,9 @@ public class TestUtils {
     when(githubUser.getLogin()).thenReturn(JOE_DOE_USERNAME);
     when(githubUser.getId()).thenReturn(Long.valueOf(JOE_DOE_GITHUB_ID));
     when(githubUser.getAvatarUrl()).thenReturn(JOE_DOE_AVATAR);
+  }
+
+  public static void setUpCloudformationComponent(CloudformationComponent cloudformationComponent) {
+    when(cloudformationComponent.deployStack(any(), any(), any(), any())).thenReturn(POJA_CREATED_STACK_ID);
   }
 }
