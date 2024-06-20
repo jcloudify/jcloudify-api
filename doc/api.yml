@@ -794,7 +794,8 @@ components:
     StackType:
       type: string
       enum:
-        - EVENT
+        - EVENT_1
+        - EVENT_2
         - COMPUTE_PERMISSION
         - STORAGE_BUCKET
         - STORAGE_DATABASE
