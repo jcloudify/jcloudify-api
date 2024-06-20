@@ -13,7 +13,6 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToCr
 import static api.jcloudify.app.integration.conf.utils.TestMocks.prodEnvironment;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -80,15 +79,12 @@ public class ApplicationIT extends FacadeIT {
                 initiateStackDeployment(STORAGE_BUCKET),
                     initiateStackDeployment(STORAGE_DATABASE)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(EVENT)));
-    assertTrue(
-            ignoreIds(actual).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
+    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(STORAGE_DATABASE)));
   }
 
   private static List<Stack> ignoreIds(List<Stack> stacks) {
-    return stacks.stream()
-            .map(stack -> stack.id(POJA_CREATED_STACK_ID))
-            .toList();
+    return stacks.stream().map(stack -> stack.id(POJA_CREATED_STACK_ID)).toList();
   }
 }
