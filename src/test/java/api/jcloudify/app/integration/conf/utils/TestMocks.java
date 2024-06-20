@@ -3,11 +3,10 @@ package api.jcloudify.app.integration.conf.utils;
 import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
 
 import api.jcloudify.app.endpoint.rest.model.Application;
-import api.jcloudify.app.endpoint.rest.model.CrupdateApplication;
+import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.model.User;
-
 import java.time.Instant;
 import java.util.List;
 
@@ -38,27 +37,27 @@ public class TestMocks {
 
   public static Environment prodEnvironment() {
     return new Environment()
-            .id(POJA_APPLICATION_ENVIRONMENT_ID)
-            .environmentType(EnvironmentType.PROD)
-            .state(Environment.StateEnum.HEALTHY);
+        .id(POJA_APPLICATION_ENVIRONMENT_ID)
+        .environmentType(EnvironmentType.PROD)
+        .state(Environment.StateEnum.HEALTHY);
   }
 
-  public static CrupdateApplication applicationToCreate() {
-    return new CrupdateApplication()
-            .id(POJA_APPLICATION_ID)
-            .name("poja_application_name")
-            .userId(JOE_DOE_ID)
-            .archived(false);
+  public static ApplicationBase applicationToCreate() {
+    return new ApplicationBase()
+        .id(POJA_APPLICATION_ID)
+        .name("poja-test-app")
+        .userId(JOE_DOE_ID)
+        .archived(false);
   }
 
   public static Application createdApplication() {
     return new Application()
-            .id(POJA_APPLICATION_ID)
-            .name("poja_application_name")
-            .userId(JOE_DOE_ID)
-            .creationDatetime(Instant.parse("2023-06-18T10:15:30.00Z"))
-            .githubRepository("https://github.com/joeDoe/poja_application")
-            .archived(false)
-            .environments(List.of(prodEnvironment()));
+        .id(POJA_APPLICATION_ID)
+        .name("poja-application-name")
+        .userId(JOE_DOE_ID)
+        .creationDatetime(Instant.parse("2023-06-18T10:15:30.00Z"))
+        .githubRepository("https://github.com/joeDoe/poja_application")
+        .archived(false)
+        .environments(List.of(prodEnvironment()));
   }
 }
