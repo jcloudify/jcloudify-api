@@ -158,7 +158,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/CrupdateApplication'
+                $ref: '#/components/schemas/ApplicationBase'
       responses:
         '200':
           description: The created applications
@@ -582,7 +582,7 @@ components:
           $ref: '#/components/schemas/User'
     Application:
       allOf:
-        - $ref: '#/components/schemas/CrupdateApplication'
+        - $ref: '#/components/schemas/ApplicationBase'
       properties:
         github_repository:
           type: string
@@ -594,7 +594,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Environment'
-    CrupdateApplication:
+    ApplicationBase:
       properties:
         id:
           type: string
@@ -669,7 +669,7 @@ components:
     InitiateDeployment:
       type: object
       properties:
-        stack:
+        stack_type:
           $ref: '#/components/schemas/StackType'
     Stack:
       allOf:
@@ -683,7 +683,7 @@ components:
         cf_stack_id:
           type: string
         application:
-          $ref: '#/components/schemas/CrupdateApplication'
+          $ref: '#/components/schemas/ApplicationBase'
         environment:
           $ref: '#/components/schemas/Environment'
     StackType:
