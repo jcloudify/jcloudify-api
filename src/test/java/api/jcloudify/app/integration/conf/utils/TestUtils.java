@@ -7,6 +7,9 @@ import static org.mockito.Mockito.when;
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
+import api.jcloudify.app.file.BucketComponent;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Optional;
 import lombok.SneakyThrows;
 import org.kohsuke.github.GHMyself;
@@ -41,5 +44,11 @@ public class TestUtils {
         .thenReturn(POJA_CF_STACK_ID);
     when(cloudformationComponent.updateStack(any(), any(), any(), any()))
         .thenReturn(POJA_CF_STACK_ID);
+  }
+
+  public static void setUpBucketComponent(BucketComponent bucketComponent)
+      throws MalformedURLException {
+    when(bucketComponent.presign(any(), any()))
+        .thenReturn(new URL("https://example.com/templatel"));
   }
 }

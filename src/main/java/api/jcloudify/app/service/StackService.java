@@ -1,7 +1,7 @@
 package api.jcloudify.app.service;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
-import api.jcloudify.app.aws.cloudformation.CloudformationConf;
+import api.jcloudify.app.aws.cloudformation.CloudformationTemplateConf;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackType;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Service
 public class StackService {
-  private final CloudformationConf cloudformationConf;
+  private final CloudformationTemplateConf cloudformationTemplateConf;
   private final CloudformationComponent cloudformationComponent;
   private final EnvironmentService environmentService;
   private final ApplicationService applicationService;
@@ -98,22 +98,34 @@ public class StackService {
         parameters.put("Prefix", "1");
         stackId =
             cloudformationComponent.createStack(
-                stackName, cloudformationConf.EVENT_STACK_URL, parameters, tags);
+                stackName,
+                cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
+                parameters,
+                tags);
       }
       case COMPUTE_PERMISSION -> {
         stackId =
             cloudformationComponent.createStack(
-                stackName, cloudformationConf.COMPUTE_PERMISSION_STACK_URL, parameters, tags);
+                stackName,
+                cloudformationTemplateConf.getComputePermissionStackTemplateUrl().toString(),
+                parameters,
+                tags);
       }
       case STORAGE_BUCKET -> {
         stackId =
             cloudformationComponent.createStack(
-                stackName, cloudformationConf.STORAGE_BUCKET_STACK_URL, parameters, tags);
+                stackName,
+                cloudformationTemplateConf.getStorageBucketStackTemplateUrl().toString(),
+                parameters,
+                tags);
       }
       case STORAGE_DATABASE -> {
         stackId =
             cloudformationComponent.createStack(
-                stackName, cloudformationConf.STORAGE_DATABASE_STACK_URL, parameters, tags);
+                stackName,
+                cloudformationTemplateConf.getStorageDatabaseStackTemplateUrl().toString(),
+                parameters,
+                tags);
       }
       case null -> throw new BadRequestException("Stack type to deploy must be defined");
     }
@@ -131,22 +143,34 @@ public class StackService {
         parameters.put("Prefix", "1");
         stackId =
             cloudformationComponent.updateStack(
-                stackName, cloudformationConf.EVENT_STACK_URL, parameters, tags);
+                stackName,
+                cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
+                parameters,
+                tags);
       }
       case COMPUTE_PERMISSION -> {
         stackId =
             cloudformationComponent.updateStack(
-                stackName, cloudformationConf.COMPUTE_PERMISSION_STACK_URL, parameters, tags);
+                stackName,
+                cloudformationTemplateConf.getComputePermissionStackTemplateUrl().toString(),
+                parameters,
+                tags);
       }
       case STORAGE_BUCKET -> {
         stackId =
             cloudformationComponent.updateStack(
-                stackName, cloudformationConf.STORAGE_BUCKET_STACK_URL, parameters, tags);
+                stackName,
+                cloudformationTemplateConf.getStorageBucketStackTemplateUrl().toString(),
+                parameters,
+                tags);
       }
       case STORAGE_DATABASE -> {
         stackId =
             cloudformationComponent.updateStack(
-                stackName, cloudformationConf.STORAGE_DATABASE_STACK_URL, parameters, tags);
+                stackName,
+                cloudformationTemplateConf.getStorageDatabaseStackTemplateUrl().toString(),
+                parameters,
+                tags);
       }
       case null -> throw new BadRequestException("Stack type to deploy must be defined");
     }

@@ -9,9 +9,5 @@ public class EnvConf {
     registry.add("github.client.secret", () -> "dummy");
     registry.add("github.redirect.uri", () -> "dummy");
     registry.add("github.token.url", () -> "dummy");
-    registry.add("event.stack.url", () -> "dummy");
-    registry.add("compute.permission.stack.url", () -> "dummy");
-    registry.add("storage.bucket.stack.url", () -> "dummy");
-    registry.add("storage.database.stack.url", () -> "dummy");
   }
 }

@@ -11,6 +11,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CF_STACK_I
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CREATED_STACK_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToCreate;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.prodEnvironment;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +25,9 @@ import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
+import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
+import java.net.MalformedURLException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +43,7 @@ public class ApplicationIT extends FacadeIT {
 
   @MockBean GithubComponent githubComponent;
   @MockBean CloudformationComponent cloudformationComponent;
+  @MockBean BucketComponent bucketComponent;
 
   private static Stack stackDeploymentInitiated(StackType stackType) {
     return new Stack()
@@ -60,9 +64,10 @@ public class ApplicationIT extends FacadeIT {
   }
 
   @BeforeEach
-  void setup() {
+  void setup() throws MalformedURLException {
     setUpGithub(githubComponent);
     setUpCloudformationComponent(cloudformationComponent);
+    setUpBucketComponent(bucketComponent);
   }
 
   @Test
