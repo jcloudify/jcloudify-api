@@ -37,6 +37,6 @@ public class TestUtils {
   }
 
   public static void setUpCloudformationComponent(CloudformationComponent cloudformationComponent) {
-    when(cloudformationComponent.deployStack(any(), any(), any(), any())).thenReturn(POJA_CREATED_STACK_ID);
+    when(cloudformationComponent.createStack(any(), any(), any(), any())).thenReturn(POJA_CREATED_STACK_ID);
   }
 }

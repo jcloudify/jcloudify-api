@@ -1,6 +1,10 @@
 package api.jcloudify.app.integration;
 
-import static api.jcloudify.app.integration.conf.utils.TestMocks.*;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_AVATAR;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_GITHUB_ID;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_USERNAME;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeUser;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
