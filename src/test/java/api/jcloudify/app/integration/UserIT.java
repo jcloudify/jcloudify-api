@@ -17,9 +17,8 @@ import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.model.User;
 import api.jcloudify.app.endpoint.rest.model.Whoami;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
-import java.util.List;
-
 import api.jcloudify.app.integration.conf.utils.TestUtils;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHMyself;
