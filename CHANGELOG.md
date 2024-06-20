@@ -1,3 +1,13 @@
+# [1.5.0](https://github.com/jcloudify/jcloudify-api/compare/v1.4.0...v1.5.0) (2024-06-20)
+
+
+### Features
+
+* initiate cloudformation stack deployments ([1d851c8](https://github.com/jcloudify/jcloudify-api/commit/1d851c8a1c4a3071e8bba1a9ed22009484d0c6ed))
+* initiate stack deployment ([c1f66ab](https://github.com/jcloudify/jcloudify-api/commit/c1f66ab47262147e8a240f07c3af094c91227a5a))
+
+
+
 # [1.4.0](https://github.com/jcloudify/jcloudify-api/compare/v1.3.0...v1.4.0) (2024-06-11)
 
 
