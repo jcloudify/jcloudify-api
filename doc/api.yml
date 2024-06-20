@@ -282,7 +282,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DeploymentInitiated'
+                  $ref: '#/components/schemas/Stack'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -580,8 +580,21 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
-    ApplicationBase:
-      type: object
+    Application:
+      allOf:
+        - $ref: '#/components/schemas/CrupdateApplication'
+      properties:
+        github_repository:
+          type: string
+          example: https://github.com/testUser/testRepo
+        creation_datetime:
+          type: string
+          format: date-time
+        environments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Environment'
+    CrupdateApplication:
       properties:
         id:
           type: string
@@ -590,25 +603,6 @@ components:
         archived:
           type: boolean
           default: false
-    Application:
-      allOf:
-        - $ref: '#/components/schemas/ApplicationBase'
-      properties:
-        github_repository:
-          type: string
-          example: https://github.com/testUser/testRepo
-        creation_datetime:
-          type: string
-          format: date-time
-        state:
-          type: string
-          enum:
-            - HEALTHY
-            - UNHEALTHY
-    CrupdateApplication:
-      allOf:
-        - $ref: '#/components/schemas/ApplicationBase'
-      properties:
         user_id:
           type: string
     EnvironmentType:
@@ -623,8 +617,11 @@ components:
           type: string
         environment_type:
           $ref: '#/components/schemas/EnvironmentType'
-        application_id:
+        state:
           type: string
+          enum:
+            - HEALTHY
+            - UNHEALTHY
     EnvironmentVariable:
       type: object
       properties:
@@ -672,19 +669,23 @@ components:
     InitiateDeployment:
       type: object
       properties:
-        application_name:
-          type: string
-        environment_type:
-          $ref: '#/components/schemas/EnvironmentType'
         stack:
           $ref: '#/components/schemas/StackType'
-    DeploymentInitiated:
+    Stack:
       allOf:
         - $ref: '#/components/schemas/InitiateDeployment'
       type: object
       properties:
-        stack_id:
+        id:
           type: string
+        name:
+          type: string
+        cf_stack_id:
+          type: string
+        application:
+          $ref: '#/components/schemas/CrupdateApplication'
+        environment:
+          $ref: '#/components/schemas/Environment'
     StackType:
       type: string
       enum:
