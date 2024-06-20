@@ -61,9 +61,11 @@ public class SecurityConf {
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .authenticationProvider(authProvider)
         .addFilterBefore(
-            bearerFilter(new OrRequestMatcher(
+            bearerFilter(
+                new OrRequestMatcher(
                     new AntPathRequestMatcher("/whoami", GET.name()),
-                    new AntPathRequestMatcher("/applications/*/environments/*/deploymentInitiation", POST.name()))),
+                    new AntPathRequestMatcher(
+                        "/applications/*/environments/*/deploymentInitiation", POST.name()))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -86,8 +88,8 @@ public class SecurityConf {
                     .permitAll()
                     .requestMatchers(GET, "/whoami")
                     .authenticated()
-                        .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
-                        .authenticated()
+                    .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
+                    .authenticated()
                     .requestMatchers("/**")
                     .denyAll())
         // disable superfluous protections

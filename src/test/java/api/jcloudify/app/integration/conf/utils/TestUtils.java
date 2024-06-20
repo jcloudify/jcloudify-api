@@ -40,6 +40,6 @@ public class TestUtils {
     when(cloudformationComponent.createStack(any(), any(), any(), any()))
         .thenReturn(POJA_CF_STACK_ID);
     when(cloudformationComponent.updateStack(any(), any(), any(), any()))
-            .thenReturn(POJA_CF_STACK_ID);
+        .thenReturn(POJA_CF_STACK_ID);
   }
 }
