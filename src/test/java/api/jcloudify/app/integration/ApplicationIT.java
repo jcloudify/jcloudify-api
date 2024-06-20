@@ -5,8 +5,8 @@ import api.jcloudify.app.conf.FacadeIT;
 import api.jcloudify.app.endpoint.rest.api.ApplicationApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
-import api.jcloudify.app.endpoint.rest.model.DeploymentInitiated;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
+import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
@@ -27,7 +27,9 @@ import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_DATABASE;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CF_STACK_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CREATED_STACK_ID;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToCreate;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,19 +45,18 @@ public class ApplicationIT extends FacadeIT {
     @MockBean
     CloudformationComponent cloudformationComponent;
 
-    private static DeploymentInitiated stackDeploymentInitiated(StackType stackType) {
-        return new DeploymentInitiated()
-                .stackId(POJA_CREATED_STACK_ID)
-                .applicationName("test-poja-app")
+    private static Stack stackDeploymentInitiated(StackType stackType) {
+        return new Stack()
+                .id(POJA_CREATED_STACK_ID)
+                .name("prod-test-poja-app" + stackType.getValue().toLowerCase())
+                .cfStackId(POJA_CF_STACK_ID)
                 .stack(stackType)
-                .environmentType(PROD);
+                .application(applicationToCreate());
     }
 
     private static InitiateDeployment initiateStackDeployment(StackType stackType) {
         return new InitiateDeployment()
-                .applicationName("test-poja-app")
-                .stack(stackType)
-                .environmentType(PROD);
+                .stack(stackType);
     }
 
     private ApiClient anApiClient() {
@@ -73,7 +74,7 @@ public class ApplicationIT extends FacadeIT {
         ApiClient joeDoeClient = anApiClient();
         ApplicationApi api = new ApplicationApi(joeDoeClient);
 
-        List<DeploymentInitiated> eventStackDeploymentInitiated = api.initiateStackDeployment(POJA_APPLICATION_ID,
+        List<Stack> eventStackDeploymentInitiated = api.initiateStackDeployment(POJA_APPLICATION_ID,
                 POJA_APPLICATION_ENVIRONMENT_ID,
                 List.of(initiateStackDeployment(EVENT), initiateStackDeployment(COMPUTE_PERMISSION),
                         initiateStackDeployment(STORAGE_BUCKET), initiateStackDeployment(STORAGE_DATABASE)));
