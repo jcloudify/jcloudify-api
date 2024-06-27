@@ -3,6 +3,7 @@ package api.jcloudify.app.endpoint.rest.security;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.OPTIONS;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import api.jcloudify.app.model.exception.ForbiddenException;
@@ -65,7 +66,8 @@ public class SecurityConf {
                 new OrRequestMatcher(
                     new AntPathRequestMatcher("/whoami", GET.name()),
                     new AntPathRequestMatcher(
-                        "/applications/*/environments/*/deploymentInitiation", POST.name()))),
+                        "/applications/*/environments/*/deploymentInitiation", POST.name()),
+                    new AntPathRequestMatcher("/applications", PUT.name()))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -91,6 +93,8 @@ public class SecurityConf {
                     .requestMatchers(POST, "/users")
                     .permitAll()
                     .requestMatchers(GET, "/whoami")
+                    .authenticated()
+                    .requestMatchers(PUT, "/applications")
                     .authenticated()
                     .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
                     .authenticated()

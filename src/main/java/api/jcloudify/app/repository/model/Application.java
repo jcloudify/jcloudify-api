@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Builder(toBuilder = true)
@@ -41,8 +42,7 @@ public class Application implements Serializable {
   @Column(name = "github_repository")
   private String githubRepository;
 
-  @Column(name = "creation_datetime")
-  private Instant creationDatetime;
+  @CreationTimestamp private Instant creationDatetime;
 
   @Column(name = "id_user")
   private String userId;
