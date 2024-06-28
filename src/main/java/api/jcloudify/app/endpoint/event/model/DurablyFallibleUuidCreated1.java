@@ -18,7 +18,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class DurablyFallibleUuidCreated extends PojaEvent {
+public class DurablyFallibleUuidCreated1 extends PojaEvent {
   private UuidCreated uuidCreated;
   private int waitDurationBeforeConsumingInSeconds;
   private double failureRate;
