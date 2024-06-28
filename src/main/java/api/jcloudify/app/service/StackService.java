@@ -103,16 +103,16 @@ public class StackService {
                 parameters,
                 tags);
       }
-        case EVENT_2 -> {
-          parameters.put("Prefix", "2");
-          stackId =
-                  cloudformationComponent.createStack(
-                          stackName,
-                          cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
-                          parameters,
-                          tags);
-        }
-        case COMPUTE_PERMISSION -> {
+      case EVENT_2 -> {
+        parameters.put("Prefix", "2");
+        stackId =
+            cloudformationComponent.createStack(
+                stackName,
+                cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
+                parameters,
+                tags);
+      }
+      case COMPUTE_PERMISSION -> {
         stackId =
             cloudformationComponent.createStack(
                 stackName,
@@ -157,16 +157,16 @@ public class StackService {
                 parameters,
                 tags);
       }
-        case EVENT_2 -> {
-          parameters.put("Prefix", "2");
-          stackId =
-                  cloudformationComponent.updateStack(
-                          stackName,
-                          cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
-                          parameters,
-                          tags);
-        }
-        case COMPUTE_PERMISSION -> {
+      case EVENT_2 -> {
+        parameters.put("Prefix", "2");
+        stackId =
+            cloudformationComponent.updateStack(
+                stackName,
+                cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
+                parameters,
+                tags);
+      }
+      case COMPUTE_PERMISSION -> {
         stackId =
             cloudformationComponent.updateStack(
                 stackName,

@@ -81,10 +81,11 @@ public class ApplicationIT extends FacadeIT {
             POJA_APPLICATION_ID,
             POJA_APPLICATION_ENVIRONMENT_ID,
             List.of(
-                initiateStackDeployment(EVENT_1), initiateStackDeployment(EVENT_2),
-                    initiateStackDeployment(COMPUTE_PERMISSION),
+                initiateStackDeployment(EVENT_1),
+                initiateStackDeployment(EVENT_2),
+                initiateStackDeployment(COMPUTE_PERMISSION),
                 initiateStackDeployment(STORAGE_BUCKET),
-                    initiateStackDeployment(STORAGE_DATABASE)));
+                initiateStackDeployment(STORAGE_DATABASE)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(EVENT_1)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(EVENT_2)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
