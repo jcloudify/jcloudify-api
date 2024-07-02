@@ -27,7 +27,7 @@ paths:
   /whoami:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Security
       summary: Who am I? Tells you who you are.
@@ -111,7 +111,7 @@ paths:
   /applications:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - name: name
           in: query
@@ -148,7 +148,7 @@ paths:
           $ref: '#/components/responses/500'
     put:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Application
       operationId: crupdateApplications
@@ -188,7 +188,7 @@ paths:
       - $ref: '#/components/parameters/applicationId'
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Application
       operationId: getApplicationById
@@ -216,7 +216,7 @@ paths:
       - $ref: '#/components/parameters/applicationId'
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Application
       operationId: getApplicationEnvironments
@@ -240,6 +240,43 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: crupdateApplicationEnvironments
+      summary: Crupdate environments of an application
+      requestBody:
+        description: >
+          - All application relative properties such as SSM parameters are computed from the environment's application
+          - Ressource relative properties are linked to the plan of the Environment and can be set by using a different endpoint for plan upgrade with enum values such as 1024 or 2048 for memory, etc...
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CrupdateEnvironment'
+        required: true
+      responses:
+        '200':
+          description: The crupdated environments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Environment'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
   /applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
     parameters:
@@ -247,7 +284,7 @@ paths:
       - $ref: '#/components/parameters/environmentId'
     post:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Application
       summary: Initiate stack deployment
@@ -286,7 +323,7 @@ paths:
       - $ref: '#/components/parameters/environmentId'
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Application
       operationId: getApplicationEnvironmentVariables
@@ -312,7 +349,7 @@ paths:
           $ref: '#/components/responses/500'
     put:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Application
       operationId: crupdateApplicationEnvironmentVariables
@@ -354,7 +391,7 @@ paths:
       - $ref: '#/components/parameters/variableId'
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Application
       operationId: getApplicationEnvironmentVariableById
@@ -383,7 +420,7 @@ paths:
       - $ref: '#/components/parameters/environmentId'
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - name: log_type
           in: query
@@ -433,7 +470,7 @@ paths:
       - $ref: '#/components/parameters/logId'
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Application
       operationId: getEnvironmentLogById
@@ -575,7 +612,7 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
-    CrupdateApplication:
+    ApplicationBase:
       type: object
       properties:
         id:
@@ -587,13 +624,13 @@ components:
           default: false
         user_id:
           type: string
-    Application:
-      allOf:
-        - $ref: '#/components/schemas/CrupdateApplication'
-      properties:
         github_repository:
           type: string
           example: https://github.com/testUser/testRepo
+    Application:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationBase'
+      properties:
         creation_datetime:
           type: string
           format: date-time
@@ -601,37 +638,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Environment'
-    ApplicationBase:
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        archived:
-          type: boolean
-          default: false
-        user_id:
-          type: string
     EnvironmentType:
       type: string
       enum:
         - PROD
         - PREPROD
-    PojaMetadata:
+
+    MetadataBase:
       type: object
       properties:
-        app_name:
-          type: string
-          example: 'poja-sqlite'
         ses_source:
           type: string
-          example: 'noreply@nowhere.com'
+          example: "noreply@nowhere.com"
         with_swagger_ui:
           type: boolean
           example: false
         package_full_name:
           type: string
-          example: 'school.hei'
+          example: "school.hei"
         custom_java_repositories:
           type: string
           format: binary
@@ -643,15 +667,13 @@ components:
           format: binary
         java_facade_it:
           type: string
-          example: 'FacadeIT'
+          example: "FacadeIT"
         with_gen_clients:
           type: boolean
           example: false
         with_database:
           type: string
-          example: 'sqlite'
-        output_dir:
-          type: string
+          example: "sqlite"
         jacoco_min_coverage:
           type: number
           example: 0.8
@@ -671,6 +693,43 @@ components:
         worker_batch:
           type: number
           example: 5
+        with_snapstart:
+          type: boolean
+          example: false
+        database_non_root_username:
+          type: string
+        database_non_root_password:
+          type: string
+        with_sentry:
+          type: boolean
+          example: false
+        with_sonar:
+          type: boolean
+          example: false
+        with_codeql:
+          type: boolean
+          example: false
+
+    Metadata:
+      allOf:
+        - $ref: '#/components/schemas/MetadataBase'
+      type: object
+      properties:
+        appName:
+          type: string
+          example: "poja-sqlite"
+        region:
+          type: string
+          example: "eu-west-3"
+        with_own_vpc:
+          type: boolean
+          example: false
+        ssm_sg_id:
+          type: string
+        ssm_subnet1_id:
+          type: string
+        ssm_subnet2_id:
+          type: string
         frontal_reserved_concurrent_executions_nb:
           type: string
         worker_reserved_concurrent_executions_nb:
@@ -690,22 +749,10 @@ components:
         aurora_auto_pause:
           type: boolean
           example: false
-        database_non_root_username:
-          type: string
-        database_non_root_password:
-          type: string
-        with_sentry:
-          type: boolean
-          example: false
-        with_sonar:
-          type: boolean
-          example: false
-        with_codeql:
-          type: boolean
-          example: false
         prod_db_cluster_timeout:
           type: number
           example: 300
+
     Environment:
       type: object
       properties:
@@ -719,12 +766,30 @@ components:
             - HEALTHY
             - UNHEALTHY
         metadata:
-          $ref: '#/components/schemas/PojaMetadata'
+          $ref: '#/components/schemas/Metadata'
         plan:
           $ref: '#/components/schemas/Plan'
         archived:
           type: boolean
           default: false
+        application_id:
+          type: string
+
+    CrupdateEnvironment:
+      type: object
+      properties:
+        id:
+          type: string
+        environment_type:
+          $ref: '#/components/schemas/EnvironmentType'
+        metadata:
+          $ref: '#/components/schemas/MetadataBase'
+        plan_id:
+          type: string
+        archived:
+          type: boolean
+          default: false
+
     EnvironmentVariable:
       type: object
       properties:
