@@ -4,7 +4,7 @@ import api.jcloudify.app.endpoint.rest.model.Environment;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("RestEnvironmentMapper")
 @AllArgsConstructor
 public class EnvironmentMapper {
     private final PlanMapper planMapper;
@@ -13,6 +13,7 @@ public class EnvironmentMapper {
         return new Environment()
                 .id(domain.getId())
                 .state(domain.getState())
+                .archived(domain.isArchived())
                 .plan(planMapper.toRest(domain.getPlan()))
                 .environmentType(domain.getEnvironmentType());
     }

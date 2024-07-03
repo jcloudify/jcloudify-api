@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class ApplicationService {
-  private final ApplicationRepository repository;
+    private final ApplicationRepository repository;
 
-  public Application getById(String id) {
-    return repository
-        .findById(id)
-        .orElseThrow(
-            () -> new NotFoundException("Application identified by id=" + id + " not found"));
-  }
+    public Application getById(String id) {
+        return repository
+                .findById(id)
+                .orElseThrow(
+                        () -> new NotFoundException("Application identified by id=" + id + " not found"));
+    }
 }
