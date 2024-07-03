@@ -1,3 +1,22 @@
+# [3.0.0](https://github.com/jcloudify/jcloudify-api/compare/v1.5.0...v3.0.0) (2024-07-03)
+
+
+### chore
+
+* set code version to 2.0.0 ([51ae182](https://github.com/jcloudify/jcloudify-api/commit/51ae182a71d23c29e4fd4fdb009b103823725abd))
+
+
+### Features
+
+* individually deploy event stack 1 and 2 ([6501251](https://github.com/jcloudify/jcloudify-api/commit/6501251c98c79265f17c257f9ba441cd3fb8128b))
+
+
+### BREAKING CHANGES
+
+* in doc/api.yml add Environment[]  to Application
+
+
+
 # [1.5.0](https://github.com/jcloudify/jcloudify-api/compare/v1.4.0...v1.5.0) (2024-06-20)
 
 
