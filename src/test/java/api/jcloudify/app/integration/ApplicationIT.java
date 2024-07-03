@@ -1,8 +1,7 @@
 package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE_PERMISSION;
-import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT_1;
-import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT_2;
+import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT;
 import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_BUCKET;
 import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_DATABASE;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
@@ -81,13 +80,11 @@ public class ApplicationIT extends FacadeIT {
             POJA_APPLICATION_ID,
             POJA_APPLICATION_ENVIRONMENT_ID,
             List.of(
-                initiateStackDeployment(EVENT_1),
-                initiateStackDeployment(EVENT_2),
+                initiateStackDeployment(EVENT),
                 initiateStackDeployment(COMPUTE_PERMISSION),
                 initiateStackDeployment(STORAGE_BUCKET),
                 initiateStackDeployment(STORAGE_DATABASE)));
-    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(EVENT_1)));
-    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(EVENT_2)));
+    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(EVENT)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
     assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(STORAGE_DATABASE)));

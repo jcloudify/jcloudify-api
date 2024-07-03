@@ -94,17 +94,7 @@ public class StackService {
       Map<String, String> tags) {
     String stackId;
     switch (toDeploy.getStackType()) {
-      case EVENT_1 -> {
-        parameters.put("Prefix", "1");
-        stackId =
-            cloudformationComponent.createStack(
-                stackName,
-                cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case EVENT_2 -> {
-        parameters.put("Prefix", "2");
+      case EVENT -> {
         stackId =
             cloudformationComponent.createStack(
                 stackName,
@@ -148,17 +138,7 @@ public class StackService {
       Map<String, String> tags) {
     String stackId;
     switch (toDeploy.getStackType()) {
-      case EVENT_1 -> {
-        parameters.put("Prefix", "1");
-        stackId =
-            cloudformationComponent.updateStack(
-                stackName,
-                cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case EVENT_2 -> {
-        parameters.put("Prefix", "2");
+      case EVENT -> {
         stackId =
             cloudformationComponent.updateStack(
                 stackName,
