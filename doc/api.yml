@@ -715,7 +715,7 @@ components:
         - $ref: '#/components/schemas/MetadataBase'
       type: object
       properties:
-        appName:
+        app_name:
           type: string
           example: "poja-sqlite"
         region:
