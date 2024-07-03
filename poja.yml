@@ -5,7 +5,7 @@ aurora_min_capacity: 2
 aurora_scale_point: 60
 aurora_sleep: 900
 aws_account_id: 057045785189
-cli_version: 14.0.0
+cli_version: 15.1.1
 codeartifact_domain_name: npm-jcloudify-app
 codeartifact_repository_name: jcloudify-store
 custom_java_deps: poja-custom-java-deps.txt
@@ -40,6 +40,7 @@ with_snapstart: 'true'
 with_sonar: 'false'
 with_swagger_ui: 'false'
 worker_batch: 5
-worker_function_timeout: 600
+worker_function_1_timeout: 600
+worker_function_2_timeout: 600
 worker_memory: 1024
 worker_reserved_concurrent_executions_nb: null
