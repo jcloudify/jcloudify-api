@@ -630,6 +630,8 @@ components:
           example: https://github.com/testUser/testRepo
         metadata:
           $ref: '#/components/schemas/Metadata'
+        plan:
+          $ref: "#/components/schemas/Plan"
 
     Application:
       allOf:
