@@ -612,6 +612,7 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+
     ApplicationBase:
       type: object
       properties:
@@ -627,6 +628,9 @@ components:
         github_repository:
           type: string
           example: https://github.com/testUser/testRepo
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+
     Application:
       allOf:
         - $ref: '#/components/schemas/ApplicationBase'
@@ -638,15 +642,50 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Environment'
+
     EnvironmentType:
       type: string
       enum:
         - PROD
         - PREPROD
 
-    MetadataBase:
+    Metadata:
       type: object
       properties:
+        region:
+          type: string
+          example: "eu-west-3"
+        with_own_vpc:
+          type: boolean
+          example: false
+        ssm_sg_id:
+          type: string
+        ssm_subnet1_id:
+          type: string
+        ssm_subnet2_id:
+          type: string
+        frontal_reserved_concurrent_executions_nb:
+          type: string
+        worker_reserved_concurrent_executions_nb:
+          type: string
+        with_snapstart:
+          type: boolean
+          example: false
+        aurora_min_capacity:
+          type: number
+        aurora_max_capacity:
+          type: number
+        aurora_scale_point:
+          type: number
+        aurora_sleep:
+          type: number
+          example: 300
+        aurora_auto_pause:
+          type: boolean
+          example: false
+        prod_db_cluster_timeout:
+          type: number
+          example: 300
         ses_source:
           type: string
           example: "noreply@nowhere.com"
@@ -693,9 +732,6 @@ components:
         worker_batch:
           type: number
           example: 5
-        with_snapstart:
-          type: boolean
-          example: false
         database_non_root_username:
           type: string
         database_non_root_password:
@@ -710,49 +746,6 @@ components:
           type: boolean
           example: false
 
-    Metadata:
-      allOf:
-        - $ref: '#/components/schemas/MetadataBase'
-      type: object
-      properties:
-        app_name:
-          type: string
-          example: "poja-sqlite"
-        region:
-          type: string
-          example: "eu-west-3"
-        with_own_vpc:
-          type: boolean
-          example: false
-        ssm_sg_id:
-          type: string
-        ssm_subnet1_id:
-          type: string
-        ssm_subnet2_id:
-          type: string
-        frontal_reserved_concurrent_executions_nb:
-          type: string
-        worker_reserved_concurrent_executions_nb:
-          type: string
-        with_snapstart:
-          type: boolean
-          example: false
-        aurora_min_capacity:
-          type: number
-        aurora_max_capacity:
-          type: number
-        aurora_scale_point:
-          type: number
-        aurora_sleep:
-          type: number
-          example: 300
-        aurora_auto_pause:
-          type: boolean
-          example: false
-        prod_db_cluster_timeout:
-          type: number
-          example: 300
-
     Environment:
       type: object
       properties:
@@ -765,15 +758,9 @@ components:
           enum:
             - HEALTHY
             - UNHEALTHY
-        metadata:
-          $ref: '#/components/schemas/Metadata'
-        plan:
-          $ref: '#/components/schemas/Plan'
         archived:
           type: boolean
           default: false
-        application_id:
-          type: string
 
     CrupdateEnvironment:
       type: object
@@ -782,10 +769,6 @@ components:
           type: string
         environment_type:
           $ref: '#/components/schemas/EnvironmentType'
-        metadata:
-          $ref: '#/components/schemas/MetadataBase'
-        plan_id:
-          type: string
         archived:
           type: boolean
           default: false
