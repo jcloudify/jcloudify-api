@@ -15,9 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -60,9 +60,10 @@ public class GithubComponent {
     body.put("redirect_uri", conf.getRedirectUri());
 
     HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
-    ResponseEntity<Map> response =
-        restTemplate.exchange(conf.getTokenUrl(), POST, entity, Map.class);
-    Map responseBody = response.getBody();
+    ParameterizedTypeReference<Map<String, Object>> typeReference =
+        new ParameterizedTypeReference<>() {};
+    var response = restTemplate.exchange(conf.getTokenUrl(), POST, entity, typeReference);
+    var responseBody = response.getBody();
 
     if (responseBody != null && !responseBody.containsKey("error")) {
       String accessToken = (String) responseBody.get("access_token");
