@@ -2,6 +2,7 @@ package api.jcloudify.app.repository.model;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,4 +49,9 @@ public class Application implements Serializable {
 
   @OneToMany(mappedBy = "applicationId", cascade = CascadeType.ALL)
   private List<Environment> environments;
+
+  @JsonIgnore
+  public String getFormattedName() {
+    return name.replace("_", "-");
+  }
 }

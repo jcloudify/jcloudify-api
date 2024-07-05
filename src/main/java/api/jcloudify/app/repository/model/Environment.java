@@ -4,7 +4,9 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static org.hibernate.type.SqlTypes.NAMED_ENUM;
 
+import api.jcloudify.app.endpoint.rest.model.Environment.StateEnum;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
@@ -48,5 +50,10 @@ public class Environment implements Serializable {
   @JdbcTypeCode(NAMED_ENUM)
   @Enumerated(STRING)
   @Column(name = "state")
-  private api.jcloudify.app.endpoint.rest.model.Environment.StateEnum state;
+  private StateEnum state;
+
+  @JsonIgnore
+  public String getFormattedEnvironmentType() {
+    return environmentType.toString().toLowerCase();
+  }
 }
