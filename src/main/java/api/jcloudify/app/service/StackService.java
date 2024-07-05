@@ -1,11 +1,12 @@
 package api.jcloudify.app.service;
 
+import static java.util.Objects.requireNonNull;
+
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.aws.cloudformation.CloudformationTemplateConf;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackType;
-import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.repository.jpa.StackRepository;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.Environment;
@@ -34,8 +35,7 @@ public class StackService {
         .toList();
   }
 
-  private Optional<Stack> checkIfStackAlreadyExists(
-      String applicationId, String environmentId, StackType type) {
+  private Optional<Stack> findBy(String applicationId, String environmentId, StackType type) {
     return repository.findByApplicationIdAndEnvironmentIdAndType(
         applicationId, environmentId, type);
   }
@@ -54,15 +54,13 @@ public class StackService {
 
   private api.jcloudify.app.endpoint.rest.model.Stack deployStack(
       InitiateDeployment toDeploy, String applicationId, String environmentId) {
-    Optional<Stack> stack =
-        checkIfStackAlreadyExists(applicationId, environmentId, toDeploy.getStackType());
+    Optional<Stack> stack = findBy(applicationId, environmentId, toDeploy.getStackType());
     Environment environment = environmentService.getById(environmentId);
     String environmentType = environment.getEnvironmentType().toString().toLowerCase();
     Application application = applicationService.getById(applicationId);
     String applicationName = application.getName().replace("_", "-");
-    Map<String, String> parameters = new HashMap<>();
-    parameters.put("Env", environmentType);
-    parameters.put("AppName", applicationName);
+    Map<String, String> parameters = getParametersFrom(environmentType, applicationName);
+
     if (stack.isPresent()) {
       Stack toUpdate = stack.get();
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
@@ -87,48 +85,35 @@ public class StackService {
     }
   }
 
+  private static Map<String, String> getParametersFrom(
+      String environmentType, String applicationName) {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("Env", environmentType);
+    parameters.put("AppName", applicationName);
+    return parameters;
+  }
+
+  private String getStackTemplateUrlFrom(StackType stackType) {
+    return (switch (stackType) {
+          case EVENT -> cloudformationTemplateConf.getEventStackTemplateUrl();
+          case COMPUTE_PERMISSION -> cloudformationTemplateConf
+              .getComputePermissionStackTemplateUrl();
+          case STORAGE_BUCKET -> cloudformationTemplateConf.getStorageBucketStackTemplateUrl();
+          case STORAGE_DATABASE -> cloudformationTemplateConf.getStorageDatabaseStackTemplateUrl();
+        })
+        .toString();
+  }
+
   private String createStack(
       InitiateDeployment toDeploy,
       Map<String, String> parameters,
       String stackName,
       Map<String, String> tags) {
-    String stackId;
-    switch (toDeploy.getStackType()) {
-      case EVENT -> {
-        stackId =
-            cloudformationComponent.createStack(
-                stackName,
-                cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case COMPUTE_PERMISSION -> {
-        stackId =
-            cloudformationComponent.createStack(
-                stackName,
-                cloudformationTemplateConf.getComputePermissionStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case STORAGE_BUCKET -> {
-        stackId =
-            cloudformationComponent.createStack(
-                stackName,
-                cloudformationTemplateConf.getStorageBucketStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case STORAGE_DATABASE -> {
-        stackId =
-            cloudformationComponent.createStack(
-                stackName,
-                cloudformationTemplateConf.getStorageDatabaseStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case null -> throw new BadRequestException("Stack type to deploy must be defined");
-    }
-    return stackId;
+    return cloudformationComponent.createStack(
+        stackName,
+        getStackTemplateUrlFrom(requireNonNull(toDeploy.getStackType())),
+        parameters,
+        tags);
   }
 
   private String updateStack(
@@ -136,43 +121,11 @@ public class StackService {
       Map<String, String> parameters,
       String stackName,
       Map<String, String> tags) {
-    String stackId;
-    switch (toDeploy.getStackType()) {
-      case EVENT -> {
-        stackId =
-            cloudformationComponent.updateStack(
-                stackName,
-                cloudformationTemplateConf.getEventStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case COMPUTE_PERMISSION -> {
-        stackId =
-            cloudformationComponent.updateStack(
-                stackName,
-                cloudformationTemplateConf.getComputePermissionStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case STORAGE_BUCKET -> {
-        stackId =
-            cloudformationComponent.updateStack(
-                stackName,
-                cloudformationTemplateConf.getStorageBucketStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case STORAGE_DATABASE -> {
-        stackId =
-            cloudformationComponent.updateStack(
-                stackName,
-                cloudformationTemplateConf.getStorageDatabaseStackTemplateUrl().toString(),
-                parameters,
-                tags);
-      }
-      case null -> throw new BadRequestException("Stack type to deploy must be defined");
-    }
-    return stackId;
+    return cloudformationComponent.updateStack(
+        stackName,
+        getStackTemplateUrlFrom(requireNonNull(toDeploy.getStackType())),
+        parameters,
+        tags);
   }
 
   private static Map<String, String> setUpTags(String applicationName, String applicationEnv) {
