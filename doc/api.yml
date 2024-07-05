@@ -651,28 +651,30 @@ components:
         - PROD
         - PREPROD
 
-    Metadata:
+    ConcurrencyMetadata:
       type: object
       properties:
-        region:
-          type: string
-          example: "eu-west-3"
-        with_own_vpc:
-          type: boolean
-          example: false
-        ssm_sg_id:
-          type: string
-        ssm_subnet1_id:
-          type: string
-        ssm_subnet2_id:
-          type: string
         frontal_reserved_concurrent_executions_nb:
           type: string
         worker_reserved_concurrent_executions_nb:
           type: string
-        with_snapstart:
-          type: boolean
-          example: false
+
+    ComputeMetadata:
+      type: object
+      properties:
+        frontal_memory:
+          type: number
+          example: 2048
+        worker_memory:
+          type: number
+          example: 1024
+        worker_batch:
+          type: number
+          example: 5
+
+    AuroraMetadata:
+      type: object
+      properties:
         aurora_min_capacity:
           type: number
         aurora_max_capacity:
@@ -685,18 +687,29 @@ components:
         aurora_auto_pause:
           type: boolean
           example: false
+
+    ClientMetadata:
+      type: object
+      properties:
+        ts_client_default_openapi_server_url:
+          type: string
+        ts_client_api_url_env_var_name:
+          type: string
+
+    DatabaseMetadata:
+      type: object
+      properties:
+        database_non_root_username:
+          type: string
+        database_non_root_password:
+          type: string
         prod_db_cluster_timeout:
           type: number
           example: 300
-        ses_source:
-          type: string
-          example: "noreply@nowhere.com"
-        with_swagger_ui:
-          type: boolean
-          example: false
-        package_full_name:
-          type: string
-          example: "school.hei"
+
+    CustomMetadata:
+      type: object
+      properties:
         custom_java_repositories:
           type: string
           format: binary
@@ -706,6 +719,22 @@ components:
         custom_java_env_vars:
           type: string
           format: binary
+
+    Metadata:
+      type: object
+      properties:
+        with_snapstart:
+          type: boolean
+          example: false
+        ses_source:
+          type: string
+          example: "noreply@nowhere.com"
+        with_swagger_ui:
+          type: boolean
+          example: false
+        package_full_name:
+          type: string
+          example: "school.hei"
         java_facade_it:
           type: string
           example: "FacadeIT"
@@ -721,23 +750,6 @@ components:
         with_publish_to_npm_registry:
           type: boolean
           example: false
-        ts_client_default_openapi_server_url:
-          type: string
-        ts_client_api_url_env_var_name:
-          type: string
-        frontal_memory:
-          type: number
-          example: 2048
-        worker_memory:
-          type: number
-          example: 1024
-        worker_batch:
-          type: number
-          example: 5
-        database_non_root_username:
-          type: string
-        database_non_root_password:
-          type: string
         with_sentry:
           type: boolean
           example: false
@@ -747,6 +759,18 @@ components:
         with_codeql:
           type: boolean
           example: false
+        concurrency:
+          $ref: '#/components/schemas/ConcurrencyMetadata'
+        compute:
+          $ref: '#/components/schemas/ComputeMetadata'
+        aurora:
+          $ref: '#/components/schemas/AuroraMetadata'
+        database:
+          $ref: '#/components/schemas/DatabaseMetadata'
+        custom:
+          $ref: '#/components/schemas/CustomMetadata'
+        client:
+          $ref: '#/components/schemas/ClientMetadata'
 
     Environment:
       type: object
