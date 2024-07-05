@@ -54,13 +54,13 @@ public class StackService {
 
   private api.jcloudify.app.endpoint.rest.model.Stack deployStack(
       InitiateDeployment toDeploy, String applicationId, String environmentId) {
-    Optional<Stack> stack = findBy(applicationId, environmentId, toDeploy.getStackType());
-    Environment environment = environmentService.getById(environmentId);
-    String environmentType = environment.getEnvironmentType().toString().toLowerCase();
     Application application = applicationService.getById(applicationId);
-    String applicationName = application.getName().replace("_", "-");
+    Environment environment = environmentService.getById(environmentId);
+    String environmentType = environment.getFormattedEnvironmentType();
+    String applicationName = application.getFormattedName();
     Map<String, String> parameters = getParametersFrom(environmentType, applicationName);
 
+    Optional<Stack> stack = findBy(applicationId, environmentId, toDeploy.getStackType());
     if (stack.isPresent()) {
       Stack toUpdate = stack.get();
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
