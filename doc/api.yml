@@ -67,7 +67,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/token'
+                $ref: '#/components/schemas/Token'
         '400':
           $ref: '#/components/responses/400'
         '404':
@@ -562,7 +562,7 @@ components:
             $ref: '#/components/schemas/InternalServerException'
 
   schemas:
-    token:
+    Token:
       properties:
         access_token:
           type: string
