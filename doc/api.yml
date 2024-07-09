@@ -89,18 +89,14 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/CreateUser'
+              $ref: "#/components/schemas/CreateUsersRequestBody"
       responses:
         '200':
           description: The created user accounts
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/CreateUsersResponse"
         '400':
           $ref: '#/components/responses/400'
         '429':
@@ -123,19 +119,19 @@ paths:
           description: Filter applications by the id of the user who owns it
           schema:
             type: string
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
       tags:
         - Application
       operationId: getApplications
       summary: Get all applications
       responses:
         '200':
-          description: List of all applications
+          description: paged list of applications
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Application'
+                $ref: "#/components/schemas/PagedApplicationsResponse"
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -160,18 +156,14 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/ApplicationBase'
+              $ref: "#/components/schemas/CrupdateApplicationsRequestBody"
       responses:
         '200':
           description: The created applications
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Application'
+                $ref: "#/components/schemas/CrupdateApplicationsResponse"
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -528,6 +520,23 @@ components:
       schema:
         type: string
       required: true
+    page:
+      name: page
+      in: query
+      description: page number
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    page_size:
+      name: page_size
+      in: query
+      description: page_size
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 500
+        default: 30
 
   responses:
     '400':
@@ -562,6 +571,9 @@ components:
             $ref: '#/components/schemas/InternalServerException'
 
   schemas:
+    #############################################
+    ###############  Components #################
+    #############################################
     Token:
       properties:
         access_token:
@@ -868,6 +880,62 @@ components:
         - STORAGE_BUCKET
         - STORAGE_DATABASE_POSTGRES
         - STORAGE_DATABASE_SQLITE
+    ##############################################################
+    ###############  RequestBodies And Responses #################
+    ##############################################################
+    PagedResponse:
+      type: object
+      properties:
+        page_size:
+          type: integer
+        page_number:
+          type: integer
+        has_next:
+          type: boolean
+        has_previous:
+          type: boolean
+        count:
+          type: integer
+    CreateUsersRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateUser"
+    CreateUsersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+    PagedApplicationsResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Application"
+    CrupdateApplicationsRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationBase"
+    CrupdateApplicationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+    #############################################
+    ###############  Exceptions #################
+    #############################################
     Exception:
       type: object
       properties:
