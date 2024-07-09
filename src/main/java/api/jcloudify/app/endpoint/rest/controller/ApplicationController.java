@@ -1,13 +1,13 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
 import api.jcloudify.app.endpoint.rest.mapper.ApplicationMapper;
-import api.jcloudify.app.endpoint.rest.model.Application;
-import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
-import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
-import api.jcloudify.app.endpoint.rest.model.Stack;
+import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsRequestBody;
+import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsResponse;
+import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
+import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentResponse;
 import api.jcloudify.app.service.ApplicationService;
 import api.jcloudify.app.service.StackService;
-import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,15 +26,22 @@ public class ApplicationController {
   private final ApplicationMapper mapper;
 
   @PutMapping("/applications")
-  public List<Application> crupdateApplications(@RequestBody List<ApplicationBase> toCrupdate) {
-    return mapper.toRest(applicationService.saveApplications(toCrupdate));
+  public CrupdateApplicationsResponse crupdateApplications(
+      @RequestBody CrupdateApplicationsRequestBody toCrupdate) {
+    var data =
+        mapper.toRest(
+            applicationService.saveApplications(Objects.requireNonNull(toCrupdate.getData())));
+    return new CrupdateApplicationsResponse().data(data);
   }
 
   @PostMapping("/applications/{applicationId}/environments/{environmentId}/deploymentInitiation")
-  public List<Stack> deployStack(
+  public InitiateStackDeploymentResponse initiatedStackDeployment(
       @PathVariable String applicationId,
       @PathVariable String environmentId,
-      @RequestBody List<InitiateDeployment> deploymentsToInitiate) {
-    return stackService.process(deploymentsToInitiate, applicationId, environmentId);
+      @RequestBody InitiateStackDeploymentRequestBody deploymentsToInitiate) {
+    var data =
+        stackService.process(
+            Objects.requireNonNull(deploymentsToInitiate.getData()), applicationId, environmentId);
+    return new InitiateStackDeploymentResponse().data(data);
   }
 }

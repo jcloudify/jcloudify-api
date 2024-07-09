@@ -27,7 +27,9 @@ import api.jcloudify.app.endpoint.rest.api.ApplicationApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.Application;
+import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
+import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
@@ -35,6 +37,7 @@ import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -81,21 +84,25 @@ public class ApplicationIT extends FacadeIT {
     ApiClient joeDoeClient = anApiClient();
     ApplicationApi api = new ApplicationApi(joeDoeClient);
 
-    List<Stack> actual =
+    var actual =
         api.initiateStackDeployment(
             POJA_APPLICATION_ID,
             POJA_APPLICATION_ENVIRONMENT_ID,
-            List.of(
-                initiateStackDeployment(EVENT),
-                initiateStackDeployment(COMPUTE_PERMISSION),
-                initiateStackDeployment(STORAGE_BUCKET),
-                initiateStackDeployment(STORAGE_DATABASE_POSTGRES),
-                initiateStackDeployment(STORAGE_DATABASE_SQLITE)));
-    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(EVENT)));
-    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
-    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
-    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
-    assertTrue(ignoreIds(actual).contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
+            new InitiateStackDeploymentRequestBody()
+                .data(
+                    List.of(
+                        initiateStackDeployment(EVENT),
+                        initiateStackDeployment(COMPUTE_PERMISSION),
+                        initiateStackDeployment(STORAGE_BUCKET),
+                        initiateStackDeployment(STORAGE_DATABASE_POSTGRES),
+                        initiateStackDeployment(STORAGE_DATABASE_SQLITE))));
+    var actualData = Objects.requireNonNull(actual.getData());
+
+    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(EVENT)));
+    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
+    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
+    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
+    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
   }
 
   @Test
@@ -103,16 +110,15 @@ public class ApplicationIT extends FacadeIT {
     ApiClient joeDoeClient = anApiClient();
     ApplicationApi api = new ApplicationApi(joeDoeClient);
 
-    List<Application> actual =
-        api
-            .crupdateApplications(
-                List.of(applicationToUpdate().archived(true), applicationToCreate()))
-            .stream()
-            .map(ApplicationIT::ignoreIds)
-            .toList();
+    var actual =
+        api.crupdateApplications(
+            new CrupdateApplicationsRequestBody()
+                .data(List.of(applicationToUpdate().archived(true), applicationToCreate())));
+    var actualData =
+        Objects.requireNonNull(actual.getData()).stream().map(ApplicationIT::ignoreIds).toList();
 
-    assertTrue(actual.contains(updatedApplication()));
-    assertTrue(actual.contains(createdApplication()));
+    assertTrue(actualData.contains(updatedApplication()));
+    assertTrue(actualData.contains(createdApplication()));
   }
 
   private static List<Stack> ignoreIds(List<Stack> stacks) {
