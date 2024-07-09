@@ -280,24 +280,20 @@ paths:
       tags:
         - Application
       summary: Initiate stack deployment
-      operationId: InitiateStackDeployment
+      operationId: initiateStackDeployment
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/InitiateDeployment'
+              $ref: "#/components/schemas/InitiateStackDeploymentRequestBody"
       responses:
         '200':
           description: Deployment successfully initiated
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Stack'
+                $ref: "#/components/schemas/InitiateStackDeploymentResponse"
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -933,6 +929,20 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Application"
+    InitiateStackDeploymentRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/InitiateDeployment"
+    InitiateStackDeploymentResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Stack"
     #############################################
     ###############  Exceptions #################
     #############################################
