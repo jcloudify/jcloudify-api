@@ -14,11 +14,13 @@ import api.jcloudify.app.endpoint.rest.api.UserApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
+import api.jcloudify.app.endpoint.rest.model.CreateUsersRequestBody;
 import api.jcloudify.app.endpoint.rest.model.User;
 import api.jcloudify.app.endpoint.rest.model.Whoami;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHMyself;
@@ -70,7 +72,10 @@ public class UserIT extends FacadeIT {
             .email("test@example.com")
             .token(JOE_DOE_TOKEN);
 
-    User actual = api.createUser(List.of(toCreate)).getFirst();
+    User actual =
+        Objects.requireNonNull(
+                api.createUser(new CreateUsersRequestBody().data(List.of(toCreate))).getData())
+            .getFirst();
 
     assertEquals("test@example.com", actual.getEmail());
     assertEquals(JOE_DOE_AVATAR, actual.getAvatar());
