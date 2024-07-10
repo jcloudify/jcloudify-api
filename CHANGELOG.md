@@ -1,3 +1,12 @@
+## [3.0.1](https://github.com/jcloudify/jcloudify-api/compare/v3.0.0...v3.0.1) (2024-07-10)
+
+
+### Bug Fixes
+
+* replace old stack type EVENT_1 and EVENT_2 by only EVENT ([def3e95](https://github.com/jcloudify/jcloudify-api/commit/def3e95bf23a7161ddc96a45763e74b449b56b36))
+
+
+
 # [3.0.0](https://github.com/jcloudify/jcloudify-api/compare/v1.5.0...v3.0.0) (2024-07-03)
 
 
