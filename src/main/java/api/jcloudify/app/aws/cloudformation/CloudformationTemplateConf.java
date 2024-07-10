@@ -27,8 +27,13 @@ public class CloudformationTemplateConf {
     return bucketComponent.presign(eventStackTemplatePath, Duration.ofMinutes(3));
   }
 
-  public URL getStorageDatabaseStackTemplateUrl() {
+  public URL getStorageDatabasePostgresStackTemplateUrl() {
     String eventStackTemplatePath = CF_STACK_TEMPLATE_FOLDER + "storage-database-stack.yml";
+    return bucketComponent.presign(eventStackTemplatePath, Duration.ofMinutes(5));
+  }
+
+  public URL getStorageDatabaseSQliteStackTemplateUrl() {
+    String eventStackTemplatePath = CF_STACK_TEMPLATE_FOLDER + "storage-efs-stack.yml";
     return bucketComponent.presign(eventStackTemplatePath, Duration.ofMinutes(5));
   }
 }
