@@ -628,10 +628,6 @@ components:
         github_repository:
           type: string
           example: https://github.com/testUser/testRepo
-        conf:
-          $ref: '#/components/schemas/PojaConf'
-        plan:
-          $ref: "#/components/schemas/Plan"
 
     Application:
       allOf:
@@ -773,20 +769,15 @@ components:
           $ref: '#/components/schemas/ClientConf'
 
     Environment:
+      allOf:
+        - $ref: '#/components/schemas/CrupdateEnvironment'
       type: object
       properties:
-        id:
-          type: string
-        environment_type:
-          $ref: '#/components/schemas/EnvironmentType'
         state:
           type: string
           enum:
             - HEALTHY
             - UNHEALTHY
-        archived:
-          type: boolean
-          default: false
 
     CrupdateEnvironment:
       type: object
@@ -798,6 +789,10 @@ components:
         archived:
           type: boolean
           default: false
+        conf:
+          $ref: '#/components/schemas/PojaConf'
+        plan:
+          $ref: "#/components/schemas/Plan"
 
     EnvironmentVariable:
       type: object
