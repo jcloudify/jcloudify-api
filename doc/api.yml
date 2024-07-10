@@ -871,7 +871,8 @@ components:
         - EVENT
         - COMPUTE_PERMISSION
         - STORAGE_BUCKET
-        - STORAGE_DATABASE
+        - STORAGE_DATABASE_POSTGRES
+        - STORAGE_DATABASE_SQLITE
     Exception:
       type: object
       properties:
