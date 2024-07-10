@@ -628,8 +628,8 @@ components:
         github_repository:
           type: string
           example: https://github.com/testUser/testRepo
-        metadata:
-          $ref: '#/components/schemas/Metadata'
+        conf:
+          $ref: '#/components/schemas/PojaConf'
         plan:
           $ref: "#/components/schemas/Plan"
 
@@ -651,7 +651,7 @@ components:
         - PROD
         - PREPROD
 
-    ConcurrencyMetadata:
+    ConcurrencyConf:
       type: object
       properties:
         frontal_reserved_concurrent_executions_nb:
@@ -659,7 +659,7 @@ components:
         worker_reserved_concurrent_executions_nb:
           type: string
 
-    ComputeMetadata:
+    ComputeConf:
       type: object
       properties:
         frontal_memory:
@@ -672,7 +672,7 @@ components:
           type: number
           example: 5
 
-    AuroraMetadata:
+    AuroraConf:
       type: object
       properties:
         aurora_min_capacity:
@@ -688,7 +688,7 @@ components:
           type: boolean
           example: false
 
-    ClientMetadata:
+    ClientConf:
       type: object
       properties:
         ts_client_default_openapi_server_url:
@@ -696,7 +696,7 @@ components:
         ts_client_api_url_env_var_name:
           type: string
 
-    DatabaseMetadata:
+    DatabaseConf:
       type: object
       properties:
         database_non_root_username:
@@ -707,7 +707,7 @@ components:
           type: number
           example: 300
 
-    CustomMetadata:
+    CustomConf:
       type: object
       properties:
         custom_java_repositories:
@@ -720,7 +720,7 @@ components:
           type: string
           format: binary
 
-    Metadata:
+    PojaConf:
       type: object
       properties:
         with_snapstart:
@@ -760,17 +760,17 @@ components:
           type: boolean
           example: false
         concurrency:
-          $ref: '#/components/schemas/ConcurrencyMetadata'
+          $ref: '#/components/schemas/ConcurrencyConf'
         compute:
-          $ref: '#/components/schemas/ComputeMetadata'
+          $ref: '#/components/schemas/ComputeConf'
         aurora:
-          $ref: '#/components/schemas/AuroraMetadata'
+          $ref: '#/components/schemas/AuroraConf'
         database:
-          $ref: '#/components/schemas/DatabaseMetadata'
+          $ref: '#/components/schemas/DatabaseConf'
         custom:
-          $ref: '#/components/schemas/CustomMetadata'
+          $ref: '#/components/schemas/CustomConf'
         client:
-          $ref: '#/components/schemas/ClientMetadata'
+          $ref: '#/components/schemas/ClientConf'
 
     Environment:
       type: object
