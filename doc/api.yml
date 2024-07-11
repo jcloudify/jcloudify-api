@@ -727,6 +727,46 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /payment/set-default:
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      summary: Set default payment method
+      operationId: setDefaultPaymentMethod
+      requestBody:
+        required: true
+        description: customerId and paymentMethId
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_id:
+                  type: string
+                  example: customer_id
+                payment_method_id:
+                  type: string
+                  example: payment_method_id
+      responses:
+        '200':
+          description: The payment method id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: payment_method_id
+        '400':
+          $ref: '#/components/responses/400'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
 components:
   securitySchemes:
     bearerAuth:
