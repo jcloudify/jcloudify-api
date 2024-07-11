@@ -647,6 +647,46 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /payment/customer:
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      summary: Create Stripe Customer
+      operationId: createStripeCustomer
+      requestBody:
+        required: true
+        description: The customer to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Hajatiana
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: The created user accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: customer_id
+        '400':
+          $ref: '#/components/responses/400'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
 components:
   securitySchemes:
     bearerAuth:
