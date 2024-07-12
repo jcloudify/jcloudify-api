@@ -421,19 +421,19 @@ paths:
           schema:
             type: string
             format: date-time
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
       tags:
         - Application
       operationId: getEnvironmentLogs
       summary: Get the logs of an environment
       responses:
         '200':
-          description: List of logs
+          description: paged list of logs
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Log'
+                $ref: '#/components/schemas/PagedLogs'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -981,6 +981,15 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnvironmentVariable"
+    PagedLogs:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Log"
     #############################################
     ###############  Exceptions #################
     #############################################
