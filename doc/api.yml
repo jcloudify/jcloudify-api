@@ -213,15 +213,16 @@ paths:
         - Application
       operationId: getApplicationEnvironments
       summary: Get environment list of an application
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
       responses:
         '200':
-          description: List of environments
+          description: paged list of environments
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Environment'
+                $ref: '#/components/schemas/PagedEnvironmentsResponse'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -246,9 +247,7 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/CrupdateEnvironment'
+              $ref: '#/components/schemas/CrupdateEnvironmentsRequestBody'
         required: true
       responses:
         '200':
@@ -256,9 +255,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Environment'
+                $ref: '#/components/schemas/CrupdateEnvironmentsResponse'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -943,6 +940,27 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Stack"
+    PagedEnvironmentsResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              $ref: "#/components/schemas/Environment"
+    CrupdateEnvironmentsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CrupdateEnvironment"
+    CrupdateEnvironmentsRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Environment"
     #############################################
     ###############  Exceptions #################
     #############################################
