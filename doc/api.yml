@@ -211,6 +211,70 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /applications/{applicationId}/ip:
+    parameters:
+      - $ref: '#/components/parameters/applicationId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getWhiteListedIpAddresses
+      summary: List of whitelisted ip addresses
+      responses:
+        '200':
+          description: List of ip addresses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WhiteListedIpAddress'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: crupdateWhiteListedIpAddress
+      summary: Add or update an ip address to the whitelist
+      requestBody:
+        description: The list of the ip addresses to add to the firewall
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/WhiteListedIpAddress'
+      responses:
+        '200':
+          description: List of crupdated ip addresses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WhiteListedIpAddress'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /applications/{applicationId}/environments:
     parameters:
       - $ref: '#/components/parameters/applicationId'
@@ -778,6 +842,17 @@ components:
           enum:
             - HEALTHY
             - UNHEALTHY
+
+    WhiteListedIpAddress:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        IpAddress:
+          type: string
+          format: ipv4
 
     CrupdateEnvironment:
       type: object
