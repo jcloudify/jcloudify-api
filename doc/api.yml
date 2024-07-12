@@ -313,15 +313,16 @@ paths:
         - Application
       operationId: getApplicationEnvironmentVariables
       summary: Get environment variables of an environment
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
       responses:
         '200':
-          description: List of environment variables
+          description: paged list of environment variables
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/EnvironmentVariable'
+                $ref: '#/components/schemas/PagedEnvironmentVariables'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -346,18 +347,14 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/CrupdateEnvironmentVariable'
+              $ref: '#/components/schemas/CrupdateEnvironmentVariablesRequestBody'
       responses:
         '200':
           description: The created environment variables
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/EnvironmentVariable'
+                $ref: '#/components/schemas/CrupdateEnvironmentVariablesResponse'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -961,6 +958,29 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Environment"
+    PagedEnvironmentVariables:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/EnvironmentVariable"
+    CrupdateEnvironmentVariablesRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CrupdateEnvironmentVariable"
+    CrupdateEnvironmentVariablesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/EnvironmentVariable"
     #############################################
     ###############  Exceptions #################
     #############################################
