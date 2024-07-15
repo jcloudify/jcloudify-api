@@ -775,8 +775,20 @@ components:
       enum:
         - PROD
         - PREPROD
-
-    ConcurrencyConf:
+    ##############################################################
+    ###############  Poja Configurations #########################
+    ##############################################################
+    PojaConf:
+      type: object
+      description: will serve to type all poja confs
+      properties:
+        version:
+          description: will be the discriminator for when it will work as expected with codegen
+          type: string
+      ##############################################################
+      ###############  Poja Conf V13.3.1 ###########################
+      ##############################################################
+    ConcurrencyConfV13_3_1:
       type: object
       properties:
         frontal_reserved_concurrent_executions_nb:
@@ -784,7 +796,7 @@ components:
         worker_reserved_concurrent_executions_nb:
           type: string
 
-    ComputeConf:
+    ComputeConfV13_3_1:
       type: object
       properties:
         frontal_memory:
@@ -797,7 +809,7 @@ components:
           type: number
           example: 5
 
-    AuroraConf:
+    AuroraConfV13_3_1:
       type: object
       properties:
         aurora_min_capacity:
@@ -813,7 +825,7 @@ components:
           type: boolean
           example: false
 
-    ClientConf:
+    ClientConfV13_3_1:
       type: object
       properties:
         ts_client_default_openapi_server_url:
@@ -821,7 +833,7 @@ components:
         ts_client_api_url_env_var_name:
           type: string
 
-    DatabaseConf:
+    DatabaseConfV13_3_1:
       type: object
       properties:
         database_non_root_username:
@@ -832,7 +844,7 @@ components:
           type: number
           example: 300
 
-    CustomConf:
+    CustomConfV13_3_1:
       type: object
       properties:
         custom_java_repositories:
@@ -845,58 +857,65 @@ components:
           type: string
           format: binary
 
-    PojaConf:
+    PojaConfV13_3_1:
       type: object
-      properties:
-        with_snapstart:
-          type: boolean
-          example: false
-        ses_source:
-          type: string
-          example: "noreply@nowhere.com"
-        with_swagger_ui:
-          type: boolean
-          example: false
-        package_full_name:
-          type: string
-          example: "school.hei"
-        java_facade_it:
-          type: string
-          example: "FacadeIT"
-        with_gen_clients:
-          type: boolean
-          example: false
-        with_database:
-          type: string
-          example: "sqlite"
-        jacoco_min_coverage:
-          type: number
-          example: 0.8
-        with_publish_to_npm_registry:
-          type: boolean
-          example: false
-        with_sentry:
-          type: boolean
-          example: false
-        with_sonar:
-          type: boolean
-          example: false
-        with_codeql:
-          type: boolean
-          example: false
-        concurrency:
-          $ref: '#/components/schemas/ConcurrencyConf'
-        compute:
-          $ref: '#/components/schemas/ComputeConf'
-        aurora:
-          $ref: '#/components/schemas/AuroraConf'
-        database:
-          $ref: '#/components/schemas/DatabaseConf'
-        custom:
-          $ref: '#/components/schemas/CustomConf'
-        client:
-          $ref: '#/components/schemas/ClientConf'
-
+      allOf:
+        - $ref: "#/components/schemas/PojaConf"
+        - properties:
+            with_snapstart:
+              type: boolean
+              example: false
+            ses_source:
+              type: string
+              example: "noreply@nowhere.com"
+            with_swagger_ui:
+              type: boolean
+              example: false
+            package_full_name:
+              type: string
+              example: "school.hei"
+            java_facade_it:
+              type: string
+              example: "FacadeIT"
+            with_gen_clients:
+              type: boolean
+              example: false
+            with_database:
+              type: string
+              example: "sqlite"
+            jacoco_min_coverage:
+              type: number
+              example: 0.8
+            with_publish_to_npm_registry:
+              type: boolean
+              example: false
+            with_sentry:
+              type: boolean
+              example: false
+            with_sonar:
+              type: boolean
+              example: false
+            with_codeql:
+              type: boolean
+              example: false
+            concurrency:
+              $ref: '#/components/schemas/ConcurrencyConfV13_3_1'
+            compute:
+              $ref: '#/components/schemas/ComputeConfV13_3_1'
+            aurora:
+              $ref: '#/components/schemas/AuroraConfV13_3_1'
+            database:
+              $ref: '#/components/schemas/DatabaseConfV13_3_1'
+            custom:
+              $ref: '#/components/schemas/CustomConfV13_3_1'
+            client:
+              $ref: '#/components/schemas/ClientConfV13_3_1'
+      ##############################################################
+      ###############  Poja Conf V15.2.2 ###########################
+      ##############################################################
+    ##############################################################
+    ###############  Poja Configurations #########################
+    ##############################################################
     Environment:
       allOf:
         - $ref: '#/components/schemas/CrupdateEnvironment'
@@ -919,7 +938,8 @@ components:
           type: boolean
           default: false
         conf:
-          $ref: '#/components/schemas/PojaConf'
+          type: string
+          description: json string representation of PojaConf until proper discriminator use in codegen is available
         plan:
           $ref: "#/components/schemas/Plan"
 
