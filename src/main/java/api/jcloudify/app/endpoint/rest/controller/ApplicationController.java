@@ -8,7 +8,6 @@ import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentResponse;
 import api.jcloudify.app.service.ApplicationService;
 import api.jcloudify.app.service.StackService;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,13 +16,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@AllArgsConstructor
 public class ApplicationController {
   private final StackService stackService;
   private final ApplicationService applicationService;
-
-  @Qualifier("RestApplicationMapper")
   private final ApplicationMapper mapper;
+
+  public ApplicationController(
+      StackService stackService,
+      ApplicationService applicationService,
+      @Qualifier("RestApplicationMapper") ApplicationMapper mapper) {
+    this.stackService = stackService;
+    this.applicationService = applicationService;
+    this.mapper = mapper;
+  }
 
   @PutMapping("/applications")
   public CrupdateApplicationsResponse crupdateApplications(
