@@ -103,6 +103,31 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /poja-versions:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - pojaVersions
+      operationId: getPojaVersions
+      summary: get all ready poja versions
+      responses:
+        '200':
+          description: the poja versions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PojaVersionsResponse"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
   /applications:
     get:
@@ -870,6 +895,15 @@ components:
         - STORAGE_BUCKET
         - STORAGE_DATABASE_POSTGRES
         - STORAGE_DATABASE_SQLITE
+    PojaVersion:
+      type: object
+      properties:
+        major:
+          type: integer
+        minor:
+          type: integer
+        patch:
+          type: integer
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
@@ -990,6 +1024,13 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/Log"
+    PojaVersionsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PojaVersion"
     #############################################
     ###############  Exceptions #################
     #############################################
