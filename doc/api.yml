@@ -647,39 +647,28 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /payment/customer:
+  /payments/customers:
     post:
       security:
         - bearerAuth: [ ]
       tags:
         - Payment
       summary: Create Stripe Customer
-      operationId: createStripeCustomer
+      operationId: createPaymentCustomer
       requestBody:
         required: true
         description: The customer to create
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Hajatiana
-                email:
-                  type: string
-                  format: email
+              $ref: '#/components/schemas/CreatePaymentCustomerRequestBody'
       responses:
         '200':
           description: The created stripe customer id
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: customer_id
+                $ref: '#/components/schemas/CreatePaymentCustomerResponse'
         '400':
           $ref: '#/components/responses/400'
         '429':
@@ -687,7 +676,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /payment/attach:
+  /payments/attach:
     put:
       security:
         - bearerAuth: [ ]
@@ -1255,6 +1244,30 @@ components:
           type: integer
         human_readable_version:
           type: string
+    PaymentCustomerBase:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    PaymentCustomer:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PaymentCustomerBase"
+        - properties:
+            id:
+              type: string
+            default_payment_method:
+              type: string
+    AttachPaymentMethod:
+      type: object
+      properties:
+        customer_id:
+          type: string
+        payment_method_id:
+          type: string
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
@@ -1399,6 +1412,17 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/StackEvent'
+    CreatePaymentCustomerRequestBody:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/PaymentCustomerBase"
+    CreatePaymentCustomerResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/PaymentCustomer"
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
