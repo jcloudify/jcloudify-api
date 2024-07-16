@@ -1,3 +1,13 @@
+# [3.1.0](https://github.com/jcloudify/jcloudify-api/compare/v3.0.1...v3.1.0) (2024-07-16)
+
+
+### Features
+
+* can crupdate applications at PUT /applications ([1ff2575](https://github.com/jcloudify/jcloudify-api/commit/1ff2575f40bdc329ef22993847ae7a4db326f08f))
+* list poja-versions read from resources/files/poja_versions.json ([ee6d7f5](https://github.com/jcloudify/jcloudify-api/commit/ee6d7f5ab1d5b739424f0f5d763e3bcbcf880784))
+
+
+
 ## [3.0.1](https://github.com/jcloudify/jcloudify-api/compare/v3.0.0...v3.0.1) (2024-07-10)
 
 
