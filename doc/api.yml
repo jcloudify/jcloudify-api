@@ -291,7 +291,60 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-
+  /applications/{applicationId}/environments/{environmentId}/config:
+    parameters:
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationEnvironmentConfig
+      summary: Get the config of an env
+      responses:
+        '200':
+          description: the config for the queried env
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfPojaConf'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Application
+      operationId: configureApplicationEnv
+      summary: configure an application's env
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: poja_version
+          description: will serve as an external discriminator to know the cast type before reading the requestBody
+          in: query
+          schema:
+            $ref: '#/components/schemas/PojaVersionDiscriminator'
+      requestBody:
+        description: the config to apply
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/OneOfPojaConf"
+      responses:
+        '200':
+          description: the applied config
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/OneOfPojaConf"
   /applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
     parameters:
       - $ref: '#/components/parameters/applicationId'
@@ -778,13 +831,23 @@ components:
     ##############################################################
     ###############  Poja Configurations #########################
     ##############################################################
+    PojaVersionDiscriminator:
+      description: will be the discriminator, possible values are the ones available as poja_version
+      type: string
+
     PojaConf:
       type: object
       description: will serve to type all poja confs
       properties:
         version:
-          description: will be the discriminator for when it will work as expected with codegen
-          type: string
+          $ref: "#/components/schemas/PojaVersionDiscriminator"
+      discriminator:
+        propertyName: 'version'
+        mapping:
+          '13.3.1': '#/components/schemas/PojaConfV13_3_1'
+      required:
+        - version
+
       ##############################################################
       ###############  Poja Conf V13.3.1 ###########################
       ##############################################################
@@ -861,55 +924,59 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/PojaConf"
-        - properties:
-            with_snapstart:
-              type: boolean
-              example: false
-            ses_source:
-              type: string
-              example: "noreply@nowhere.com"
-            with_swagger_ui:
-              type: boolean
-              example: false
-            package_full_name:
-              type: string
-              example: "school.hei"
-            java_facade_it:
-              type: string
-              example: "FacadeIT"
-            with_gen_clients:
-              type: boolean
-              example: false
-            with_database:
-              type: string
-              example: "sqlite"
-            jacoco_min_coverage:
-              type: number
-              example: 0.8
-            with_publish_to_npm_registry:
-              type: boolean
-              example: false
-            with_sentry:
-              type: boolean
-              example: false
-            with_sonar:
-              type: boolean
-              example: false
-            with_codeql:
-              type: boolean
-              example: false
-            concurrency:
-              $ref: '#/components/schemas/ConcurrencyConfV13_3_1'
-            compute:
-              $ref: '#/components/schemas/ComputeConfV13_3_1'
-            aurora:
-              $ref: '#/components/schemas/AuroraConfV13_3_1'
-            database:
-              $ref: '#/components/schemas/DatabaseConfV13_3_1'
-            custom:
-              $ref: '#/components/schemas/CustomConfV13_3_1'
-            client:
-              $ref: '#/components/schemas/ClientConfV13_3_1'
+      required:
+        - version
+      properties:
+        version:
+          $ref: "#/components/schemas/PojaVersionDiscriminator"
+        with_snapstart:
+          type: boolean
+          example: false
+        ses_source:
+          type: string
+          example: "noreply@nowhere.com"
+        with_swagger_ui:
+          type: boolean
+          example: false
+        package_full_name:
+          type: string
+          example: "school.hei"
+        java_facade_it:
+          type: string
+          example: "FacadeIT"
+        with_gen_clients:
+          type: boolean
+          example: false
+        with_database:
+          type: string
+          example: "sqlite"
+        jacoco_min_coverage:
+          type: number
+          example: 0.8
+        with_publish_to_npm_registry:
+          type: boolean
+          example: false
+        with_sentry:
+          type: boolean
+          example: false
+        with_sonar:
+          type: boolean
+          example: false
+        with_codeql:
+          type: boolean
+          example: false
+        concurrency:
+          $ref: '#/components/schemas/ConcurrencyConfV13_3_1'
+        compute:
+          $ref: '#/components/schemas/ComputeConfV13_3_1'
+        aurora:
+          $ref: '#/components/schemas/AuroraConfV13_3_1'
+        database:
+          $ref: '#/components/schemas/DatabaseConfV13_3_1'
+        custom:
+          $ref: '#/components/schemas/CustomConfV13_3_1'
+        client:
+          $ref: '#/components/schemas/ClientConfV13_3_1'
       ##############################################################
       ###############  Poja Conf V15.2.2 ###########################
       ##############################################################
@@ -937,9 +1004,6 @@ components:
         archived:
           type: boolean
           default: false
-        conf:
-          type: string
-          description: json string representation of PojaConf until proper discriminator use in codegen is available
         plan:
           $ref: "#/components/schemas/Plan"
 
@@ -1160,14 +1224,14 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/CrupdateEnvironment"
+            $ref: "#/components/schemas/Environment"
     CrupdateEnvironmentsRequestBody:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/Environment"
+            $ref: "#/components/schemas/CrupdateEnvironment"
     PagedEnvironmentVariables:
       type: object
       allOf:
@@ -1225,6 +1289,16 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/StackEvent'
+    #############################################
+    ###############  OneOf and AnyOf Components ############
+    #############################################
+    OneOfPojaConf:
+      oneOf:
+        - $ref: "#/components/schemas/PojaConfV13_3_1"
+    #############################################
+    ###############  OneOf and AnyOf Components ############
+    #############################################
+
     #############################################
     ###############  Exceptions #################
     #############################################
