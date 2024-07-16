@@ -6,17 +6,20 @@ import api.jcloudify.app.repository.jpa.ApplicationRepository;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.mapper.ApplicationMapper;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class ApplicationService {
   private final ApplicationRepository repository;
-
-  @Qualifier("DomainApplicationMapper")
   private final ApplicationMapper mapper;
+
+  public ApplicationService(
+      ApplicationRepository repository,
+      @Qualifier("DomainApplicationMapper") ApplicationMapper mapper) {
+    this.repository = repository;
+    this.mapper = mapper;
+  }
 
   public List<Application> saveApplications(List<ApplicationBase> toSave) {
     return repository.saveAll(toSave.stream().map(mapper::toDomain).toList());
