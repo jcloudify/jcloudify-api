@@ -646,7 +646,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /payments/${customerId}:
+  /payments/{customerId}:
     parameters:
       - name: customerId
         in: path
@@ -735,7 +735,34 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-
+  /payments/detach/{paymentMethodId}:
+    parameters:
+      - name: paymentMethodId
+        in: path
+        description: The identifier of the stripe payment method to detach
+        schema:
+          type: string
+        required: true
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      summary: Detach payment method from a Customer
+      operationId: detachPaymentMethod
+      responses:
+        '200':
+          description: The payment method id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentMethodResponse"
+        '400':
+          $ref: '#/components/responses/400'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /payment/set-default:
     put:
       security:
