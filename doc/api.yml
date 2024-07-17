@@ -646,7 +646,38 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-
+  /payments/${customerId}:
+    parameters:
+      - name: customerId
+        in: path
+        description: The identifier of the stripe customer
+        schema:
+          type: string
+        required: true
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      operationId: getCustomerPaymentMethods
+      summary: Get the payment method of a customer
+      responses:
+        '200':
+          description: list of payment method
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /payments/customers:
     post:
       security:
@@ -1268,6 +1299,19 @@ components:
           type: string
         payment_method_id:
           type: string
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            [card, sepa_debit]
+        brand:
+          type: string
+        last4:
+          type: string
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
@@ -1423,6 +1467,13 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/PaymentCustomer"
+    PaymentMethodResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentMethod"
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
