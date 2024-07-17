@@ -721,25 +721,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                customer_id:
-                  type: string
-                  example: customer_id
-                payment_method_id:
-                  type: string
-                  example: payment_method_id
+              $ref: "#/components/schemas/AttachPaymentMethodRequestBody"
       responses:
         '200':
           description: The payment method id
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: payment_method_id
+                $ref: "#/components/schemas/PaymentMethodResponse"
         '400':
           $ref: '#/components/responses/400'
         '429':
@@ -1292,13 +1281,6 @@ components:
               type: string
             default_payment_method:
               type: string
-    AttachPaymentMethod:
-      type: object
-      properties:
-        customer_id:
-          type: string
-        payment_method_id:
-          type: string
     PaymentMethod:
       type: object
       properties:
@@ -1474,6 +1456,16 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PaymentMethod"
+    AttachPaymentMethodRequestBody:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            customer_id:
+              type: string
+            payment_method_id:
+              type: string
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
