@@ -5,7 +5,7 @@ aurora_min_capacity: 2
 aurora_scale_point: 60
 aurora_sleep: 900
 aws_account_id: 057045785189
-cli_version: 15.1.1
+cli_version: 16.0.4
 codeartifact_domain_name: npm-jcloudify-app
 codeartifact_repository_name: jcloudify-store
 custom_java_deps: poja-custom-java-deps.txt
@@ -32,9 +32,11 @@ ts_client_api_url_env_var_name: REACT_APP_JCLOUDIFY_API_URL
 ts_client_default_openapi_server_url: jcloudify-api.preprod.hei.school
 with_codeql: 'false'
 with_database: aurora-postgres
+with_file_storage: 'true'
 with_gen_clients: 'true'
 with_own_vpc: 'true'
 with_publish_to_npm_registry: 'true'
+with_queues_nb: 2
 with_sentry: 'false'
 with_snapstart: 'true'
 with_sonar: 'false'
