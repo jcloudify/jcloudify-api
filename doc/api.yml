@@ -936,7 +936,9 @@ components:
           example: Randrianary
         plan_name:
           type: string
-
+        stripe_customer_id:
+          type: string
+          example: customer_id
     Whoami:
       properties:
         user:
@@ -1458,7 +1460,6 @@ components:
       type: object
       properties:
         data:
-          type: object
           $ref: "#/components/schemas/PaymentCustomerBase"
     CreatePaymentCustomerResponse:
       type: object
