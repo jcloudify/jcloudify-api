@@ -5,6 +5,7 @@ import static org.springframework.http.HttpMethod.OPTIONS;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 import api.jcloudify.app.model.exception.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -64,11 +64,10 @@ public class SecurityConf {
         .addFilterBefore(
             bearerFilter(
                 new OrRequestMatcher(
-                    new AntPathRequestMatcher("/whoami", GET.name()),
-                    new AntPathRequestMatcher(
-                        "/applications/*/environments/*/deploymentInitiation", POST.name()),
-                    new AntPathRequestMatcher("/applications", PUT.name()),
-                    new AntPathRequestMatcher("/poja-versions", GET.name()))),
+                    antMatcher(GET, "/whoami"),
+                    antMatcher(POST, "/applications/*/environments/*/deploymentInitiation"),
+                    antMatcher(PUT, "/applications"),
+                    antMatcher(GET, "/poja-versions"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
