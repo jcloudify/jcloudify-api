@@ -19,7 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @AutoConfigureMockMvc
-public class SpringSecurityIT extends FacadeIT {
+class SpringSecurityIT extends FacadeIT {
   @LocalServerPort private int port;
 
   @Test

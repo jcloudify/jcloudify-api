@@ -31,7 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @AutoConfigureMockMvc
-public class UserIT extends FacadeIT {
+class UserIT extends FacadeIT {
   @MockBean GithubComponent githubComponent;
   @MockBean GHMyself githubUser;
 

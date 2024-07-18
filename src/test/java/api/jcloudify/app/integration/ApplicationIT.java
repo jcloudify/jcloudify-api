@@ -47,7 +47,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @AutoConfigureMockMvc
-public class ApplicationIT extends FacadeIT {
+class ApplicationIT extends FacadeIT {
   @LocalServerPort private int port;
 
   @MockBean GithubComponent githubComponent;
