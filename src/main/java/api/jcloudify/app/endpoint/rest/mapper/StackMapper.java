@@ -22,6 +22,8 @@ public class StackMapper {
         .cfStackId(domain.getCfStackId())
         .application(applicationMapper.toRest(application))
         .environment(environmentMapper.toRest(environment))
+        .creationDatetime(domain.getCreationDatetime())
+        .updateDatetime(domain.getUpdateDatetime())
         .stackType(domain.getType());
   }
 }

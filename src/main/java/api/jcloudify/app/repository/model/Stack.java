@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -49,4 +50,10 @@ public class Stack implements Serializable {
 
   @Column(name = "id_application")
   private String applicationId;
+
+  @Column(name = "creation_datetime")
+  private Instant creationDatetime;
+
+  @Column(name = "update_datetime")
+  private Instant updateDatetime;
 }

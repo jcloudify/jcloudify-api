@@ -11,6 +11,7 @@ import api.jcloudify.app.repository.jpa.StackRepository;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.repository.model.Stack;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,16 +41,8 @@ public class StackService {
         applicationId, environmentId, type);
   }
 
-  private Stack save(
-      String name, String cfStackId, String applicationId, String environmentId, StackType type) {
-    return repository.save(
-        Stack.builder()
-            .name(name)
-            .cfStackId(cfStackId)
-            .applicationId(applicationId)
-            .environmentId(environmentId)
-            .type(type)
-            .build());
+  private Stack save(Stack toSave) {
+    return repository.save(toSave);
   }
 
   private api.jcloudify.app.endpoint.rest.model.Stack deployStack(
@@ -66,7 +59,15 @@ public class StackService {
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
       String cfStackId = updateStack(toDeploy, parameters, toUpdate.getName(), tags);
       return mapper.toRest(
-          save(toUpdate.getName(), cfStackId, applicationId, environmentId, toUpdate.getType()),
+          save(
+              Stack.builder()
+                  .name(toUpdate.getName())
+                  .cfStackId(cfStackId)
+                  .applicationId(applicationId)
+                  .environmentId(environmentId)
+                  .type(toUpdate.getType())
+                  .creationDatetime(Instant.now())
+                  .build()),
           application,
           environment);
     } else {
@@ -79,7 +80,15 @@ public class StackService {
       Map<String, String> tags = setUpTags(stackName, environmentType);
       String cfStackId = createStack(toDeploy, parameters, stackName, tags);
       return mapper.toRest(
-          save(stackName, cfStackId, applicationId, environmentId, toDeploy.getStackType()),
+          save(
+              Stack.builder()
+                  .name(stackName)
+                  .cfStackId(cfStackId)
+                  .applicationId(applicationId)
+                  .environmentId(environmentId)
+                  .type(toDeploy.getStackType())
+                  .creationDatetime(Instant.now())
+                  .build()),
           application,
           environment);
     }
