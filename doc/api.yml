@@ -327,6 +327,38 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /applications/{applicationId}/environments/{environmentId}/stacks:
+    parameters:
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getEnvironmentStacks
+      summary: Get list of stacks for a given environment
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of stacks of an environment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedStacks'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /applications/{applicationId}/environments/{environmentId}/variables:
     parameters:
       - $ref: '#/components/parameters/applicationId'
@@ -883,6 +915,12 @@ components:
           type: string
         cf_stack_id:
           type: string
+        creation_datetime:
+          type: string
+          format: date-time
+        update_datetime:
+          type: string
+          format: date-time
         application:
           $ref: '#/components/schemas/ApplicationBase'
         environment:
@@ -1031,6 +1069,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PojaVersion"
+    PagedStacks:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stack'
     #############################################
     ###############  Exceptions #################
     #############################################
