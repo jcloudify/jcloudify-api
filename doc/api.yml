@@ -1228,7 +1228,7 @@ components:
     #############################################
     ###############  Exceptions #################
     #############################################
-    Exception:
+    ExceptionModel:
       type: object
       properties:
         type:
@@ -1237,31 +1237,31 @@ components:
           type: string
     BadRequestException:
       allOf:
-        - $ref: '#/components/schemas/Exception'
+        - $ref: '#/components/schemas/ExceptionModel'
       example:
         type: BadRequestException
         message: Bad request
     NotAuthorizedException:
       allOf:
-        - $ref: '#/components/schemas/Exception'
+        - $ref: '#/components/schemas/ExceptionModel'
       example:
         type: NotAuthorizedException
         message: Not authorized
     ResourceNotFoundException:
       allOf:
-        - $ref: '#/components/schemas/Exception'
+        - $ref: '#/components/schemas/ExceptionModel'
       example:
         type: ResourceNotFoundException
         message: Resource of type <T> identified by <I> not found
     TooManyRequestsException:
       allOf:
-        - $ref: '#/components/schemas/Exception'
+        - $ref: '#/components/schemas/ExceptionModel'
       example:
         type: TooManyRequestsException
         message: Too many requests
     InternalServerException:
       allOf:
-        - $ref: '#/components/schemas/Exception'
+        - $ref: '#/components/schemas/ExceptionModel'
       example:
         type: InternalServerException
         message: Unexpected error
