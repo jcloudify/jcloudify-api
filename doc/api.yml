@@ -268,7 +268,7 @@ paths:
       requestBody:
         description: >
           - All application relative properties such as SSM parameters are computed from the environment's application
-          - Ressource relative properties are linked to the plan of the Environment and can be set by using a different endpoint for plan upgrade with enum values such as 1024 or 2048 for memory, etc...
+          - Resource relative properties are linked to the plan of the Environment and can be set by using a different endpoint for plan upgrade with enum values such as 1024 or 2048 for memory, etc...
         content:
           application/json:
             schema:
@@ -348,6 +348,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PagedStacks'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /applications/{applicationId}/environments/{environmentId}/stacks/{stackId}:
+    parameters:
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/stackId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getStackById
+      summary: Get the identified stack
+      responses:
+        '200':
+          description: The identified stack
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stack'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /applications/{applicationId}/environments/{environmentId}/stacks/{stackId}/events:
+    parameters:
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/stackId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getStackEvents
+      summary: Get detailed stack events
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of stack events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedStackEvents'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -564,6 +627,13 @@ components:
       name: variableId
       in: path
       description: The identifier of the environment variable of the specified application
+      schema:
+        type: string
+      required: true
+    stackId:
+      name: stackId
+      in: path
+      description: The identifier of the stack of a given environment
       schema:
         type: string
       required: true
@@ -933,6 +1003,52 @@ components:
         - STORAGE_BUCKET
         - STORAGE_DATABASE_POSTGRES
         - STORAGE_DATABASE_SQLITE
+    StackEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        event_id:
+          type: string
+        logical_resource_id:
+          type: string
+          description: The AWS identifier of the resource
+        resource_type:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        resource_status:
+          $ref: '#/components/schemas/StackResourceStatusType'
+        status_message:
+          type: string
+          description: Detailed reason of the status
+    StackResourceStatusType:
+      type: string
+      enum:
+        - CREATE_IN_PROGRESS
+        - CREATE_FAILED
+        - CREATE_COMPLETE
+        - DELETE_IN_PROGRESS
+        - DELETE_FAILED
+        - DELETE_COMPLETE
+        - DELETE_SKIPPED
+        - UPDATE_IN_PROGRESS
+        - UPDATE_FAILED
+        - UPDATE_COMPLETE
+        - IMPORT_FAILED
+        - IMPORT_COMPLETE
+        - IMPORT_IN_PROGRESS
+        - IMPORT_ROLLBACK_IN_PROGRESS
+        - IMPORT_ROLLBACK_FAILED
+        - IMPORT_ROLLBACK_COMPLETE
+        - UPDATE_ROLLBACK_IN_PROGRESS
+        - UPDATE_ROLLBACK_COMPLETE
+        - UPDATE_ROLLBACK_FAILED
+        - ROLLBACK_IN_PROGRESS
+        - ROLLBACK_COMPLETE
+        - ROLLBACK_FAILED
+
     PojaVersion:
       type: object
       properties:
@@ -1071,11 +1187,22 @@ components:
             $ref: "#/components/schemas/PojaVersion"
     PagedStacks:
       type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Stack'
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Stack'
+    PagedStackEvents:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/StackEvent'
     #############################################
     ###############  Exceptions #################
     #############################################
