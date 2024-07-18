@@ -6,6 +6,7 @@ import com.stripe.model.PaymentMethod;
 import com.stripe.model.PaymentMethodCollection;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.PaymentMethodAttachParams;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,14 @@ public class PaymentService {
                         .setName(name)
                         .build();
         return Customer.create(params, getRequestOption());
+    }
+
+    public PaymentMethod attach(String cId, String pmId) throws StripeException {
+        PaymentMethod resource = PaymentMethod.retrieve(pmId);
+
+        PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().setCustomer(cId).build();
+
+        return resource.attach(params);
     }
 
     RequestOptions getRequestOption() {
