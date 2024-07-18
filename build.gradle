@@ -208,5 +208,6 @@ implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.7.3'
 implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 implementation 'org.kohsuke:github-api:1.321'
 implementation 'software.amazon.awssdk:cloudformation:2.26.4'
+implementation 'com.stripe:stripe-java:26.3.0'
 
 }
