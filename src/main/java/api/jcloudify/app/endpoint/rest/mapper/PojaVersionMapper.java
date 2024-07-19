@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 public class PojaVersionMapper {
   public PojaVersion toRest(api.jcloudify.app.model.PojaVersion domain) {
     return new PojaVersion()
-        .major(domain.major())
-        .minor(domain.minor())
-        .patch(domain.patch())
-        .humanReadableVersion(domain.toHumanReadableString());
+        .major(domain.getMajor())
+        .minor(domain.getMinor())
+        .patch(domain.getPatch())
+        .humanReadableValue(domain.toHumanReadableValue());
   }
 }
