@@ -26,12 +26,12 @@ public class TestUtils {
   }
 
   public static void setUpGithub(GithubComponent githubComponent) {
-    when(githubComponent.getEmailByToken(JOE_DOE_TOKEN)).thenReturn(Optional.of(JOE_DOE_EMAIL));
+    when(githubComponent.getGithubUserId(JOE_DOE_TOKEN)).thenReturn(Optional.of(JOE_DOE_GITHUB_ID));
   }
 
   @SneakyThrows
   public static void setUpGithub(GithubComponent githubComponent, GHMyself githubUser) {
-    when(githubComponent.getEmailByToken(JOE_DOE_TOKEN)).thenReturn(Optional.of(JOE_DOE_EMAIL));
+    when(githubComponent.getGithubUserId(JOE_DOE_TOKEN)).thenReturn(Optional.of(JOE_DOE_GITHUB_ID));
     when(githubComponent.getCurrentUserByToken(JOE_DOE_TOKEN)).thenReturn(Optional.of(githubUser));
     when(githubUser.getEmail()).thenReturn("test@example.com");
     when(githubUser.getLogin()).thenReturn(JOE_DOE_USERNAME);
