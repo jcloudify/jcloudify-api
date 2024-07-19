@@ -1058,6 +1058,8 @@ components:
           type: integer
         patch:
           type: integer
+        human_readable_version:
+          type: string
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################

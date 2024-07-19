@@ -44,7 +44,7 @@ class PojaVersionIT extends FacadeIT {
   }
 
   private PojaVersion v0_0_2() {
-    return new PojaVersion().major(0).minor(0).patch(2);
+    return new PojaVersion().major(0).minor(0).patch(2).humanReadableVersion("0.0.2");
   }
 
   @Test

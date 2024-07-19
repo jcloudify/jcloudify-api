@@ -1,5 +1,7 @@
 package api.jcloudify.app.model;
 
+import static java.lang.Integer.compare;
+
 import java.net.URI;
 import lombok.Builder;
 
@@ -8,14 +10,18 @@ public record PojaVersion(int major, int minor, int patch, URI samUri /*(ignored
     implements Comparable<PojaVersion> {
   @Override
   public int compareTo(PojaVersion o) {
-    var majorComparison = Integer.compare(major, o.major);
+    var majorComparison = compare(major, o.major);
     if (majorComparison != 0) {
       return majorComparison;
     }
-    var minorComparison = Integer.compare(minor, o.minor);
+    var minorComparison = compare(minor, o.minor);
     if (minorComparison != 0) {
       return minorComparison;
     }
-    return Integer.compare(patch, o.patch);
+    return compare(patch, o.patch);
+  }
+
+  public String toHumanReadableString() {
+    return String.format("%d.%d.%d", major, minor, patch);
   }
 }
