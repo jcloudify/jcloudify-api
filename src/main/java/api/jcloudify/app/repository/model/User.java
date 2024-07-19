@@ -1,12 +1,16 @@
 package api.jcloudify.app.repository.model;
 
 import static io.hypersistence.utils.hibernate.type.array.internal.AbstractArrayType.SQL_ARRAY_TYPE;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static org.hibernate.type.SqlTypes.NAMED_ENUM;
 
 import api.jcloudify.app.repository.model.enums.UserRole;
+import api.jcloudify.app.service.pricing.PricingMethod;
 import io.hypersistence.utils.hibernate.type.array.EnumArrayType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,6 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -58,4 +63,8 @@ public class User implements Serializable {
 
   @Column(name = "avatar")
   private String avatar;
+
+  @JdbcTypeCode(NAMED_ENUM)
+  @Enumerated(STRING)
+  private PricingMethod pricingMethod;
 }

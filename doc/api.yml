@@ -790,6 +790,9 @@ components:
         last_name:
           type: string
           example: Randrianary
+        plan_name:
+          type: string
+
     Whoami:
       properties:
         user:
@@ -1004,8 +1007,6 @@ components:
         archived:
           type: boolean
           default: false
-        plan:
-          $ref: "#/components/schemas/Plan"
 
     EnvironmentVariable:
       type: object
@@ -1042,17 +1043,7 @@ components:
           enum:
             - DEPLOYMENT_LOG
             - APPLICATION_LOG
-    Plan:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        monthly_cost:
-          type: number
-        yearly_cost:
-          type: number
+
     InitiateDeployment:
       type: object
       properties:
