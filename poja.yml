@@ -5,7 +5,7 @@ aurora_min_capacity: 2
 aurora_scale_point: 60
 aurora_sleep: 900
 aws_account_id: 057045785189
-cli_version: 16.2.0
+cli_version: 16.2.1
 codeartifact_domain_name: npm-jcloudify-app
 codeartifact_repository_name: jcloudify-store
 custom_java_deps: poja-custom-java-deps.txt
