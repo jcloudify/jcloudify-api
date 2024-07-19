@@ -7,6 +7,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+import api.jcloudify.app.endpoint.rest.security.matcher.SelfUserMatcher;
 import api.jcloudify.app.model.exception.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +33,16 @@ public class SecurityConf {
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private final AuthProvider authProvider;
   private final HandlerExceptionResolver exceptionResolver;
+  private final AuthenticatedResourceProvider authenticatedResourceProvider;
 
   public SecurityConf(
       AuthProvider authProvider,
       // InternalToExternalErrorHandler behind
-      @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
+      @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver,
+      AuthenticatedResourceProvider authenticatedResourceProvider) {
     this.exceptionResolver = exceptionResolver;
     this.authProvider = authProvider;
+    this.authenticatedResourceProvider = authenticatedResourceProvider;
   }
 
   @Bean
@@ -99,9 +103,11 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(PUT, "/applications")
                     .authenticated()
-                    .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
+                    .requestMatchers(
+                            new SelfUserMatcher(POST, "/applications/*/environments/*/deploymentInitiation", authenticatedResourceProvider))
                     .authenticated()
-                    .requestMatchers(GET, "/applications/*/environments/*/stacks/*")
+                    .requestMatchers(
+                            new SelfUserMatcher(GET, "/applications/*/environments/*/stacks/*", authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers("/**")
                     .denyAll())
