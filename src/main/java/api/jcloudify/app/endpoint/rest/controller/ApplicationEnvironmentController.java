@@ -46,6 +46,6 @@ public class ApplicationEnvironmentController {
       @PathVariable String applicationId,
       @PathVariable String environmentId,
       @RequestBody OneOfPojaConf requestBody) {
-    return requestBody;
+    return service.configureEnvironment(userId, applicationId, environmentId, requestBody);
   }
 }

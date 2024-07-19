@@ -1,8 +1,10 @@
 package api.jcloudify.app.service;
 
+import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.EnvironmentRepository;
 import api.jcloudify.app.repository.model.Environment;
+import api.jcloudify.app.service.appEnvConfigurer.AppEnvConfigurerService;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EnvironmentService {
   private final EnvironmentRepository repository;
+  private final AppEnvConfigurerService configurerService;
 
   public List<Environment> findAllByApplicationId(String applicationId) {
     return repository.findAllByApplicationId(applicationId);
@@ -26,5 +29,10 @@ public class EnvironmentService {
   public List<Environment> crupdateEnvironments(
       String applicationId, List<Environment> environments) {
     return repository.saveAll(environments);
+  }
+
+  public final OneOfPojaConf configureEnvironment(
+      String userId, String appId, String environmentId, OneOfPojaConf pojaConf) {
+    return configurerService.configureEnvironment(userId, appId, environmentId, pojaConf);
   }
 }
