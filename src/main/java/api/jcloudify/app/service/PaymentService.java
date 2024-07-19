@@ -6,6 +6,7 @@ import com.stripe.model.PaymentMethod;
 import com.stripe.model.PaymentMethodCollection;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.CustomerUpdateParams;
 import com.stripe.param.PaymentMethodAttachParams;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,19 @@ public class PaymentService {
         PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().setCustomer(cId).build();
 
         return resource.attach(params);
+    }
+
+    public void detach(String cId, String pmId) throws StripeException {
+
+    }
+
+    public Customer setDefault(String cId, String pmId) throws StripeException {
+        Customer resource = Customer.retrieve(cId);
+
+        CustomerUpdateParams.InvoiceSettings invoiceSettings = CustomerUpdateParams.InvoiceSettings.builder().setDefaultPaymentMethod(pmId).build();
+        CustomerUpdateParams params = CustomerUpdateParams.builder().setInvoiceSettings(invoiceSettings).build();
+
+        return resource.update(params);
     }
 
     RequestOptions getRequestOption() {
