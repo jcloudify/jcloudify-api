@@ -66,6 +66,7 @@ public class SecurityConf {
                 new OrRequestMatcher(
                     antMatcher(GET, "/whoami"),
                     antMatcher(POST, "/applications/*/environments/*/deploymentInitiation"),
+                    antMatcher(GET, "/applications/*/environments/*/stacks/*"),
                     antMatcher(PUT, "/applications"),
                     antMatcher(GET, "/poja-versions"))),
             AnonymousAuthenticationFilter.class)
@@ -99,6 +100,8 @@ public class SecurityConf {
                     .requestMatchers(PUT, "/applications")
                     .authenticated()
                     .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
+                    .authenticated()
+                    .requestMatchers(GET, "/applications/*/environments/*/stacks/*")
                     .authenticated()
                     .requestMatchers("/**")
                     .denyAll())

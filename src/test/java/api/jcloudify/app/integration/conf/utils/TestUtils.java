@@ -33,6 +33,7 @@ public class TestUtils {
 
   public static void setUpGithub(GithubComponent githubComponent) {
     when(githubComponent.getGithubUserId(JOE_DOE_TOKEN)).thenReturn(Optional.of(JOE_DOE_GITHUB_ID));
+    when(githubComponent.getGithubUserId(JANE_DOE_TOKEN)).thenReturn(Optional.of(JANE_DOE_GITHUB_ID));
   }
 
   @SneakyThrows
