@@ -1133,7 +1133,7 @@ components:
           type: integer
         patch:
           type: integer
-        human_readable_version:
+        human_readable_value:
           type: string
     ##############################################################
     ###############  RequestBodies And Responses #################

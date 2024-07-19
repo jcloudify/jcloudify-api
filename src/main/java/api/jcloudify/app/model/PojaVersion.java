@@ -1,27 +1,27 @@
 package api.jcloudify.app.model;
 
-import static java.lang.Integer.compare;
+import static java.net.URI.create;
 
 import java.net.URI;
-import lombok.Builder;
+import lombok.Getter;
 
-@Builder
-public record PojaVersion(int major, int minor, int patch, URI samUri /*(ignored in compareTo)*/)
-    implements Comparable<PojaVersion> {
-  @Override
-  public int compareTo(PojaVersion o) {
-    var majorComparison = compare(major, o.major);
-    if (majorComparison != 0) {
-      return majorComparison;
-    }
-    var minorComparison = compare(minor, o.minor);
-    if (minorComparison != 0) {
-      return minorComparison;
-    }
-    return compare(patch, o.patch);
+@Getter
+public enum PojaVersion implements Comparable<PojaVersion> {
+  POJA_V13_3_1(
+      13, 3, 1, create("https://bdzf2zjbk6vdvjtd2plid4emq40rivto.lambda-url.eu-west-3.on.aws"));
+  private final int major;
+  private final int minor;
+  private final int patch;
+  private final URI samUri;
+
+  PojaVersion(int major, int minor, int patch, URI samUri) {
+    this.major = major;
+    this.minor = minor;
+    this.patch = patch;
+    this.samUri = samUri;
   }
 
-  public String toHumanReadableString() {
+  public final String toHumanReadableValue() {
     return String.format("%d.%d.%d", major, minor, patch);
   }
 }
