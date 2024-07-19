@@ -290,8 +290,9 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /applications/{applicationId}/environments/{environmentId}/config:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/config:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
     get:
@@ -325,12 +326,6 @@ paths:
       summary: configure an application's env
       security:
         - bearerAuth: [ ]
-      parameters:
-        - name: poja_version
-          description: will serve as an external discriminator to know the cast type before reading the requestBody
-          in: query
-          schema:
-            $ref: '#/components/schemas/PojaVersionDiscriminator'
       requestBody:
         description: the config to apply
         content:
@@ -654,6 +649,13 @@ components:
       scheme: bearer
 
   parameters:
+    userId:
+      name: userId
+      in: path
+      description: The identifier of the user
+      schema:
+        type: string
+      required: true
     applicationId:
       name: applicationId
       in: path

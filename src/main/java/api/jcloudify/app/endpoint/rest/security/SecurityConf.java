@@ -70,7 +70,8 @@ public class SecurityConf {
                     antMatcher(GET, "/applications"),
                     antMatcher(GET, "/poja-versions"),
                     antMatcher(GET, "/applications/*/environments"),
-                    antMatcher(PUT, "/applications/*/environments"))),
+                    antMatcher(PUT, "/applications/*/environments"),
+                    antMatcher(PUT, "/users/*/applications/*/environments/*/config"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -106,6 +107,8 @@ public class SecurityConf {
                     .requestMatchers(GET, "/applications/*/environments")
                     .authenticated()
                     .requestMatchers(PUT, "/applications/*/environments")
+                    .authenticated()
+                    .requestMatchers(PUT, "/users/*/applications/*/environments/*/config")
                     .authenticated()
                     .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
                     .authenticated()
