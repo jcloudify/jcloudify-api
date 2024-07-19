@@ -15,7 +15,7 @@ public class UserMapper {
   public static final UserRole[] CREATE_USER_DEFAULT_ROLE = {USER};
 
   public User toModel(CreateUser toCreate, GHMyself githubUser) {
-		return User.builder()
+    return User.builder()
         .firstName(toCreate.getFirstName())
         .lastName(toCreate.getLastName())
         .githubId(String.valueOf(githubUser.getId()))

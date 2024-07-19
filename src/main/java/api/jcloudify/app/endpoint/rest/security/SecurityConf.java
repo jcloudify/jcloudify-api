@@ -67,7 +67,9 @@ public class SecurityConf {
                     antMatcher(GET, "/whoami"),
                     antMatcher(POST, "/applications/*/environments/*/deploymentInitiation"),
                     antMatcher(PUT, "/applications"),
-                    antMatcher(GET, "/poja-versions"))),
+                    antMatcher(GET, "/poja-versions"),
+                    antMatcher(GET, "/applications/*/environments"),
+                    antMatcher(PUT, "/applications/*/environments"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -97,6 +99,10 @@ public class SecurityConf {
                     .requestMatchers(GET, "/poja-versions")
                     .authenticated()
                     .requestMatchers(PUT, "/applications")
+                    .authenticated()
+                    .requestMatchers(GET, "/applications/*/environments")
+                    .authenticated()
+                    .requestMatchers(PUT, "/applications/*/environments")
                     .authenticated()
                     .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
                     .authenticated()

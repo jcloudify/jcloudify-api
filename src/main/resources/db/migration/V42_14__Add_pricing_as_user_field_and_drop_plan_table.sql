@@ -9,4 +9,4 @@ $$
     end
 $$;
 
-alter table "user" add column pricing pricing_method default 'TEN_MICRO'::pricing_method;
+alter table "user" add column pricing_method pricing_method default 'TEN_MICRO'::pricing_method;

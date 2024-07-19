@@ -22,4 +22,9 @@ public class EnvironmentService {
         .orElseThrow(
             () -> new NotFoundException("Environment identified by id " + id + " not found"));
   }
+
+  public List<Environment> crupdateEnvironments(
+      String applicationId, List<Environment> environments) {
+    return repository.saveAll(environments);
+  }
 }
