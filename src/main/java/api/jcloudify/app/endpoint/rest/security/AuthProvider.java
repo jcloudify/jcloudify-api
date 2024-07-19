@@ -38,15 +38,16 @@ public class AuthProvider extends AbstractUserDetailsAuthenticationProvider {
     if (bearer == null) {
       throw new UsernameNotFoundException("Bad credentials"); // NOSONAR
     }
-    Optional<String> email = githubComponent.getEmailByToken(bearer);
-    if (email.isEmpty()) {
+    Optional<String> githubUserId = githubComponent.getGithubUserId(bearer);
+    if (githubUserId.isEmpty()) {
       throw new UsernameNotFoundException("Bad credentials"); // NOSONAR
     }
     try {
-      User user = userService.findByEmail(email.get());
+      User user = userService.findByGithubUserId(githubUserId.get());
       return new Principal(user, bearer);
     } catch (NotFoundException e) {
-      throw new UsernameNotFoundException("User with email " + email.get() + " not found");
+      throw new UsernameNotFoundException(
+          "User with github user id " + githubUserId.get() + " not found");
     }
   }
 

@@ -39,12 +39,12 @@ public class UserService {
         .orElseThrow(() -> new ForbiddenException("Invalid token"));
   }
 
-  public User findByEmail(String email) {
+  public User findByGithubUserId(String githubUserId) {
     return repository
-        .findByEmail(email)
+        .findByGithubId(githubUserId)
         .orElseThrow(
             () ->
                 new NotFoundException(
-                    "The user identified by the email " + email + " is not found"));
+                    "The user identified by the github id " + githubUserId + " is not found"));
   }
 }

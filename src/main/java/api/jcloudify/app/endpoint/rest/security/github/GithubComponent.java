@@ -28,12 +28,12 @@ public class GithubComponent {
   private final GithubConf conf;
   private final RestTemplate restTemplate;
 
-  public Optional<String> getEmailByToken(String token) {
+  public Optional<String> getGithubUserId(String token) {
     GHMyself currentUser;
     try {
       GitHub gitHub = new GitHubBuilder().withOAuthToken(token).build();
       currentUser = gitHub.getMyself();
-      return Optional.of(currentUser.getEmail());
+      return Optional.of(String.valueOf(currentUser.getId()));
     } catch (IOException e) {
       return Optional.empty();
     }
