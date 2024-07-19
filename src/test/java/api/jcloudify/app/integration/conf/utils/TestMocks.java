@@ -1,6 +1,7 @@
 package api.jcloudify.app.integration.conf.utils;
 
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
+import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
 
 import api.jcloudify.app.endpoint.rest.model.Application;
@@ -40,10 +41,10 @@ public class TestMocks {
         .avatar(JOE_DOE_AVATAR);
   }
 
-  public static Environment prodEnvironment() {
+  public static Environment pojaAppProdEnvironment() {
     return new Environment()
         .id(POJA_APPLICATION_ENVIRONMENT_ID)
-        .environmentType(EnvironmentType.PROD)
+        .environmentType(PROD)
         .state(HEALTHY);
   }
 
@@ -83,6 +84,6 @@ public class TestMocks {
         .creationDatetime(POJA_APPLICATION_CREATION_DATETIME)
         .githubRepository(POJA_APPLICATION_GITHUB_REPOSITORY)
         .archived(true)
-        .environments(List.of(prodEnvironment()));
+        .environments(List.of(pojaAppProdEnvironment()));
   }
 }

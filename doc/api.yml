@@ -238,16 +238,14 @@ paths:
         - Application
       operationId: getApplicationEnvironments
       summary: Get environment list of an application
-      parameters:
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/page_size"
+      description: list of environments, pagination was omitted because we might not have that many environments for a single app
       responses:
         '200':
-          description: paged list of environments
+          description: list of environments
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagedEnvironmentsResponse'
+                $ref: '#/components/schemas/EnvironmentsResponse'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -264,7 +262,8 @@ paths:
       tags:
         - Application
       operationId: crupdateApplicationEnvironments
-      summary: Crupdate environments of an application
+      summary: Crupdate environments of an application.
+      description: for each environment in the payload, it creates an environment if given id exists, updates it otherwise
       requestBody:
         description: >
           - All application relative properties such as SSM parameters are computed from the environment's application
@@ -996,6 +995,7 @@ components:
           enum:
             - HEALTHY
             - UNHEALTHY
+            - UNKNOWN
 
     CrupdateEnvironment:
       type: object
@@ -1200,13 +1200,14 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Stack"
-    PagedEnvironmentsResponse:
+    EnvironmentsResponse:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagedResponse"
         - properties:
             data:
-              $ref: "#/components/schemas/Environment"
+              type: array
+              items:
+                $ref: "#/components/schemas/Environment"
     CrupdateEnvironmentsResponse:
       type: object
       properties:

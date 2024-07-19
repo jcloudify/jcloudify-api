@@ -14,7 +14,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CREATED_ST
 import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToCreate;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToUpdate;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.createdApplication;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.prodEnvironment;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.pojaAppProdEnvironment;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.updatedApplication;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
@@ -61,7 +61,7 @@ class ApplicationIT extends FacadeIT {
         .cfStackId(POJA_CF_STACK_ID)
         .stackType(stackType)
         .application(applicationToUpdate())
-        .environment(prodEnvironment());
+        .environment(pojaAppProdEnvironment());
   }
 
   private static InitiateDeployment initiateStackDeployment(StackType stackType) {
