@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Configuration
 public class StripeConf {
-    private String secretKey;
+  private String secretKey;
 
-    @Value("${stripe.secret.key}")
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-        Stripe.apiKey = secretKey;
-    }
+  @Value("${stripe.secret.key}")
+  public void setSecretKey(String secretKey) {
+    this.secretKey = secretKey;
+    Stripe.apiKey = secretKey;
+  }
 }
