@@ -646,14 +646,9 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /payments/{customerId}:
+  /users/{userId}/payment-methods/:
     parameters:
-      - name: customerId
-        in: path
-        description: The identifier of the stripe customer
-        schema:
-          type: string
-        required: true
+      - $ref: "#/components/parameters/userId"
     get:
       security:
         - bearerAuth: [ ]
@@ -678,7 +673,9 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /payments/customers:
+  /users/{userId}/payment-methods/customers:
+    parameters:
+      - $ref: "#/components/parameters/userId"
     post:
       security:
         - bearerAuth: [ ]
@@ -707,7 +704,10 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /payments/attach:
+  /users/{userId}/payment-methods/{paymentMethodId}/attach:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/paymentMethodId"
     put:
       security:
         - bearerAuth: [ ]
@@ -715,13 +715,6 @@ paths:
         - Payment
       summary: Attach payment method to a Customer
       operationId: attachPaymentMethod
-      requestBody:
-        required: true
-        description: customerId and paymentMethId to attach
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AttachPaymentMethodRequestBody"
       responses:
         '200':
           description: The payment method id
@@ -735,14 +728,10 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /payments/detach/{paymentMethodId}:
+  /users/{userId}/payment-methods/{paymentMethodId}/detach:
     parameters:
-      - name: paymentMethodId
-        in: path
-        description: The identifier of the stripe payment method to detach
-        schema:
-          type: string
-        required: true
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/paymentMethodId"
     put:
       security:
         - bearerAuth: [ ]
@@ -763,7 +752,10 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /payment/set-default:
+  /users/{userId}/payment-methods/{paymentMethodId}/set-default:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/paymentMethodId"
     put:
       security:
         - bearerAuth: [ ]
@@ -771,13 +763,6 @@ paths:
         - Payment
       summary: Set default payment method
       operationId: setDefaultPaymentMethod
-      requestBody:
-        required: true
-        description: customerId and paymentMethId
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AttachPaymentMethodRequestBody"
       responses:
         '200':
           description: The payment method id
@@ -799,6 +784,20 @@ components:
       scheme: bearer
 
   parameters:
+    paymentMethodId:
+      name: paymentMethodId
+      in: path
+      description: The identifier of the payment method
+      schema:
+        type: string
+      required: true
+    userId:
+      name: userId
+      in: path
+      description: The identifier of the user
+      schema:
+        type: string
+      required: true
     applicationId:
       name: applicationId
       in: path
@@ -1473,16 +1472,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PaymentMethod"
-    AttachPaymentMethodRequestBody:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            customer_id:
-              type: string
-            payment_method_id:
-              type: string
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
