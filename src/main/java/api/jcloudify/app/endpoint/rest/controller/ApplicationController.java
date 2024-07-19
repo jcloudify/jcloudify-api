@@ -6,6 +6,7 @@ import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsResponse;
 import api.jcloudify.app.service.ApplicationService;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,14 +23,12 @@ public class ApplicationController {
     this.mapper = mapper;
   }
 
-  @PutMapping("/applications")
+  @PutMapping("/users/{userId}/applications")
   public CrupdateApplicationsResponse crupdateApplications(
-      @RequestBody CrupdateApplicationsRequestBody toCrupdate) {
+      @PathVariable String userId, @RequestBody CrupdateApplicationsRequestBody toCrupdate) {
     var data =
         mapper.toRest(
             applicationService.saveApplications(Objects.requireNonNull(toCrupdate.getData())));
     return new CrupdateApplicationsResponse().data(data);
   }
-
-
 }

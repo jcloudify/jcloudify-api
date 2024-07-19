@@ -69,9 +69,9 @@ public class SecurityConf {
             bearerFilter(
                 new OrRequestMatcher(
                     antMatcher(GET, "/whoami"),
-                    antMatcher(POST, "/applications/*/environments/*/deploymentInitiation"),
-                    antMatcher(GET, "/applications/*/environments/*/stacks/*"),
-                    antMatcher(PUT, "/applications"),
+                    antMatcher(POST, "/users/*/applications/*/environments/*/deploymentInitiation"),
+                    antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*"),
+                    antMatcher(PUT, "/users/*/applications"),
                     antMatcher(GET, "/poja-versions"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
@@ -101,13 +101,19 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
                     .authenticated()
-                    .requestMatchers(PUT, "/applications")
+                    .requestMatchers(PUT, "/users/*/applications")
                     .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(POST, "/applications/*/environments/*/deploymentInitiation", authenticatedResourceProvider))
+                        new SelfUserMatcher(
+                            POST,
+                            "/users/*/applications/*/environments/*/deploymentInitiation",
+                            authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(GET, "/applications/*/environments/*/stacks/*", authenticatedResourceProvider))
+                        new SelfUserMatcher(
+                            GET,
+                            "/users/*/applications/*/environments/*/stacks/*",
+                            authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers("/**")
                     .denyAll())

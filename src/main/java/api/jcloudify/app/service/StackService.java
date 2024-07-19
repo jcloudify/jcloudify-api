@@ -42,18 +42,22 @@ public class StackService {
         applicationId, environmentId, type);
   }
 
-  public List<api.jcloudify.app.endpoint.rest.model.Stack> findAllBy(String applicationId, String environmentId) {
+  public List<api.jcloudify.app.endpoint.rest.model.Stack> findAllBy(
+      String applicationId, String environmentId) {
     return repository.findAllByApplicationIdAndEnvironmentId(applicationId, environmentId).stream()
-            .map(this::toRestWithApplicationAndEnvironment)
-            .toList();
+        .map(this::toRestWithApplicationAndEnvironment)
+        .toList();
   }
 
   public api.jcloudify.app.endpoint.rest.model.Stack getById(String stackId) {
-    return toRestWithApplicationAndEnvironment(repository.findById(stackId)
-            .orElseThrow(() -> new NotFoundException("Stack id=" + stackId +" not found")));
+    return toRestWithApplicationAndEnvironment(
+        repository
+            .findById(stackId)
+            .orElseThrow(() -> new NotFoundException("Stack id=" + stackId + " not found")));
   }
 
-  private api.jcloudify.app.endpoint.rest.model.Stack toRestWithApplicationAndEnvironment(Stack domain) {
+  private api.jcloudify.app.endpoint.rest.model.Stack toRestWithApplicationAndEnvironment(
+      Stack domain) {
     Application application = applicationService.getById(domain.getApplicationId());
     Environment environment = environmentService.getById(domain.getEnvironmentId());
     return mapper.toRest(domain, application, environment);
