@@ -1,5 +1,6 @@
 package api.jcloudify.app.service.appEnvConfigurer.writer;
 
+import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PojaConf;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
