@@ -8,7 +8,7 @@ Globals:
     Runtime: java21
     Tracing: Active
     Architectures:
-      - x86_64
+      - arm64
     EventInvokeConfig:
       MaximumRetryAttempts: 0
     AutoPublishAlias: live
