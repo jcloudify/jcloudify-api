@@ -1154,8 +1154,6 @@ components:
           type: integer
         page_number:
           type: integer
-        has_next:
-          type: boolean
         has_previous:
           type: boolean
         count:
