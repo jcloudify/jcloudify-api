@@ -9,13 +9,12 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_CREATION_DATETIME;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CF_STACK_ID;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CREATED_STACK_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToCreate;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToUpdate;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.createdApplication;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.prodEnvironment;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.stackDeploymentInitiated;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.updatedApplication;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
@@ -31,7 +30,6 @@ import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
-import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
@@ -54,16 +52,6 @@ class ApplicationIT extends FacadeIT {
   @MockBean GithubComponent githubComponent;
   @MockBean CloudformationComponent cloudformationComponent;
   @MockBean BucketComponent bucketComponent;
-
-  private static Stack stackDeploymentInitiated(StackType stackType) {
-    return new Stack()
-        .id(POJA_CREATED_STACK_ID)
-        .name("prod-" + stackType.getValue().toLowerCase().replace("_", "-") + "-poja-test-app")
-        .cfStackId(POJA_CF_STACK_ID)
-        .stackType(stackType)
-        .application(applicationToUpdate())
-        .environment(prodEnvironment());
-  }
 
   private static InitiateDeployment initiateStackDeployment(StackType stackType) {
     return new InitiateDeployment().stackType(stackType);
@@ -100,15 +88,15 @@ class ApplicationIT extends FacadeIT {
     var actualData = Objects.requireNonNull(actual.getData());
 
     assertNotNull(actualData.getFirst().getCreationDatetime());
-    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
+    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
     assertTrue(
-        ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
-    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
+        ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
+    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
     assertTrue(
-        ignoreIdsAndDatetime(actualData)
+        ignoreStackIdsAndDatetime(actualData)
             .contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
     assertTrue(
-        ignoreIdsAndDatetime(actualData)
+        ignoreStackIdsAndDatetime(actualData)
             .contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
   }
 
@@ -126,17 +114,6 @@ class ApplicationIT extends FacadeIT {
 
     assertTrue(actualData.contains(updatedApplication()));
     assertTrue(actualData.contains(createdApplication()));
-  }
-
-  private static List<Stack> ignoreIdsAndDatetime(List<Stack> stacks) {
-    return stacks.stream()
-        .peek(
-            stack -> {
-              stack.id(POJA_CREATED_STACK_ID);
-              stack.creationDatetime(null);
-              stack.updateDatetime(null);
-            })
-        .toList();
   }
 
   private static Application ignoreIds(Application application) {
