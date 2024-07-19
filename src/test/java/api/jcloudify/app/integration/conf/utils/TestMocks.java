@@ -6,7 +6,6 @@ import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.Environment;
-import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.model.User;
 import java.time.Instant;
 import java.util.List;
