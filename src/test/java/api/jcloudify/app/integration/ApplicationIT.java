@@ -14,7 +14,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToUp
 import static api.jcloudify.app.integration.conf.utils.TestMocks.createdApplication;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.stackDeploymentInitiated;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.updatedApplication;
-import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdsAndDatetime;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStacksIdAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
@@ -88,15 +88,15 @@ class ApplicationIT extends FacadeIT {
     var actualData = Objects.requireNonNull(actual.getData());
 
     assertNotNull(actualData.getFirst().getCreationDatetime());
-    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
+    assertTrue(ignoreStacksIdAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
     assertTrue(
-        ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
-    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
+        ignoreStacksIdAndDatetime(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
+    assertTrue(ignoreStacksIdAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
     assertTrue(
-        ignoreStackIdsAndDatetime(actualData)
+        ignoreStacksIdAndDatetime(actualData)
             .contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
     assertTrue(
-        ignoreStackIdsAndDatetime(actualData)
+        ignoreStacksIdAndDatetime(actualData)
             .contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
   }
 
