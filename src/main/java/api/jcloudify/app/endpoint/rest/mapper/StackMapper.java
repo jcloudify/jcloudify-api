@@ -20,7 +20,7 @@ public class StackMapper {
         .id(domain.getId())
         .name(domain.getName())
         .cfStackId(domain.getCfStackId())
-        .application(applicationMapper.toRest(application))
+        .application(applicationMapper.toBaseRest(application))
         .environment(environmentMapper.toRest(environment))
         .stackType(domain.getType());
   }

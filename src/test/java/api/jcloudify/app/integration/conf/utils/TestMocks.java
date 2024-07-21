@@ -19,6 +19,7 @@ public class TestMocks {
   public static final String JOE_DOE_USERNAME = "JoeDoe";
   public static final String JOE_DOE_AVATAR =
       "https://github.com/images/" + JOE_DOE_USERNAME + ".png";
+  public static final String JANE_DOE_ID = "janee_doe_id";
   public static final String POJA_CREATED_STACK_ID = "poja_created_stack_id";
   public static final String POJA_CF_STACK_ID = "poja_cf_stack_id";
   public static final String POJA_APPLICATION_ID = "poja_application_id";
@@ -65,25 +66,36 @@ public class TestMocks {
         .archived(false);
   }
 
-  public static Application createdApplication() {
-    return new Application()
-        .id(POJA_APPLICATION_ID)
-        .name(POJA_APPLICATION_NAME + "-2")
-        .userId(JOE_DOE_ID)
-        .creationDatetime(POJA_APPLICATION_CREATION_DATETIME)
-        .githubRepository(POJA_APPLICATION_GITHUB_REPOSITORY)
-        .archived(false)
-        .environments(List.of());
-  }
-
-  public static Application updatedApplication() {
+  public static Application joePojaApplication1() {
     return new Application()
         .id(POJA_APPLICATION_ID)
         .name(POJA_APPLICATION_NAME)
         .userId(JOE_DOE_ID)
         .creationDatetime(POJA_APPLICATION_CREATION_DATETIME)
         .githubRepository(POJA_APPLICATION_GITHUB_REPOSITORY)
-        .archived(true)
+        .archived(false)
         .environments(List.of(pojaAppProdEnvironment()));
+  }
+
+  public static Application joePojaApplication2() {
+    return new Application()
+        .id("poja_application_2_id")
+        .name("poja-test-app-2")
+        .userId(JOE_DOE_ID)
+        .creationDatetime(Instant.parse("2023-06-18T10:16:30.00Z"))
+        .githubRepository("https://github.com/joeDoe/poja_application_2")
+        .archived(false)
+        .environments(List.of());
+  }
+
+  public static Application janePojaApplication() {
+    return new Application()
+        .id("poja_application_3_id")
+        .name("poja-test-app-3")
+        .userId(JANE_DOE_ID)
+        .creationDatetime(Instant.parse("2023-06-18T10:17:30.00Z"))
+        .githubRepository(POJA_APPLICATION_GITHUB_REPOSITORY)
+        .archived(false)
+        .environments(List.of());
   }
 }
