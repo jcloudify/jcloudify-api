@@ -67,6 +67,7 @@ public class SecurityConf {
                     antMatcher(GET, "/whoami"),
                     antMatcher(POST, "/applications/*/environments/*/deploymentInitiation"),
                     antMatcher(PUT, "/applications"),
+                    antMatcher(GET, "/applications"),
                     antMatcher(GET, "/poja-versions"),
                     antMatcher(GET, "/applications/*/environments"),
                     antMatcher(PUT, "/applications/*/environments"))),
@@ -99,6 +100,8 @@ public class SecurityConf {
                     .requestMatchers(GET, "/poja-versions")
                     .authenticated()
                     .requestMatchers(PUT, "/applications")
+                    .authenticated()
+                    .requestMatchers(GET, "/applications")
                     .authenticated()
                     .requestMatchers(GET, "/applications/*/environments")
                     .authenticated()

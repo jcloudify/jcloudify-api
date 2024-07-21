@@ -1,8 +1,8 @@
 package api.jcloudify.app.endpoint.rest.mapper;
 
+import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.Environment;
-import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.service.EnvironmentService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ public class ApplicationMapper {
   private final EnvironmentService environmentService;
   private final EnvironmentMapper environmentMapper;
 
-  public ApplicationBase toRest(Application domain) {
+  public ApplicationBase toBaseRest(api.jcloudify.app.repository.model.Application domain) {
     return new ApplicationBase()
         .id(domain.getId())
         .name(domain.getName())
@@ -23,11 +23,7 @@ public class ApplicationMapper {
         .userId(domain.getUserId());
   }
 
-  public List<api.jcloudify.app.endpoint.rest.model.Application> toRest(List<Application> domains) {
-    return domains.stream().map(this::restFrom).toList();
-  }
-
-  private api.jcloudify.app.endpoint.rest.model.Application restFrom(Application domain) {
+  public Application toRest(api.jcloudify.app.repository.model.Application domain) {
     return new api.jcloudify.app.endpoint.rest.model.Application()
         .id(domain.getId())
         .name(domain.getName())
