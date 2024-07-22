@@ -8,7 +8,6 @@ import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.Stack;
-import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
@@ -20,8 +19,10 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.MalformedURLException;
+import java.time.Instant;
 import java.util.Objects;
 
+import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE_PERMISSION;
 import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT;
@@ -38,7 +39,6 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsForbiddenException;
-import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
@@ -74,30 +74,46 @@ public class StackIT extends FacadeIT {
 
     private static Environment otherEnvironment() {
         return new Environment()
-                .id("other_poja_environment_id")
+                .id("other_poja_application_environment_id")
                 .environmentType(PROD)
-                .archived(false);
-    }
-
-    private static Stack environmentStack(String id, String name, StackType type) {
-        return new Stack()
-                .id(id)
-                .name(name)
-                .stackType(type)
-                .application(otherApplication())
-                .environment(otherEnvironment());
+                .archived(false)
+                .state(HEALTHY);
     }
 
     private Stack bucketStack() {
-        return environmentStack(BUCKET_STACK_ID, BUCKET_STACK_NAME, STORAGE_BUCKET);
+        return new Stack()
+                .id(BUCKET_STACK_ID)
+                .name(BUCKET_STACK_NAME)
+                .stackType(STORAGE_BUCKET)
+                .cfStackId("bucket_stack_aws_id")
+                .application(otherApplication())
+                .environment(otherEnvironment())
+                .creationDatetime(Instant.parse("2023-06-18T10:15:30.00Z"))
+                .updateDatetime(Instant.parse("2023-07-18T10:15:30.00Z"));
     }
 
     private Stack computePermStack() {
-        return environmentStack(COMPUTE_PERM_STACK_ID, COMPUTE_PERM_STACK_NAME, COMPUTE_PERMISSION);
+        return new Stack()
+                .id(COMPUTE_PERM_STACK_ID)
+                .name(COMPUTE_PERM_STACK_NAME)
+                .stackType(COMPUTE_PERMISSION)
+                .cfStackId("compute_perm_stack_aws_id")
+                .application(otherApplication())
+                .environment(otherEnvironment())
+                .creationDatetime(Instant.parse("2023-06-18T10:15:30.00Z"))
+                .updateDatetime(Instant.parse("2023-07-18T10:15:30.00Z"));
     }
 
     private Stack eventStack() {
-        return environmentStack(EVENT_STACK_ID, EVENT_STACK_NAME, EVENT);
+        return new Stack()
+                .id(EVENT_STACK_ID)
+                .name(EVENT_STACK_NAME)
+                .stackType(EVENT)
+                .cfStackId("event_stack_aws_id")
+                .application(otherApplication())
+                .environment(otherEnvironment())
+                .creationDatetime(Instant.parse("2023-06-18T10:15:30.00Z"))
+                .updateDatetime(Instant.parse("2023-07-18T10:15:30.00Z"));
     }
     @BeforeEach
     void setup() throws MalformedURLException {
@@ -121,7 +137,7 @@ public class StackIT extends FacadeIT {
     }
 
     @Test
-    void get_other_user_stack_list_ko() throws ApiException {
+    void get_other_user_stack_list_ko() {
         ApiClient janeDoeClient = anApiClient(JANE_DOE_TOKEN);
         ApplicationApi api = new ApplicationApi(janeDoeClient);
 
@@ -138,12 +154,12 @@ public class StackIT extends FacadeIT {
         Stack actualEventStack = api.getStackById(POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID, "event_stack_1_id");
         Stack actualBucketStack = api.getStackById(POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID, "bucket_stack_1_id");
 
-        assertEquals(ignoreStackIdAndDatetime(actualEventStack), eventStack());
-        assertEquals(ignoreStackIdAndDatetime(actualBucketStack), bucketStack());
+        assertEquals(actualEventStack, eventStack());
+        assertEquals(actualBucketStack, bucketStack());
     }
 
     @Test
-    void get_other_user_stack_by_id_ko() throws ApiException {
+    void get_other_user_stack_by_id_ko() {
         ApiClient joeDoeClient = anApiClient(JOE_DOE_TOKEN);
         ApplicationApi api = new ApplicationApi(joeDoeClient);
 
