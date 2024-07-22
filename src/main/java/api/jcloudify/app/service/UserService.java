@@ -25,6 +25,10 @@ public class UserService {
     return repository.saveAll(toSave);
   }
 
+  public User updateUser(User toUpdate) {
+    return repository.save(toUpdate);
+  }
+
   private User createUserFrom(CreateUser createUser) {
     GHMyself githubUser = getUserByToken(createUser.getToken());
     User user = mapper.toModel(createUser, githubUser);
