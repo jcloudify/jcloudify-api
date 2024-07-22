@@ -40,18 +40,20 @@ public class PaymentService {
     return newCustomer;
   }
 
-  public PaymentMethod attach(String cId, String pmId) throws StripeException {
-    PaymentMethod resource = PaymentMethod.retrieve(pmId);
+  public List<PaymentMethod> attach(String paymentMethodId, String userId) throws StripeException {
+    User user = userService.getUserById(userId);
+    PaymentMethod resource = PaymentMethod.retrieve(paymentMethodId);
 
-    PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().setCustomer(cId).build();
-
-    return resource.attach(params);
+    PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().setCustomer(user.getStripeCustomerId()).build();
+    resource.attach(params);
+    return this.getPaymentMethods(userId);
   }
 
-  public PaymentMethod detach(String cId, String pmId) throws StripeException {
-    PaymentMethod resource = PaymentMethod.retrieve("pm_1MqLiJLkdIwHu7ixUEgbFdYF");
+  public List<PaymentMethod> detach(String paymentMethodId, String userId) throws StripeException {
+    PaymentMethod resource = PaymentMethod.retrieve(paymentMethodId);
     PaymentMethodDetachParams params = PaymentMethodDetachParams.builder().build();
-    return resource.detach(params);
+    resource.detach(params);
+    return this.getPaymentMethods(userId);
   }
 
   public Customer setDefault(String cId, String pmId) throws StripeException {
