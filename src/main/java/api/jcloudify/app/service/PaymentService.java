@@ -30,9 +30,13 @@ public class PaymentService {
     return paymentMethods.getData();
   }
 
-  public Customer createCustomer(PaymentCustomerBase customer, String userId) throws StripeException {
+  public Customer createCustomer(PaymentCustomerBase customer, String userId)
+      throws StripeException {
     CustomerCreateParams params =
-        CustomerCreateParams.builder().setEmail(customer.getEmail()).setName(customer.getName()).build();
+        CustomerCreateParams.builder()
+            .setEmail(customer.getEmail())
+            .setName(customer.getName())
+            .build();
     Customer newCustomer = Customer.create(params, getRequestOption());
     User currentUser = userService.getUserById(userId);
     currentUser.setStripeCustomerId(newCustomer.getId());
@@ -44,7 +48,8 @@ public class PaymentService {
     User user = userService.getUserById(userId);
     PaymentMethod resource = PaymentMethod.retrieve(paymentMethodId);
 
-    PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().setCustomer(user.getStripeCustomerId()).build();
+    PaymentMethodAttachParams params =
+        PaymentMethodAttachParams.builder().setCustomer(user.getStripeCustomerId()).build();
     resource.attach(params);
     return this.getPaymentMethods(userId);
   }
@@ -56,11 +61,14 @@ public class PaymentService {
     return this.getPaymentMethods(userId);
   }
 
-  public Customer setDefault(String cId, String pmId) throws StripeException {
-    Customer resource = Customer.retrieve(cId);
+  public Customer setDefault(String paymentMethodId, String userId) throws StripeException {
+    User user = userService.getUserById(userId);
+    Customer resource = Customer.retrieve(user.getStripeCustomerId());
 
     CustomerUpdateParams.InvoiceSettings invoiceSettings =
-        CustomerUpdateParams.InvoiceSettings.builder().setDefaultPaymentMethod(pmId).build();
+        CustomerUpdateParams.InvoiceSettings.builder()
+            .setDefaultPaymentMethod(paymentMethodId)
+            .build();
     CustomerUpdateParams params =
         CustomerUpdateParams.builder().setInvoiceSettings(invoiceSettings).build();
 

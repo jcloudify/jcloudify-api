@@ -109,6 +109,12 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
                     .authenticated()
+                    .requestMatchers(GET, "/users/*/payment-methods")
+                    .authenticated()
+                    .requestMatchers(POST, "/users/*/payment-methods/customers")
+                    .authenticated()
+                    .requestMatchers(PUT, "/users/*/payment-methods/**")
+                    .authenticated()
                     .requestMatchers("/**")
                     .denyAll())
         // disable superfluous protections

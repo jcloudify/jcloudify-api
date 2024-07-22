@@ -30,7 +30,9 @@ public class UserService {
   }
 
   public User getUserById(String userId) {
-    return repository.findById(userId).orElseThrow(() -> new NotFoundException("user id: " + userId));
+    return repository
+        .findById(userId)
+        .orElseThrow(() -> new NotFoundException("user id: " + userId));
   }
 
   private User createUserFrom(CreateUser createUser) {

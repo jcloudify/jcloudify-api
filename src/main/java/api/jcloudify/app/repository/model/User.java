@@ -66,7 +66,7 @@ public class User implements Serializable {
 
   @Column(name = "stripe_customer_id")
   private String StripeCustomerId;
-  
+
   @JdbcTypeCode(NAMED_ENUM)
   @Enumerated(STRING)
   private PricingMethod pricingMethod;
