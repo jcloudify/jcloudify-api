@@ -29,6 +29,10 @@ public class UserService {
     return repository.save(toUpdate);
   }
 
+  public User getUserById(String userId) {
+    return repository.findById(userId).orElseThrow(() -> new NotFoundException("user id: " + userId));
+  }
+
   private User createUserFrom(CreateUser createUser) {
     GHMyself githubUser = getUserByToken(createUser.getToken());
     User user = mapper.toModel(createUser, githubUser);
