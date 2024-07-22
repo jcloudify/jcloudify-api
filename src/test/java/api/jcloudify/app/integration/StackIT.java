@@ -168,13 +168,12 @@ public class StackIT extends FacadeIT {
         ApiClient joeDoeClient = anApiClient(JOE_DOE_TOKEN);
         StackApi api = new StackApi(joeDoeClient);
 
-        var actual = api.getEnvironmentStacks(JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID, null, null);
+        var actual = api.getEnvironmentStacks(JOE_DOE_ID, "other_poja_application_id", "other_poja_application_environment_id", null, null);
         var actualData = Objects.requireNonNull(actual.getData());
 
-        assertTrue(ignoreStackIdsAndDatetime(actualData).contains(eventStack()));
-        assertTrue(
-                ignoreStackIdsAndDatetime(actualData).contains(computePermStack()));
-        assertTrue(ignoreStackIdsAndDatetime(actualData).contains(bucketStack()));
+        assertTrue(actualData.contains(eventStack()));
+        assertTrue(actualData.contains(computePermStack()));
+        assertTrue(actualData.contains(bucketStack()));
     }
 
     @Test

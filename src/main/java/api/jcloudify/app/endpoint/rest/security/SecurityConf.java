@@ -70,12 +70,13 @@ public class SecurityConf {
                 new OrRequestMatcher(
                     antMatcher(GET, "/whoami"),
                     antMatcher(POST, "/applications/*/environments/*/deploymentInitiation"),
-                    antMatcher(PUT, "/users/{userId}/applications"),
-                    antMatcher(GET, "/users/{userId}/applications"),
+                    antMatcher(PUT, "/users/*/applications"),
+                    antMatcher(GET, "/users/*/applications"),
                     antMatcher(GET, "/poja-versions"),
-                    antMatcher(GET, "/users/{userId}/applications/*/environments"),
-                    antMatcher(PUT, "/users/{userId}/applications/*/environments"),
-                    antMatcher(GET, "/users/{userId}/applications/*/environments/*/stacks/*"))),
+                    antMatcher(GET, "/users/*/applications/*/environments"),
+                    antMatcher(PUT, "/users/*/applications/*/environments"),
+                    antMatcher(GET, "/users/{userId}/applications/*/environments/*/stacks"),
+                    antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -107,23 +108,27 @@ public class SecurityConf {
                         .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
                         .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(PUT, "/users/{userId}/applications", authenticatedResourceProvider)
+                            new SelfUserMatcher(PUT, "/users/*/applications", authenticatedResourceProvider)
                     )
                     .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(GET, "/users/{userId}/applications", authenticatedResourceProvider)
+                            new SelfUserMatcher(GET, "/users/*/applications", authenticatedResourceProvider)
                     )
                     .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(GET, "/users/{userId}/applications/*/environments", authenticatedResourceProvider)
+                            new SelfUserMatcher(GET, "/users/*/applications/*/environments", authenticatedResourceProvider)
                     )
                     .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(PUT, "/users/{userId}/applications/*/environments", authenticatedResourceProvider)
+                            new SelfUserMatcher(PUT, "/users/*/applications/*/environments", authenticatedResourceProvider)
                     )
                     .authenticated()
                         .requestMatchers(
-                                new SelfUserMatcher(GET, "/users/{userId}/applications/*/environments/*/stacks/*", authenticatedResourceProvider)
+                                new SelfUserMatcher(GET, "/users/*/applications/*/environments/*/stacks", authenticatedResourceProvider)
+                        )
+                        .authenticated()
+                        .requestMatchers(
+                                new SelfUserMatcher(GET, "/users/*/applications/*/environments/*/stacks/*", authenticatedResourceProvider)
                         )
                         .authenticated()
                     .requestMatchers("/**")

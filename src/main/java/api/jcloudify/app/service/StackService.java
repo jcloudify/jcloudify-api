@@ -7,6 +7,9 @@ import api.jcloudify.app.aws.cloudformation.CloudformationTemplateConf;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackType;
+import api.jcloudify.app.model.BoundedPageSize;
+import api.jcloudify.app.model.Page;
+import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.StackRepository;
 import api.jcloudify.app.repository.model.Application;
@@ -43,10 +46,11 @@ public class StackService {
         applicationId, environmentId, type);
   }
 
-  public List<api.jcloudify.app.endpoint.rest.model.Stack> findAllBy(String applicationId, String environmentId) {
-    return repository.findAllByApplicationIdAndEnvironmentId(applicationId, environmentId).stream()
+  public Page<api.jcloudify.app.endpoint.rest.model.Stack> findAll(String applicationId, String environmentId, PageFromOne pageFromOne, BoundedPageSize boundedPageSize) {
+    var data = repository.findAllByApplicationIdAndEnvironmentId(applicationId, environmentId).stream()
             .map(this::toRestWithApplicationAndEnvironment)
             .toList();
+    return new Page<>(pageFromOne, boundedPageSize, data);
   }
 
   public api.jcloudify.app.endpoint.rest.model.Stack getById(String stackId) {
