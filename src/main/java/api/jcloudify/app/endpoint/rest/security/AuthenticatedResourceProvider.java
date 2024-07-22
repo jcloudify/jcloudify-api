@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class AuthenticatedResourceProvider {
-    public User getUser() {
-        return AuthProvider.getPrincipal().getUser();
-    }
+  public User getUser() {
+    return AuthProvider.getPrincipal().getUser();
+  }
 }

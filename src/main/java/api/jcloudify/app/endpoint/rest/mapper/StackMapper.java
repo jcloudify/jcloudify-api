@@ -23,7 +23,7 @@ public class StackMapper {
         .application(applicationMapper.toBaseRest(application))
         .environment(environmentMapper.toRest(environment))
         .stackType(domain.getType())
-            .creationDatetime(domain.getCreationDatetime())
-            .updateDatetime(domain.getUpdateDatetime());
+        .creationDatetime(domain.getCreationDatetime())
+        .updateDatetime(domain.getUpdateDatetime());
   }
 }

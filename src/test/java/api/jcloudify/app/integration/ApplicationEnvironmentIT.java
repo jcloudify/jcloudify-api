@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.conf.FacadeIT;
-import api.jcloudify.app.endpoint.rest.api.ApplicationApi;
 import api.jcloudify.app.endpoint.rest.api.EnvironmentApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
@@ -75,14 +74,14 @@ class ApplicationEnvironmentIT extends FacadeIT {
 
     var createApplicationResponse =
         api.crupdateApplicationEnvironments(
-                JOE_DOE_ID,
+            JOE_DOE_ID,
             POJA_APPLICATION_ID,
             new CrupdateEnvironmentsRequestBody().data(List.of(toCrupdateEnvironment(toCreate))));
     var updatedPayload =
         requireNonNull(createApplicationResponse.getData()).getFirst().archived(true);
     var updateApplicationResponse =
         api.crupdateApplicationEnvironments(
-                JOE_DOE_ID,
+            JOE_DOE_ID,
             POJA_APPLICATION_ID,
             new CrupdateEnvironmentsRequestBody()
                 .data(List.of(toCrupdateEnvironment(updatedPayload))));

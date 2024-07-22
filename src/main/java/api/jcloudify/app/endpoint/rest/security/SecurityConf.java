@@ -105,32 +105,40 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
                     .authenticated()
-                        .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
-                        .authenticated()
-                    .requestMatchers(
-                            new SelfUserMatcher(PUT, "/users/*/applications", authenticatedResourceProvider)
-                    )
+                    .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
                     .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(GET, "/users/*/applications", authenticatedResourceProvider)
-                    )
+                        new SelfUserMatcher(
+                            PUT, "/users/*/applications", authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(GET, "/users/*/applications/*/environments", authenticatedResourceProvider)
-                    )
+                        new SelfUserMatcher(
+                            GET, "/users/*/applications", authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
-                            new SelfUserMatcher(PUT, "/users/*/applications/*/environments", authenticatedResourceProvider)
-                    )
+                        new SelfUserMatcher(
+                            GET,
+                            "/users/*/applications/*/environments",
+                            authenticatedResourceProvider))
                     .authenticated()
-                        .requestMatchers(
-                                new SelfUserMatcher(GET, "/users/*/applications/*/environments/*/stacks", authenticatedResourceProvider)
-                        )
-                        .authenticated()
-                        .requestMatchers(
-                                new SelfUserMatcher(GET, "/users/*/applications/*/environments/*/stacks/*", authenticatedResourceProvider)
-                        )
-                        .authenticated()
+                    .requestMatchers(
+                        new SelfUserMatcher(
+                            PUT,
+                            "/users/*/applications/*/environments",
+                            authenticatedResourceProvider))
+                    .authenticated()
+                    .requestMatchers(
+                        new SelfUserMatcher(
+                            GET,
+                            "/users/*/applications/*/environments/*/stacks",
+                            authenticatedResourceProvider))
+                    .authenticated()
+                    .requestMatchers(
+                        new SelfUserMatcher(
+                            GET,
+                            "/users/*/applications/*/environments/*/stacks/*",
+                            authenticatedResourceProvider))
+                    .authenticated()
                     .requestMatchers("/**")
                     .denyAll())
         // disable superfluous protections

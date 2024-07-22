@@ -12,7 +12,6 @@ import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -34,7 +33,8 @@ public class TestUtils {
 
   public static void setUpGithub(GithubComponent githubComponent) {
     when(githubComponent.getGithubUserId(JOE_DOE_TOKEN)).thenReturn(Optional.of(JOE_DOE_GITHUB_ID));
-    when(githubComponent.getGithubUserId(JANE_DOE_TOKEN)).thenReturn(Optional.of(JANE_DOE_GITHUB_ID));
+    when(githubComponent.getGithubUserId(JANE_DOE_TOKEN))
+        .thenReturn(Optional.of(JANE_DOE_GITHUB_ID));
   }
 
   @SneakyThrows
@@ -61,9 +61,7 @@ public class TestUtils {
   }
 
   public static List<Stack> ignoreStackIdsAndDatetime(List<Stack> stacks) {
-    return stacks.stream()
-            .map(TestUtils::ignoreStackIdAndDatetime)
-            .toList();
+    return stacks.stream().map(TestUtils::ignoreStackIdAndDatetime).toList();
   }
 
   public static Stack ignoreStackIdAndDatetime(Stack stack) {
@@ -77,14 +75,13 @@ public class TestUtils {
     ApiException apiException = assertThrows(ApiException.class, executable);
     String responseBody = apiException.getResponseBody();
     assertEquals(
-            "{" + "\"type\":\"403 FORBIDDEN\"," + "\"message\":\"" + message + "\"}", responseBody);
+        "{" + "\"type\":\"403 FORBIDDEN\"," + "\"message\":\"" + message + "\"}", responseBody);
   }
 
   public static void assertThrowsBadRequestException(Executable executable, String message) {
     ApiException apiException = assertThrows(ApiException.class, executable);
     String responseBody = apiException.getResponseBody();
     assertEquals(
-            "{" + "\"type\":\"400 BAD_REQUEST\"," + "\"message\":\"" + message + "\"}", responseBody);
+        "{" + "\"type\":\"400 BAD_REQUEST\"," + "\"message\":\"" + message + "\"}", responseBody);
   }
-
 }

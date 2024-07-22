@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,7 +20,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Builder(toBuilder = true)
@@ -43,7 +44,6 @@ public class Stack implements Serializable {
   @Enumerated(STRING)
   private StackType type;
 
-  @Column(name = "cf_stack_id")
   private String cfStackId;
 
   @Column(name = "id_environment")
@@ -52,9 +52,11 @@ public class Stack implements Serializable {
   @Column(name = "id_application")
   private String applicationId;
 
-  @Column(name = "creation_datetime")
+  @CreationTimestamp
+  @Column(columnDefinition = "TIMESTAMP WITHOUT TIMEZONE")
   private Instant creationDatetime;
 
-  @Column(name = "update_datetime")
+  @UpdateTimestamp
+  @Column(columnDefinition = "TIMESTAMP WITHOUT TIMEZONE")
   private Instant updateDatetime;
 }

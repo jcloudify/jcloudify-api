@@ -27,7 +27,7 @@ public class TestMocks {
   public static final String JANE_DOE_GITHUB_ID = "4321";
   public static final String JANE_DOE_USERNAME = "JaneDoe";
   public static final String JANE_DOE_AVATAR =
-          "https://github.com/images/" + JANE_DOE_USERNAME + ".png";
+      "https://github.com/images/" + JANE_DOE_USERNAME + ".png";
   public static final String POJA_CREATED_STACK_ID = "poja_created_stack_id";
   public static final String POJA_CF_STACK_ID = "poja_cf_stack_id";
   public static final String POJA_APPLICATION_ID = "poja_application_id";
@@ -58,14 +58,14 @@ public class TestMocks {
 
   public static User janeDoeUser() {
     return new User()
-            .id(JANE_DOE_ID)
-            .email(JANE_DOE_EMAIL)
-            .username(JANE_DOE_USERNAME)
-            .role(USER)
-            .firstName("Jane")
-            .lastName("Doe")
-            .githubId(JANE_DOE_GITHUB_ID)
-            .avatar(JANE_DOE_AVATAR);
+        .id(JANE_DOE_ID)
+        .email(JANE_DOE_EMAIL)
+        .username(JANE_DOE_USERNAME)
+        .role(USER)
+        .firstName("Jane")
+        .lastName("Doe")
+        .githubId(JANE_DOE_GITHUB_ID)
+        .avatar(JANE_DOE_AVATAR);
   }
 
   public static Environment pojaAppProdEnvironment() {
@@ -127,11 +127,11 @@ public class TestMocks {
 
   public static Stack stackDeploymentInitiated(StackType stackType) {
     return new Stack()
-            .id(POJA_CREATED_STACK_ID)
-            .name("prod-" + stackType.getValue().toLowerCase().replace("_", "-") + "-poja-test-app")
-            .cfStackId(POJA_CF_STACK_ID)
-            .stackType(stackType)
-            .application(applicationToUpdate())
-            .environment(pojaAppProdEnvironment());
+        .id(POJA_CREATED_STACK_ID)
+        .name("prod-" + stackType.getValue().toLowerCase().replace("_", "-") + "-poja-test-app")
+        .cfStackId(POJA_CF_STACK_ID)
+        .stackType(stackType)
+        .application(applicationToUpdate())
+        .environment(pojaAppProdEnvironment());
   }
 }
