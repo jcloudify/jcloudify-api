@@ -44,16 +44,6 @@ public class ApplicationController {
     return new CrupdateApplicationsResponse().data(mappedData);
   }
 
-  @PostMapping("/applications/{applicationId}/environments/{environmentId}/deploymentInitiation")
-  public InitiateStackDeploymentResponse initiatedStackDeployment(
-      @PathVariable String applicationId,
-      @PathVariable String environmentId,
-      @RequestBody InitiateStackDeploymentRequestBody deploymentsToInitiate) {
-    var data =
-        stackService.process(
-            Objects.requireNonNull(deploymentsToInitiate.getData()), applicationId, environmentId);
-    return new InitiateStackDeploymentResponse().data(data);
-  }
 
   @GetMapping("/applications")
   public PagedApplicationsResponse getApplications(

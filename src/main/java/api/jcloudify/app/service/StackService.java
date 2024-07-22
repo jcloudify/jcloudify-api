@@ -7,6 +7,7 @@ import api.jcloudify.app.aws.cloudformation.CloudformationTemplateConf;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackType;
+import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.StackRepository;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.Environment;
@@ -41,6 +42,24 @@ public class StackService {
     return repository.findByApplicationIdAndEnvironmentIdAndType(
         applicationId, environmentId, type);
   }
+
+  public List<api.jcloudify.app.endpoint.rest.model.Stack> findAllBy(String applicationId, String environmentId) {
+    return repository.findAllByApplicationIdAndEnvironmentId(applicationId, environmentId).stream()
+            .map(this::toRestWithApplicationAndEnvironment)
+            .toList();
+  }
+
+  public api.jcloudify.app.endpoint.rest.model.Stack getById(String stackId) {
+    return toRestWithApplicationAndEnvironment(repository.findById(stackId)
+            .orElseThrow(() -> new NotFoundException("Stack id=" + stackId +" not found")));
+  }
+
+  private api.jcloudify.app.endpoint.rest.model.Stack toRestWithApplicationAndEnvironment(Stack domain) {
+    Application application = applicationService.getById(domain.getApplicationId());
+    Environment environment = environmentService.getById(domain.getEnvironmentId());
+    return mapper.toRest(domain, application, environment);
+  }
+
 
   private Stack save(
       Stack toSave) {
