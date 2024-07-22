@@ -1,5 +1,6 @@
 package api.jcloudify.app.service;
 
+import api.jcloudify.app.endpoint.rest.model.PaymentCustomerBase;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
@@ -26,9 +27,9 @@ public class PaymentService {
     return paymentMethods.getData();
   }
 
-  public Customer createCustomer(String name, String email) throws StripeException {
+  public Customer createCustomer(PaymentCustomerBase customer) throws StripeException {
     CustomerCreateParams params =
-        CustomerCreateParams.builder().setEmail(email).setName(name).build();
+        CustomerCreateParams.builder().setEmail(customer.getEmail()).setName(customer.getName()).build();
     return Customer.create(params, getRequestOption());
   }
 
