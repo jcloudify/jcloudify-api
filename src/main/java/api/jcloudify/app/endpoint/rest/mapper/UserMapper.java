@@ -18,6 +18,6 @@ public class UserMapper {
         .firstName(domain.getFirstName())
         .lastName(domain.getLastName())
         .role(userRoleMapper.toRest(domain.getRoles()[0]))
-        .avatar(domain.getAvatar());
+        .avatar(domain.getAvatar()).stripeCustomerId(domain.getStripeCustomerId());
   }
 }

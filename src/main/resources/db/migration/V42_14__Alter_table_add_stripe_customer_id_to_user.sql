@@ -1,0 +1,1 @@
+alter table "user" add column stripe_customer_id varchar;
