@@ -379,7 +379,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /users/{userId}applications/{applicationId}/environments/{environmentId}/stacks:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks:
     parameters:
       - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
@@ -400,7 +400,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagedStacks'
+                $ref: '#/components/schemas/PagedStacksResponse'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1275,7 +1275,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PojaVersion"
-    PagedStacks:
+    PagedStacksResponse:
       type: object
       allOf:
         - $ref: "#/components/schemas/PagedResponse"
