@@ -12,16 +12,16 @@ import api.jcloudify.app.model.Page;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.StackRepository;
+import api.jcloudify.app.repository.jpa.dao.StackDao;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.repository.model.Stack;
-
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
@@ -33,6 +33,7 @@ public class StackService {
   private final ApplicationService applicationService;
   private final StackRepository repository;
   private final StackMapper mapper;
+  private final StackDao dao;
 
   public List<api.jcloudify.app.endpoint.rest.model.Stack> process(
       List<InitiateDeployment> deployments, String applicationId, String environmentId) {
@@ -46,27 +47,42 @@ public class StackService {
         applicationId, environmentId, type);
   }
 
-  public Page<api.jcloudify.app.endpoint.rest.model.Stack> findAll(String applicationId, String environmentId, PageFromOne pageFromOne, BoundedPageSize boundedPageSize) {
-    var data = repository.findAllByApplicationIdAndEnvironmentId(applicationId, environmentId).stream()
+  public Page<api.jcloudify.app.endpoint.rest.model.Stack> findAllBy(
+      String userId,
+      String applicationId,
+      String environmentId,
+      PageFromOne pageFromOne,
+      BoundedPageSize boundedPageSize) {
+    var data =
+        dao
+            .findAllByCriteria(
+                userId,
+                applicationId,
+                environmentId,
+                PageRequest.of(pageFromOne.getValue() - 1, boundedPageSize.getValue()))
+            .stream()
             .map(this::toRestWithApplicationAndEnvironment)
             .toList();
     return new Page<>(pageFromOne, boundedPageSize, data);
   }
 
-  public api.jcloudify.app.endpoint.rest.model.Stack getById(String stackId) {
-    return toRestWithApplicationAndEnvironment(repository.findById(stackId)
-            .orElseThrow(() -> new NotFoundException("Stack id=" + stackId +" not found")));
+  public api.jcloudify.app.endpoint.rest.model.Stack getById(
+      String userId, String applicationId, String environmentId, String stackId) {
+    assert userId != null;
+    return toRestWithApplicationAndEnvironment(
+        repository
+            .findByApplicationIdAndEnvironmentIdAndId(applicationId, environmentId, stackId)
+            .orElseThrow(() -> new NotFoundException("Stack id=" + stackId + " not found")));
   }
 
-  private api.jcloudify.app.endpoint.rest.model.Stack toRestWithApplicationAndEnvironment(Stack domain) {
+  private api.jcloudify.app.endpoint.rest.model.Stack toRestWithApplicationAndEnvironment(
+      Stack domain) {
     Application application = applicationService.getById(domain.getApplicationId());
     Environment environment = environmentService.getById(domain.getEnvironmentId());
     return mapper.toRest(domain, application, environment);
   }
 
-
-  private Stack save(
-      Stack toSave) {
+  private Stack save(Stack toSave) {
     return repository.save(toSave);
   }
 
@@ -84,13 +100,13 @@ public class StackService {
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
       String cfStackId = updateStack(toDeploy, parameters, toUpdate.getName(), tags);
       return mapper.toRest(
-          save(Stack.builder()
+          save(
+              Stack.builder()
                   .name(toUpdate.getName())
                   .cfStackId(cfStackId)
                   .applicationId(applicationId)
                   .environmentId(environmentId)
                   .type(toUpdate.getType())
-                  .updateDatetime(Instant.now())
                   .build()),
           application,
           environment);
@@ -104,13 +120,13 @@ public class StackService {
       Map<String, String> tags = setUpTags(stackName, environmentType);
       String cfStackId = createStack(toDeploy, parameters, stackName, tags);
       return mapper.toRest(
-          save(Stack.builder()
+          save(
+              Stack.builder()
                   .name(stackName)
                   .cfStackId(cfStackId)
                   .applicationId(applicationId)
                   .environmentId(environmentId)
                   .type(toDeploy.getStackType())
-                  .creationDatetime(Instant.now())
                   .build()),
           application,
           environment);

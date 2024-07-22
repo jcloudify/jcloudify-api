@@ -30,18 +30,16 @@ public class ApplicationController {
 
   @PutMapping("/users/{userId}/applications")
   public CrupdateApplicationsResponse crupdateApplications(
-          @PathVariable String userId,
-      @RequestBody CrupdateApplicationsRequestBody toCrupdate) {
+      @PathVariable String userId, @RequestBody CrupdateApplicationsRequestBody toCrupdate) {
     var data = Objects.requireNonNull(toCrupdate.getData());
     var mappedData =
         applicationService.saveApplications(data).stream().map(mapper::toRest).toList();
     return new CrupdateApplicationsResponse().data(mappedData);
   }
 
-
   @GetMapping("/users/{userId}/applications")
   public PagedApplicationsResponse getApplications(
-          @PathVariable String userId,
+      @PathVariable String userId,
       @RequestParam(required = false, defaultValue = "1") PageFromOne page,
       @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize,
       @RequestParam(required = false) String name) {

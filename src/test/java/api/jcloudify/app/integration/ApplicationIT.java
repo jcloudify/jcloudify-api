@@ -1,24 +1,13 @@
 package api.jcloudify.app.integration;
 
-import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE_PERMISSION;
-import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT;
-import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_BUCKET;
-import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_DATABASE_POSTGRES;
-import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_DATABASE_SQLITE;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_CREATION_DATETIME;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CF_STACK_ID;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_CREATED_STACK_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToCreate;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToUpdate;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.janePojaApplication;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication1;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication2;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.pojaAppProdEnvironment;
-import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
@@ -36,8 +25,6 @@ import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsRequestBody;
-import api.jcloudify.app.endpoint.rest.model.Stack;
-import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
@@ -72,8 +59,6 @@ class ApplicationIT extends FacadeIT {
     setUpBucketComponent(bucketComponent);
   }
 
-
-
   @Test
   void crupdate_applications_ok() throws ApiException {
     ApiClient joeDoeClient = anApiClient();
@@ -81,7 +66,8 @@ class ApplicationIT extends FacadeIT {
     ApplicationBase toCreate = applicationToCreate();
 
     var createApplicationResponse =
-        api.crupdateApplications(JOE_DOE_ID, new CrupdateApplicationsRequestBody().data(List.of(toCreate)));
+        api.crupdateApplications(
+            JOE_DOE_ID, new CrupdateApplicationsRequestBody().data(List.of(toCreate)));
     List<ApplicationBase> updatedPayload =
         List.of(
             toApplicationBase(
@@ -90,7 +76,8 @@ class ApplicationIT extends FacadeIT {
                     .name(randomUUID().toString())));
 
     var updateApplicationResponse =
-        api.crupdateApplications(JOE_DOE_ID, new CrupdateApplicationsRequestBody().data(updatedPayload));
+        api.crupdateApplications(
+            JOE_DOE_ID, new CrupdateApplicationsRequestBody().data(updatedPayload));
     var updateApplicationResponseData =
         requireNonNull(updateApplicationResponse.getData()).stream()
             .map(ApplicationIT::ignoreIds)
@@ -111,7 +98,7 @@ class ApplicationIT extends FacadeIT {
 
     var userIdFilteredPagedResponse =
         api.getApplications(
-                JOE_DOE_ID, null, new PageFromOne(1).getValue(), new BoundedPageSize(10).getValue());
+            JOE_DOE_ID, null, new PageFromOne(1).getValue(), new BoundedPageSize(10).getValue());
     List<Application> userIdFilteredPagedResponseData =
         requireNonNull(userIdFilteredPagedResponse.getData());
     var nameFilteredPagedResponse =
