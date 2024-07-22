@@ -141,11 +141,6 @@ paths:
           description: Filter applications by name, case insensitive
           schema:
             type: string
-        - name: user_id
-          in: query
-          description: Filter applications by the id of the user who owns it
-          schema:
-            type: string
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/page_size"
       tags:
@@ -349,9 +344,8 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/OneOfPojaConf"
-  /users/{userId}/applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
+  /applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
     parameters:
-      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
     post:

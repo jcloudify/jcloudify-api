@@ -2,6 +2,7 @@ package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.UNKNOWN;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.pojaAppProdEnvironment;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.conf.FacadeIT;
 import api.jcloudify.app.endpoint.rest.api.ApplicationApi;
+import api.jcloudify.app.endpoint.rest.api.EnvironmentApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironment;
@@ -57,9 +59,9 @@ class ApplicationEnvironmentIT extends FacadeIT {
   @Test
   void list_environments_ok() throws ApiException {
     ApiClient joeDoeClient = anApiClient();
-    ApplicationApi api = new ApplicationApi(joeDoeClient);
+    EnvironmentApi api = new EnvironmentApi(joeDoeClient);
 
-    var actual = api.getApplicationEnvironments(POJA_APPLICATION_ID);
+    var actual = api.getApplicationEnvironments(JOE_DOE_ID, POJA_APPLICATION_ID);
     var actualData = requireNonNull(actual.getData());
 
     assertTrue(actualData.contains(pojaAppProdEnvironment()));
@@ -68,17 +70,19 @@ class ApplicationEnvironmentIT extends FacadeIT {
   @Test
   void crupdate_environments_ok() throws ApiException {
     ApiClient joeDoeClient = anApiClient();
-    ApplicationApi api = new ApplicationApi(joeDoeClient);
+    EnvironmentApi api = new EnvironmentApi(joeDoeClient);
     Environment toCreate = toCreateEnv();
 
     var createApplicationResponse =
         api.crupdateApplicationEnvironments(
+                JOE_DOE_ID,
             POJA_APPLICATION_ID,
             new CrupdateEnvironmentsRequestBody().data(List.of(toCrupdateEnvironment(toCreate))));
     var updatedPayload =
         requireNonNull(createApplicationResponse.getData()).getFirst().archived(true);
     var updateApplicationResponse =
         api.crupdateApplicationEnvironments(
+                JOE_DOE_ID,
             POJA_APPLICATION_ID,
             new CrupdateEnvironmentsRequestBody()
                 .data(List.of(toCrupdateEnvironment(updatedPayload))));

@@ -26,7 +26,6 @@ import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -37,8 +36,6 @@ import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsRequestBody;
-import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
-import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
@@ -64,20 +61,6 @@ class ApplicationIT extends FacadeIT {
   @MockBean CloudformationComponent cloudformationComponent;
   @MockBean BucketComponent bucketComponent;
 
-  private static Stack stackDeploymentInitiated(StackType stackType) {
-    return new Stack()
-        .id(POJA_CREATED_STACK_ID)
-        .name("prod-" + stackType.getValue().toLowerCase().replace("_", "-") + "-poja-test-app")
-        .cfStackId(POJA_CF_STACK_ID)
-        .stackType(stackType)
-        .application(applicationToUpdate())
-        .environment(pojaAppProdEnvironment());
-  }
-
-  private static InitiateDeployment initiateStackDeployment(StackType stackType) {
-    return new InitiateDeployment().stackType(stackType);
-  }
-
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
   }
@@ -89,32 +72,7 @@ class ApplicationIT extends FacadeIT {
     setUpBucketComponent(bucketComponent);
   }
 
-  @Test
-  void initiate_event_stack_deployment_ok() throws ApiException {
-    ApiClient joeDoeClient = anApiClient();
-    ApplicationApi api = new ApplicationApi(joeDoeClient);
 
-    var actual =
-        api.initiateStackDeployment(
-            POJA_APPLICATION_ID,
-            POJA_APPLICATION_ENVIRONMENT_ID,
-            new InitiateStackDeploymentRequestBody()
-                .data(
-                    List.of(
-                        initiateStackDeployment(EVENT),
-                        initiateStackDeployment(COMPUTE_PERMISSION),
-                        initiateStackDeployment(STORAGE_BUCKET),
-                        initiateStackDeployment(STORAGE_DATABASE_POSTGRES),
-                        initiateStackDeployment(STORAGE_DATABASE_SQLITE))));
-    var actualData = requireNonNull(actual.getData());
-
-    assertNotNull(actualData.getFirst().getCreationDatetime());
-    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
-    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
-    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
-    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
-    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
-  }
 
   @Test
   void crupdate_applications_ok() throws ApiException {
@@ -123,7 +81,7 @@ class ApplicationIT extends FacadeIT {
     ApplicationBase toCreate = applicationToCreate();
 
     var createApplicationResponse =
-        api.crupdateApplications(new CrupdateApplicationsRequestBody().data(List.of(toCreate)));
+        api.crupdateApplications(JOE_DOE_ID, new CrupdateApplicationsRequestBody().data(List.of(toCreate)));
     List<ApplicationBase> updatedPayload =
         List.of(
             toApplicationBase(
@@ -132,7 +90,7 @@ class ApplicationIT extends FacadeIT {
                     .name(randomUUID().toString())));
 
     var updateApplicationResponse =
-        api.crupdateApplications(new CrupdateApplicationsRequestBody().data(updatedPayload));
+        api.crupdateApplications(JOE_DOE_ID, new CrupdateApplicationsRequestBody().data(updatedPayload));
     var updateApplicationResponseData =
         requireNonNull(updateApplicationResponse.getData()).stream()
             .map(ApplicationIT::ignoreIds)
@@ -153,12 +111,12 @@ class ApplicationIT extends FacadeIT {
 
     var userIdFilteredPagedResponse =
         api.getApplications(
-            null, JOE_DOE_ID, new PageFromOne(1).getValue(), new BoundedPageSize(10).getValue());
+                JOE_DOE_ID, null, new PageFromOne(1).getValue(), new BoundedPageSize(10).getValue());
     List<Application> userIdFilteredPagedResponseData =
         requireNonNull(userIdFilteredPagedResponse.getData());
     var nameFilteredPagedResponse =
         api.getApplications(
-            "2", JOE_DOE_ID, new PageFromOne(1).getValue(), new BoundedPageSize(10).getValue());
+            JOE_DOE_ID, "2", new PageFromOne(1).getValue(), new BoundedPageSize(10).getValue());
     List<Application> nameFilteredPagedResponseData =
         requireNonNull(nameFilteredPagedResponse.getData());
 
