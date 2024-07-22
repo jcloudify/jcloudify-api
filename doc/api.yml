@@ -108,7 +108,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - pojaVersions
+        - PojaVersions
       operationId: getPojaVersions
       summary: get all ready poja versions
       responses:
@@ -129,7 +129,9 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications:
+  /users/{userId}/applications:
+    parameters:
+      - $ref: '#/components/parameters/userId'
     get:
       security:
         - bearerAuth: [ ]
@@ -200,8 +202,9 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}:
+  /users/{userId}/applications/{applicationId}:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
     get:
       security:
@@ -228,14 +231,15 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}/environments:
+  /users/{userId}/applications/{applicationId}/environments:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
     get:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Environment
       operationId: getApplicationEnvironments
       summary: Get environment list of an application
       description: list of environments, pagination was omitted because we might not have that many environments for a single app
@@ -260,7 +264,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Environment
       operationId: crupdateApplicationEnvironments
       summary: Crupdate environments of an application.
       description: for each environment in the payload, it creates an environment if given id exists, updates it otherwise
@@ -290,20 +294,21 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /applications/{applicationId}/environments/{environmentId}/config:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/config:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
     get:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Environment
       operationId: getApplicationEnvironmentConfig
-      summary: Get the config of an env
+      summary: Get the config of an environment
       responses:
         '200':
-          description: the config for the queried env
+          description: the config for the queried environment
           content:
             application/json:
               schema:
@@ -320,9 +325,9 @@ paths:
           $ref: '#/components/responses/500'
     put:
       tags:
-        - Application
+        - Environment
       operationId: configureApplicationEnv
-      summary: configure an application's env
+      summary: configure an application's environment
       security:
         - bearerAuth: [ ]
       parameters:
@@ -344,15 +349,16 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/OneOfPojaConf"
-  /applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
     post:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Stack
       summary: Initiate stack deployment
       operationId: initiateStackDeployment
       requestBody:
@@ -379,15 +385,16 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}/environments/{environmentId}/stacks:
+  /users/{userId}applications/{applicationId}/environments/{environmentId}/stacks:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
     get:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Stack
       operationId: getEnvironmentStacks
       summary: Get list of stacks for a given environment
       parameters:
@@ -411,8 +418,9 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}/environments/{environmentId}/stacks/{stackId}:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
       - $ref: '#/components/parameters/stackId'
@@ -420,7 +428,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Stack
       operationId: getStackById
       summary: Get the identified stack
       responses:
@@ -441,8 +449,9 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}/environments/{environmentId}/stacks/{stackId}/events:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}/events:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
       - $ref: '#/components/parameters/stackId'
@@ -450,9 +459,9 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Stack
       operationId: getStackEvents
-      summary: Get detailed stack events
+      summary: Get detailed events of a the identified stack
       parameters:
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/page_size"
@@ -474,15 +483,16 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}/environments/{environmentId}/variables:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/variables:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
     get:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Environment
       operationId: getApplicationEnvironmentVariables
       summary: Get environment variables of an environment
       parameters:
@@ -509,7 +519,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Environment
       operationId: crupdateApplicationEnvironmentVariables
       summary: Crupdate environment variables
       description: update if id is provided, create otherwise.
@@ -538,8 +548,9 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}/environments/{environmentId}/variables/{variableId}:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/variables/{variableId}:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
       - $ref: '#/components/parameters/variableId'
@@ -547,7 +558,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Environment
       operationId: getApplicationEnvironmentVariableById
       summary: Get a environment variables by identifier
       responses:
@@ -568,8 +579,9 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}/environments/{environmentId}/logs:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/logs:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
     get:
@@ -596,7 +608,7 @@ paths:
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/page_size"
       tags:
-        - Application
+        - Environment
       operationId: getEnvironmentLogs
       summary: Get the logs of an environment
       responses:
@@ -617,8 +629,9 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /applications/{applicationId}/environments/{environmentId}/logs/{logId}:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/logs/{logId}:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
       - $ref: '#/components/parameters/logId'
@@ -626,7 +639,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - Application
+        - Environment
       operationId: getEnvironmentLogById
       summary: Get a logs by identifier
       responses:
@@ -654,6 +667,13 @@ components:
       scheme: bearer
 
   parameters:
+    userId:
+      name: userId
+      in: path
+      description: The identifier of the user
+      schema:
+        type: string
+      required: true
     applicationId:
       name: applicationId
       in: path
