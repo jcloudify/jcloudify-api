@@ -23,7 +23,7 @@ public class PaymentController {
 
     @PostMapping("/users/{userId}/payment-methods/customers")
     public CreatePaymentCustomerResponse createCustomer(@PathVariable String userId, @RequestBody CreatePaymentCustomerRequestBody customer) throws StripeException {
-        Customer created = paymentService.createCustomer(Objects.requireNonNull(customer.getData()));
+        Customer created = paymentService.createCustomer(Objects.requireNonNull(customer.getData()), userId);
         return new CreatePaymentCustomerResponse().data(paymentMapper.restCustomer(created));
     }
 }

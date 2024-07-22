@@ -1,6 +1,7 @@
 package api.jcloudify.app.service;
 
 import api.jcloudify.app.endpoint.rest.model.PaymentCustomerBase;
+import api.jcloudify.app.repository.model.User;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class PaymentService {
   private final StripeConf stripeConf;
+  private final UserService userService;
 
   public List<PaymentMethod> getPaymentMethod(String cId) throws StripeException {
     Customer customer = Customer.retrieve(cId);
@@ -27,10 +29,14 @@ public class PaymentService {
     return paymentMethods.getData();
   }
 
-  public Customer createCustomer(PaymentCustomerBase customer) throws StripeException {
+  public Customer createCustomer(PaymentCustomerBase customer, String userId) throws StripeException {
     CustomerCreateParams params =
         CustomerCreateParams.builder().setEmail(customer.getEmail()).setName(customer.getName()).build();
-    return Customer.create(params, getRequestOption());
+    Customer newCustomer = Customer.create(params, getRequestOption());
+    User currentUser = userService.getUserById(userId);
+    currentUser.setStripeCustomerId(newCustomer.getId());
+    userService.updateUser(currentUser);
+    return newCustomer;
   }
 
   public PaymentMethod attach(String cId, String pmId) throws StripeException {
