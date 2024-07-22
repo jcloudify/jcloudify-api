@@ -25,6 +25,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -106,11 +107,12 @@ class ApplicationIT extends FacadeIT {
                         initiateStackDeployment(STORAGE_DATABASE_SQLITE))));
     var actualData = requireNonNull(actual.getData());
 
-    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(EVENT)));
-    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
-    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
-    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
-    assertTrue(ignoreIds(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
+    assertNotNull(actualData.getFirst().getCreationDatetime());
+    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
+    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
+    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
+    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
+    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
   }
 
   @Test
@@ -185,8 +187,15 @@ class ApplicationIT extends FacadeIT {
         .environments(List.of());
   }
 
-  private static List<Stack> ignoreIds(List<Stack> stacks) {
-    return stacks.stream().map(stack -> stack.id(POJA_CREATED_STACK_ID)).toList();
+  private static List<Stack> ignoreIdsAndDatetime(List<Stack> stacks) {
+    return stacks.stream()
+            .peek(
+                    stack -> {
+                      stack.id(POJA_CREATED_STACK_ID);
+                      stack.creationDatetime(null);
+                      stack.updateDatetime(null);
+                    })
+            .toList();
   }
 
   private static Application ignoreIds(Application application) {
