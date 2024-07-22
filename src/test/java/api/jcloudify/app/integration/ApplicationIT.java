@@ -18,6 +18,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.janePojaApplica
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication1;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication2;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.pojaAppProdEnvironment;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
@@ -108,11 +109,11 @@ class ApplicationIT extends FacadeIT {
     var actualData = requireNonNull(actual.getData());
 
     assertNotNull(actualData.getFirst().getCreationDatetime());
-    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
-    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
-    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
-    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
-    assertTrue(ignoreIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
+    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
+    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
+    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
+    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
+    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
   }
 
   @Test
@@ -185,17 +186,6 @@ class ApplicationIT extends FacadeIT {
         .githubRepository(base.getGithubRepository())
         .userId(base.getUserId())
         .environments(List.of());
-  }
-
-  private static List<Stack> ignoreIdsAndDatetime(List<Stack> stacks) {
-    return stacks.stream()
-            .peek(
-                    stack -> {
-                      stack.id(POJA_CREATED_STACK_ID);
-                      stack.creationDatetime(null);
-                      stack.updateDatetime(null);
-                    })
-            .toList();
   }
 
   private static Application ignoreIds(Application application) {
