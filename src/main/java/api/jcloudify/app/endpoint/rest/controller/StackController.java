@@ -18,8 +18,9 @@ import java.util.Objects;
 public class StackController {
     private final StackService service;
 
-    @GetMapping("/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}")
-    public Stack getStacks(@PathVariable String applicationId,
+    @GetMapping("/users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}")
+    public Stack getStacks(@PathVariable String userId,
+                           @PathVariable String applicationId,
                            @PathVariable String environmentId,
                            @PathVariable String stackId) {
         return service.getById(stackId);

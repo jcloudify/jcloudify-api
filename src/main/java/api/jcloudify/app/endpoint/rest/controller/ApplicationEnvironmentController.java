@@ -20,14 +20,15 @@ public class ApplicationEnvironmentController {
   private final EnvironmentService service;
   private final EnvironmentMapper mapper;
 
-  @GetMapping("/applications/{applicationId}/environments")
-  public EnvironmentsResponse getApplicationEnvironments(@PathVariable String applicationId) {
+  @GetMapping("/users/{userId}/applications/{applicationId}/environments")
+  public EnvironmentsResponse getApplicationEnvironments(@PathVariable String userId, @PathVariable String applicationId) {
     var data = service.findAllByApplicationId(applicationId).stream().map(mapper::toRest).toList();
     return new EnvironmentsResponse().data(data);
   }
 
-  @PutMapping("/applications/{applicationId}/environments")
+  @PutMapping("/users/{userId}/applications/{applicationId}/environments")
   public CrupdateEnvironmentsResponse crupdateApplicationEnvironments(
+          @PathVariable String userId,
       @PathVariable String applicationId,
       @RequestBody CrupdateEnvironmentsRequestBody requestBody) {
     var requestBodyData = requireNonNull(requestBody.getData());

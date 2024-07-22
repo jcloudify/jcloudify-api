@@ -7,6 +7,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+import api.jcloudify.app.endpoint.rest.security.matcher.SelfUserMatcher;
 import api.jcloudify.app.model.exception.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +33,16 @@ public class SecurityConf {
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private final AuthProvider authProvider;
   private final HandlerExceptionResolver exceptionResolver;
+  private final AuthenticatedResourceProvider authenticatedResourceProvider;
 
   public SecurityConf(
       AuthProvider authProvider,
       // InternalToExternalErrorHandler behind
-      @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
+      @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver,
+      AuthenticatedResourceProvider authenticatedResourceProvider) {
     this.exceptionResolver = exceptionResolver;
     this.authProvider = authProvider;
+    this.authenticatedResourceProvider = authenticatedResourceProvider;
   }
 
   @Bean
@@ -66,12 +70,12 @@ public class SecurityConf {
                 new OrRequestMatcher(
                     antMatcher(GET, "/whoami"),
                     antMatcher(POST, "/applications/*/environments/*/deploymentInitiation"),
-                    antMatcher(PUT, "/applications"),
-                    antMatcher(GET, "/applications"),
+                    antMatcher(PUT, "/users/{userId}/applications"),
+                    antMatcher(GET, "/users/{userId}/applications"),
                     antMatcher(GET, "/poja-versions"),
-                    antMatcher(GET, "/applications/*/environments"),
-                    antMatcher(PUT, "/applications/*/environments"),
-                    antMatcher(GET, "/applications/*/environments/*/stacks/*"))),
+                    antMatcher(GET, "/users/{userId}/applications/*/environments"),
+                    antMatcher(PUT, "/users/{userId}/applications/*/environments"),
+                    antMatcher(GET, "/users/{userId}/applications/*/environments/*/stacks/*"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -100,18 +104,28 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
                     .authenticated()
-                    .requestMatchers(PUT, "/applications")
-                    .authenticated()
-                    .requestMatchers(GET, "/applications")
-                    .authenticated()
-                    .requestMatchers(GET, "/applications/*/environments")
-                    .authenticated()
-                    .requestMatchers(PUT, "/applications/*/environments")
-                    .authenticated()
-                        .requestMatchers(GET, "/applications/*/environments/*/stacks/*")
+                        .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
                         .authenticated()
-                    .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
+                    .requestMatchers(
+                            new SelfUserMatcher(PUT, "/users/{userId}/applications", authenticatedResourceProvider)
+                    )
                     .authenticated()
+                    .requestMatchers(
+                            new SelfUserMatcher(GET, "/users/{userId}/applications", authenticatedResourceProvider)
+                    )
+                    .authenticated()
+                    .requestMatchers(
+                            new SelfUserMatcher(GET, "/users/{userId}/applications/*/environments", authenticatedResourceProvider)
+                    )
+                    .authenticated()
+                    .requestMatchers(
+                            new SelfUserMatcher(PUT, "/users/{userId}/applications/*/environments", authenticatedResourceProvider)
+                    )
+                    .authenticated()
+                        .requestMatchers(
+                                new SelfUserMatcher(GET, "/users/{userId}/applications/*/environments/*/stacks/*", authenticatedResourceProvider)
+                        )
+                        .authenticated()
                     .requestMatchers("/**")
                     .denyAll())
         // disable superfluous protections
