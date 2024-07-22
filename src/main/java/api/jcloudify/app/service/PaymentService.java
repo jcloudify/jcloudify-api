@@ -21,8 +21,9 @@ public class PaymentService {
   private final StripeConf stripeConf;
   private final UserService userService;
 
-  public List<PaymentMethod> getPaymentMethod(String cId) throws StripeException {
-    Customer customer = Customer.retrieve(cId);
+  public List<PaymentMethod> getPaymentMethods(String userId) throws StripeException {
+    User user = userService.getUserById(userId);
+    Customer customer = Customer.retrieve(user.getStripeCustomerId());
 
     PaymentMethodCollection paymentMethods = customer.listPaymentMethods();
 
