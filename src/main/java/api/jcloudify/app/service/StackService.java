@@ -42,9 +42,10 @@ public class StackService {
         .toList();
   }
 
-  private Optional<Stack> findBy(String applicationId, String environmentId, StackType type) {
-    return repository.findByApplicationIdAndEnvironmentIdAndType(
-        applicationId, environmentId, type);
+  private Optional<Stack> findBy(
+      String applicationId, String environmentId, StackType type, String id) {
+    return repository.findByApplicationIdAndEnvironmentIdAndTypeAndId(
+        applicationId, environmentId, type, id);
   }
 
   public Page<api.jcloudify.app.endpoint.rest.model.Stack> findAllBy(
@@ -94,7 +95,8 @@ public class StackService {
     String applicationName = application.getFormattedName();
     Map<String, String> parameters = getParametersFrom(environmentType, applicationName);
 
-    Optional<Stack> stack = findBy(applicationId, environmentId, toDeploy.getStackType());
+    Optional<Stack> stack =
+        findBy(applicationId, environmentId, toDeploy.getStackType(), toDeploy.getStackId());
     if (stack.isPresent()) {
       Stack toUpdate = stack.get();
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
@@ -102,11 +104,13 @@ public class StackService {
       return mapper.toRest(
           save(
               Stack.builder()
+                  .id(toUpdate.getId())
                   .name(toUpdate.getName())
                   .cfStackId(cfStackId)
                   .applicationId(applicationId)
                   .environmentId(environmentId)
                   .type(toUpdate.getType())
+                  .creationDatetime(toUpdate.getCreationDatetime())
                   .build()),
           application,
           environment);

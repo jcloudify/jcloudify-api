@@ -17,10 +17,14 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.JANE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JANE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ENVIRONMENT_ID;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.stackDeploymentInitiated;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsForbiddenException;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreCfStackIdAndDatetime;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreCfStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
@@ -70,7 +74,7 @@ public class StackIT extends FacadeIT {
 
   private static ApplicationBase otherApplication() {
     return new ApplicationBase()
-        .id("other_poja_application_id")
+        .id(OTHER_POJA_APPLICATION_ID)
         .name("other-poja-test-app")
         .archived(false)
         .githubRepository("https://github.com/joeDoe/other_poja_application")
@@ -79,7 +83,7 @@ public class StackIT extends FacadeIT {
 
   private static Environment otherEnvironment() {
     return new Environment()
-        .id("other_poja_application_environment_id")
+        .id(OTHER_POJA_APPLICATION_ENVIRONMENT_ID)
         .environmentType(PROD)
         .archived(false)
         .state(HEALTHY);
@@ -121,8 +125,12 @@ public class StackIT extends FacadeIT {
         .updateDatetime(Instant.parse("2023-07-18T10:15:30.00Z"));
   }
 
-  private static InitiateDeployment initiateStackDeployment(StackType stackType) {
+  private static InitiateDeployment createStack(StackType stackType) {
     return new InitiateDeployment().stackType(stackType);
+  }
+
+  private static InitiateDeployment updateStack(String stackId, StackType stackType) {
+    return new InitiateDeployment().stackId(stackId).stackType(stackType);
   }
 
   @BeforeEach
@@ -133,37 +141,74 @@ public class StackIT extends FacadeIT {
   }
 
   @Test
-  void initiate_stack_deployment_ok() throws ApiException {
+  void create_stacks_ok() throws ApiException {
     ApiClient joeDoeClient = anApiClient(JOE_DOE_TOKEN);
     StackApi api = new StackApi(joeDoeClient);
 
-    var actual =
+    var actualCreatedStacks =
         api.initiateStackDeployment(
+            JOE_DOE_ID,
             POJA_APPLICATION_ID,
             POJA_APPLICATION_ENVIRONMENT_ID,
             new InitiateStackDeploymentRequestBody()
                 .data(
                     List.of(
-                        initiateStackDeployment(EVENT),
-                        initiateStackDeployment(COMPUTE_PERMISSION),
-                        initiateStackDeployment(STORAGE_BUCKET),
-                        initiateStackDeployment(STORAGE_DATABASE_POSTGRES),
-                        initiateStackDeployment(STORAGE_DATABASE_SQLITE))));
-    var actualData = requireNonNull(actual.getData());
+                        createStack(EVENT),
+                        createStack(COMPUTE_PERMISSION),
+                        createStack(STORAGE_BUCKET),
+                        createStack(STORAGE_DATABASE_POSTGRES),
+                        createStack(STORAGE_DATABASE_SQLITE))));
+    var actualCreatedStacksData = requireNonNull(actualCreatedStacks.getData());
 
-    assertNotNull(actualData.getFirst().getCreationDatetime());
-    assertTrue(ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(EVENT)));
+    assertNotNull(actualCreatedStacksData.getFirst().getCreationDatetime());
     assertTrue(
-        ignoreStackIdsAndDatetime(actualData)
+        ignoreStackIdsAndDatetime(actualCreatedStacksData)
+            .contains(stackDeploymentInitiated(EVENT)));
+    assertTrue(
+        ignoreStackIdsAndDatetime(actualCreatedStacksData)
             .contains(stackDeploymentInitiated(COMPUTE_PERMISSION)));
     assertTrue(
-        ignoreStackIdsAndDatetime(actualData).contains(stackDeploymentInitiated(STORAGE_BUCKET)));
+        ignoreStackIdsAndDatetime(actualCreatedStacksData)
+            .contains(stackDeploymentInitiated(STORAGE_BUCKET)));
     assertTrue(
-        ignoreStackIdsAndDatetime(actualData)
+        ignoreStackIdsAndDatetime(actualCreatedStacksData)
             .contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
     assertTrue(
-        ignoreStackIdsAndDatetime(actualData)
+        ignoreStackIdsAndDatetime(actualCreatedStacksData)
             .contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
+  }
+
+  @Test
+  void update_stack_ok() throws ApiException {
+    ApiClient joeDoeClient = anApiClient(JOE_DOE_TOKEN);
+    StackApi api = new StackApi(joeDoeClient);
+
+    var actualCreatedStacks =
+        api.initiateStackDeployment(
+            JOE_DOE_ID,
+            OTHER_POJA_APPLICATION_ID,
+            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+            new InitiateStackDeploymentRequestBody()
+                .data(
+                    List.of(
+                        updateStack("event_stack_1_id", EVENT),
+                        updateStack("compute_perm_stack_1_id", COMPUTE_PERMISSION),
+                        updateStack("bucket_stack_1_id", STORAGE_BUCKET))));
+    var actualCreatedStacksData = requireNonNull(actualCreatedStacks.getData());
+    var firstData = actualCreatedStacksData.getFirst();
+
+    assertNotNull(firstData.getUpdateDatetime());
+    assertNotNull(firstData.getCreationDatetime());
+    assertTrue(firstData.getUpdateDatetime().isAfter(firstData.getCreationDatetime()));
+    assertTrue(
+        ignoreCfStackIdsAndDatetime(actualCreatedStacksData)
+            .contains(ignoreCfStackIdAndDatetime(eventStack())));
+    assertTrue(
+        ignoreCfStackIdsAndDatetime(actualCreatedStacksData)
+            .contains(ignoreCfStackIdAndDatetime(computePermStack())));
+    assertTrue(
+        ignoreCfStackIdsAndDatetime(actualCreatedStacksData)
+            .contains(ignoreCfStackIdAndDatetime(bucketStack())));
   }
 
   @Test
@@ -174,8 +219,8 @@ public class StackIT extends FacadeIT {
     var actual =
         api.getEnvironmentStacks(
             JOE_DOE_ID,
-            "other_poja_application_id",
-            "other_poja_application_environment_id",
+            OTHER_POJA_APPLICATION_ID,
+            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
             null,
             null);
     var actualData = Objects.requireNonNull(actual.getData());
@@ -205,14 +250,14 @@ public class StackIT extends FacadeIT {
     Stack actualEventStack =
         api.getStackById(
             JOE_DOE_ID,
-            "other_poja_application_id",
-            "other_poja_application_environment_id",
+            OTHER_POJA_APPLICATION_ID,
+            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
             "event_stack_1_id");
     Stack actualBucketStack =
         api.getStackById(
             JOE_DOE_ID,
-            "other_poja_application_id",
-            "other_poja_application_environment_id",
+            OTHER_POJA_APPLICATION_ID,
+            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
             "bucket_stack_1_id");
 
     assertEquals(actualEventStack, eventStack());

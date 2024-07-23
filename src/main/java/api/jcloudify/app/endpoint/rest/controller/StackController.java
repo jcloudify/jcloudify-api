@@ -11,7 +11,7 @@ import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,8 +48,10 @@ public class StackController {
         .data(responseData);
   }
 
-  @PostMapping("/applications/{applicationId}/environments/{environmentId}/deploymentInitiation")
+  @PutMapping(
+      "/users/{userId}/applications/{applicationId}/environments/{environmentId}/deploymentInitiation")
   public InitiateStackDeploymentResponse initiatedStackDeployment(
+      @PathVariable String userId,
       @PathVariable String applicationId,
       @PathVariable String environmentId,
       @RequestBody InitiateStackDeploymentRequestBody deploymentsToInitiate) {
