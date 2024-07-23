@@ -64,8 +64,21 @@ public class TestUtils {
     return stacks.stream().map(TestUtils::ignoreStackIdAndDatetime).toList();
   }
 
+  public static List<Stack> ignoreCfStackIdsAndDatetime(List<Stack> stacks) {
+    return stacks.stream().map(TestUtils::ignoreCfStackIdAndDatetime).toList();
+  }
+
   public static Stack ignoreStackIdAndDatetime(Stack stack) {
     stack.id(POJA_CREATED_STACK_ID);
+    return ignoreStackDatetime(stack);
+  }
+
+  public static Stack ignoreCfStackIdAndDatetime(Stack stack) {
+    stack.cfStackId(POJA_CF_STACK_ID);
+    return ignoreStackDatetime(stack);
+  }
+
+  public static Stack ignoreStackDatetime(Stack stack) {
     stack.creationDatetime(null);
     stack.updateDatetime(null);
     return stack;

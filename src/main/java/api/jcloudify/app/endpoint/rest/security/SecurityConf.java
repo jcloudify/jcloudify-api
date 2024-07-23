@@ -7,6 +7,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+import api.jcloudify.app.endpoint.rest.security.matcher.SelfApplicationMatcher;
 import api.jcloudify.app.endpoint.rest.security.matcher.SelfUserMatcher;
 import api.jcloudify.app.model.exception.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -69,7 +70,7 @@ public class SecurityConf {
             bearerFilter(
                 new OrRequestMatcher(
                     antMatcher(GET, "/whoami"),
-                    antMatcher(POST, "/applications/*/environments/*/deploymentInitiation"),
+                    antMatcher(PUT, "/users/*/applications/*/environments/*/deploymentInitiation"),
                     antMatcher(PUT, "/users/*/applications"),
                     antMatcher(GET, "/users/*/applications"),
                     antMatcher(GET, "/poja-versions"),
@@ -105,7 +106,11 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
                     .authenticated()
-                    .requestMatchers(POST, "/applications/*/environments/*/deploymentInitiation")
+                    .requestMatchers(
+                        new SelfApplicationMatcher(
+                            PUT,
+                            "/users/{userId}/applications/*/environments/*/deploymentInitiation",
+                            authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
                         new SelfUserMatcher(

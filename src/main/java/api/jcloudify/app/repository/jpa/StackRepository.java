@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StackRepository extends JpaRepository<Stack, String> {
-  Optional<Stack> findByApplicationIdAndEnvironmentIdAndType(
-      String applicationId, String environmentId, StackType type);
+  Optional<Stack> findByApplicationIdAndEnvironmentIdAndTypeAndId(
+      String applicationId, String environmentId, StackType type, String id);
 
   Optional<Stack> findByApplicationIdAndEnvironmentIdAndId(
       String applicationId, String environmentId, String id);

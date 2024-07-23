@@ -11,7 +11,6 @@ import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.mapper.ApplicationMapper;
 import java.util.List;
 import java.util.Optional;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -39,7 +38,8 @@ public class ApplicationService {
 
   public Application getById(String id) {
     return findById(id)
-            .orElseThrow(() -> new NotFoundException("Application identified by id=" + id + " not found"));
+        .orElseThrow(
+            () -> new NotFoundException("Application identified by id=" + id + " not found"));
   }
 
   public Optional<Application> findById(String id) {

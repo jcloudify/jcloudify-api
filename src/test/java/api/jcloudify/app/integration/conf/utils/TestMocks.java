@@ -43,6 +43,9 @@ public class TestMocks {
   public static final String BUCKET_STACK_NAME = "poja_app_bucket_stack";
   public static final String COMPUTE_PERM_STACK_ID = "compute_perm_stack_1_id";
   public static final String COMPUTE_PERM_STACK_NAME = "poja_app_compute_perm_stack";
+  public static final String OTHER_POJA_APPLICATION_ID = "other_poja_application_id";
+  public static final String OTHER_POJA_APPLICATION_ENVIRONMENT_ID =
+      "other_poja_application_environment_id";
 
   public static User joeDoeUser() {
     return new User()
