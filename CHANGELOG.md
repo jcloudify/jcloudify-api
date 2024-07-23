@@ -1,3 +1,20 @@
+# [3.2.0](https://github.com/jcloudify/jcloudify-api/compare/v3.1.0...v3.2.0) (2024-07-23)
+
+
+### Bug Fixes
+
+* check user github id by token instead of email ([7751c5b](https://github.com/jcloudify/jcloudify-api/commit/7751c5b51373b7fba2d06d7c40d3005825c96546))
+
+
+### Features
+
+* add humanReadableVersion to PojaVersion in order to have the same string representation over api and consumers ([d919513](https://github.com/jcloudify/jcloudify-api/commit/d919513b777b4a77090ea4d7c342884e14294eb2))
+* create and list environments, created environments have UNKNOWN state by default ([fa337e4](https://github.com/jcloudify/jcloudify-api/commit/fa337e44778195606b3bc4fd3bf117812d60cd80))
+* get all applications filtered by name and userId ([04b42fa](https://github.com/jcloudify/jcloudify-api/commit/04b42fa63dbda469ef05243a222aeb8e53f52320))
+* pricing is directly attached to user, defaulting to TEN_MICRO, there is no other ref ([301a12e](https://github.com/jcloudify/jcloudify-api/commit/301a12e5c4ffe04235744484d017a06045406420))
+
+
+
 # [3.1.0](https://github.com/jcloudify/jcloudify-api/compare/v3.0.1...v3.1.0) (2024-07-16)
 
 
