@@ -10,6 +10,8 @@ import api.jcloudify.app.repository.jpa.dao.ApplicationDao;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.mapper.ApplicationMapper;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -36,10 +38,12 @@ public class ApplicationService {
   }
 
   public Application getById(String id) {
-    return repository
-        .findById(id)
-        .orElseThrow(
-            () -> new NotFoundException("Application identified by id=" + id + " not found"));
+    return findById(id)
+            .orElseThrow(() -> new NotFoundException("Application identified by id=" + id + " not found"));
+  }
+
+  public Optional<Application> findById(String id) {
+    return repository.findById(id);
   }
 
   public Page<Application> findAllByCriteria(
