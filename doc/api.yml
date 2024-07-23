@@ -848,14 +848,14 @@ components:
       discriminator:
         propertyName: 'version'
         mapping:
-          '13.3.1': '#/components/schemas/PojaConfV13_3_1'
+          '16.2.1': '#/components/schemas/PojaConfV16_2_1'
       required:
         - version
 
       ##############################################################
-      ###############  Poja Conf V13.3.1 ###########################
+      ###############  Poja Conf V16.2.1 ###########################
       ##############################################################
-    ConcurrencyConfV13_3_1:
+    ConcurrencyConfV16_2_1:
       type: object
       properties:
         frontal_reserved_concurrent_executions_nb:
@@ -863,20 +863,29 @@ components:
         worker_reserved_concurrent_executions_nb:
           type: string
 
-    ComputeConfV13_3_1:
+    ComputeConfV16_2_1:
       type: object
       properties:
         frontal_memory:
           type: number
           example: 2048
+        frontal_function_timeout:
+          type: number
+          example: 30
         worker_memory:
           type: number
           example: 1024
         worker_batch:
           type: number
           example: 5
+        worker_function_1_timeout:
+          type: number
+          example: 600
+        worker_function_2_timeout:
+          type: number
+          example: 600
 
-    AuroraConfV13_3_1:
+    AuroraConfV16_2_1:
       type: object
       properties:
         aurora_min_capacity:
@@ -892,15 +901,21 @@ components:
           type: boolean
           example: false
 
-    ClientConfV13_3_1:
+    ClientConfV16_2_1:
       type: object
       properties:
         ts_client_default_openapi_server_url:
           type: string
         ts_client_api_url_env_var_name:
           type: string
+        aws_account_id:
+          type: string
+        codeartifact_repository_name:
+          type: string
+        codeartifact_domain_name:
+          type: string
 
-    DatabaseConfV13_3_1:
+    DatabaseConfV16_2_1:
       type: object
       properties:
         database_non_root_username:
@@ -911,20 +926,23 @@ components:
           type: number
           example: 300
 
-    CustomConfV13_3_1:
+    CustomConfV16_2_1:
       type: object
       properties:
         custom_java_repositories:
-          type: string
-          format: binary
+          $ref: "#/components/schemas/StringMap"
         custom_java_deps:
-          type: string
-          format: binary
+          $ref: "#/components/schemas/StringMap"
         custom_java_env_vars:
-          type: string
-          format: binary
+          $ref: "#/components/schemas/StringMap"
 
-    PojaConfV13_3_1:
+    StringMap:
+      type: object
+      properties:
+        additionalProperties:
+          type: string
+
+    PojaConfV16_2_1:
       type: object
       allOf:
         - $ref: "#/components/schemas/PojaConf"
@@ -969,18 +987,27 @@ components:
         with_codeql:
           type: boolean
           example: false
+        with_queue_nb:
+          type: number
+          enum:
+            - 0
+            - 1
+            - 2
+        with_file_storage:
+          type: boolean
+          example: true
         concurrency:
-          $ref: '#/components/schemas/ConcurrencyConfV13_3_1'
+          $ref: '#/components/schemas/ConcurrencyConfV16_2_1'
         compute:
-          $ref: '#/components/schemas/ComputeConfV13_3_1'
+          $ref: '#/components/schemas/ComputeConfV16_2_1'
         aurora:
-          $ref: '#/components/schemas/AuroraConfV13_3_1'
+          $ref: '#/components/schemas/AuroraConfV16_2_1'
         database:
-          $ref: '#/components/schemas/DatabaseConfV13_3_1'
+          $ref: '#/components/schemas/DatabaseConfV16_2_1'
         custom:
-          $ref: '#/components/schemas/CustomConfV13_3_1'
+          $ref: '#/components/schemas/CustomConfV16_2_1'
         client:
-          $ref: '#/components/schemas/ClientConfV13_3_1'
+          $ref: '#/components/schemas/ClientConfV16_2_1'
       ##############################################################
       ###############  Poja Conf V15.2.2 ###########################
       ##############################################################
@@ -1286,7 +1313,7 @@ components:
     #############################################
     OneOfPojaConf:
       oneOf:
-        - $ref: "#/components/schemas/PojaConfV13_3_1"
+        - $ref: "#/components/schemas/PojaConfV16_2_1"
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
