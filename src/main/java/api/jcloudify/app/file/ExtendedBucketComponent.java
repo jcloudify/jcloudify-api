@@ -17,8 +17,8 @@ public class ExtendedBucketComponent {
   private static String getBucketKey(
       String userId, String appId, String envId, FileType fileType, String filename) {
     return switch (fileType) {
-      case POJA_CONF ->
-          String.format("/users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
+      case POJA_CONF -> String.format(
+          "/users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
     };
   }
 }

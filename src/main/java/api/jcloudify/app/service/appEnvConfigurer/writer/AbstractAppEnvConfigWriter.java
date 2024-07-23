@@ -1,6 +1,5 @@
 package api.jcloudify.app.service.appEnvConfigurer.writer;
 
-import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PojaConf;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -9,7 +8,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 abstract sealed class AbstractAppEnvConfigWriter implements PojaConfFileWriter
-    permits AppEnvConfigWriterFacade, PojaConfV13_3_1Writer {
+    permits AppEnvConfigWriterFacade, PojaConfV16_2_1Writer {
   protected final ObjectMapper yamlObjectMapper;
 
   AbstractAppEnvConfigWriter(@Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper) {
