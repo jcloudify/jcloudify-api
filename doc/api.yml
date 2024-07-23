@@ -344,16 +344,17 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/OneOfPojaConf"
-  /applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
     parameters:
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
-    post:
+    put:
       security:
         - bearerAuth: [ ]
       tags:
         - Stack
-      summary: Initiate stack deployment
+      summary: Update stack if stack_id provided, created new stack otherwise
       operationId: initiateStackDeployment
       requestBody:
         required: true
@@ -1061,6 +1062,8 @@ components:
     InitiateDeployment:
       type: object
       properties:
+        stack_id:
+          type: string
         stack_type:
           $ref: '#/components/schemas/StackType'
     Stack:
