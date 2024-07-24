@@ -39,8 +39,8 @@ public class Application implements Serializable {
   private String name;
   private boolean archived;
 
-  @Column(name = "github_repository")
-  private String githubRepository;
+  private String githubRepositoryName;
+  private boolean isGithubRepositoryPrivate;
 
   @CreationTimestamp private Instant creationDatetime;
 
