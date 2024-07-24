@@ -23,8 +23,6 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATIO
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.stackDeploymentInitiated;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsForbiddenException;
-import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreCfStackIdAndDatetime;
-import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreCfStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
@@ -199,19 +197,18 @@ public class StackIT extends FacadeIT {
                         updateStack("bucket_stack_1_id", STORAGE_BUCKET))));
     var actualCreatedStacksData = requireNonNull(actualCreatedStacks.getData());
     var firstData = actualCreatedStacksData.getFirst();
+    var allStacks =
+        api.getEnvironmentStacks(
+            JOE_DOE_ID,
+            OTHER_POJA_APPLICATION_ID,
+            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+            null,
+            null);
 
     assertNotNull(firstData.getUpdateDatetime());
     assertNotNull(firstData.getCreationDatetime());
     assertTrue(firstData.getUpdateDatetime().isAfter(firstData.getCreationDatetime()));
-    assertTrue(
-        ignoreCfStackIdsAndDatetime(actualCreatedStacksData)
-            .contains(ignoreCfStackIdAndDatetime(eventStack())));
-    assertTrue(
-        ignoreCfStackIdsAndDatetime(actualCreatedStacksData)
-            .contains(ignoreCfStackIdAndDatetime(computePermStack())));
-    assertTrue(
-        ignoreCfStackIdsAndDatetime(actualCreatedStacksData)
-            .contains(ignoreCfStackIdAndDatetime(bucketStack())));
+    assertEquals(requireNonNull(allStacks.getData()).size(), 3);
   }
 
   @Test

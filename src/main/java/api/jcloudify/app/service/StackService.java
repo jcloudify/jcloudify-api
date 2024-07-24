@@ -48,12 +48,6 @@ public class StackService {
         .toList();
   }
 
-  private Optional<Stack> findBy(
-      String applicationId, String environmentId, StackType type, String id) {
-    return repository.findByApplicationIdAndEnvironmentIdAndTypeAndId(
-        applicationId, environmentId, type, id);
-  }
-
   public Page<api.jcloudify.app.endpoint.rest.model.Stack> findAllBy(
       String userId,
       String applicationId,
@@ -102,7 +96,8 @@ public class StackService {
     Map<String, String> parameters = getParametersFrom(environmentType, applicationName);
 
     Optional<Stack> stack =
-        findBy(applicationId, environmentId, toDeploy.getStackType(), toDeploy.getId());
+        dao.findByIdAndCriteria(
+            toDeploy.getId(), applicationId, environmentId, toDeploy.getStackType());
     if (stack.isPresent()) {
       Stack toUpdate = stack.get();
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
