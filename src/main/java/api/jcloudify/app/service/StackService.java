@@ -102,7 +102,7 @@ public class StackService {
     Map<String, String> parameters = getParametersFrom(environmentType, applicationName);
 
     Optional<Stack> stack =
-        findBy(applicationId, environmentId, toDeploy.getStackType(), toDeploy.getStackId());
+        findBy(applicationId, environmentId, toDeploy.getStackType(), toDeploy.getId());
     if (stack.isPresent()) {
       Stack toUpdate = stack.get();
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
@@ -132,6 +132,7 @@ public class StackService {
       Stack saved =
           save(
               Stack.builder()
+                  .id(toDeploy.getId())
                   .name(stackName)
                   .cfStackId(cfStackId)
                   .applicationId(applicationId)
