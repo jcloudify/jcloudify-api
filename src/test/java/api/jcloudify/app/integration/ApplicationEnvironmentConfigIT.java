@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.conf.FacadeIT;
+import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.PojaConfUploaded;
 import api.jcloudify.app.endpoint.rest.api.EnvironmentApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
@@ -39,6 +41,7 @@ public class ApplicationEnvironmentConfigIT extends FacadeIT {
   @MockBean GithubComponent githubComponent;
   @MockBean CloudformationComponent cloudformationComponent;
   @MockBean BucketComponent bucketComponent;
+  @MockBean EventProducer<PojaConfUploaded> eventProducer;
 
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
@@ -52,7 +55,7 @@ public class ApplicationEnvironmentConfigIT extends FacadeIT {
   }
 
   @Test
-  void update_environment_ok() throws ApiException {
+  void configure_environment_ok() throws ApiException {
     var apiClient = anApiClient();
     var api = new EnvironmentApi(apiClient);
     var currentApplication = joePojaApplication1();
