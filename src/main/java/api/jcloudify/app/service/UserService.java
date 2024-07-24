@@ -20,6 +20,8 @@ public class UserService {
   private final GithubComponent githubComponent;
   private final UserMapper mapper;
 
+  private final PaymentService paymentService;
+
   public List<User> createUsers(List<CreateUser> toCreate) {
     List<User> toSave = toCreate.stream().map(this::createUserFrom).toList();
     return repository.saveAll(toSave);
@@ -27,7 +29,8 @@ public class UserService {
 
   private User createUserFrom(CreateUser createUser) {
     GHMyself githubUser = getUserByToken(createUser.getToken());
-    User user = mapper.toModel(createUser, githubUser);
+    String customerId = paymentService.createCustomer(createUser);
+    User user = mapper.toModel(createUser, githubUser, customerId);
     if (repository.existsByEmail(user.getEmail()))
       throw new BadRequestException("An account with the same email already exists");
     return user;
