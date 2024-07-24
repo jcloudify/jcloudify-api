@@ -133,7 +133,7 @@ public class StackIT extends FacadeIT {
   }
 
   private static InitiateDeployment updateStack(String stackId, StackType stackType) {
-    return new InitiateDeployment().stackId(stackId).stackType(stackType);
+    return new InitiateDeployment().id(stackId).stackType(stackType);
   }
 
   @BeforeEach
