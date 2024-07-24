@@ -6,7 +6,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplicat
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
-import static api.jcloudify.app.model.PojaVersion.POJA_V16_2_1;
+import static api.jcloudify.app.model.PojaVersion.POJA_V17_0_0;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +18,7 @@ import api.jcloudify.app.endpoint.rest.api.EnvironmentApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
-import api.jcloudify.app.endpoint.rest.model.PojaConfV1621;
+import api.jcloudify.app.endpoint.rest.model.PojaConfV1700;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
@@ -60,7 +60,7 @@ public class ApplicationEnvironmentConfigIT extends FacadeIT {
     var api = new EnvironmentApi(apiClient);
     var currentApplication = joePojaApplication1();
     var currentEnv = requireNonNull(currentApplication.getEnvironments()).getFirst();
-    var payload = new OneOfPojaConf(pojaConfV1331());
+    var payload = new OneOfPojaConf(pojaConfV17_0_0());
 
     var actual =
         api.configureApplicationEnv(
@@ -69,7 +69,7 @@ public class ApplicationEnvironmentConfigIT extends FacadeIT {
     assertEquals(payload, actual);
   }
 
-  private static @NotNull PojaConfV1621 pojaConfV1331() {
-    return new PojaConfV1621().version(POJA_V16_2_1.toHumanReadableValue());
+  private static @NotNull PojaConfV1700 pojaConfV17_0_0() {
+    return new PojaConfV1700().version(POJA_V17_0_0.toHumanReadableValue());
   }
 }

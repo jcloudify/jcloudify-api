@@ -1,0 +1,58 @@
+---
+version: "17.0.0"
+integration:
+  with_sentry: null
+  with_sonar: null
+  with_codeql: null
+  with_file_storage: null
+  with_swagger_ui: null
+gen_api_client:
+  aws_account_id: null
+  with_publish_to_npm_registry: null
+  ts_client_default_openapi_server_url: null
+  ts_client_api_url_env_var_name: null
+  codeartifact_repository_name: null
+  codeartifact_domain_name: null
+concurrency:
+  frontal_reserved_concurrent_executions_nb: null
+  worker_reserved_concurrent_executions_nb: null
+compute:
+  frontal_memory: null
+  frontal_function_timeout: null
+  worker_memory: null
+  worker_batch: null
+  worker_function_1_timeout: null
+  worker_function_2_timeout: null
+emailing:
+  ses_source: null
+testing:
+  java_facade_it: null
+  jacoco_min_coverage: null
+database:
+  with_database: null
+  database_non_root_username: null
+  database_non_root_password: null
+  prod_db_cluster_timeout: null
+  aurora_min_capacity: null
+  aurora_max_capacity: null
+  aurora_scale_point: null
+  aurora_sleep: null
+  aurora_auto_pause: null
+general:
+  cli_version: "17.0.0"
+  app_name: null
+  with_snapstart: null
+  with_queues_nb: null
+  package_full_name: null
+  custom_java_repositories: null
+  custom_java_deps: null
+  custom_java_env_vars: null
+  poja_python_repository_name: null
+  poja_python_repository_domain: null
+  poja_domain_owner: null
+networking:
+  region: "eu-west-3"
+  with_own_vpc: true
+  ssm_sg_id: "sg-id"
+  ssm_subnet1_id: "subnet-1"
+  ssm_subnet2_id: "subnet-2"
