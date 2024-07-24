@@ -1,5 +1,7 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
+import static java.util.Objects.requireNonNull;
+
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentResponse;
 import api.jcloudify.app.endpoint.rest.model.PagedStacksResponse;
@@ -7,7 +9,6 @@ import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.service.StackService;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,7 +58,7 @@ public class StackController {
       @RequestBody InitiateStackDeploymentRequestBody deploymentsToInitiate) {
     var data =
         service.process(
-            Objects.requireNonNull(deploymentsToInitiate.getData()), applicationId, environmentId);
+            requireNonNull(deploymentsToInitiate.getData()), userId, applicationId, environmentId);
     return new InitiateStackDeploymentResponse().data(data);
   }
 }

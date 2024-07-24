@@ -4,6 +4,8 @@ import static java.util.Objects.requireNonNull;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.aws.cloudformation.CloudformationTemplateConf;
+import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackType;
@@ -34,11 +36,15 @@ public class StackService {
   private final StackRepository repository;
   private final StackMapper mapper;
   private final StackDao dao;
+  private final EventProducer eventProducer;
 
   public List<api.jcloudify.app.endpoint.rest.model.Stack> process(
-      List<InitiateDeployment> deployments, String applicationId, String environmentId) {
+      List<InitiateDeployment> deployments,
+      String userId,
+      String applicationId,
+      String environmentId) {
     return deployments.stream()
-        .map(stack -> this.deployStack(stack, applicationId, environmentId))
+        .map(stack -> this.deployStack(stack, userId, applicationId, environmentId))
         .toList();
   }
 
@@ -88,7 +94,7 @@ public class StackService {
   }
 
   private api.jcloudify.app.endpoint.rest.model.Stack deployStack(
-      InitiateDeployment toDeploy, String applicationId, String environmentId) {
+      InitiateDeployment toDeploy, String userId, String applicationId, String environmentId) {
     Application application = applicationService.getById(applicationId);
     Environment environment = environmentService.getById(environmentId);
     String environmentType = environment.getFormattedEnvironmentType();
@@ -101,7 +107,7 @@ public class StackService {
       Stack toUpdate = stack.get();
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
       String cfStackId = updateStack(toDeploy, parameters, toUpdate.getName(), tags);
-      return mapper.toRest(
+      Stack saved =
           save(
               Stack.builder()
                   .id(toUpdate.getId())
@@ -111,9 +117,9 @@ public class StackService {
                   .environmentId(environmentId)
                   .type(toUpdate.getType())
                   .creationDatetime(toUpdate.getCreationDatetime())
-                  .build()),
-          application,
-          environment);
+                  .build());
+      eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(saved).build()));
+      return mapper.toRest(saved, application, environment);
     } else {
       String stackName =
           String.format(
@@ -123,7 +129,7 @@ public class StackService {
               applicationName);
       Map<String, String> tags = setUpTags(stackName, environmentType);
       String cfStackId = createStack(toDeploy, parameters, stackName, tags);
-      return mapper.toRest(
+      Stack saved =
           save(
               Stack.builder()
                   .name(stackName)
@@ -131,9 +137,9 @@ public class StackService {
                   .applicationId(applicationId)
                   .environmentId(environmentId)
                   .type(toDeploy.getStackType())
-                  .build()),
-          application,
-          environment);
+                  .build());
+      eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(saved).build()));
+      return mapper.toRest(saved, application, environment);
     }
   }
 
