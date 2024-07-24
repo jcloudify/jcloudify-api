@@ -19,19 +19,22 @@ public final class PojaConfUploaded extends PojaEvent {
    * @param environmentId: environment configured with the conf
    * @param userId: poja conf owner userid
    * @param filename: refers to the s3 key without the prefixes (userId, environmentId, ...)
+   * @param appId: configuredAppId
    */
   public PojaConfUploaded(
-      PojaVersion pojaVersion, String environmentId, String userId, String filename) {
+      PojaVersion pojaVersion, String environmentId, String userId, String filename, String appId) {
     this.pojaVersion = pojaVersion;
     this.environmentId = environmentId;
     this.userId = userId;
     this.filename = filename;
+    this.appId = appId;
   }
 
   private final PojaVersion pojaVersion;
   private final String environmentId;
   private final String userId;
   private final String filename;
+  private final String appId;
 
   @Override
   public Duration maxConsumerDuration() {
