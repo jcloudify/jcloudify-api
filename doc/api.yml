@@ -1090,7 +1090,7 @@ components:
     InitiateDeployment:
       type: object
       properties:
-        stack_id:
+        id:
           type: string
         stack_type:
           $ref: '#/components/schemas/StackType'
@@ -1099,8 +1099,6 @@ components:
         - $ref: '#/components/schemas/InitiateDeployment'
       type: object
       properties:
-        id:
-          type: string
         name:
           type: string
         cf_stack_id:
