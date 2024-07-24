@@ -1,3 +1,13 @@
+# [3.3.0](https://github.com/jcloudify/jcloudify-api/compare/v3.2.0...v3.3.0) (2024-07-24)
+
+
+### Features
+
+* get stack by id ([7834ded](https://github.com/jcloudify/jcloudify-api/commit/7834ded5c984df186fc45aa55c304b1bb29dedb1))
+* **to-continue:** get stack list ([fe737eb](https://github.com/jcloudify/jcloudify-api/commit/fe737eb0d36ea7291abca2dd413312fe757f411d))
+
+
+
 # [3.2.0](https://github.com/jcloudify/jcloudify-api/compare/v3.1.0...v3.2.0) (2024-07-23)
 
 
