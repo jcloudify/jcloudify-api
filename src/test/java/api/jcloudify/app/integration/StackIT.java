@@ -41,6 +41,7 @@ import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.Environment;
+import api.jcloudify.app.endpoint.rest.model.GithubRepository;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
 import api.jcloudify.app.endpoint.rest.model.Stack;
@@ -77,7 +78,7 @@ public class StackIT extends FacadeIT {
         .id(OTHER_POJA_APPLICATION_ID)
         .name("other-poja-test-app")
         .archived(false)
-        .githubRepository("https://github.com/joeDoe/other_poja_application")
+        .githubRepository(new GithubRepository().name("other_poja_application").isPrivate(false))
         .userId(JOE_DOE_ID);
   }
 

@@ -819,8 +819,15 @@ components:
         user_id:
           type: string
         github_repository:
+          $ref: "#/components/schemas/GithubRepository"
+
+    GithubRepository:
+      type: object
+      properties:
+        name:
           type: string
-          example: https://github.com/testUser/testRepo
+        is_private:
+          type: boolean
 
     Application:
       allOf:

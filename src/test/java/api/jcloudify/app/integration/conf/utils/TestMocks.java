@@ -7,6 +7,7 @@ import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.Environment;
+import api.jcloudify.app.endpoint.rest.model.GithubRepository;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.model.User;
@@ -33,8 +34,8 @@ public class TestMocks {
   public static final String POJA_APPLICATION_ID = "poja_application_id";
   public static final String POJA_APPLICATION_NAME = "poja-test-app";
   public static final String POJA_APPLICATION_ENVIRONMENT_ID = "poja_application_environment_id";
-  public static final String POJA_APPLICATION_GITHUB_REPOSITORY =
-      "https://github.com/joeDoe/poja_application";
+  public static final GithubRepository POJA_APPLICATION_GITHUB_REPOSITORY =
+      new GithubRepository().name("poja_application").isPrivate(false);
   public static final Instant POJA_APPLICATION_CREATION_DATETIME =
       Instant.parse("2023-06-18T10:15:30.00Z");
   public static final String EVENT_STACK_ID = "event_stack_1_id";
@@ -112,7 +113,7 @@ public class TestMocks {
         .name("poja-test-app-2")
         .userId(JOE_DOE_ID)
         .creationDatetime(Instant.parse("2023-06-18T10:16:30.00Z"))
-        .githubRepository("https://github.com/joeDoe/poja_application_2")
+        .githubRepository(new GithubRepository().name("poja_application_2").isPrivate(false))
         .archived(false)
         .environments(List.of());
   }
