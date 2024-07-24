@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.services.cloudformation.CloudFormationClient;
 import software.amazon.awssdk.services.cloudformation.model.CloudFormationException;
 import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsRequest;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsResponse;
 import software.amazon.awssdk.services.cloudformation.model.Parameter;
 import software.amazon.awssdk.services.cloudformation.model.Tag;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
@@ -16,7 +19,7 @@ import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
 @Component
 @AllArgsConstructor
 public class CloudformationComponent {
-  private final CloudformationConf conf;
+  private final CloudFormationClient cloudFormationClient;
 
   private static List<Tag> setUpTags(Map<String, String> tags) {
     return tags.entrySet().stream()
@@ -52,7 +55,7 @@ public class CloudformationComponent {
             .capabilities(CAPABILITY_NAMED_IAM)
             .build();
     try {
-      return conf.getCloudformationClient().createStack(request).stackId();
+      return cloudFormationClient.createStack(request).stackId();
     } catch (CloudFormationException e) {
       throw new BadRequestException(
           String.format(
@@ -78,11 +81,26 @@ public class CloudformationComponent {
             .build();
 
     try {
-      return conf.getCloudformationClient().updateStack(request).stackId();
+      return cloudFormationClient.updateStack(request).stackId();
     } catch (CloudFormationException e) {
       throw new BadRequestException(
           String.format(
               "An error occurred during stack(%s) update: %s", stackName, e.getMessage()));
+    }
+  }
+
+  public DescribeStackEventsResponse getStackEvents(String stackName, String nextToken) {
+    DescribeStackEventsRequest request =
+        DescribeStackEventsRequest.builder()
+            .nextToken(nextToken.isEmpty() ? null : nextToken)
+            .stackName(stackName)
+            .build();
+    try {
+      return cloudFormationClient.describeStackEvents(request);
+    } catch (CloudFormationException e) {
+      throw new BadRequestException(
+          String.format(
+              "An error occurred when retrieving stack(%s) events: %s", stackName, e.getMessage()));
     }
   }
 }

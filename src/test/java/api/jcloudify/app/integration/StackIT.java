@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.conf.FacadeIT;
+import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.rest.api.StackApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
@@ -68,6 +69,7 @@ public class StackIT extends FacadeIT {
   @MockBean GithubComponent githubComponent;
   @MockBean CloudformationComponent cloudformationComponent;
   @MockBean BucketComponent bucketComponent;
+  @MockBean EventProducer eventProducer;
 
   private ApiClient anApiClient(String token) {
     return TestUtils.anApiClient(token, port);
