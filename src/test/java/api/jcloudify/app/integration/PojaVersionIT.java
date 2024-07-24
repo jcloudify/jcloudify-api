@@ -43,8 +43,8 @@ class PojaVersionIT extends FacadeIT {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
   }
 
-  private PojaVersion v16_2_1() {
-    return new PojaVersion().major(16).minor(2).patch(1).humanReadableValue("16.2.1");
+  private PojaVersion v17_0_0() {
+    return new PojaVersion().major(17).minor(0).patch(0).humanReadableValue("17.0.0");
   }
 
   @Test
@@ -55,6 +55,6 @@ class PojaVersionIT extends FacadeIT {
     PojaVersionsResponse pojaVersions = api.getPojaVersions();
     var data = Objects.requireNonNull(pojaVersions.getData());
 
-    assertTrue(data.contains(v16_2_1()));
+    assertTrue(data.contains(v17_0_0()));
   }
 }
