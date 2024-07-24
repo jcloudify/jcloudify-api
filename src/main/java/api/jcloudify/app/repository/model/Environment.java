@@ -48,6 +48,8 @@ public class Environment implements Serializable {
   @Column(name = "state")
   private StateEnum state;
 
+  private String configurationFileKey;
+
   @JsonIgnore
   public String getFormattedEnvironmentType() {
     return environmentType.toString().toLowerCase();

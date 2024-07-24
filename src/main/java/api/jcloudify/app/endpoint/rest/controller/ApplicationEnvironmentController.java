@@ -6,6 +6,7 @@ import api.jcloudify.app.endpoint.rest.mapper.EnvironmentMapper;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsResponse;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentsResponse;
+import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.service.EnvironmentService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,5 +40,22 @@ public class ApplicationEnvironmentController {
             .map(mapper::toRest)
             .toList();
     return new CrupdateEnvironmentsResponse().data(data);
+  }
+
+  @PutMapping("/users/{userId}/applications/{applicationId}/environments/{environmentId}/config")
+  public OneOfPojaConf configureApplicationEnv(
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @PathVariable String environmentId,
+      @RequestBody OneOfPojaConf requestBody) {
+    return service.configureEnvironment(userId, applicationId, environmentId, requestBody);
+  }
+
+  @GetMapping("/users/{userId}/applications/{applicationId}/environments/{environmentId}/config")
+  public OneOfPojaConf getApplicationEnvironmentConfig(
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @PathVariable String environmentId) {
+    return service.getConfig(userId, applicationId, environmentId);
   }
 }
