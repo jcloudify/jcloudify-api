@@ -27,6 +27,11 @@ public class UserService {
     return repository.saveAll(toSave);
   }
 
+  public User getUserById(String userId) {
+    return repository.findById(userId)
+            .orElseThrow(() -> new NotFoundException("The user identified by id " + userId + " is not found"));
+  }
+
   private User createUserFrom(CreateUser createUser) {
     GHMyself githubUser = getUserByToken(createUser.getToken());
     String customerId = paymentService.createCustomer(createUser);
