@@ -1,3 +1,13 @@
+## [3.5.2](https://github.com/jcloudify/jcloudify-api/compare/v3.5.1...v3.5.2) (2024-07-25)
+
+
+### Bug Fixes
+
+* bucket key path does not starts with a slash ([755e817](https://github.com/jcloudify/jcloudify-api/commit/755e8177ab5c3cc102f69da030051c8b60d5ea64))
+* missing env var ([9bc347a](https://github.com/jcloudify/jcloudify-api/commit/9bc347a870c7f7acbc8c64a202d22f90d9c684a2))
+
+
+
 ## [3.5.1](https://github.com/jcloudify/jcloudify-api/compare/v3.5.0...v3.5.1) (2024-07-25)
 
 
@@ -106,15 +116,6 @@
 
 * initiate cloudformation stack deployments ([1d851c8](https://github.com/jcloudify/jcloudify-api/commit/1d851c8a1c4a3071e8bba1a9ed22009484d0c6ed))
 * initiate stack deployment ([c1f66ab](https://github.com/jcloudify/jcloudify-api/commit/c1f66ab47262147e8a240f07c3af094c91227a5a))
-
-
-
-# [1.4.0](https://github.com/jcloudify/jcloudify-api/compare/v1.3.0...v1.4.0) (2024-06-11)
-
-
-### Features
-
-* user must provide email adress during signup ([c02f97d](https://github.com/jcloudify/jcloudify-api/commit/c02f97db67c5ca5c4baf387a2ff55a4534db55fd))
 
 
 
