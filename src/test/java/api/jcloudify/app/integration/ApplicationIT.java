@@ -81,12 +81,14 @@ class ApplicationIT extends FacadeIT {
     var updateApplicationResponseData =
         requireNonNull(updateApplicationResponse.getData()).stream()
             .map(ApplicationIT::ignoreIds)
+            .map(ApplicationIT::ignoreRepositoryUrls)
             .toList();
 
     List<Application> expectedResponseData =
         updatedPayload.stream()
             .map(ApplicationIT::toApplicationWithIgnoredEnvironments)
             .map(ApplicationIT::ignoreIds)
+            .map(ApplicationIT::ignoreRepositoryUrls)
             .toList();
     assertTrue(updateApplicationResponseData.containsAll(expectedResponseData));
   }
@@ -135,5 +137,9 @@ class ApplicationIT extends FacadeIT {
 
   private static Application ignoreIds(Application application) {
     return application.id(POJA_APPLICATION_ID).creationDatetime(POJA_APPLICATION_CREATION_DATETIME);
+  }
+
+  private static Application ignoreRepositoryUrls(Application application) {
+    return application.repositoryUrl(null);
   }
 }

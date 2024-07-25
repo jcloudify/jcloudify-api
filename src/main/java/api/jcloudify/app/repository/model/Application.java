@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
@@ -37,6 +38,8 @@ public class Application implements Serializable {
   private String githubRepositoryName;
   private boolean isGithubRepositoryPrivate;
 
+  @Transient private String previousGithubRepositoryName;
+
   @CreationTimestamp private Instant creationDatetime;
 
   @Column(name = "id_user")
@@ -46,6 +49,9 @@ public class Application implements Serializable {
 
   @OneToMany(mappedBy = "applicationId", cascade = CascadeType.ALL)
   private List<Environment> environments;
+
+  @Column(insertable = false)
+  private String repoHttpUrl;
 
   @JsonIgnore
   public String getFormattedName() {

@@ -4,7 +4,7 @@ import api.jcloudify.app.endpoint.rest.mapper.UserMapper;
 import api.jcloudify.app.endpoint.rest.model.Token;
 import api.jcloudify.app.endpoint.rest.model.Whoami;
 import api.jcloudify.app.endpoint.rest.security.model.Principal;
-import api.jcloudify.app.service.GithubService;
+import api.jcloudify.app.service.github.GithubService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,32 +1,52 @@
 package api.jcloudify.app.endpoint.rest.security.github;
 
+import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import api.jcloudify.app.endpoint.rest.model.Token;
 import api.jcloudify.app.model.exception.BadRequestException;
+import api.jcloudify.app.repository.model.Application;
+import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
+import api.jcloudify.app.service.github.model.CreateRepoResponse;
+import api.jcloudify.app.service.github.model.UpdateRepoRequestBody;
+import api.jcloudify.app.service.github.model.UpdateRepoResponse;
 import java.io.IOException;
+import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
-@AllArgsConstructor
 public class GithubComponent {
   private final GithubConf conf;
   private final RestTemplate restTemplate;
+  private final UriComponents githubApiBaseUri;
+
+  public GithubComponent(
+      GithubConf conf,
+      RestTemplate restTemplate,
+      @Value("${github.api.baseuri}") String githubApiBaseUri) {
+    this.conf = conf;
+    this.restTemplate = restTemplate;
+    this.githubApiBaseUri = UriComponentsBuilder.fromHttpUrl(githubApiBaseUri).build();
+    ;
+  }
 
   public Optional<String> getGithubUserId(String token) {
     GHMyself currentUser;
@@ -72,5 +92,66 @@ public class GithubComponent {
     }
     assert responseBody != null;
     throw new BadRequestException((String) responseBody.get("error_description"));
+  }
+
+  public URI createRepoFor(Application application, String token) {
+    log.info("creating repo for {}", application);
+    HttpHeaders headers = getGithubHttpHeaders(token);
+    var requestBody =
+        new CreateRepoRequestBody(
+            application.getGithubRepositoryName(),
+            application.getDescription(),
+            application.isGithubRepositoryPrivate());
+    HttpEntity<CreateRepoRequestBody> entity = new HttpEntity<>(requestBody, headers);
+
+    CreateRepoResponse response =
+        restTemplate.exchange(getCreateRepoUri(), POST, entity, CreateRepoResponse.class).getBody();
+    return response.htmlUrl();
+  }
+
+  public URI updateRepoFor(Application application, String token, String githubUsername) {
+    log.info("updating repo for {}", application);
+
+    HttpHeaders headers = getGithubHttpHeaders(token);
+    UpdateRepoRequestBody requestBody =
+        new UpdateRepoRequestBody(
+            application.getGithubRepositoryName(),
+            application.getDescription(),
+            application.isGithubRepositoryPrivate(),
+            application.isArchived());
+    HttpEntity<UpdateRepoRequestBody> entity = new HttpEntity<>(requestBody, headers);
+
+    UpdateRepoResponse response =
+        restTemplate
+            .exchange(
+                getUpdateRepoUri(application, githubUsername).toUriString(),
+                PATCH,
+                entity,
+                UpdateRepoResponse.class)
+            .getBody();
+
+    return response.htmlUrl();
+  }
+
+  private UriComponents getUpdateRepoUri(Application application, String githubUsername) {
+    return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
+        .path("/repos/Mahefaa/poja_application")
+        .buildAndExpand(githubUsername, application.getPreviousGithubRepositoryName());
+  }
+
+  private static HttpHeaders getGithubHttpHeaders(String token) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(APPLICATION_JSON);
+    headers.setAccept(Collections.singletonList(APPLICATION_JSON));
+    headers.set("Authorization", "Bearer " + token);
+    headers.set("X-GitHub-Api-Version", "2022-11-28");
+    return headers;
+  }
+
+  private URI getCreateRepoUri() {
+    return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
+        .path("/user/repos")
+        .build()
+        .toUri();
   }
 }
