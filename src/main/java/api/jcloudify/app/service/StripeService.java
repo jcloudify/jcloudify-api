@@ -8,10 +8,9 @@ import com.stripe.net.RequestOptions;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerUpdateParams;
 import com.stripe.param.PaymentMethodAttachParams;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -22,64 +21,62 @@ public class StripeService {
     try {
       CustomerCreateParams params =
           CustomerCreateParams.builder().setName(name).setEmail(email).build();
-      return Customer.create(params);
+      return Customer.create(params, getRequestOption());
     } catch (StripeException e) {
       throw new RuntimeException(e);
     }
   }
 
   public List<PaymentMethod> getPaymentMethods(String customerId) {
-      try {
-          Customer customer = Customer.retrieve(customerId);
+    try {
+      Customer customer = Customer.retrieve(customerId);
 
-          PaymentMethodCollection pmCollection = customer.listPaymentMethods();
-          return pmCollection.getData();
-      } catch (StripeException e) {
-          throw new RuntimeException(e);
-      }
+      PaymentMethodCollection pmCollection = customer.listPaymentMethods();
+      return pmCollection.getData();
+    } catch (StripeException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  public Customer setDefaultPaymentMethod(String customerId, String paymentMethodId) {
-      try {
-          Customer customer = Customer.retrieve(customerId);
+  public PaymentMethod setDefaultPaymentMethod(String customerId, String paymentMethodId) {
+    try {
+      Customer customer = Customer.retrieve(customerId);
 
-          CustomerUpdateParams.InvoiceSettings invoiveSettingParams =
-                  CustomerUpdateParams.InvoiceSettings.builder()
-                          .setDefaultPaymentMethod(paymentMethodId)
-                          .build();
-          CustomerUpdateParams params = CustomerUpdateParams.builder()
-                  .setInvoiceSettings(invoiveSettingParams)
-                  .build();
-          return customer.update(params);
-      } catch (StripeException e) {
-          throw new RuntimeException(e);
-      }
+      CustomerUpdateParams.InvoiceSettings invoiveSettingParams =
+          CustomerUpdateParams.InvoiceSettings.builder()
+              .setDefaultPaymentMethod(paymentMethodId)
+              .build();
+      CustomerUpdateParams params =
+          CustomerUpdateParams.builder().setInvoiceSettings(invoiveSettingParams).build();
+      customer.update(params);
+      return PaymentMethod.retrieve(paymentMethodId);
+    } catch (StripeException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-    public PaymentMethod attachPaymentMethod(String customerId, String paymentMethodId) {
-        try {
-            PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
+  public PaymentMethod attachPaymentMethod(String customerId, String paymentMethodId) {
+    try {
+      PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
 
-            PaymentMethodAttachParams params = PaymentMethodAttachParams.builder()
-                    .setCustomer(customerId)
-                    .build();
-            return paymentMethod.attach(params);
-        } catch (StripeException e) {
-            throw new RuntimeException(e);
-        }
+      PaymentMethodAttachParams params =
+          PaymentMethodAttachParams.builder().setCustomer(customerId).build();
+      return paymentMethod.attach(params);
+    } catch (StripeException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    public PaymentMethod detachPaymentMethod(String paymentMethodId) {
-        try {
-            PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
+  public PaymentMethod detachPaymentMethod(String paymentMethodId) {
+    try {
+      PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
 
-            PaymentMethodAttachParams params = PaymentMethodAttachParams.builder()
-                    .build();
-            return paymentMethod.attach(params);
-        } catch (StripeException e) {
-            throw new RuntimeException(e);
-        }
+      PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().build();
+      return paymentMethod.attach(params);
+    } catch (StripeException e) {
+      throw new RuntimeException(e);
     }
+  }
 
   private RequestOptions getRequestOption() {
     return RequestOptions.builder().setApiKey(stripeConf.getApiKey()).build();

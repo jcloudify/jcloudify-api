@@ -5,12 +5,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PaymentMapper {
-    public PaymentMethod toRest(com.stripe.model.PaymentMethod domain) {
-        com.stripe.model.PaymentMethod.Card card = domain.getCard();
-        return new PaymentMethod()
-                .id(domain.getId())
-                .type(domain.getType())
-                .brand(card.getBrand())
-                .last4(card.getLast4());
-    }
+  public PaymentMethod toRest(com.stripe.model.PaymentMethod domain) {
+    com.stripe.model.PaymentMethod.Card card = domain.getCard();
+    return new PaymentMethod()
+        .id(domain.getId())
+        .type(domain.getType())
+        .brand(card.getBrand())
+        .last4(card.getLast4());
+  }
 }

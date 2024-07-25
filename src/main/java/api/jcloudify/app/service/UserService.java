@@ -28,8 +28,10 @@ public class UserService {
   }
 
   public User getUserById(String userId) {
-    return repository.findById(userId)
-            .orElseThrow(() -> new NotFoundException("The user identified by id " + userId + " is not found"));
+    return repository
+        .findById(userId)
+        .orElseThrow(
+            () -> new NotFoundException("The user identified by id " + userId + " is not found"));
   }
 
   private User createUserFrom(CreateUser createUser) {
