@@ -171,7 +171,6 @@ paths:
         - Application
       operationId: crupdateApplications
       summary: Create or update applications
-      description: update if id is provided, create otherwise.
       requestBody:
         required: true
         description: Application to crupdate

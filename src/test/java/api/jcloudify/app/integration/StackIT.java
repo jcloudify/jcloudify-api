@@ -130,8 +130,8 @@ public class StackIT extends FacadeIT {
         .updateDatetime(Instant.parse("2023-07-18T10:15:30.00Z"));
   }
 
-  private static InitiateDeployment createStack(StackType stackType) {
-    return new InitiateDeployment().stackType(stackType);
+  private static InitiateDeployment createStack(String id, StackType stackType) {
+    return new InitiateDeployment().id(id).stackType(stackType);
   }
 
   private static InitiateDeployment updateStack(String stackId, StackType stackType) {
@@ -158,11 +158,11 @@ public class StackIT extends FacadeIT {
             new InitiateStackDeploymentRequestBody()
                 .data(
                     List.of(
-                        createStack(EVENT),
-                        createStack(COMPUTE_PERMISSION),
-                        createStack(STORAGE_BUCKET),
-                        createStack(STORAGE_DATABASE_POSTGRES),
-                        createStack(STORAGE_DATABASE_SQLITE))));
+                        createStack("poja_app_event_stack_id", EVENT),
+                        createStack("poja_app_perm_stack_id", COMPUTE_PERMISSION),
+                        createStack("poja_app_bucket_stack_id", STORAGE_BUCKET),
+                        createStack("poja_app_postgres_stack_id", STORAGE_DATABASE_POSTGRES),
+                        createStack("poja_app_sqlite_stack_id", STORAGE_DATABASE_SQLITE))));
     var actualCreatedStacksData = requireNonNull(actualCreatedStacks.getData());
 
     assertNotNull(actualCreatedStacksData.getFirst().getCreationDatetime());

@@ -1,12 +1,9 @@
 package api.jcloudify.app.repository.model;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -32,9 +29,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @EqualsAndHashCode
 @ToString
 public class Application implements Serializable {
-  @Id
-  @GeneratedValue(strategy = IDENTITY)
-  private String id;
+  @Id private String id;
 
   private String name;
   private boolean archived;

@@ -104,6 +104,7 @@ public class TestMocks {
 
   public static ApplicationBase applicationToCreate() {
     return new ApplicationBase()
+        .id(POJA_APPLICATION_ID + "_2")
         .name(POJA_APPLICATION_NAME + "-2")
         .userId(JOE_DOE_ID)
         .githubRepository(POJA_APPLICATION_GITHUB_REPOSITORY)
