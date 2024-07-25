@@ -22,6 +22,7 @@ import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.model.TestingConfV1700;
 import api.jcloudify.app.endpoint.rest.model.User;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 
 public class TestMocks {
@@ -160,7 +161,10 @@ public class TestMocks {
     String humanReadableValuePojaVersion = POJA_V17_0_0.toHumanReadableValue();
     return new PojaConfV1700()
         .version(humanReadableValuePojaVersion)
-        .general(new GeneralPojaConfV1700().cliVersion(humanReadableValuePojaVersion))
+        .general(
+            new GeneralPojaConfV1700()
+                .cliVersion(humanReadableValuePojaVersion)
+                .customJavaDeps(new HashMap<>()))
         .database(new DatabaseConfV1700())
         .emailing(new MailingConfV1700())
         .genApiClient(new GenApiClientV1700())

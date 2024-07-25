@@ -44,9 +44,9 @@ general:
   with_snapstart: null
   with_queues_nb: null
   package_full_name: null
-  custom_java_repositories: null
-  custom_java_deps: null
-  custom_java_env_vars: null
+  custom_java_repositories: {}
+  custom_java_deps: {}
+  custom_java_env_vars: {}
   poja_python_repository_name: null
   poja_python_repository_domain: null
   poja_domain_owner: null

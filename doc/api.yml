@@ -933,9 +933,8 @@ components:
 
     StringMap:
       type: object
-      properties:
-        additionalProperties:
-          type: string
+      additionalProperties:
+        type: string
 
     WithQueuesNbEnum:
       type: number
