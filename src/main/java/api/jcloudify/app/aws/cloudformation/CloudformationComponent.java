@@ -11,8 +11,8 @@ import software.amazon.awssdk.services.cloudformation.CloudFormationClient;
 import software.amazon.awssdk.services.cloudformation.model.CloudFormationException;
 import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsRequest;
-import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsResponse;
 import software.amazon.awssdk.services.cloudformation.model.Parameter;
+import software.amazon.awssdk.services.cloudformation.model.StackEvent;
 import software.amazon.awssdk.services.cloudformation.model.Tag;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
 
@@ -89,14 +89,11 @@ public class CloudformationComponent {
     }
   }
 
-  public DescribeStackEventsResponse getStackEvents(String stackName, String nextToken) {
+  public List<StackEvent> getStackEvents(String stackName) {
     DescribeStackEventsRequest request =
-        DescribeStackEventsRequest.builder()
-            .nextToken(nextToken.isEmpty() ? null : nextToken)
-            .stackName(stackName)
-            .build();
+        DescribeStackEventsRequest.builder().stackName(stackName).build();
     try {
-      return cloudFormationClient.describeStackEvents(request);
+      return cloudFormationClient.describeStackEvents(request).stackEvents();
     } catch (CloudFormationException e) {
       throw new BadRequestException(
           String.format(

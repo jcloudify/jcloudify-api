@@ -18,11 +18,11 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsResponse;
 
 @Service
 @AllArgsConstructor
@@ -40,26 +40,19 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     String bucketKey =
         getBucketKey(
             userId, stack.getApplicationId(), stack.getEnvironmentId(), STACK_EVENT, "log.txt");
-    String nextToken =
-        crupdateStackEvent(stack.getName(), stackCrupdated.getContinuationToken(), bucketKey);
-    if (!nextToken.isEmpty()) {
-      eventProducer.accept(
-          List.of(
-              StackCrupdated.builder()
-                  .userId(userId)
-                  .stack(stack)
-                  .continuationToken(nextToken)
-                  .build()));
+    boolean isLast = crupdateStackEvent(stack.getName(), bucketKey);
+    if (!isLast) {
+      eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
     }
   }
 
-  private String crupdateStackEvent(String stackName, String nextToken, String bucketKey) {
-    File stackEventJsonFile = bucketComponent.download(bucketKey);
-    DescribeStackEventsResponse response =
-        cloudformationComponent.getStackEvents(stackName, nextToken);
-    List<StackEvent> stackEvents = response.stackEvents().stream().map(mapper::toRest).toList();
+  private boolean crupdateStackEvent(String stackName, String bucketKey) {
+    List<StackEvent> stackEvents =
+        cloudformationComponent.getStackEvents(stackName).stream().map(mapper::toRest).toList();
+    File stackEventJsonFile;
     try {
-      if (stackEventJsonFile.exists() && stackEventJsonFile.length() != 0) {
+      if (bucketComponent.doesExist(bucketKey)) {
+        stackEventJsonFile = bucketComponent.download(bucketKey);
         List<StackEvent> actual = om.readValue(stackEventJsonFile, new TypeReference<>() {});
         stackEvents = mergeAndSortStackEventList(actual, stackEvents);
       } else {
@@ -70,7 +63,9 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
       throw new InternalServerErrorException(e);
     }
     bucketComponent.upload(stackEventJsonFile, bucketKey);
-    return response.nextToken();
+    return Objects.requireNonNull(stackEvents.getFirst().getResourceStatus())
+        .toString()
+        .contains("COMPLETE");
   }
 
   private List<StackEvent> mergeAndSortStackEventList(
