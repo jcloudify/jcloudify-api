@@ -2,11 +2,13 @@ package api.jcloudify.app.service;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentMethod;
 import com.stripe.model.PaymentMethodCollection;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerUpdateParams;
+import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.PaymentMethodAttachParams;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -73,6 +75,26 @@ public class StripeService {
 
       PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().build();
       return paymentMethod.attach(params);
+    } catch (StripeException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public PaymentIntent createPaymentIntent(Long amount, String returnUrl, String customerId) {
+    try {
+      Customer customer = Customer.retrieve(customerId);
+      PaymentIntentCreateParams params =
+          PaymentIntentCreateParams.builder()
+              .setAmount(amount)
+              .setCurrency("usd")
+              .setCustomer(customer.getId())
+              .setConfirm(true)
+              .setReceiptEmail(customer.getEmail())
+              .setPaymentMethod(customer.getInvoiceSettings().getDefaultPaymentMethod())
+              .setReturnUrl(returnUrl)
+              .build();
+
+      return PaymentIntent.create(params);
     } catch (StripeException e) {
       throw new RuntimeException(e);
     }

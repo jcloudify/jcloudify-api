@@ -40,6 +40,10 @@ public class PaymentService {
     }
   }
 
+  public void initiatePayment(Long amount, String returnUrl, String customerId) {
+    stripeService.createPaymentIntent(amount, returnUrl, customerId);
+  }
+
   public List<PaymentMethod> getPaymentMethods(String userId) {
     User user = userService.getUserById(userId);
     return stripeService.getPaymentMethods(user.getStripeId());
