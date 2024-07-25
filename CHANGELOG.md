@@ -1,3 +1,12 @@
+## [3.5.1](https://github.com/jcloudify/jcloudify-api/compare/v3.5.0...v3.5.1) (2024-07-25)
+
+
+### Bug Fixes
+
+* **poja-conf:** poja custom are HashMaps ([73cd8a3](https://github.com/jcloudify/jcloudify-api/commit/73cd8a36ad9527f330ffcd0b80489e8a96559103))
+
+
+
 # [3.5.0](https://github.com/jcloudify/jcloudify-api/compare/v3.4.0...v3.5.0) (2024-07-25)
 
 
@@ -106,17 +115,6 @@
 ### Features
 
 * user must provide email adress during signup ([c02f97d](https://github.com/jcloudify/jcloudify-api/commit/c02f97db67c5ca5c4baf387a2ff55a4534db55fd))
-
-
-
-# [1.3.0](https://github.com/jcloudify/jcloudify-api/compare/v1.2.0...v1.3.0) (2024-06-04)
-
-
-### Features
-
-* avatar field to user data ([596a495](https://github.com/jcloudify/jcloudify-api/commit/596a4956bd0b4ce5a8391228c6597933be5b220d))
-* user sign up endpoint ([df971a6](https://github.com/jcloudify/jcloudify-api/commit/df971a688a7d024dc95a89f139d1c7efb0b1215d))
-* whoami endpoint ([866b901](https://github.com/jcloudify/jcloudify-api/commit/866b90109b06670a6a5230c944df343fa8376e8a))
 
 
 
