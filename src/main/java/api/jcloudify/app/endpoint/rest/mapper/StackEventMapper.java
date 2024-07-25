@@ -1,13 +1,13 @@
 package api.jcloudify.app.endpoint.rest.mapper;
 
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UNKNOWN_TO_SDK_VERSION;
+
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackResourceStatusType;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.cloudformation.model.ResourceStatus;
-
-import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UNKNOWN_TO_SDK_VERSION;
 
 @Component
 @Slf4j

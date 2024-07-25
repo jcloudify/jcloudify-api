@@ -21,7 +21,6 @@ import lombok.ToString;
 public class StackCrupdated extends PojaEvent {
   private String userId;
   private Stack stack;
-  private String continuationToken;
 
   @Override
   public Duration maxConsumerDuration() {

@@ -3,14 +3,31 @@ package api.jcloudify.app.file;
 import java.io.File;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 @AllArgsConstructor
 @Component
 public class ExtendedBucketComponent {
   private final BucketComponent bucketComponent;
+  private final BucketConf bucketConf;
 
   public final FileHash upload(File file, String key) {
     return bucketComponent.upload(file, key);
+  }
+
+  public boolean doesExist(String bucketKey) {
+    try {
+      HeadObjectRequest headObjectRequest =
+          HeadObjectRequest.builder().bucket(bucketConf.getBucketName()).key(bucketKey).build();
+
+      HeadObjectResponse headObjectResponse =
+          bucketConf.getS3Client().headObject(headObjectRequest);
+      return headObjectResponse != null;
+    } catch (NoSuchKeyException e) {
+      return false;
+    }
   }
 
   public static String getBucketKey(
