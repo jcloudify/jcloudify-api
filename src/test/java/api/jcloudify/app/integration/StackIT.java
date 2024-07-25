@@ -78,7 +78,11 @@ public class StackIT extends FacadeIT {
         .id(OTHER_POJA_APPLICATION_ID)
         .name("other-poja-test-app")
         .archived(false)
-        .githubRepository(new GithubRepository().name("other_poja_application").isPrivate(false))
+        .githubRepository(
+            new GithubRepository()
+                .name("other_poja_application")
+                .isPrivate(false)
+                .description("a regular poja app"))
         .userId(JOE_DOE_ID);
   }
 

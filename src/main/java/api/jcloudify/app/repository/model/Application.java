@@ -47,6 +47,8 @@ public class Application implements Serializable {
   @Column(name = "id_user")
   private String userId;
 
+  private String description;
+
   @OneToMany(mappedBy = "applicationId", cascade = CascadeType.ALL)
   private List<Environment> environments;
 

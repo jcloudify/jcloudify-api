@@ -3,13 +3,23 @@ package api.jcloudify.app.integration.conf.utils;
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
+import static api.jcloudify.app.model.PojaVersion.POJA_V17_0_0;
 
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
+import api.jcloudify.app.endpoint.rest.model.ComputeConfV1700;
+import api.jcloudify.app.endpoint.rest.model.ConcurrencyConfV1700;
+import api.jcloudify.app.endpoint.rest.model.DatabaseConfV1700;
 import api.jcloudify.app.endpoint.rest.model.Environment;
+import api.jcloudify.app.endpoint.rest.model.GenApiClientV1700;
+import api.jcloudify.app.endpoint.rest.model.GeneralPojaConfV1700;
 import api.jcloudify.app.endpoint.rest.model.GithubRepository;
+import api.jcloudify.app.endpoint.rest.model.IntegrationV1700;
+import api.jcloudify.app.endpoint.rest.model.MailingConfV1700;
+import api.jcloudify.app.endpoint.rest.model.PojaConfV1700;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
+import api.jcloudify.app.endpoint.rest.model.TestingConfV1700;
 import api.jcloudify.app.endpoint.rest.model.User;
 import java.time.Instant;
 import java.util.List;
@@ -35,7 +45,10 @@ public class TestMocks {
   public static final String POJA_APPLICATION_NAME = "poja-test-app";
   public static final String POJA_APPLICATION_ENVIRONMENT_ID = "poja_application_environment_id";
   public static final GithubRepository POJA_APPLICATION_GITHUB_REPOSITORY =
-      new GithubRepository().name("poja_application").isPrivate(false);
+      new GithubRepository()
+          .name("poja_application")
+          .isPrivate(false)
+          .description("a regular poja app");
   public static final Instant POJA_APPLICATION_CREATION_DATETIME =
       Instant.parse("2023-06-18T10:15:30.00Z");
   public static final String EVENT_STACK_ID = "event_stack_1_id";
@@ -113,7 +126,11 @@ public class TestMocks {
         .name("poja-test-app-2")
         .userId(JOE_DOE_ID)
         .creationDatetime(Instant.parse("2023-06-18T10:16:30.00Z"))
-        .githubRepository(new GithubRepository().name("poja_application_2").isPrivate(false))
+        .githubRepository(
+            new GithubRepository()
+                .name("poja_application_2")
+                .isPrivate(false)
+                .description("a regular poja app"))
         .archived(false)
         .environments(List.of());
   }
@@ -137,5 +154,19 @@ public class TestMocks {
         .stackType(stackType)
         .application(applicationToUpdate())
         .environment(pojaAppProdEnvironment());
+  }
+
+  public static PojaConfV1700 getValidPojaConfV17_0_0() {
+    String humanReadableValuePojaVersion = POJA_V17_0_0.toHumanReadableValue();
+    return new PojaConfV1700()
+        .version(humanReadableValuePojaVersion)
+        .general(new GeneralPojaConfV1700().cliVersion(humanReadableValuePojaVersion))
+        .database(new DatabaseConfV1700())
+        .emailing(new MailingConfV1700())
+        .genApiClient(new GenApiClientV1700())
+        .integration(new IntegrationV1700())
+        .compute(new ComputeConfV1700())
+        .concurrency(new ConcurrencyConfV1700())
+        .testing(new TestingConfV1700());
   }
 }

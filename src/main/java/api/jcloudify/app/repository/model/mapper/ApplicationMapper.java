@@ -20,6 +20,7 @@ public class ApplicationMapper {
         .isGithubRepositoryPrivate(TRUE.equals(githubRepository.getIsPrivate()))
         .userId(rest.getUserId())
         .archived(rest.getArchived())
+        .description(githubRepository.getDescription())
         .build();
   }
 }
