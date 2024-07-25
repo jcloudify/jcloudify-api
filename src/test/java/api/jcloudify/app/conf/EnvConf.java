@@ -4,7 +4,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 
 public class EnvConf {
   private static final String NETWORKING_CONFIG_STRING_VALUE =
-      "{\"region\": \"eu-west-3\",\"with_own_vpc\": true, \"ssm_sg_id\": \"sg-id\", \"ssm_subnet1_id\": \"subnet-1\", \"ssm_subnet2_id\": \"subnet-2\"}";
+      "{\"region\": \"eu-west-3\",\"with_own_vpc\": true, \"ssm_sg_id\": \"sg-id\","
+          + " \"ssm_subnet1_id\": \"subnet-1\", \"ssm_subnet2_id\": \"subnet-2\"}";
 
   void configureProperties(DynamicPropertyRegistry registry) {
     registry.add("spring.flyway.locations", () -> "classpath:/db/migration,classpath:/db/testdata");

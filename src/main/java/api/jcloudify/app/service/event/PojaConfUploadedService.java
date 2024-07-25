@@ -15,12 +15,13 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
 
   @Override
   public void accept(PojaConfUploaded pojaConfUploaded) {
-    var pojaConf = bucketComponent.download(
-        ExtendedBucketComponent.getBucketKey(
-            pojaConfUploaded.getUserId(),
-            pojaConfUploaded.getAppId(),
-            pojaConfUploaded.getEnvironmentId(),
-            POJA_CONF,
-            pojaConfUploaded.getFilename()));
+    var pojaConf =
+        bucketComponent.download(
+            ExtendedBucketComponent.getBucketKey(
+                pojaConfUploaded.getUserId(),
+                pojaConfUploaded.getAppId(),
+                pojaConfUploaded.getEnvironmentId(),
+                POJA_CONF,
+                pojaConfUploaded.getFilename()));
   }
 }
