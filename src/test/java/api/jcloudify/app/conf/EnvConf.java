@@ -14,5 +14,6 @@ public class EnvConf {
     registry.add("github.redirect.uri", () -> "dummy");
     registry.add("github.token.url", () -> "dummy");
     registry.add("apps.envs.networking", () -> NETWORKING_CONFIG_STRING_VALUE);
+    registry.add("github.api.baseuri", () -> "https://api.github.com");
   }
 }

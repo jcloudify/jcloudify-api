@@ -841,6 +841,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Environment'
+        repositoryUrl:
+          type: string
 
     EnvironmentType:
       type: string

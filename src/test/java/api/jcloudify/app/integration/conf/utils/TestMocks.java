@@ -119,7 +119,8 @@ public class TestMocks {
         .creationDatetime(POJA_APPLICATION_CREATION_DATETIME)
         .githubRepository(POJA_APPLICATION_GITHUB_REPOSITORY)
         .archived(false)
-        .environments(List.of(pojaAppProdEnvironment()));
+        .environments(List.of(pojaAppProdEnvironment()))
+        .repositoryUrl("http://github.com/user/repo");
   }
 
   public static Application joePojaApplication2() {
@@ -134,7 +135,8 @@ public class TestMocks {
                 .isPrivate(false)
                 .description("a regular poja app"))
         .archived(false)
-        .environments(List.of());
+        .environments(List.of())
+        .repositoryUrl("http://github.com/user/repo");
   }
 
   public static Application janePojaApplication() {
@@ -145,7 +147,8 @@ public class TestMocks {
         .creationDatetime(Instant.parse("2023-06-18T10:17:30.00Z"))
         .githubRepository(POJA_APPLICATION_GITHUB_REPOSITORY)
         .archived(false)
-        .environments(List.of());
+        .environments(List.of())
+        .repositoryUrl("http://github.com/user/repo");
   }
 
   public static Stack stackDeploymentInitiated(StackType stackType) {

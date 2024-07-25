@@ -42,7 +42,8 @@ public class ApplicationMapper {
         .archived(domain.isArchived())
         .userId(domain.getUserId())
         .creationDatetime(domain.getCreationDatetime())
-        .environments(getEnvironmentsByApplicationId(domain.getId()));
+        .environments(getEnvironmentsByApplicationId(domain.getId()))
+        .repositoryUrl(domain.getRepoHttpUrl());
   }
 
   private List<Environment> getEnvironmentsByApplicationId(String applicationId) {
