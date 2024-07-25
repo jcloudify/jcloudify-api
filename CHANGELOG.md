@@ -1,3 +1,20 @@
+# [3.5.0](https://github.com/jcloudify/jcloudify-api/compare/v3.4.0...v3.5.0) (2024-07-25)
+
+
+### Bug Fixes
+
+* remove duplicated stack id ([5618141](https://github.com/jcloudify/jcloudify-api/commit/561814123d2530148dfeffb72b4fa2cc6f85f27d))
+* update stack when it already exists ([bda3bf6](https://github.com/jcloudify/jcloudify-api/commit/bda3bf6892a699f3789d7c608fd06ab8b1d29b7b))
+
+
+### Features
+
+* add repository description to application, and fix poja-conf tests ([28b8a46](https://github.com/jcloudify/jcloudify-api/commit/28b8a463c0264aae19b0d72dd7d678409e55c31d))
+* PojaConfV17_0_0 ([d29fd7b](https://github.com/jcloudify/jcloudify-api/commit/d29fd7b7c3b5b5d8e3da50cbad18729bd9b5905b))
+* save stack logs in s3 ([d97c8af](https://github.com/jcloudify/jcloudify-api/commit/d97c8af8427f4467a33196be61f81d20f84d082a))
+
+
+
 # [3.4.0](https://github.com/jcloudify/jcloudify-api/compare/v3.3.0...v3.4.0) (2024-07-24)
 
 
@@ -100,21 +117,6 @@
 * avatar field to user data ([596a495](https://github.com/jcloudify/jcloudify-api/commit/596a4956bd0b4ce5a8391228c6597933be5b220d))
 * user sign up endpoint ([df971a6](https://github.com/jcloudify/jcloudify-api/commit/df971a688a7d024dc95a89f139d1c7efb0b1215d))
 * whoami endpoint ([866b901](https://github.com/jcloudify/jcloudify-api/commit/866b90109b06670a6a5230c944df343fa8376e8a))
-
-
-
-# [1.2.0](https://github.com/jcloudify/jcloudify-api/compare/v1.1.0...v1.2.0) (2024-05-23)
-
-
-### Bug Fixes
-
-* rename user role attributea and default value ([45552a1](https://github.com/jcloudify/jcloudify-api/commit/45552a1ebd05f88ddf3086f9244dd5e3158e705b))
-
-
-### Features
-
-* configure github authentication ([7d9519c](https://github.com/jcloudify/jcloudify-api/commit/7d9519c58844e615b9149a3ed8e3e97e076378cf))
-* implement endpoint to exchange github code into token ([5436877](https://github.com/jcloudify/jcloudify-api/commit/543687714d676d72d73cb8a4225380e1ce4b9616))
 
 
 
