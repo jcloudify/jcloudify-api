@@ -1179,6 +1179,7 @@ components:
         - ROLLBACK_IN_PROGRESS
         - ROLLBACK_COMPLETE
         - ROLLBACK_FAILED
+        - UNKNOWN_TO_SDK_VERSION
 
     PojaVersion:
       type: object
