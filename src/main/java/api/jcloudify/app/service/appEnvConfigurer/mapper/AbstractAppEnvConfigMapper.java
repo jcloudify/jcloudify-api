@@ -12,10 +12,13 @@ abstract sealed class AbstractAppEnvConfigMapper implements PojaConfFileMapper
     permits AppEnvConfigMapperFacade, PojaConfV17_0_0Mapper {
   protected final ObjectMapper yamlObjectMapper;
   protected final NetworkingService networkingService;
-  AbstractAppEnvConfigMapper(@Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper, NetworkingService networkingService) {
+
+  AbstractAppEnvConfigMapper(
+      @Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper,
+      NetworkingService networkingService) {
     this.yamlObjectMapper = yamlObjectMapper;
-		this.networkingService = networkingService;
-	}
+    this.networkingService = networkingService;
+  }
 
   protected final File createNamedTempFile(String filename) {
     return new File(createTempDir(), filename);
