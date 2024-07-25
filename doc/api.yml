@@ -828,6 +828,8 @@ components:
           type: string
         is_private:
           type: boolean
+        description:
+          type: string
 
     Application:
       allOf:
