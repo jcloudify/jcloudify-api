@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.cloudformation.model.ResourceStatus;
 
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UNKNOWN_TO_SDK_VERSION;
+
 @Component
 @Slf4j
 public class StackEventMapper {
@@ -22,9 +24,12 @@ public class StackEventMapper {
 
   private StackResourceStatusType toRestStackEventStatusType(ResourceStatus domain) {
     try {
+      if (domain == ResourceStatus.UNKNOWN_TO_SDK_VERSION) {
+        return UNKNOWN_TO_SDK_VERSION;
+      }
       return StackResourceStatusType.valueOf(domain.toString());
     } catch (IllegalArgumentException e) {
-      log.error("No enum constant for value: {}", domain);
+      log.error("No enum constant for value: {}", domain.getClass());
       throw new InternalServerErrorException(e);
     }
   }
