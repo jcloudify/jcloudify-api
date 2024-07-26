@@ -13,6 +13,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.COMPUTE_PERM_ST
 import static api.jcloudify.app.integration.conf.utils.TestMocks.COMPUTE_PERM_STACK_NAME;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.EVENT_STACK_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.EVENT_STACK_NAME;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.GH_APP_INSTALL_1_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JANE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JANE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
@@ -86,7 +87,8 @@ public class StackIT extends FacadeIT {
             new GithubRepository()
                 .name("other_poja_application")
                 .isPrivate(false)
-                .description("a regular poja app"))
+                .description("a regular poja app")
+                .installationId(GH_APP_INSTALL_1_ID))
         .userId(JOE_DOE_ID);
   }
 

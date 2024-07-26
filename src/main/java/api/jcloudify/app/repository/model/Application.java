@@ -37,6 +37,7 @@ public class Application implements Serializable {
 
   private String githubRepositoryName;
   private boolean isGithubRepositoryPrivate;
+  private String installationId;
 
   @Transient private String previousGithubRepositoryName;
 

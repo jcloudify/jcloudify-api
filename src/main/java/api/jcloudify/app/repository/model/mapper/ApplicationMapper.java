@@ -21,6 +21,7 @@ public class ApplicationMapper {
         .userId(rest.getUserId())
         .archived(rest.getArchived())
         .description(githubRepository.getDescription())
+        .installationId(githubRepository.getInstallationId())
         .build();
   }
 }

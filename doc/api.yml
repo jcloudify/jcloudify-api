@@ -128,7 +128,62 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-
+  /users/{userId}/installations:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - GithubApp
+      operationId: getUserInstallations
+      summary: get all user installations of jcloudify app
+      responses:
+        '200':
+          description: list of installations
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/GithubAppInstallationsResponse"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - GithubApp
+      operationId: crupdateGithubAppInstallations
+      summary: for each installation, it will create if id exist, update it otherwise
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/CrupdateGithubAppInstallationsRequestBody"
+      responses:
+        '200':
+          description: created or updated installations
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CrupdateGithubAppInstallationsResponse"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /users/{userId}/applications:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -829,6 +884,8 @@ components:
           type: boolean
         description:
           type: string
+        installation_id:
+          type: string
 
     Application:
       allOf:
@@ -1193,6 +1250,19 @@ components:
           type: integer
         human_readable_value:
           type: string
+    AppInstallation:
+      type: object
+      properties:
+        id:
+          type: string
+        gh_installation_id:
+          type: integer
+          format: int64
+        owner:
+          type: string
+        is_org:
+          type: boolean
+
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
@@ -1303,6 +1373,27 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnvironmentVariable"
+    GithubAppInstallationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppInstallation"
+    CrupdateGithubAppInstallationsRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppInstallation"
+    CrupdateGithubAppInstallationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppInstallation"
     PagedLogs:
       type: object
       allOf:

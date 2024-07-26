@@ -49,11 +49,13 @@ public class TestMocks {
   public static final String POJA_APPLICATION_ID = "poja_application_id";
   public static final String POJA_APPLICATION_NAME = "poja-test-app";
   public static final String POJA_APPLICATION_ENVIRONMENT_ID = "poja_application_environment_id";
+  public static final String GH_APP_INSTALL_1_ID = "gh_app_install_1_id";
   public static final GithubRepository POJA_APPLICATION_GITHUB_REPOSITORY =
       new GithubRepository()
           .name("poja_application")
           .isPrivate(false)
-          .description("a regular poja app");
+          .description("a regular poja app")
+          .installationId(GH_APP_INSTALL_1_ID);
   public static final Instant POJA_APPLICATION_CREATION_DATETIME =
       Instant.parse("2023-06-18T10:15:30.00Z");
   public static final String EVENT_STACK_ID = "event_stack_1_id";
@@ -137,7 +139,8 @@ public class TestMocks {
             new GithubRepository()
                 .name("poja_application_2")
                 .isPrivate(false)
-                .description("a regular poja app"))
+                .description("a regular poja app")
+                .installationId(GH_APP_INSTALL_1_ID))
         .archived(false)
         .environments(List.of())
         .repositoryUrl("http://github.com/user/repo");
