@@ -1,8 +1,6 @@
 package api.jcloudify.app.service;
 
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
-import api.jcloudify.app.endpoint.rest.security.AuthProvider;
-import api.jcloudify.app.endpoint.rest.security.model.Principal;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.Page;
 import api.jcloudify.app.model.PageFromOne;
@@ -12,7 +10,6 @@ import api.jcloudify.app.repository.jpa.dao.ApplicationDao;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.mapper.ApplicationMapper;
 import api.jcloudify.app.service.github.GithubService;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +39,7 @@ public class ApplicationService {
 
   @Transactional
   public List<Application> saveApplications(List<ApplicationBase> toSave) {
-    List<Application> createdApplications = new ArrayList<>();
+    /* List<Application> createdApplications = new ArrayList<>();
     List<Application> updatedApplications = new ArrayList<>();
     for (Application app : toSave.stream().map(mapper::toDomain).toList()) {
       if (repository.existsById(app.getId())) {
@@ -59,8 +56,8 @@ public class ApplicationService {
     var githubCreatedApplications = createRepoFrom(createdApplications, token);
     var githubUpdatedApplications = updateRepoFor(updatedApplications, token, githubUsername);
     var result = new ArrayList<>(githubCreatedApplications);
-    result.addAll(githubUpdatedApplications);
-    return result;
+    result.addAll(githubUpdatedApplications);*/
+    return repository.saveAll(toSave.stream().map(mapper::toDomain).toList());
   }
 
   private List<Application> createRepoFrom(List<Application> toCreate, String token) {
