@@ -4,13 +4,16 @@ import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.UNKNOW
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.pojaAppProdEnvironment;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -88,6 +91,32 @@ class ApplicationEnvironmentIT extends FacadeIT {
 
     var updateApplicationResponseData = requireNonNull(updateApplicationResponse.getData());
     assertTrue(updateApplicationResponseData.contains(toCreate));
+  }
+
+  @Test
+  void get_envionment_by_id_ok() throws ApiException {
+    ApiClient joeDoeClient = anApiClient();
+    EnvironmentApi api = new EnvironmentApi(joeDoeClient);
+
+    Environment actual =
+        api.getApplicationEnvironmentById(
+            JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID);
+
+    assertEquals(pojaAppProdEnvironment(), actual);
+  }
+
+  @Test
+  void get_envionment_by_id_ko() throws ApiException {
+    ApiClient joeDoeClient = anApiClient();
+    EnvironmentApi api = new EnvironmentApi(joeDoeClient);
+
+    assertThrowsBadRequestException(
+        () -> api.getApplicationEnvironmentById(JOE_DOE_ID, POJA_APPLICATION_ID, "dummy"),
+        "Environment identified by id dummy for application "
+            + POJA_APPLICATION_ID
+            + " of user "
+            + JOE_DOE_ID
+            + " not found");
   }
 
   private static Environment toCreateEnv() {

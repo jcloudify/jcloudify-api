@@ -41,4 +41,22 @@ public class EnvironmentService {
     String configurationFileKey = linkedEnvironment.getConfigurationFileKey();
     return configurerService.readConfig(userId, appId, environmentId, configurationFileKey);
   }
+
+  public Environment getUserApplicationEnvironmentById(
+      String userId, String applicationId, String environmentId) {
+    Environment environment =
+        repository
+            .findByCriteria(userId, applicationId, environmentId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(
+                        "Environment identified by id "
+                            + environmentId
+                            + " for application "
+                            + applicationId
+                            + " of user "
+                            + userId
+                            + " not found"));
+    return environment;
+  }
 }

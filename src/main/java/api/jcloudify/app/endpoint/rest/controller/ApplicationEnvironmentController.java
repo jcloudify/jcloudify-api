@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import api.jcloudify.app.endpoint.rest.mapper.EnvironmentMapper;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsResponse;
+import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentsResponse;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.service.EnvironmentService;
@@ -57,5 +58,14 @@ public class ApplicationEnvironmentController {
       @PathVariable String applicationId,
       @PathVariable String environmentId) {
     return service.getConfig(userId, applicationId, environmentId);
+  }
+
+  @GetMapping("/users/{userId}/applications/{applicationId}/environments/{environmentId}")
+  public Environment getApplicationEnvironmentById(
+      @PathVariable String applicationId,
+      @PathVariable String environmentId,
+      @PathVariable String userId) {
+    return mapper.toRest(
+        service.getUserApplicationEnvironmentById(userId, applicationId, environmentId));
   }
 }
