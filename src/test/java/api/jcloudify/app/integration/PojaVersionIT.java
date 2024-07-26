@@ -16,9 +16,7 @@ import api.jcloudify.app.endpoint.rest.model.PojaVersionsResponse;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;

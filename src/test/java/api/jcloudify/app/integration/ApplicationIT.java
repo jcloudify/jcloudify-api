@@ -30,9 +30,7 @@ import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

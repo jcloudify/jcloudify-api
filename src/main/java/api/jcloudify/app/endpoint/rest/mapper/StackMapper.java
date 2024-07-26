@@ -1,5 +1,7 @@
 package api.jcloudify.app.endpoint.rest.mapper;
 
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UNKNOWN_TO_SDK_VERSION;
+
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackResourceStatusType;
@@ -10,8 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.cloudformation.model.ResourceStatus;
-
-import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UNKNOWN_TO_SDK_VERSION;
 
 @Component
 @AllArgsConstructor
@@ -37,12 +37,12 @@ public class StackMapper {
 
   public StackEvent toRest(software.amazon.awssdk.services.cloudformation.model.StackEvent domain) {
     return new StackEvent()
-            .eventId(domain.eventId())
-            .logicalResourceId(domain.logicalResourceId())
-            .resourceType(domain.resourceType())
-            .resourceStatus(toRestStackEventStatusType(domain.resourceStatus()))
-            .timestamp(domain.timestamp())
-            .statusMessage(domain.resourceStatusReason());
+        .eventId(domain.eventId())
+        .logicalResourceId(domain.logicalResourceId())
+        .resourceType(domain.resourceType())
+        .resourceStatus(toRestStackEventStatusType(domain.resourceStatus()))
+        .timestamp(domain.timestamp())
+        .statusMessage(domain.resourceStatusReason());
   }
 
   private StackResourceStatusType toRestStackEventStatusType(ResourceStatus domain) {

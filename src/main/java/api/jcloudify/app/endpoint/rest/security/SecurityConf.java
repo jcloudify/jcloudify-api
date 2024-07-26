@@ -78,6 +78,7 @@ public class SecurityConf {
                     antMatcher(PUT, "/users/*/applications/*/environments"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*"),
+                    antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/events"),
                     antMatcher(PUT, "/users/*/applications/*/environments/*/config"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/config"))),
             AnonymousAuthenticationFilter.class)
@@ -123,27 +124,33 @@ public class SecurityConf {
                             GET, "/users/*/applications", authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
-                        new SelfUserMatcher(
+                        new SelfApplicationMatcher(
                             GET,
                             "/users/*/applications/*/environments",
                             authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
-                        new SelfUserMatcher(
+                        new SelfApplicationMatcher(
                             PUT,
                             "/users/*/applications/*/environments",
                             authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
-                        new SelfUserMatcher(
+                        new SelfApplicationMatcher(
                             GET,
                             "/users/*/applications/*/environments/*/stacks",
                             authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
-                        new SelfUserMatcher(
+                        new SelfApplicationMatcher(
                             GET,
                             "/users/*/applications/*/environments/*/stacks/*",
+                            authenticatedResourceProvider))
+                    .authenticated()
+                    .requestMatchers(
+                        new SelfApplicationMatcher(
+                            GET,
+                            "/users/*/applications/*/environments/*/stacks/*/events",
                             authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(

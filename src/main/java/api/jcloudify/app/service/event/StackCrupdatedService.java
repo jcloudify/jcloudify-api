@@ -1,5 +1,7 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.service.StackService.STACK_EVENT_FILENAME;
+import static api.jcloudify.app.service.StackService.getStackEventsBucketKey;
 import static java.io.File.createTempFile;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -37,7 +39,12 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     Stack stack = stackCrupdated.getStack();
     String userId = stackCrupdated.getUserId();
     String bucketKey =
-        getBucketKey(userId, stack.getApplicationId(), stack.getEnvironmentId(), stack.getId(), "log.json");
+        getStackEventsBucketKey(
+            userId,
+            stack.getApplicationId(),
+            stack.getEnvironmentId(),
+            stack.getId(),
+            STACK_EVENT_FILENAME);
     boolean isLast = crupdateStackEvent(stack.getName(), bucketKey);
     if (!isLast) {
       eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
@@ -81,10 +88,5 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
               return i2.compareTo(i1);
             })
         .toList();
-  }
-
-  private static String getBucketKey(String userId, String appId, String envId, String stackId, String filename) {
-    return String.format(
-            "users/%s/apps/%s/envs/%s/stacks/%s/events/%s", userId, appId, envId, stackId, filename);
   }
 }
