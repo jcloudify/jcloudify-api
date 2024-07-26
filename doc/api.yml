@@ -343,6 +343,37 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getApplicationEnvironmentById
+      summary: Get an environment by its identifier
+      responses:
+        '200':
+          description: the specified environment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Environment'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/config:
     parameters:
       - $ref: '#/components/parameters/userId'
