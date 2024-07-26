@@ -1,6 +1,7 @@
 package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.UNKNOWN;
+import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
@@ -94,6 +95,23 @@ class ApplicationEnvironmentIT extends FacadeIT {
   }
 
   @Test
+  void crupdate_environment_ko() {
+    ApiClient joeDoeClient = anApiClient();
+    EnvironmentApi api = new EnvironmentApi(joeDoeClient);
+    Environment toCreate =
+        new Environment().id(randomUUID().toString()).environmentType(PROD).state(UNKNOWN);
+
+    assertThrowsBadRequestException(
+        () ->
+            api.crupdateApplicationEnvironments(
+                JOE_DOE_ID,
+                POJA_APPLICATION_ID,
+                new CrupdateEnvironmentsRequestBody()
+                    .data(List.of(toCrupdateEnvironment(toCreate)))),
+        "Only one PROD environment can be created.");
+  }
+
+  @Test
   void get_envionment_by_id_ok() throws ApiException {
     ApiClient joeDoeClient = anApiClient();
     EnvironmentApi api = new EnvironmentApi(joeDoeClient);
@@ -120,7 +138,7 @@ class ApplicationEnvironmentIT extends FacadeIT {
   }
 
   private static Environment toCreateEnv() {
-    return new Environment().id(randomUUID().toString()).environmentType(PROD).state(UNKNOWN);
+    return new Environment().id(randomUUID().toString()).environmentType(PREPROD).state(UNKNOWN);
   }
 
   private static CrupdateEnvironment toCrupdateEnvironment(Environment environment) {
