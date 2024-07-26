@@ -937,6 +937,11 @@ components:
       additionalProperties:
         type: string
 
+    StringList:
+      type: array
+      items:
+        type: string
+
     WithQueuesNbEnum:
       type: number
       enum:
@@ -955,9 +960,9 @@ components:
         package_full_name:
           type: string
         custom_java_repositories:
-          $ref: "#/components/schemas/StringMap"
+          $ref: "#/components/schemas/StringList"
         custom_java_deps:
-          $ref: "#/components/schemas/StringMap"
+          $ref: "#/components/schemas/StringList"
         custom_java_env_vars:
           $ref: "#/components/schemas/StringMap"
     GenApiClient1:

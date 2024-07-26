@@ -43,8 +43,8 @@ general:
   with_snapstart: null
   with_queues_nb: null
   package_full_name: null
-  custom_java_repositories: {}
-  custom_java_deps: {}
+  custom_java_repositories: []
+  custom_java_deps: []
   custom_java_env_vars: {}
   cli_version: "17.0.0"
   poja_python_repository_name: null
