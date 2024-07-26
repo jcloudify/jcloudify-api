@@ -8,7 +8,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import api.jcloudify.app.endpoint.rest.model.Token;
 import api.jcloudify.app.model.exception.ApiException;
 import api.jcloudify.app.model.exception.BadRequestException;
-import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
 import api.jcloudify.app.service.github.model.CreateRepoResponse;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
@@ -108,14 +107,10 @@ public class GithubComponent {
     throw new BadRequestException((String) responseBody.get("error_description"));
   }
 
-  public URI createRepoFor(Application application, String token) {
-    log.info("creating repo for {}", application);
+  public URI createRepoFor(CreateRepoRequestBody requestBody, String token) {
+    log.info("creating repo for {}", requestBody);
     HttpHeaders headers = getGithubHttpHeaders(token);
-    var requestBody =
-        new CreateRepoRequestBody(
-            application.getGithubRepositoryName(),
-            application.getDescription(),
-            application.isGithubRepositoryPrivate());
+
     HttpEntity<CreateRepoRequestBody> entity = new HttpEntity<>(requestBody, headers);
 
     CreateRepoResponse response =
@@ -123,22 +118,20 @@ public class GithubComponent {
     return response.htmlUrl();
   }
 
-  public URI updateRepoFor(Application application, String token, String githubUsername) {
-    log.info("updating repo for {}", application);
-
+  public URI updateRepoFor(
+      UpdateRepoRequestBody requestBody,
+      String repositoryName,
+      String token,
+      String repoOwnerUsername) {
+    log.info("updating repo for {}", requestBody);
     HttpHeaders headers = getGithubHttpHeaders(token);
-    UpdateRepoRequestBody requestBody =
-        new UpdateRepoRequestBody(
-            application.getGithubRepositoryName(),
-            application.getDescription(),
-            application.isGithubRepositoryPrivate(),
-            application.isArchived());
+
     HttpEntity<UpdateRepoRequestBody> entity = new HttpEntity<>(requestBody, headers);
 
     UpdateRepoResponse response =
         restTemplate
             .exchange(
-                getUpdateRepoUri(application, githubUsername).toUriString(),
+                getUpdateRepoUri(repositoryName, repoOwnerUsername).toUriString(),
                 PATCH,
                 entity,
                 UpdateRepoResponse.class)
@@ -147,10 +140,10 @@ public class GithubComponent {
     return response.htmlUrl();
   }
 
-  private UriComponents getUpdateRepoUri(Application application, String githubUsername) {
+  private UriComponents getUpdateRepoUri(String repositoryName, String githubUsername) {
     return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
-        .path("/repos/Mahefaa/poja_application")
-        .buildAndExpand(githubUsername, application.getPreviousGithubRepositoryName());
+        .path("/repos/{owner}/{repositoryName}")
+        .buildAndExpand(githubUsername, repositoryName);
   }
 
   private static HttpHeaders getGithubHttpHeaders(String token) {
@@ -164,7 +157,7 @@ public class GithubComponent {
 
   private URI getCreateRepoUri() {
     return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
-        .path("/user/repos")
+        .path("/repos/jcloudify/jcloudify-starter-template/generate")
         .build()
         .toUri();
   }

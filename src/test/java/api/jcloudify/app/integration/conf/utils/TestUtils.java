@@ -4,7 +4,6 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -16,7 +15,6 @@ import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -41,14 +39,6 @@ public class TestUtils {
     when(githubComponent.getGithubUserId(JOE_DOE_TOKEN)).thenReturn(Optional.of(JOE_DOE_GITHUB_ID));
     when(githubComponent.getGithubUserId(JANE_DOE_TOKEN))
         .thenReturn(Optional.of(JANE_DOE_GITHUB_ID));
-    when(githubComponent.createRepoFor(any(), eq(JOE_DOE_TOKEN)))
-        .thenReturn(URI.create("https://github.com/JohnDoe"));
-    when(githubComponent.createRepoFor(any(), eq(JANE_DOE_TOKEN)))
-        .thenReturn(URI.create("https://github.com/JaneDoe"));
-    when(githubComponent.updateRepoFor(any(), eq(JOE_DOE_TOKEN), any()))
-        .thenReturn(URI.create("https://github.com/JohnDoe"));
-    when(githubComponent.updateRepoFor(any(), eq(JANE_DOE_TOKEN), any()))
-        .thenReturn(URI.create("https://github.com/JaneDoe"));
     when(githubComponent.listApplications()).thenReturn(ghApps());
   }
 

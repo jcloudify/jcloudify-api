@@ -1,3 +1,6 @@
 package api.jcloudify.app.service.github.model;
 
-public record CreateRepoRequestBody(String name, String description, boolean isPrivate) {}
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record CreateRepoRequestBody(
+    String owner, String name, String description, @JsonProperty("private") boolean isPrivate) {}
