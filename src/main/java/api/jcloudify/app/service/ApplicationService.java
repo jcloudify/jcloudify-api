@@ -1,5 +1,7 @@
 package api.jcloudify.app.service;
 
+import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.ApplicationCrupdated;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.Page;
@@ -9,7 +11,7 @@ import api.jcloudify.app.repository.jpa.ApplicationRepository;
 import api.jcloudify.app.repository.jpa.dao.ApplicationDao;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.mapper.ApplicationMapper;
-import api.jcloudify.app.service.github.GithubService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -24,59 +26,46 @@ public class ApplicationService {
   private final ApplicationRepository repository;
   private final ApplicationDao dao;
   private final ApplicationMapper mapper;
-  private final GithubService githubService;
+  private final EventProducer<ApplicationCrupdated> applicationCrupdatedEventProducer;
 
   public ApplicationService(
       ApplicationRepository repository,
       ApplicationDao dao,
       @Qualifier("DomainApplicationMapper") ApplicationMapper mapper,
-      GithubService githubService) {
+      EventProducer<ApplicationCrupdated> applicationCrupdatedEventProducer) {
     this.repository = repository;
     this.dao = dao;
     this.mapper = mapper;
-    this.githubService = githubService;
+    this.applicationCrupdatedEventProducer = applicationCrupdatedEventProducer;
   }
 
   @Transactional
   public List<Application> saveApplications(List<ApplicationBase> toSave) {
-    /* List<Application> createdApplications = new ArrayList<>();
-    List<Application> updatedApplications = new ArrayList<>();
-    for (Application app : toSave.stream().map(mapper::toDomain).toList()) {
+    List<ApplicationCrupdated> events = new ArrayList<>();
+    List<Application> entities = toSave.stream().map(mapper::toDomain).toList();
+    for (Application app : entities) {
       if (repository.existsById(app.getId())) {
         var persisted = getById(app.getId());
         app.setPreviousGithubRepositoryName(persisted.getGithubRepositoryName());
-        updatedApplications.add(repository.save(app));
-      } else {
-        createdApplications.add(repository.save(app));
       }
+      events.add(toApplicationCrupdatedEvent(app));
     }
-    Principal principal = AuthProvider.getPrincipal();
-    String token = principal.getBearer();
-    String githubUsername = principal.getUsername();
-    var githubCreatedApplications = createRepoFrom(createdApplications, token);
-    var githubUpdatedApplications = updateRepoFor(updatedApplications, token, githubUsername);
-    var result = new ArrayList<>(githubCreatedApplications);
-    result.addAll(githubUpdatedApplications);*/
-    return repository.saveAll(toSave.stream().map(mapper::toDomain).toList());
+    var saved = repository.saveAll(entities);
+    applicationCrupdatedEventProducer.accept(events);
+    return saved;
   }
 
-  private List<Application> createRepoFrom(List<Application> toCreate, String token) {
-    toCreate.forEach(
-        app -> {
-          var url = githubService.createRepoFor(app, token);
-          app.setRepoHttpUrl(url.toString());
-        });
-    return toCreate;
-  }
-
-  private List<Application> updateRepoFor(
-      List<Application> toUpdate, String token, String githubUsername) {
-    toUpdate.forEach(
-        app -> {
-          var url = githubService.updateRepoFor(app, token, githubUsername);
-          app.setRepoHttpUrl(url.toString());
-        });
-    return toUpdate;
+  private ApplicationCrupdated toApplicationCrupdatedEvent(Application entity) {
+    return ApplicationCrupdated.builder()
+        .applicationId(entity.getId())
+        .applicationRepoName(entity.getGithubRepositoryName())
+        .repoUrl(entity.getRepoHttpUrl())
+        .installationId(entity.getInstallationId())
+        .description(entity.getDescription())
+        .isRepoPrivate(entity.isGithubRepositoryPrivate())
+        .previousApplicationRepoName(entity.getPreviousGithubRepositoryName())
+        .isArchived(entity.isArchived())
+        .build();
   }
 
   public Application getById(String id) {

@@ -2,10 +2,11 @@ package api.jcloudify.app.service.github;
 
 import api.jcloudify.app.endpoint.rest.model.Token;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
-import api.jcloudify.app.repository.model.Application;
+import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
+import api.jcloudify.app.service.github.model.UpdateRepoRequestBody;
 import java.net.URI;
-import java.util.List;
+import java.time.Duration;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,15 +20,23 @@ public class GithubService {
     return githubComponent.exchangeCodeToToken(code);
   }
 
-  public URI createRepoFor(Application application, String token) {
-    return githubComponent.createRepoFor(application, token);
+  public URI createRepoFor(CreateRepoRequestBody requestBody, String token) {
+    return githubComponent.createRepoFor(requestBody, token);
   }
 
-  public URI updateRepoFor(Application application, String token, String githubUsername) {
-    return githubComponent.updateRepoFor(application, token, githubUsername);
+  public URI updateRepoFor(
+      UpdateRepoRequestBody application,
+      String repositoryName,
+      String token,
+      String githubUsername) {
+    return githubComponent.updateRepoFor(application, repositoryName, token, githubUsername);
   }
 
   public Set<GhAppInstallation> listApplications() {
     return githubComponent.listApplications();
+  }
+
+  public String getInstallationToken(long installationId, Duration duration) {
+    return githubComponent.getAppInstallationToken(installationId, duration);
   }
 }

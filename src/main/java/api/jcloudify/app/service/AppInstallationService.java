@@ -1,10 +1,12 @@
 package api.jcloudify.app.service;
 
+import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.AppInstallationRepository;
 import api.jcloudify.app.repository.model.AppInstallation;
 import api.jcloudify.app.service.github.GithubService;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -28,5 +30,14 @@ public class AppInstallationService {
             .map(GhAppInstallation::appId)
             .collect(Collectors.toUnmodifiableSet());
     return persisted.stream().filter((a) -> mappedInstallations.contains(a.getGhId())).toList();
+  }
+
+  public Optional<AppInstallation> findById(String id) {
+    return repository.findById(id);
+  }
+
+  public AppInstallation getById(String id) {
+    return findById(id)
+        .orElseThrow(() -> new NotFoundException("AppInstallation#Id = " + id + " not found."));
   }
 }
