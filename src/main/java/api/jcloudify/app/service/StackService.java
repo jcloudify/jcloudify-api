@@ -1,5 +1,6 @@
 package api.jcloudify.app.service;
 
+import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -8,16 +9,23 @@ import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
+import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackType;
+import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.Page;
 import api.jcloudify.app.model.PageFromOne;
+import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.StackRepository;
 import api.jcloudify.app.repository.jpa.dao.StackDao;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.repository.model.Stack;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +37,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Service
 public class StackService {
+  public static final String STACK_EVENT_FILENAME = "log.json";
   private final CloudformationTemplateConf cloudformationTemplateConf;
   private final CloudformationComponent cloudformationComponent;
   private final EnvironmentService environmentService;
@@ -37,6 +46,30 @@ public class StackService {
   private final StackMapper mapper;
   private final StackDao dao;
   private final EventProducer eventProducer;
+  private final ExtendedBucketComponent bucketComponent;
+  private final ObjectMapper om;
+
+  public Page<StackEvent> getStackEvents(
+      String userId,
+      String applicationId,
+      String environmentId,
+      String stackId,
+      PageFromOne pageFromOne,
+      BoundedPageSize boundedPageSize) {
+    String stackEventsBucketKey =
+        getStackEventsBucketKey(
+            userId, applicationId, environmentId, stackId, STACK_EVENT_FILENAME);
+    try {
+      List<StackEvent> stackEvents =
+          fromStackEventFileToList(bucketComponent, om, stackId, stackEventsBucketKey);
+      int firstIndex = (pageFromOne.getValue() - 1) * boundedPageSize.getValue();
+      int lastIndex = min(firstIndex + boundedPageSize.getValue() - 1, stackEvents.size() - 1);
+      var data = stackEvents.subList(firstIndex, lastIndex);
+      return new Page<>(pageFromOne, boundedPageSize, data);
+    } catch (IOException e) {
+      throw new InternalServerErrorException(e);
+    }
+  }
 
   public List<api.jcloudify.app.endpoint.rest.model.Stack> process(
       List<InitiateDeployment> deployments,
@@ -137,6 +170,25 @@ public class StackService {
       eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(saved).build()));
       return mapper.toRest(saved, application, environment);
     }
+  }
+
+  public static String getStackEventsBucketKey(
+      String userId, String appId, String envId, String stackId, String filename) {
+    return String.format(
+        "users/%s/apps/%s/envs/%s/stacks/%s/events/%s", userId, appId, envId, stackId, filename);
+  }
+
+  private static List<StackEvent> fromStackEventFileToList(
+      ExtendedBucketComponent bucketComponent,
+      ObjectMapper om,
+      String stackId,
+      String stackEventsBucketKey)
+      throws IOException {
+    if (bucketComponent.doesExist(stackEventsBucketKey)) {
+      File stackEventsFile = bucketComponent.download(stackEventsBucketKey);
+      return om.readValue(stackEventsFile, new TypeReference<>() {});
+    }
+    throw new NotFoundException("No events found for stack id=" + stackId); // Unreachable statement
   }
 
   private static Map<String, String> getParametersFrom(

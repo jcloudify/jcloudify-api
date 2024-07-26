@@ -13,21 +13,16 @@ import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
-
-import java.io.File;
+import api.jcloudify.app.file.ExtendedBucketComponent;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
-
-import api.jcloudify.app.file.ExtendedBucketComponent;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.function.Executable;
 import org.kohsuke.github.GHMyself;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 
 public class TestUtils {
   public static ApiClient anApiClient(String token, int serverPort) {
@@ -71,20 +66,24 @@ public class TestUtils {
         .thenReturn(POJA_CF_STACK_ID);
   }
 
-  public static void setUpBucketComponent(BucketComponent bucketComponent)
-          throws IOException {
+  public static void setUpBucketComponent(BucketComponent bucketComponent) throws IOException {
     when(bucketComponent.presign(any(), any()))
         .thenReturn(new URL("https://example.com/templatel"));
-
   }
 
-  public static void setUpExtendedBucketComponent(ExtendedBucketComponent extendedBucketComponent) throws IOException {
+  public static void setUpExtendedBucketComponent(ExtendedBucketComponent extendedBucketComponent)
+      throws IOException {
     ClassPathResource stackEventResource = new ClassPathResource("files/log.json");
-    String stackEventFileBucketKey = String.format(
-            "users/%s/apps/%s/envs/%s/stacks/%s/events/%s", JOE_DOE_ID, OTHER_POJA_APPLICATION_ID,
-            OTHER_POJA_APPLICATION_ENVIRONMENT_ID, COMPUTE_PERM_STACK_ID, "log.json");
+    String stackEventFileBucketKey =
+        String.format(
+            "users/%s/apps/%s/envs/%s/stacks/%s/events/%s",
+            JOE_DOE_ID,
+            OTHER_POJA_APPLICATION_ID,
+            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+            COMPUTE_PERM_STACK_ID,
+            "log.json");
     when(extendedBucketComponent.download(stackEventFileBucketKey))
-            .thenReturn(stackEventResource.getFile());
+        .thenReturn(stackEventResource.getFile());
     when(extendedBucketComponent.doesExist(stackEventFileBucketKey)).thenReturn(true);
   }
 

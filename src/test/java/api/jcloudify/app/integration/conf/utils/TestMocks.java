@@ -22,13 +22,9 @@ import api.jcloudify.app.endpoint.rest.model.MailingConfV1700;
 import api.jcloudify.app.endpoint.rest.model.PojaConfV1700;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
-import api.jcloudify.app.endpoint.rest.model.StackResourceStatusType;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.model.TestingConfV1700;
 import api.jcloudify.app.endpoint.rest.model.User;
-import org.springframework.core.io.FileSystemResource;
-
-import java.io.File;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -187,21 +183,24 @@ public class TestMocks {
   }
 
   public static List<StackEvent> permStackEvents() {
-    StackEvent createInProgress = new StackEvent()
+    StackEvent createInProgress =
+        new StackEvent()
             .eventId("ExecutionRole-CREATE_IN_PROGRESS-2024-07-26T05:08:30.029Z")
             .logicalResourceId("ExecutionRole")
             .resourceType("AWS::IAM::Role")
             .timestamp(Instant.parse("2024-07-26T05:08:30.029Z"))
             .resourceStatus(CREATE_IN_PROGRESS)
             .statusMessage(null);
-    StackEvent createComplete = new StackEvent()
+    StackEvent createComplete =
+        new StackEvent()
             .eventId("ExecutionRole-CREATE_COMPLETE-2024-07-26T05:08:48.624Z")
             .logicalResourceId("ExecutionRole")
             .resourceType("AWS::IAM::Role")
             .timestamp(Instant.parse("2024-07-26T05:08:48.624Z"))
             .resourceStatus(CREATE_COMPLETE)
             .statusMessage(null);
-    StackEvent updateInProgress = new StackEvent()
+    StackEvent updateInProgress =
+        new StackEvent()
             .eventId("9094a550-4b12-11ef-804a-0642aee31ca5")
             .logicalResourceId("prod-compute-permission-poja-second")
             .resourceType("AWS::CloudFormation::Stack")
