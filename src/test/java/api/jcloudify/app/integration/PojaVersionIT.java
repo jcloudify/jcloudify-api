@@ -6,32 +6,21 @@ import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudforma
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
-import api.jcloudify.app.conf.FacadeIT;
+import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.api.PojaVersionsApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.PojaVersion;
 import api.jcloudify.app.endpoint.rest.model.PojaVersionsResponse;
-import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
-import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.io.IOException;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.server.LocalServerPort;
 
 @Slf4j
-class PojaVersionIT extends FacadeIT {
-
-  @MockBean GithubComponent githubComponent;
-  @MockBean CloudformationComponent cloudformationComponent;
-  @MockBean BucketComponent bucketComponent;
-  @LocalServerPort private int port;
-
+class PojaVersionIT extends MockedThirdParties {
   @BeforeEach
   void setup() throws IOException {
     setUpGithub(githubComponent);

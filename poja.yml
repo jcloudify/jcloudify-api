@@ -17,7 +17,7 @@ frontal_function_timeout: 30
 frontal_memory: 2048
 frontal_reserved_concurrent_executions_nb: null
 jacoco_min_coverage: '0.2'
-java_facade_it: FacadeIT
+java_facade_it: api.jcloudify.app.integration.conf.MockedThirdParties
 package_full_name: api.jcloudify.app
 poja_domain_owner: 088312068315
 poja_python_repository_domain: python-numer-tech

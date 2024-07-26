@@ -4,14 +4,14 @@ import static api.jcloudify.app.endpoint.rest.controller.health.PingController.O
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import api.jcloudify.app.PojaGenerated;
-import api.jcloudify.app.conf.FacadeIT;
+import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.controller.health.HealthDbController;
 import api.jcloudify.app.endpoint.rest.controller.health.PingController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @PojaGenerated
-class HealthControllerIT extends FacadeIT {
+class HealthControllerIT extends MockedThirdParties {
 
   @Autowired PingController pingController;
   @Autowired HealthDbController healthDbController;
