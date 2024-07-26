@@ -77,6 +77,7 @@ public class SecurityConf {
                     antMatcher(GET, "/poja-versions"),
                     antMatcher(GET, "/users/*/applications/*/environments"),
                     antMatcher(PUT, "/users/*/applications/*/environments"),
+                    antMatcher(GET, "/users/*/applications/*/environments/*"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/events"),
@@ -138,6 +139,12 @@ public class SecurityConf {
                         new SelfApplicationMatcher(
                             PUT,
                             "/users/*/applications/*/environments",
+                            authenticatedResourceProvider))
+                    .authenticated()
+                    .requestMatchers(
+                        new SelfApplicationMatcher(
+                            GET,
+                            "/users/*/applications/*/environments/*",
                             authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
