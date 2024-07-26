@@ -35,8 +35,6 @@ public class ExtendedBucketComponent {
     return switch (fileType) {
       case POJA_CONF -> String.format(
           "users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
-      case STACK_EVENT -> String.format(
-          "users/%s/apps/%s/envs/%s/stack-events/%s", userId, appId, envId, filename);
     };
   }
 
