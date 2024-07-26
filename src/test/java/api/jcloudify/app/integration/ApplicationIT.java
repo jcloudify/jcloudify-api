@@ -8,6 +8,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToCr
 import static api.jcloudify.app.integration.conf.utils.TestMocks.janePojaApplication;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication1;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication2;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
@@ -114,6 +115,26 @@ class ApplicationIT extends FacadeIT {
     assertTrue(nameFilteredPagedResponseData.contains(joePojaApplication2()));
     assertFalse(nameFilteredPagedResponseData.contains(joePojaApplication1()));
     assertEquals(1, nameFilteredPagedResponse.getCount());
+  }
+
+  @Test
+  void get_application_by_id_ok() throws ApiException {
+    ApiClient joeDoeClient = anApiClient();
+    ApplicationApi api = new ApplicationApi(joeDoeClient);
+
+    Application actual = api.getApplicationById(JOE_DOE_ID, POJA_APPLICATION_ID);
+
+    assertEquals(joePojaApplication1(), actual);
+  }
+
+  @Test
+  void get_application_by_id_ko() {
+    ApiClient joeDoeClient = anApiClient();
+    ApplicationApi api = new ApplicationApi(joeDoeClient);
+
+    assertThrowsBadRequestException(
+        () -> api.getApplicationById(JOE_DOE_ID, "non_existent_application_id"),
+        "Application identified by id=non_existent_application_id not found");
   }
 
   private static ApplicationBase toApplicationBase(Application application) {
