@@ -21,11 +21,13 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPL
 import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.permStackEvents;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.stackDeploymentInitiated;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsForbiddenException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.ignoreStackIdsAndDatetime;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpExtendedBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +49,10 @@ import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
+import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
+
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.Instant;
 import java.util.List;
@@ -68,6 +73,8 @@ public class StackIT extends FacadeIT {
   @MockBean CloudformationComponent cloudformationComponent;
   @MockBean BucketComponent bucketComponent;
   @MockBean EventProducer eventProducer;
+  @MockBean
+  ExtendedBucketComponent extendedBucketComponent;
 
   private ApiClient anApiClient(String token) {
     return TestUtils.anApiClient(token, port);
@@ -139,10 +146,11 @@ public class StackIT extends FacadeIT {
   }
 
   @BeforeEach
-  void setup() throws MalformedURLException {
+  void setup() throws IOException {
     setUpGithub(githubComponent);
     setUpCloudformationComponent(cloudformationComponent);
     setUpBucketComponent(bucketComponent);
+    setUpExtendedBucketComponent(extendedBucketComponent);
   }
 
   @Test
@@ -196,8 +204,8 @@ public class StackIT extends FacadeIT {
             new InitiateStackDeploymentRequestBody()
                 .data(
                     List.of(
-                        updateStack("event_stack_1_id", EVENT),
-                        updateStack("compute_perm_stack_1_id", COMPUTE_PERMISSION),
+                        updateStack(EVENT_STACK_ID, EVENT),
+                        updateStack(COMPUTE_PERM_STACK_ID, COMPUTE_PERMISSION),
                         updateStack("bucket_stack_1_id", STORAGE_BUCKET))));
     var actualCreatedStacksData = requireNonNull(actualCreatedStacks.getData());
     var firstData = actualCreatedStacksData.getFirst();
@@ -256,7 +264,7 @@ public class StackIT extends FacadeIT {
             JOE_DOE_ID,
             OTHER_POJA_APPLICATION_ID,
             OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
-            "event_stack_1_id");
+                EVENT_STACK_ID);
     Stack actualBucketStack =
         api.getStackById(
             JOE_DOE_ID,
@@ -279,7 +287,40 @@ public class StackIT extends FacadeIT {
                 JANE_DOE_ID,
                 POJA_APPLICATION_ID,
                 POJA_APPLICATION_ENVIRONMENT_ID,
-                "compute_perm_stack_1_id"),
+                COMPUTE_PERM_STACK_ID),
         "Bad credentials");
+  }
+
+  @Test
+  void get_stack_events_ok() throws ApiException {
+    ApiClient joeDoeClient = anApiClient(JOE_DOE_TOKEN);
+    StackApi api = new StackApi(joeDoeClient);
+
+    var actual = api.getStackEvents(
+            JOE_DOE_ID,
+            OTHER_POJA_APPLICATION_ID,
+            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+            COMPUTE_PERM_STACK_ID,
+            null, null
+    );
+    var actualData = requireNonNull(actual.getData());
+
+    assertTrue(actualData.containsAll(permStackEvents()));
+  }
+
+  @Test
+  void get_other_stack_event_ko() {
+    ApiClient janeDoeClient = anApiClient(JANE_DOE_TOKEN);
+    StackApi api = new StackApi(janeDoeClient);
+
+    assertThrowsForbiddenException(
+            () ->
+                    api.getStackEvents(
+                            JOE_DOE_ID,
+                            OTHER_POJA_APPLICATION_ID,
+                            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+                            COMPUTE_PERM_STACK_ID,
+                            null, null),
+            "Bad credentials");
   }
 }
