@@ -5,7 +5,7 @@ import static java.io.File.createTempFile;
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
-import api.jcloudify.app.endpoint.rest.mapper.StackEventMapper;
+import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class StackCrupdatedService implements Consumer<StackCrupdated> {
   private final CloudformationComponent cloudformationComponent;
   private final ExtendedBucketComponent bucketComponent;
-  private final StackEventMapper mapper;
+  private final StackMapper mapper;
   private final ObjectMapper om;
   private final EventProducer eventProducer;
 
@@ -58,7 +58,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
       }
       om.writeValue(stackEventJsonFile, stackEvents);
       bucketComponent.upload(stackEventJsonFile, bucketKey);
-      return Objects.requireNonNull(stackEvents.getLast().getResourceStatus())
+      return Objects.requireNonNull(stackEvents.getFirst().getResourceStatus())
           .toString()
           .contains("COMPLETE");
     } catch (IOException e) {
@@ -78,7 +78,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
               if (i1 == null && i2 == null) return 0;
               if (i1 == null) return 1;
               if (i2 == null) return -1;
-              return i1.compareTo(i2);
+              return i2.compareTo(i1);
             })
         .toList();
   }
