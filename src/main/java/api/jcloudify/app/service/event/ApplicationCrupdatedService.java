@@ -1,10 +1,12 @@
 package api.jcloudify.app.service.event;
 
 import api.jcloudify.app.endpoint.event.model.ApplicationCrupdated;
+import api.jcloudify.app.repository.jpa.ApplicationRepository;
 import api.jcloudify.app.service.AppInstallationService;
 import api.jcloudify.app.service.github.GithubService;
 import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
 import api.jcloudify.app.service.github.model.UpdateRepoRequestBody;
+import java.net.URI;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class ApplicationCrupdatedService implements Consumer<ApplicationCrupdated> {
   private final GithubService githubService;
   private final AppInstallationService installationService;
+  private final ApplicationRepository repository;
 
   @Override
   public void accept(ApplicationCrupdated applicationCrupdated) {
@@ -25,15 +28,17 @@ public class ApplicationCrupdatedService implements Consumer<ApplicationCrupdate
         githubService.getInstallationToken(
             persistedInstallation.getGhId(), applicationCrupdated.maxConsumerDuration());
     var owner = persistedInstallation.getOwnerGithubLogin();
-    switch (applicationCrupdated.getCrupdateType()) {
-      case CREATE -> createRepo(owner, applicationCrupdated, token);
-      case UPDATE -> updateRepo(owner, applicationCrupdated, token);
-    }
+    var uri =
+        switch (applicationCrupdated.getCrupdateType()) {
+          case CREATE -> createRepo(owner, applicationCrupdated, token);
+          case UPDATE -> updateRepo(owner, applicationCrupdated, token);
+        };
+    repository.updateApplicationRepoUrl(applicationCrupdated.getApplicationId(), uri.toString());
   }
 
-  private void updateRepo(
+  private URI updateRepo(
       String repoOwnerUsername, ApplicationCrupdated applicationCrupdated, String token) {
-    var updateRepo =
+    var updateRepoResultUri =
         githubService.updateRepoFor(
             new UpdateRepoRequestBody(
                 applicationCrupdated.getApplicationRepoName(),
@@ -43,11 +48,12 @@ public class ApplicationCrupdatedService implements Consumer<ApplicationCrupdate
             applicationCrupdated.getPreviousApplicationRepoName(),
             token,
             repoOwnerUsername);
-    log.info("update repo {}", updateRepo);
+    log.info("update repo {}", updateRepoResultUri);
+    return updateRepoResultUri;
   }
 
-  private void createRepo(String owner, ApplicationCrupdated applicationCrupdated, String token) {
-    var createRepo =
+  private URI createRepo(String owner, ApplicationCrupdated applicationCrupdated, String token) {
+    var createRepoResultUri =
         githubService.createRepoFor(
             new CreateRepoRequestBody(
                 owner,
@@ -55,6 +61,7 @@ public class ApplicationCrupdatedService implements Consumer<ApplicationCrupdate
                 applicationCrupdated.getDescription(),
                 applicationCrupdated.isRepoPrivate()),
             token);
-    log.info("create repo {}", createRepo);
+    log.info("create repo {}", createRepoResultUri);
+    return createRepoResultUri;
   }
 }
