@@ -1,3 +1,20 @@
+# [3.6.0](https://github.com/jcloudify/jcloudify-api/compare/v3.5.2...v3.6.0) (2024-07-26)
+
+
+### Bug Fixes
+
+* create log file in temp directory ([0cc9893](https://github.com/jcloudify/jcloudify-api/commit/0cc9893e24c3d3e53117cc6827e77607d596f2e8))
+* crupdate stack events ([c855ba3](https://github.com/jcloudify/jcloudify-api/commit/c855ba3c87d8957d782f9b97fa42ae586dfe134f))
+* security conf ([99629bf](https://github.com/jcloudify/jcloudify-api/commit/99629bf703cf36318918b3a35581430c2fd5699d))
+
+
+### Features
+
+* crupdate repo on application crupdate ([c9276f7](https://github.com/jcloudify/jcloudify-api/commit/c9276f7b28fc57cb7c67e1168f63bd1ee69daca3))
+* poja version is hidden as internal, shown version is jcloudifys and will be mapped internally ([c8739ff](https://github.com/jcloudify/jcloudify-api/commit/c8739ff196468ee50f07f60f2e0ca63e0c85dacc))
+
+
+
 ## [3.5.2](https://github.com/jcloudify/jcloudify-api/compare/v3.5.1...v3.5.2) (2024-07-25)
 
 
@@ -106,16 +123,6 @@
 ### BREAKING CHANGES
 
 * in doc/api.yml add Environment[]  to Application
-
-
-
-# [1.5.0](https://github.com/jcloudify/jcloudify-api/compare/v1.4.0...v1.5.0) (2024-06-20)
-
-
-### Features
-
-* initiate cloudformation stack deployments ([1d851c8](https://github.com/jcloudify/jcloudify-api/commit/1d851c8a1c4a3071e8bba1a9ed22009484d0c6ed))
-* initiate stack deployment ([c1f66ab](https://github.com/jcloudify/jcloudify-api/commit/c1f66ab47262147e8a240f07c3af094c91227a5a))
 
 
 
