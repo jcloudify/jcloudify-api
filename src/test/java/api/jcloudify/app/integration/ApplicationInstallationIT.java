@@ -22,6 +22,7 @@ import api.jcloudify.app.endpoint.rest.model.CrupdateGithubAppInstallationsReque
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
+import api.jcloudify.app.service.jwt.JwtGenerator;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,7 @@ class ApplicationInstallationIT extends FacadeIT {
   @MockBean GithubComponent githubComponent;
   @MockBean CloudformationComponent cloudformationComponent;
   @MockBean BucketComponent bucketComponent;
+  @MockBean JwtGenerator jwtGenerator;
 
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);

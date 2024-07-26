@@ -1,24 +1,32 @@
 package api.jcloudify.app.endpoint.rest.security.github;
 
+import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import api.jcloudify.app.endpoint.rest.model.Token;
+import api.jcloudify.app.model.exception.ApiException;
 import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
 import api.jcloudify.app.service.github.model.CreateRepoResponse;
+import api.jcloudify.app.service.github.model.GhAppInstallation;
 import api.jcloudify.app.service.github.model.UpdateRepoRequestBody;
 import api.jcloudify.app.service.github.model.UpdateRepoResponse;
+import api.jcloudify.app.service.jwt.JwtGenerator;
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.kohsuke.github.GHAppInstallation;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -37,14 +45,20 @@ public class GithubComponent {
   private final GithubConf conf;
   private final RestTemplate restTemplate;
   private final UriComponents githubApiBaseUri;
+  private final JwtGenerator jwtGenerator;
+  private final int githubAppId;
 
   public GithubComponent(
       GithubConf conf,
       RestTemplate restTemplate,
-      @Value("${github.api.baseuri}") String githubApiBaseUri) {
+      @Value("${github.api.baseuri}") String githubApiBaseUri,
+      JwtGenerator jwtGenerator,
+      @Value("${github.appid}") int githubAppId) {
     this.conf = conf;
     this.restTemplate = restTemplate;
     this.githubApiBaseUri = UriComponentsBuilder.fromHttpUrl(githubApiBaseUri).build();
+    this.jwtGenerator = jwtGenerator;
+    this.githubAppId = githubAppId;
     ;
   }
 
@@ -153,5 +167,36 @@ public class GithubComponent {
         .path("/user/repos")
         .build()
         .toUri();
+  }
+
+  public String getAppInstallationToken(long installationId, Duration expiration) {
+    var jwtToken = jwtGenerator.createJwt(githubAppId, expiration);
+    try {
+      var gitHubApp = new GitHubBuilder().withJwtToken(jwtToken).build();
+      return gitHubApp
+          .getApp()
+          .getInstallationById(installationId)
+          .createToken()
+          .create()
+          .getToken();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public Set<GhAppInstallation> listApplications() {
+    var jwtToken = jwtGenerator.createJwt(githubAppId, Duration.ofSeconds(30));
+    try {
+      var gitHubApp = new GitHubBuilder().withJwtToken(jwtToken).build();
+      return gitHubApp.getApp().listInstallations().toList().stream()
+          .map(GithubComponent::toDomain)
+          .collect(Collectors.toUnmodifiableSet());
+    } catch (IOException e) {
+      throw new ApiException(SERVER_EXCEPTION, e);
+    }
+  }
+
+  private static GhAppInstallation toDomain(GHAppInstallation installation) {
+    return new GhAppInstallation(installation.getId());
   }
 }

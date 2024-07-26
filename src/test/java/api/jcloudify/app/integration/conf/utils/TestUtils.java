@@ -14,11 +14,13 @@ import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.file.ExtendedBucketComponent;
+import api.jcloudify.app.service.github.model.GhAppInstallation;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.function.Executable;
 import org.kohsuke.github.GHMyself;
@@ -47,6 +49,11 @@ public class TestUtils {
         .thenReturn(URI.create("https://github.com/JohnDoe"));
     when(githubComponent.updateRepoFor(any(), eq(JANE_DOE_TOKEN), any()))
         .thenReturn(URI.create("https://github.com/JaneDoe"));
+    when(githubComponent.listApplications()).thenReturn(ghApps());
+  }
+
+  private static Set<GhAppInstallation> ghApps() {
+    return Set.of(new GhAppInstallation(12344), new GhAppInstallation(12346));
   }
 
   @SneakyThrows
