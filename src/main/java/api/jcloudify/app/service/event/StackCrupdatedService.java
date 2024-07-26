@@ -2,6 +2,7 @@ package api.jcloudify.app.service.event;
 
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.FileType.STACK_EVENT;
+import static java.io.File.createTempFile;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.endpoint.event.EventProducer;
@@ -49,23 +50,23 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
   private boolean crupdateStackEvent(String stackName, String bucketKey) {
     List<StackEvent> stackEvents =
         cloudformationComponent.getStackEvents(stackName).stream().map(mapper::toRest).toList();
-    File stackEventJsonFile;
     try {
+      File stackEventJsonFile;
       if (bucketComponent.doesExist(bucketKey)) {
         stackEventJsonFile = bucketComponent.download(bucketKey);
         List<StackEvent> actual = om.readValue(stackEventJsonFile, new TypeReference<>() {});
         stackEvents = mergeAndSortStackEventList(actual, stackEvents);
       } else {
-        stackEventJsonFile = new File("log", ".txt");
+        stackEventJsonFile = createTempFile("log", ".txt");
       }
       om.writeValue(stackEventJsonFile, stackEvents);
+      bucketComponent.upload(stackEventJsonFile, bucketKey);
+      return Objects.requireNonNull(stackEvents.getLast().getResourceStatus())
+          .toString()
+          .contains("COMPLETE");
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
     }
-    bucketComponent.upload(stackEventJsonFile, bucketKey);
-    return Objects.requireNonNull(stackEvents.getFirst().getResourceStatus())
-        .toString()
-        .contains("COMPLETE");
   }
 
   private List<StackEvent> mergeAndSortStackEventList(
