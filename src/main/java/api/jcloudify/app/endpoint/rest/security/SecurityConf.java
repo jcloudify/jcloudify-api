@@ -111,7 +111,7 @@ public class SecurityConf {
                     .requestMatchers(
                         new SelfApplicationMatcher(
                             PUT,
-                            "/users/{userId}/applications/*/environments/*/deploymentInitiation",
+                            "/users/*/applications/*/environments/*/deploymentInitiation",
                             authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
