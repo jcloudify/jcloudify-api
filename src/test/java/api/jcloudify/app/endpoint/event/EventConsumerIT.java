@@ -4,7 +4,7 @@ import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import api.jcloudify.app.PojaGenerated;
-import api.jcloudify.app.conf.FacadeIT;
+import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.event.consumer.EventConsumer;
 import api.jcloudify.app.endpoint.event.consumer.model.ConsumableEvent;
 import api.jcloudify.app.endpoint.event.consumer.model.TypedEvent;
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @PojaGenerated
-class EventConsumerIT extends FacadeIT {
+class EventConsumerIT extends MockedThirdParties {
 
   @Autowired EventConsumer subject;
   @Autowired DummyUuidRepository dummyUuidRepository;

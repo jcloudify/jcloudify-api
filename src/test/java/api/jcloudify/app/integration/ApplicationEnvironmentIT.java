@@ -17,16 +17,13 @@ import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
-import api.jcloudify.app.conf.FacadeIT;
+import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.api.EnvironmentApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironment;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.Environment;
-import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
-import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.io.IOException;
 import java.util.List;
@@ -34,20 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @AutoConfigureMockMvc
 @Slf4j
-class ApplicationEnvironmentIT extends FacadeIT {
-  @LocalServerPort private int port;
-
-  @MockBean GithubComponent githubComponent;
-  @MockBean CloudformationComponent cloudformationComponent;
-  @MockBean BucketComponent bucketComponent;
-
+class ApplicationEnvironmentIT extends MockedThirdParties {
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
   }

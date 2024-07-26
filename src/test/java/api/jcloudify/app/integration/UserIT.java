@@ -8,7 +8,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeUser;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import api.jcloudify.app.conf.FacadeIT;
+import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.api.SecurityApi;
 import api.jcloudify.app.endpoint.rest.api.UserApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
@@ -17,7 +17,6 @@ import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.model.CreateUsersRequestBody;
 import api.jcloudify.app.endpoint.rest.model.User;
 import api.jcloudify.app.endpoint.rest.model.Whoami;
-import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.util.List;
 import java.util.Objects;
@@ -26,16 +25,12 @@ import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHMyself;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @AutoConfigureMockMvc
-class UserIT extends FacadeIT {
-  @MockBean GithubComponent githubComponent;
+class UserIT extends MockedThirdParties {
   @MockBean GHMyself githubUser;
-
-  @LocalServerPort private int port;
 
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);

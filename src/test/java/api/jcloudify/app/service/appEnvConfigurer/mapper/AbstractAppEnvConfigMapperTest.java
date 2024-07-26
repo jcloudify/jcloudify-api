@@ -6,7 +6,7 @@ import static java.nio.file.Files.readAllBytes;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import api.jcloudify.app.conf.FacadeIT;
+import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-class AbstractAppEnvConfigMapperTest extends FacadeIT {
+class AbstractAppEnvConfigMapperTest extends MockedThirdParties {
   public static final String POJA_CONF_1_YML_RESOURCE_PATH = "files/poja_1.yml";
   @Autowired AbstractAppEnvConfigMapper subject;
 
