@@ -1,6 +1,6 @@
 package api.jcloudify.app.service.appEnvConfigurer.mapper;
 
-import static api.jcloudify.app.integration.conf.utils.TestMocks.getValidPojaConfV17_0_0;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.getValidPojaConf1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllBytes;
 import static java.util.UUID.randomUUID;
@@ -18,7 +18,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 class AbstractAppEnvConfigMapperTest extends FacadeIT {
-  public static final String POJA_V_17_0_0_YML_RESOURCE_PATH = "files/poja_v17_0_0.yml";
+  public static final String POJA_CONF_1_YML_RESOURCE_PATH = "files/poja_1.yml";
   @Autowired AbstractAppEnvConfigMapper subject;
 
   @Test
@@ -32,17 +32,17 @@ class AbstractAppEnvConfigMapperTest extends FacadeIT {
 
   @Test
   void writeToTempFile() throws IOException {
-    var pojaV1331File = subject.writeToTempFile(getValidPojaConfV17_0_0());
+    var pojaV1331File = subject.writeToTempFile(getValidPojaConf1());
 
     assertEquals(
-        getResource(POJA_V_17_0_0_YML_RESOURCE_PATH).getContentAsString(UTF_8),
+        getResource(POJA_CONF_1_YML_RESOURCE_PATH).getContentAsString(UTF_8),
         readFileContent(pojaV1331File));
   }
 
   @Test
   void read_ok() throws IOException {
-    var file = getResource(POJA_V_17_0_0_YML_RESOURCE_PATH).getFile();
-    var expected = new OneOfPojaConf(getValidPojaConfV17_0_0());
+    var file = getResource(POJA_CONF_1_YML_RESOURCE_PATH).getFile();
+    var expected = new OneOfPojaConf(getValidPojaConf1());
 
     var actual = subject.read(file);
 

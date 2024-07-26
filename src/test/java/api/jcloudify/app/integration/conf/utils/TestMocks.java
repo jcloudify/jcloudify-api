@@ -3,23 +3,23 @@ package api.jcloudify.app.integration.conf.utils;
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
-import static api.jcloudify.app.model.PojaVersion.POJA_V17_0_0;
+import static api.jcloudify.app.model.PojaVersion.POJA_1;
 
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
-import api.jcloudify.app.endpoint.rest.model.ComputeConfV1700;
-import api.jcloudify.app.endpoint.rest.model.ConcurrencyConfV1700;
-import api.jcloudify.app.endpoint.rest.model.DatabaseConfV1700;
+import api.jcloudify.app.endpoint.rest.model.ComputeConf1;
+import api.jcloudify.app.endpoint.rest.model.ConcurrencyConf1;
+import api.jcloudify.app.endpoint.rest.model.DatabaseConf1;
 import api.jcloudify.app.endpoint.rest.model.Environment;
-import api.jcloudify.app.endpoint.rest.model.GenApiClientV1700;
-import api.jcloudify.app.endpoint.rest.model.GeneralPojaConfV1700;
+import api.jcloudify.app.endpoint.rest.model.GenApiClient1;
+import api.jcloudify.app.endpoint.rest.model.GeneralPojaConf1;
 import api.jcloudify.app.endpoint.rest.model.GithubRepository;
-import api.jcloudify.app.endpoint.rest.model.IntegrationV1700;
-import api.jcloudify.app.endpoint.rest.model.MailingConfV1700;
-import api.jcloudify.app.endpoint.rest.model.PojaConfV1700;
+import api.jcloudify.app.endpoint.rest.model.Integration1;
+import api.jcloudify.app.endpoint.rest.model.MailingConf1;
+import api.jcloudify.app.endpoint.rest.model.PojaConf1;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackType;
-import api.jcloudify.app.endpoint.rest.model.TestingConfV1700;
+import api.jcloudify.app.endpoint.rest.model.TestingConf1;
 import api.jcloudify.app.endpoint.rest.model.User;
 import java.time.Instant;
 import java.util.HashMap;
@@ -161,20 +161,17 @@ public class TestMocks {
         .environment(pojaAppProdEnvironment());
   }
 
-  public static PojaConfV1700 getValidPojaConfV17_0_0() {
-    String humanReadableValuePojaVersion = POJA_V17_0_0.toHumanReadableValue();
-    return new PojaConfV1700()
+  public static PojaConf1 getValidPojaConf1() {
+    String humanReadableValuePojaVersion = POJA_1.toHumanReadableValue();
+    return new PojaConf1()
         .version(humanReadableValuePojaVersion)
-        .general(
-            new GeneralPojaConfV1700()
-                .cliVersion(humanReadableValuePojaVersion)
-                .customJavaDeps(new HashMap<>()))
-        .database(new DatabaseConfV1700())
-        .emailing(new MailingConfV1700())
-        .genApiClient(new GenApiClientV1700())
-        .integration(new IntegrationV1700())
-        .compute(new ComputeConfV1700())
-        .concurrency(new ConcurrencyConfV1700())
-        .testing(new TestingConfV1700());
+        .general(new GeneralPojaConf1().customJavaDeps(new HashMap<>()))
+        .database(new DatabaseConf1())
+        .emailing(new MailingConf1())
+        .genApiClient(new GenApiClient1())
+        .integration(new Integration1())
+        .compute(new ComputeConf1())
+        .concurrency(new ConcurrencyConf1())
+        .testing(new TestingConf1());
   }
 }

@@ -1,5 +1,5 @@
 ---
-version: "17.0.0"
+version: "3.6.2"
 integration:
   with_sentry: null
   with_sonar: null
@@ -39,7 +39,6 @@ database:
   aurora_sleep: null
   aurora_auto_pause: null
 general:
-  cli_version: "17.0.0"
   app_name: null
   with_snapstart: null
   with_queues_nb: null
@@ -47,6 +46,7 @@ general:
   custom_java_repositories: {}
   custom_java_deps: {}
   custom_java_env_vars: {}
+  cli_version: "17.0.0"
   poja_python_repository_name: null
   poja_python_repository_domain: null
   poja_domain_owner: null

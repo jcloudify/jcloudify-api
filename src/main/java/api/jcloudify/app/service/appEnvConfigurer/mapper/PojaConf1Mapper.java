@@ -4,9 +4,8 @@ import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVE
 
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PojaConf;
-import api.jcloudify.app.endpoint.rest.model.PojaConfV1700;
 import api.jcloudify.app.model.exception.ApiException;
-import api.jcloudify.app.model.pojaConf.v17_0_0.PojaConfV17_0_0;
+import api.jcloudify.app.model.pojaConf.conf1.PojaConf1;
 import api.jcloudify.app.service.appEnvConfigurer.NetworkingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -16,8 +15,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-final class PojaConfV17_0_0Mapper extends AbstractAppEnvConfigMapper {
-  PojaConfV17_0_0Mapper(
+final class PojaConf1Mapper extends AbstractAppEnvConfigMapper {
+  PojaConf1Mapper(
       @Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper,
       NetworkingService networkingService) {
     super(yamlObjectMapper, networkingService);
@@ -26,18 +25,19 @@ final class PojaConfV17_0_0Mapper extends AbstractAppEnvConfigMapper {
   @SneakyThrows
   @Override
   protected File writeToTempFile(PojaConf pojaConf) {
-    var casted = (PojaConfV1700) pojaConf;
+    var casted = (api.jcloudify.app.endpoint.rest.model.PojaConf1) pojaConf;
     var domainPojaConf =
-        new PojaConfV17_0_0(casted, networkingService.getNetworkingConfig(), null, null, null);
-    File namedTempFile = createNamedTempFile("poja_v17_0_0.yml");
+        new PojaConf1(casted, networkingService.getNetworkingConfig(), null, null, null);
+    File namedTempFile = createNamedTempFile("poja_1.yml");
     this.yamlObjectMapper.writeValue(namedTempFile, domainPojaConf);
     return namedTempFile;
   }
 
   public OneOfPojaConf read(File file) {
-    PojaConfV1700 pojaConf;
+    api.jcloudify.app.endpoint.rest.model.PojaConf1 pojaConf;
     try {
-      pojaConf = yamlObjectMapper.readValue(file, PojaConfV1700.class);
+      pojaConf =
+          yamlObjectMapper.readValue(file, api.jcloudify.app.endpoint.rest.model.PojaConf1.class);
     } catch (IOException e) {
       throw new ApiException(SERVER_EXCEPTION, e);
     }
@@ -46,6 +46,6 @@ final class PojaConfV17_0_0Mapper extends AbstractAppEnvConfigMapper {
 
   @Override
   public File write(OneOfPojaConf oneOfPojaConf) {
-    return writeToTempFile(oneOfPojaConf.getPojaConfV1700());
+    return writeToTempFile(oneOfPojaConf.getPojaConf1());
   }
 }
