@@ -1,11 +1,14 @@
 package api.jcloudify.app.service;
 
+import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
+import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.EnvironmentRepository;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.service.appEnvConfigurer.AppEnvConfigurerService;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,10 @@ public class EnvironmentService {
 
   public List<Environment> crupdateEnvironments(
       String applicationId, List<Environment> environments) {
+    environments.forEach(
+        environment ->
+            checkIfEnvironmentExists(
+                environment.getId(), applicationId, environment.getEnvironmentType()));
     return repository.saveAll(environments);
   }
 
@@ -40,6 +47,17 @@ public class EnvironmentService {
     Environment linkedEnvironment = getById(environmentId);
     String configurationFileKey = linkedEnvironment.getConfigurationFileKey();
     return configurerService.readConfig(userId, appId, environmentId, configurationFileKey);
+  }
+
+  public void checkIfEnvironmentExists(String id, String appId, EnvironmentType type) {
+    Optional<Environment> actualById = repository.findById(id);
+    if (actualById.isEmpty()) {
+      Optional<Environment> actualByAppIdAndType =
+          repository.findFirstByApplicationIdAndEnvironmentType(appId, type);
+      if (actualByAppIdAndType.isPresent()) {
+        throw new BadRequestException("Only one " + type + " environment can be created.");
+      }
+    }
   }
 
   public Environment getUserApplicationEnvironmentById(

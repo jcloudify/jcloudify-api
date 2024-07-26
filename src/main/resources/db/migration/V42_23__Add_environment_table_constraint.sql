@@ -1,0 +1,1 @@
+alter table "environment" add constraint unique_env_by_app unique (environment_type, id_application);

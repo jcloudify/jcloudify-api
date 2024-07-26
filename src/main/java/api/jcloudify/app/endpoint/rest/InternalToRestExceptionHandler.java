@@ -6,6 +6,7 @@ import api.jcloudify.app.model.exception.ForbiddenException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import java.nio.file.AccessDeniedException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -50,6 +51,12 @@ public class InternalToRestExceptionHandler {
     restException.setType(HttpStatus.FORBIDDEN.toString());
     restException.setMessage(e.getMessage());
     return new ResponseEntity<>(restException, HttpStatus.FORBIDDEN);
+  }
+
+  @ExceptionHandler(value = {DataIntegrityViolationException.class})
+  ResponseEntity<ExceptionModel> handleDataIntegrityViolation(DataIntegrityViolationException e) {
+    log.info("Bad request", e);
+    return new ResponseEntity<>(toRest(e, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
   }
 
   private ExceptionModel toRest(java.lang.Exception e, HttpStatus notFound) {
