@@ -1,3 +1,14 @@
+# [3.7.0](https://github.com/jcloudify/jcloudify-api/compare/v3.6.0...v3.7.0) (2024-07-26)
+
+
+### Features
+
+* change custom_java_deps and custom_java_repositories from string map to string list ([3512a62](https://github.com/jcloudify/jcloudify-api/commit/3512a625ae501630ca508848a2bea4e43369f991))
+* get application by id ([11363d8](https://github.com/jcloudify/jcloudify-api/commit/11363d8c2ac0a3c0edb5a257a6957c9c5a383305))
+* get stack events ([b50655a](https://github.com/jcloudify/jcloudify-api/commit/b50655a18b519d084a568988d58906b50cddf803))
+
+
+
 # [3.6.0](https://github.com/jcloudify/jcloudify-api/compare/v3.5.2...v3.6.0) (2024-07-26)
 
 
@@ -104,25 +115,6 @@
 ### Bug Fixes
 
 * replace old stack type EVENT_1 and EVENT_2 by only EVENT ([def3e95](https://github.com/jcloudify/jcloudify-api/commit/def3e95bf23a7161ddc96a45763e74b449b56b36))
-
-
-
-# [3.0.0](https://github.com/jcloudify/jcloudify-api/compare/v1.5.0...v3.0.0) (2024-07-03)
-
-
-### chore
-
-* set code version to 2.0.0 ([51ae182](https://github.com/jcloudify/jcloudify-api/commit/51ae182a71d23c29e4fd4fdb009b103823725abd))
-
-
-### Features
-
-* individually deploy event stack 1 and 2 ([6501251](https://github.com/jcloudify/jcloudify-api/commit/6501251c98c79265f17c257f9ba441cd3fb8128b))
-
-
-### BREAKING CHANGES
-
-* in doc/api.yml add Environment[]  to Application
 
 
 
