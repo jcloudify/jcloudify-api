@@ -1,0 +1,66 @@
+[
+  {
+    "event_id": "ExecutionRole-CREATE_IN_PROGRESS-2024-07-26T05:08:30.029Z",
+    "logical_resource_id": "ExecutionRole",
+    "resource_type": "AWS::IAM::Role",
+    "timestamp": "2024-07-26T05:08:30.029Z",
+    "resource_status": "CREATE_IN_PROGRESS",
+    "status_message": null
+  },
+  {
+    "event_id": "ExecutionRole-CREATE_IN_PROGRESS-2024-07-26T05:08:31.025Z",
+    "logical_resource_id": "ExecutionRole",
+    "resource_type": "AWS::IAM::Role",
+    "timestamp": "2024-07-26T05:08:31.025Z",
+    "resource_status": "CREATE_IN_PROGRESS",
+    "status_message": "Resource creation Initiated"
+  },
+  {
+    "event_id": "ExecutionRole-CREATE_COMPLETE-2024-07-26T05:08:48.624Z",
+    "logical_resource_id": "ExecutionRole",
+    "resource_type": "AWS::IAM::Role",
+    "timestamp": "2024-07-26T05:08:48.624Z",
+    "resource_status": "CREATE_COMPLETE",
+    "status_message": null
+  },
+  {
+    "event_id": "2606c290-4b0d-11ef-88a7-0a32665f34ff",
+    "logical_resource_id": "prod-compute-permission-poja-second",
+    "resource_type": "AWS::CloudFormation::Stack",
+    "timestamp": "2024-07-26T05:08:51.628Z",
+    "resource_status": "CREATE_COMPLETE",
+    "status_message": null
+  },
+  {
+    "event_id": "9094a550-4b12-11ef-804a-0642aee31ca5",
+    "logical_resource_id": "prod-compute-permission-poja-second",
+    "resource_type": "AWS::CloudFormation::Stack",
+    "timestamp": "2024-07-26T05:47:37.873Z",
+    "resource_status": "UPDATE_IN_PROGRESS",
+    "status_message": "User Initiated"
+  },
+  {
+    "event_id": "ExecutionRole-UPDATE_IN_PROGRESS-2024-07-26T05:47:41.408Z",
+    "logical_resource_id": "ExecutionRole",
+    "resource_type": "AWS::IAM::Role",
+    "timestamp": "2024-07-26T05:47:41.408Z",
+    "resource_status": "UPDATE_IN_PROGRESS",
+    "status_message": "Requested update requires the creation of a new physical resource; hence creating one."
+  },
+  {
+    "event_id": "ExecutionRole-UPDATE_IN_PROGRESS-2024-07-26T05:47:42.433Z",
+    "logical_resource_id": "ExecutionRole",
+    "resource_type": "AWS::IAM::Role",
+    "timestamp": "2024-07-26T05:47:42.433Z",
+    "resource_status": "UPDATE_IN_PROGRESS",
+    "status_message": "Resource creation Initiated"
+  },
+  {
+    "event_id": "ExecutionRole-UPDATE_COMPLETE-2024-07-26T05:48:00.188Z",
+    "logical_resource_id": "ExecutionRole",
+    "resource_type": "AWS::IAM::Role",
+    "timestamp": "2024-07-26T05:48:00.188Z",
+    "resource_status": "UPDATE_COMPLETE",
+    "status_message": null
+  }
+]

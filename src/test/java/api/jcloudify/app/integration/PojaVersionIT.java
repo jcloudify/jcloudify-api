@@ -16,6 +16,8 @@ import api.jcloudify.app.endpoint.rest.model.PojaVersionsResponse;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
+
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +35,7 @@ class PojaVersionIT extends FacadeIT {
   @LocalServerPort private int port;
 
   @BeforeEach
-  void setup() throws MalformedURLException {
+  void setup() throws IOException {
     setUpGithub(githubComponent);
     setUpCloudformationComponent(cloudformationComponent);
     setUpBucketComponent(bucketComponent);

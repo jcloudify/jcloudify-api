@@ -2,6 +2,9 @@ package api.jcloudify.app.integration.conf.utils;
 
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_IN_PROGRESS;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
 import static api.jcloudify.app.model.PojaVersion.POJA_V17_0_0;
 
@@ -18,9 +21,14 @@ import api.jcloudify.app.endpoint.rest.model.IntegrationV1700;
 import api.jcloudify.app.endpoint.rest.model.MailingConfV1700;
 import api.jcloudify.app.endpoint.rest.model.PojaConfV1700;
 import api.jcloudify.app.endpoint.rest.model.Stack;
+import api.jcloudify.app.endpoint.rest.model.StackEvent;
+import api.jcloudify.app.endpoint.rest.model.StackResourceStatusType;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.model.TestingConfV1700;
 import api.jcloudify.app.endpoint.rest.model.User;
+import org.springframework.core.io.FileSystemResource;
+
+import java.io.File;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -176,5 +184,30 @@ public class TestMocks {
         .compute(new ComputeConfV1700())
         .concurrency(new ConcurrencyConfV1700())
         .testing(new TestingConfV1700());
+  }
+
+  public static List<StackEvent> permStackEvents() {
+    StackEvent createInProgress = new StackEvent()
+            .eventId("ExecutionRole-CREATE_IN_PROGRESS-2024-07-26T05:08:30.029Z")
+            .logicalResourceId("ExecutionRole")
+            .resourceType("AWS::IAM::Role")
+            .timestamp(Instant.parse("2024-07-26T05:08:30.029Z"))
+            .resourceStatus(CREATE_IN_PROGRESS)
+            .statusMessage(null);
+    StackEvent createComplete = new StackEvent()
+            .eventId("ExecutionRole-CREATE_COMPLETE-2024-07-26T05:08:48.624Z")
+            .logicalResourceId("ExecutionRole")
+            .resourceType("AWS::IAM::Role")
+            .timestamp(Instant.parse("2024-07-26T05:08:48.624Z"))
+            .resourceStatus(CREATE_COMPLETE)
+            .statusMessage(null);
+    StackEvent updateInProgress = new StackEvent()
+            .eventId("9094a550-4b12-11ef-804a-0642aee31ca5")
+            .logicalResourceId("prod-compute-permission-poja-second")
+            .resourceType("AWS::CloudFormation::Stack")
+            .timestamp(Instant.parse("2024-07-26T05:47:37.873Z"))
+            .resourceStatus(UPDATE_IN_PROGRESS)
+            .statusMessage("User Initiated");
+    return List.of(createInProgress, createComplete, updateInProgress);
   }
 }
