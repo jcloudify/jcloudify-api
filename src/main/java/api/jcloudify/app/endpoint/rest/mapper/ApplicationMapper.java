@@ -20,7 +20,8 @@ public class ApplicationMapper {
         new GithubRepository()
             .name(domain.getGithubRepositoryName())
             .isPrivate(domain.isGithubRepositoryPrivate())
-            .description(domain.getDescription());
+            .description(domain.getDescription())
+            .installationId(domain.getInstallationId());
     return new ApplicationBase()
         .id(domain.getId())
         .name(domain.getName())
@@ -34,7 +35,8 @@ public class ApplicationMapper {
         new GithubRepository()
             .name(domain.getGithubRepositoryName())
             .isPrivate(domain.isGithubRepositoryPrivate())
-            .description(domain.getDescription());
+            .description(domain.getDescription())
+            .installationId(domain.getInstallationId());
     return new api.jcloudify.app.endpoint.rest.model.Application()
         .id(domain.getId())
         .name(domain.getName())

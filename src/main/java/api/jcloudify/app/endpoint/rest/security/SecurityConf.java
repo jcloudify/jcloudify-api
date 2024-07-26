@@ -70,6 +70,8 @@ public class SecurityConf {
             bearerFilter(
                 new OrRequestMatcher(
                     antMatcher(GET, "/whoami"),
+                    antMatcher(GET, "/users/*/installations"),
+                    antMatcher(PUT, "/users/*/installations"),
                     antMatcher(PUT, "/users/*/applications/*/environments/*/deploymentInitiation"),
                     antMatcher(PUT, "/users/*/applications"),
                     antMatcher(GET, "/users/*/applications"),
@@ -109,6 +111,14 @@ public class SecurityConf {
                     .requestMatchers(GET, "/whoami")
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
+                    .authenticated()
+                    .requestMatchers(
+                        new SelfUserMatcher(
+                            PUT, "/users/*/installations", authenticatedResourceProvider))
+                    .authenticated()
+                    .requestMatchers(
+                        new SelfUserMatcher(
+                            GET, "/users/*/installations", authenticatedResourceProvider))
                     .authenticated()
                     .requestMatchers(
                         new SelfApplicationMatcher(
