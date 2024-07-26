@@ -1,6 +1,7 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
 import api.jcloudify.app.endpoint.rest.mapper.ApplicationMapper;
+import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsResponse;
 import api.jcloudify.app.endpoint.rest.model.PagedApplicationsResponse;
@@ -51,5 +52,11 @@ public class ApplicationController {
         .pageSize(pagedData.queryPageSize().getValue())
         .pageNumber(pagedData.queryPage().getValue())
         .data(mappedData);
+  }
+
+  @GetMapping("/users/{userId}/applications/{applicationId}")
+  public Application getApplicationById(
+      @PathVariable String userId, @PathVariable String applicationId) {
+    return mapper.toRest(applicationService.getById(applicationId, userId));
   }
 }

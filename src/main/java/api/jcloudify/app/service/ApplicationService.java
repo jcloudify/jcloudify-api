@@ -99,4 +99,11 @@ public class ApplicationService {
             userId, name, PageRequest.of(pageFromOne.getValue() - 1, boundedPageSize.getValue()));
     return new Page<>(pageFromOne, boundedPageSize, data);
   }
+
+  public Application getById(String id, String userId) {
+    return repository
+        .findByIdAndUserId(id, userId)
+        .orElseThrow(
+            () -> new NotFoundException("Application identified by id=" + id + " not found"));
+  }
 }
