@@ -1,7 +1,9 @@
-package api.jcloudify.app.model.pojaConf.v17_0_0;
+package api.jcloudify.app.model.pojaConf.conf1;
 
-import api.jcloudify.app.endpoint.rest.model.GeneralPojaConfV1700;
-import api.jcloudify.app.endpoint.rest.model.PojaConfV1700;
+import static api.jcloudify.app.endpoint.rest.model.PojaConf1.JSON_PROPERTY_GENERAL;
+
+import api.jcloudify.app.endpoint.rest.model.GeneralPojaConf1;
+import api.jcloudify.app.model.PojaVersion;
 import api.jcloudify.app.model.pojaConf.NetworkingConfig;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,15 +18,16 @@ import java.io.Serializable;
 import java.util.Map;
 import lombok.Builder;
 
-@JsonSerialize(using = PojaConfV17_0_0.PojaConfV17_0_0Serializer.class)
-public record PojaConfV17_0_0(
-    @JsonIgnoreProperties("general") PojaConfV1700 rest,
-    GeneralConfV17_0_0 general,
+@JsonSerialize(using = PojaConf1.PojaConf1Serializer.class)
+public record PojaConf1(
+    @JsonIgnoreProperties(JSON_PROPERTY_GENERAL)
+        api.jcloudify.app.endpoint.rest.model.PojaConf1 rest,
+    @JsonProperty(JSON_PROPERTY_GENERAL) GeneralConf1 general,
     NetworkingConfig networking)
     implements Serializable {
   @Builder
-  public PojaConfV17_0_0(
-      PojaConfV1700 rest,
+  public PojaConf1(
+      api.jcloudify.app.endpoint.rest.model.PojaConf1 rest,
       NetworkingConfig networking,
       String pojaPythonRepositoryName,
       String pojaPythonRepositoryDomain,
@@ -39,26 +42,26 @@ public record PojaConfV17_0_0(
         networking);
   }
 
-  private static GeneralConfV17_0_0 from(
-      GeneralPojaConfV1700 rest,
+  private static GeneralConf1 from(
+      GeneralPojaConf1 rest,
       String pojaPythonRepositoryName,
       String pojaPythonRepositoryDomain,
       String pojaDomainOwner) {
-    return new GeneralConfV17_0_0(
+    return new GeneralConf1(
         rest, pojaPythonRepositoryName, pojaPythonRepositoryDomain, pojaDomainOwner);
   }
 
-  public static class PojaConfV17_0_0Serializer extends StdSerializer<PojaConfV17_0_0> {
-    public PojaConfV17_0_0Serializer(Class<PojaConfV17_0_0> t) {
+  public static class PojaConf1Serializer extends StdSerializer<PojaConf1> {
+    public PojaConf1Serializer(Class<PojaConf1> t) {
       super(t);
     }
 
-    public PojaConfV17_0_0Serializer() {
+    public PojaConf1Serializer() {
       this(null);
     }
 
     @Override
-    public void serialize(PojaConfV17_0_0 value, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(PojaConf1 value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException {
       ObjectMapper mapper = (ObjectMapper) jgen.getCodec();
       jgen.writeStartObject();
@@ -102,23 +105,28 @@ public record PojaConfV17_0_0(
     }
   }
 
-  public static class GeneralConfV17_0_0 extends GeneralPojaConfV1700 {
+  public static class GeneralConf1 extends GeneralPojaConf1 {
+    public static final String JSON_PROPERTY_CLI_VERSION = "cli_version";
+
+    @JsonProperty(JSON_PROPERTY_CLI_VERSION)
+    private final String cliVersion;
+
     @Builder
-    public GeneralConfV17_0_0(
-        GeneralPojaConfV1700 rest,
+    public GeneralConf1(
+        GeneralPojaConf1 rest,
         String pojaPythonRepositoryName,
         String pojaPythonRepositoryDomain,
         String pojaDomainOwner) {
       super();
+      this.cliVersion = PojaVersion.POJA_1.getCliVersion();
       this.pojaPythonRepositoryName = pojaPythonRepositoryName;
       this.pojaPythonRepositoryDomain = pojaPythonRepositoryDomain;
       this.pojaDomainOwner = pojaDomainOwner;
       setAllFrom(rest);
     }
 
-    public void setAllFrom(GeneralPojaConfV1700 general) {
+    public void setAllFrom(GeneralPojaConf1 general) {
       this.appName(general.getAppName());
-      this.cliVersion(general.getCliVersion());
       this.customJavaDeps(general.getCustomJavaDeps());
       this.customJavaEnvVars(general.getCustomJavaEnvVars());
       this.customJavaRepositories(general.getCustomJavaRepositories());

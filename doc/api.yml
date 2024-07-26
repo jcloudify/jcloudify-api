@@ -865,14 +865,14 @@ components:
       discriminator:
         propertyName: 'version'
         mapping:
-          '17.0.0': '#/components/schemas/PojaConfV17_0_0'
+          '3.6.2': '#/components/schemas/PojaConf1'
       required:
         - version
 
       ##############################################################
-      ###############  Poja Conf V17.0.0 ###########################
+      ###############  Poja Conf 1 ###########################
       ##############################################################
-    ConcurrencyConfV17_0_0:
+    ConcurrencyConf1:
       type: object
       properties:
         frontal_reserved_concurrent_executions_nb:
@@ -880,7 +880,7 @@ components:
         worker_reserved_concurrent_executions_nb:
           type: integer
 
-    ComputeConfV17_0_0:
+    ComputeConf1:
       type: object
       properties:
         frontal_memory:
@@ -902,7 +902,7 @@ components:
           type: number
           example: 600
 
-    DatabaseConfV17_0_0:
+    DatabaseConf1:
       type: object
       properties:
         with_database:
@@ -943,11 +943,9 @@ components:
         - 0
         - 1
         - 2
-    GeneralPojaConfV17_0_0:
+    GeneralPojaConf1:
       type: object
       properties:
-        cli_version:
-          $ref: "#/components/schemas/PojaVersionDiscriminator"
         app_name:
           type: string
         with_snapstart:
@@ -962,7 +960,7 @@ components:
           $ref: "#/components/schemas/StringMap"
         custom_java_env_vars:
           $ref: "#/components/schemas/StringMap"
-    GenApiClientV17_0_0:
+    GenApiClient1:
       type: object
       properties:
         aws_account_id:
@@ -977,7 +975,7 @@ components:
           type: string
         codeartifact_domain_name:
           type: string
-    IntegrationV17_0_0:
+    Integration1:
       type: object
       properties:
         with_sentry:
@@ -995,7 +993,7 @@ components:
         with_swagger_ui:
           type: boolean
           example: false
-    TestingConfV17_0_0:
+    TestingConf1:
       type: object
       properties:
         java_facade_it:
@@ -1004,13 +1002,13 @@ components:
         jacoco_min_coverage:
           type: number
           example: 0.8
-    MailingConfV17_0_0:
+    MailingConf1:
       properties:
         ses_source:
           type: string
           example: "noreply@nowhere.com"
 
-    PojaConfV17_0_0:
+    PojaConf1:
       type: object
       allOf:
         - $ref: "#/components/schemas/PojaConf"
@@ -1020,23 +1018,23 @@ components:
         version:
           $ref: "#/components/schemas/PojaVersionDiscriminator"
         general:
-          $ref: "#/components/schemas/GeneralPojaConfV17_0_0"
+          $ref: "#/components/schemas/GeneralPojaConf1"
         integration:
-          $ref: "#/components/schemas/IntegrationV17_0_0"
+          $ref: "#/components/schemas/Integration1"
         gen_api_client:
-          $ref: "#/components/schemas/GenApiClientV17_0_0"
+          $ref: "#/components/schemas/GenApiClient1"
         concurrency:
-          $ref: '#/components/schemas/ConcurrencyConfV17_0_0'
+          $ref: '#/components/schemas/ConcurrencyConf1'
         compute:
-          $ref: '#/components/schemas/ComputeConfV17_0_0'
+          $ref: '#/components/schemas/ComputeConf1'
         emailing:
-          $ref: "#/components/schemas/MailingConfV17_0_0"
+          $ref: "#/components/schemas/MailingConf1"
         testing:
-          $ref: "#/components/schemas/TestingConfV17_0_0"
+          $ref: "#/components/schemas/TestingConf1"
         database:
-          $ref: '#/components/schemas/DatabaseConfV17_0_0'
+          $ref: '#/components/schemas/DatabaseConf1'
       ##############################################################
-      ###############  Poja Conf V17.0.0 ###########################
+      ###############  Poja Conf 1 ###########################
       ##############################################################
     ##############################################################
     ###############  Poja Configurations #########################
@@ -1341,7 +1339,7 @@ components:
     #############################################
     OneOfPojaConf:
       oneOf:
-        - $ref: "#/components/schemas/PojaConfV17_0_0"
+        - $ref: "#/components/schemas/PojaConf1"
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################

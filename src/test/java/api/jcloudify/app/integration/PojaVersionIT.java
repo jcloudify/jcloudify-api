@@ -43,8 +43,17 @@ class PojaVersionIT extends FacadeIT {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
   }
 
-  private PojaVersion v17_0_0() {
-    return new PojaVersion().major(17).minor(0).patch(0).humanReadableValue("17.0.0");
+  private PojaVersion pojaConf1() {
+    var from = api.jcloudify.app.model.PojaVersion.POJA_1;
+    return createFrom(from);
+  }
+
+  private static PojaVersion createFrom(api.jcloudify.app.model.PojaVersion from) {
+    return new PojaVersion()
+        .major(from.getMajor())
+        .minor(from.getMinor())
+        .patch(from.getPatch())
+        .humanReadableValue(from.toHumanReadableValue());
   }
 
   @Test
@@ -55,6 +64,6 @@ class PojaVersionIT extends FacadeIT {
     PojaVersionsResponse pojaVersions = api.getPojaVersions();
     var data = Objects.requireNonNull(pojaVersions.getData());
 
-    assertTrue(data.contains(v17_0_0()));
+    assertTrue(data.contains(pojaConf1()));
   }
 }

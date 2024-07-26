@@ -2,7 +2,7 @@ package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.getValidPojaConfV17_0_0;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.getValidPojaConf1;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication1;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
@@ -58,7 +58,7 @@ public class ApplicationEnvironmentConfigIT extends FacadeIT {
     var api = new EnvironmentApi(apiClient);
     var currentApplication = joePojaApplication1();
     var currentEnv = requireNonNull(currentApplication.getEnvironments()).getFirst();
-    var payload = new OneOfPojaConf(getValidPojaConfV17_0_0());
+    var payload = new OneOfPojaConf(getValidPojaConf1());
 
     var actual =
         api.configureApplicationEnv(

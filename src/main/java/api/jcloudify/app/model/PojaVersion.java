@@ -9,12 +9,18 @@ import lombok.Getter;
 
 @Getter
 public enum PojaVersion implements Comparable<PojaVersion> {
-  POJA_V17_0_0(
-      17, 0, 0, create("https://u2csjwdclz55oe4tivon6xtzli0ctjap.lambda-url.eu-west-3.on.aws"));
+  POJA_1(3, 6, 2, create("https://u2csjwdclz55oe4tivon6xtzli0ctjap.lambda-url.eu-west-3.on.aws")) {
+    @Override
+    public String getCliVersion() {
+      return "17.0.0";
+    }
+  };
   private final int major;
   private final int minor;
   private final int patch;
   private final URI samUri;
+
+  public abstract String getCliVersion();
 
   PojaVersion(int major, int minor, int patch, URI samUri) {
     this.major = major;
@@ -30,6 +36,15 @@ public enum PojaVersion implements Comparable<PojaVersion> {
   public static Optional<PojaVersion> fromHumanReadableValue(String humanReadableValue) {
     for (PojaVersion value : values()) {
       if (value.toHumanReadableValue().equals(humanReadableValue)) {
+        return Optional.of(value);
+      }
+    }
+    return empty();
+  }
+
+  public static Optional<PojaVersion> fromCliVersion(String cliVersion) {
+    for (PojaVersion value : values()) {
+      if (value.getCliVersion().equals(cliVersion)) {
         return Optional.of(value);
       }
     }

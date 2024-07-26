@@ -9,7 +9,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 abstract sealed class AbstractAppEnvConfigMapper implements PojaConfFileMapper
-    permits AppEnvConfigMapperFacade, PojaConfV17_0_0Mapper {
+    permits AppEnvConfigMapperFacade, PojaConf1Mapper {
   protected final ObjectMapper yamlObjectMapper;
   protected final NetworkingService networkingService;
 
