@@ -49,6 +49,7 @@ public class Environment implements Serializable {
   private StateEnum state;
 
   private String configurationFileKey;
+  private String codeFileKey;
 
   @JsonIgnore
   public String getFormattedEnvironmentType() {
