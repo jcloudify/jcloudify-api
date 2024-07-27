@@ -28,7 +28,7 @@ Globals:
         AWS_EVENTBRIDGE_BUS: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/eventbridge/bus-name}}'
         AWS_EVENT_STACK_1_SQS_QUEUE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/1/sqs/mailbox-queue-url}}'
         AWS_EVENT_STACK_2_SQS_QUEUE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/2/sqs/mailbox-queue-url}}'
-        
+
         SPRING_DATASOURCE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/db/url}}'
         SPRING_DATASOURCE_USERNAME: !Sub '{{resolve:ssm:/jcloudify/${Env}/db/user/username}}'
         SPRING_DATASOURCE_PASSWORD: !Sub '{{resolve:ssm:/jcloudify/${Env}/db/user/password}}'
@@ -40,7 +40,8 @@ Globals:
         GITHUB_API_BASEURI: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/api/base-uri}}'
         APP_PEM: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/app/pem}}'
         GITHUB_APPID: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/app/id}}'
-        
+        POJA_SAM_API_KEY: !Sub '{{resolve:ssm:/jcloudify-api/${env}/poja/sam/api/key}}'
+
 
 Parameters:
   Env:
@@ -61,7 +62,7 @@ Resources:
       MemorySize: 2048
       Timeout: 30
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
-      
+
       Events:
         ApiCall:
           Type: Api
@@ -78,7 +79,7 @@ Resources:
       MemorySize: 1024
       Timeout: 600 #note(sqs-visibility)
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
-      
+
       Events:
         AllEvents:
           Type: SQS
@@ -93,7 +94,7 @@ Resources:
       MemorySize: 1024
       Timeout: 600 #note(sqs-visibility)
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
-      
+
       Events:
         AllEvents:
           Type: SQS

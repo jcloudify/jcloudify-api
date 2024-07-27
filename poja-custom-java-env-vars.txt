@@ -6,3 +6,4 @@ APPS_ENVS_NETWORKING: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/apps/env/network
 GITHUB_API_BASEURI: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/api/base-uri}}'
 APP_PEM: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/app/pem}}'
 GITHUB_APPID: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/app/id}}'
+POJA_SAM_API_KEY: !Sub '{{resolve:ssm:/jcloudify-api/${env}/poja/sam/api/key}}'
