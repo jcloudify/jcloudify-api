@@ -8,18 +8,22 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.pojaAppProdEnvironment;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.ssmParam1Updated;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.ssmParameter;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.ssmParameterToCreate;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsNotFoundException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpSsmComponent;
 import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import api.jcloudify.app.aws.ssm.SsmComponent;
 import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.api.EnvironmentApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
@@ -36,18 +40,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @AutoConfigureMockMvc
 @Slf4j
 class ApplicationEnvironmentIT extends MockedThirdParties {
+  @MockBean
+  SsmComponent ssmComponent;
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
-  }
-
-  private static SsmParameter toCreate() {
-    return ssmParameter("ssm_param_to_create_id", "/poja/prod/ssm/new/param", "dummy");
   }
 
   private static SsmParameter ssmParam1() {
@@ -58,15 +61,12 @@ class ApplicationEnvironmentIT extends MockedThirdParties {
     return ssmParameter("ssm_param_2_id", "/poja/prod/ssm/param2", "dummy");
   }
 
-  private static SsmParameter ssmParam1Update() {
-    return ssmParameter("ssm_param_1_id", "/poja/prod/ssm/param1", "param1");
-  }
-
   @BeforeEach
   void setup() throws IOException {
     setUpGithub(githubComponent);
     setUpCloudformationComponent(cloudformationComponent);
     setUpBucketComponent(bucketComponent);
+    setUpSsmComponent(ssmComponent);
   }
 
   @Test
@@ -173,18 +173,18 @@ class ApplicationEnvironmentIT extends MockedThirdParties {
     var createSsmParametersResponse = api.crupdateApplicationEnvironmentSsmParameters(
             JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID,
             new CrupdateEnvironmentSsmParameters()
-                    .data(List.of(toCreate())));
+                    .data(List.of(ssmParameterToCreate())));
     var createdSsmParametersData = createSsmParametersResponse.getData();
     var updateSsmParameter = api.crupdateApplicationEnvironmentSsmParameters(
             JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID,
             new CrupdateEnvironmentSsmParameters()
-                    .data(List.of(ssmParam1Update())));
+                    .data(List.of(ssmParam1Updated())));
     var updatedSsmParameterData = updateSsmParameter.getData();
 
     assertNotNull(createdSsmParametersData);
-    assertTrue(createdSsmParametersData.contains(toCreate()));
+    assertTrue(createdSsmParametersData.contains(ssmParameterToCreate()));
     assertNotNull(updatedSsmParameterData);
-    assertTrue(updatedSsmParameterData.contains(ssmParam1Update()));
+    assertTrue(updatedSsmParameterData.contains(ssmParam1Updated()));
   }
 
   private static Environment toCreateEnv() {

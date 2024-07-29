@@ -1,12 +1,15 @@
 package api.jcloudify.app.integration.conf.utils;
 
 import static api.jcloudify.app.integration.conf.utils.TestMocks.*;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.ssmParameterToCreate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
+import api.jcloudify.app.aws.ssm.SsmComponent;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.Stack;
@@ -54,6 +57,11 @@ public class TestUtils {
     when(githubUser.getLogin()).thenReturn(JOE_DOE_USERNAME);
     when(githubUser.getId()).thenReturn(Long.valueOf(JOE_DOE_GITHUB_ID));
     when(githubUser.getAvatarUrl()).thenReturn(JOE_DOE_AVATAR);
+  }
+
+  public static void setUpSsmComponent(SsmComponent ssmComponent) {
+    when(ssmComponent.crupdateSsmParameters(eq(List.of(ssmParameterToCreate())), any())).thenReturn(List.of(awsSsmParameterModelToCreate()));
+    when(ssmComponent.crupdateSsmParameters(eq(List.of(ssmParam1Updated())), any())).thenReturn(List.of(awsSsmParameterModelToUpdate()));
   }
 
   public static void setUpCloudformationComponent(CloudformationComponent cloudformationComponent) {

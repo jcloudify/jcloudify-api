@@ -237,7 +237,7 @@ public class StackService {
         tags);
   }
 
-  private static Map<String, String> setUpTags(String applicationName, String applicationEnv) {
+  public static Map<String, String> setUpTags(String applicationName, String applicationEnv) {
     Map<String, String> tags = new HashMap<>();
     tags.put("app", applicationName);
     tags.put("env", applicationEnv);
