@@ -2,10 +2,12 @@ package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_AVATAR;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_GITHUB_ID;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_STRIPE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_USERNAME;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeUser;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpStripe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import api.jcloudify.app.conf.MockedThirdParties;
@@ -18,6 +20,7 @@ import api.jcloudify.app.endpoint.rest.model.CreateUsersRequestBody;
 import api.jcloudify.app.endpoint.rest.model.User;
 import api.jcloudify.app.endpoint.rest.model.Whoami;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
+import api.jcloudify.app.service.StripeService;
 import java.util.List;
 import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +34,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureMockMvc
 class UserIT extends MockedThirdParties {
   @MockBean GHMyself githubUser;
+  @MockBean StripeService stripeService;
 
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
@@ -43,6 +47,7 @@ class UserIT extends MockedThirdParties {
   @BeforeEach
   void setup() {
     setUpGithub(githubComponent, githubUser);
+    setUpStripe(stripeService);
   }
 
   @Test
@@ -76,5 +81,6 @@ class UserIT extends MockedThirdParties {
     assertEquals(JOE_DOE_AVATAR, actual.getAvatar());
     assertEquals(JOE_DOE_GITHUB_ID, actual.getGithubId());
     assertEquals(JOE_DOE_USERNAME, actual.getUsername());
+    assertEquals(JOE_DOE_STRIPE_ID, actual.getStripeId());
   }
 }

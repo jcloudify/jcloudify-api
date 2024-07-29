@@ -16,6 +16,7 @@ import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.file.ExtendedBucketComponent;
+import api.jcloudify.app.service.StripeService;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
 import java.io.IOException;
 import java.net.URL;
@@ -70,6 +71,15 @@ public class TestUtils {
             List.of(
                 ssmParameter("/poja/prod/ssm/param1", "dummy"),
                 ssmParameter("/poja/prod/ssm/param2", "dummy")));
+              }
+              
+  @SneakyThrows
+  public static void setUpStripe(StripeService stripeService) {
+    when(stripeService.createCustomer(any(), any())).thenReturn(stripeCustomer());
+    when(stripeService.getPaymentMethods(any())).thenReturn(paymentMethods());
+    when(stripeService.setDefaultPaymentMethod(any(), any())).thenReturn(paymentMethod());
+    when(stripeService.detachPaymentMethod(any())).thenReturn(paymentMethod());
+    when(stripeService.attachPaymentMethod(any(), any())).thenReturn(paymentMethod());
   }
 
   public static void setUpCloudformationComponent(CloudformationComponent cloudformationComponent) {
