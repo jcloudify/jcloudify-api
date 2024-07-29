@@ -652,6 +652,72 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/ssmparameters:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: name
+          in: query
+          description: Filter ssm parameters by name
+          schema:
+            type: string
+          required: false
+      tags:
+        - Environment
+      operationId: getApplicationEnvironmentSsmParameters
+      summary: Get list of ssm parameters and their values by environment
+      responses:
+        '200':
+          description: Get list of ssm parameters for an application environment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedEnvironmentSsmParameters'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: crupdateApplicationEnvironmentSsmParameters
+      summary: crupdate ssm parameters for an application environment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrupdateEnvironmentSsmParameters'
+        required: true
+      responses:
+        '200':
+          description: The crupdated ssm parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrupdateEnvironmentSsmParameters'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/logs:
     parameters:
@@ -1174,6 +1240,14 @@ components:
       properties:
         environmentId:
           type: string
+    SsmParameter:
+      type: object
+      properties:
+        name:
+          type: string
+          example: /poja/app/env/name
+        value:
+          type: string
     Log:
       type: object
       properties:
@@ -1404,6 +1478,22 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnvironmentVariable"
+    CrupdateEnvironmentSsmParameters:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SsmParameter'
+    PagedEnvironmentSsmParameters:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            date:
+              type: array
+              items:
+                $ref: '#/components/schemas/SsmParameter'
     GithubAppInstallationsResponse:
       type: object
       properties:
