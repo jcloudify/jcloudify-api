@@ -27,6 +27,8 @@ import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.model.TestingConf1;
 import api.jcloudify.app.endpoint.rest.model.User;
+import software.amazon.awssdk.services.ssm.model.Parameter;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -224,5 +226,27 @@ public class TestMocks {
             .id(id)
             .name(name)
             .value(value);
+  }
+
+  public static Parameter awsSsmParameterModelToCreate() {
+    return Parameter.builder()
+            .name("/poja/prod/ssm/new/param")
+            .value("dummy")
+            .build();
+  }
+
+  public static Parameter awsSsmParameterModelToUpdate() {
+    return Parameter.builder()
+            .name("/poja/prod/ssm/param1")
+            .value("param1")
+            .build();
+  }
+
+  public static SsmParameter ssmParameterToCreate() {
+    return ssmParameter("ssm_param_to_create_id", "/poja/prod/ssm/new/param", "dummy");
+  }
+
+  public static SsmParameter ssmParam1Updated() {
+    return ssmParameter("ssm_param_1_id", "/poja/prod/ssm/param1", "param1");
   }
 }
