@@ -12,7 +12,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,7 +23,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 @Entity
 @Builder(toBuilder = true)
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @Table(name = "\"environment\"")
@@ -50,6 +48,27 @@ public class Environment implements Serializable {
 
   private String configurationFileKey;
   private String codeFileKey;
+
+  /**
+   * @param configurationFileKey non formatted s3 file key, will need to be formatted using
+   *     ExtendedBucketComponent .getBucketKey to get the real filename
+   */
+  public Environment(
+      String id,
+      EnvironmentType environmentType,
+      boolean archived,
+      String applicationId,
+      StateEnum state,
+      String configurationFileKey,
+      String codeFileKey) {
+    this.id = id;
+    this.environmentType = environmentType;
+    this.archived = archived;
+    this.applicationId = applicationId;
+    this.state = state;
+    this.configurationFileKey = configurationFileKey;
+    this.codeFileKey = codeFileKey;
+  }
 
   @JsonIgnore
   public String getFormattedEnvironmentType() {

@@ -11,10 +11,12 @@ import api.jcloudify.app.endpoint.rest.model.PojaConf;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.PojaVersion;
 import api.jcloudify.app.model.exception.ApiException;
+import api.jcloudify.app.repository.jpa.EnvironmentRepository;
 import api.jcloudify.app.service.appEnvConfigurer.mapper.PojaConfFileMapper;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -22,19 +24,23 @@ public class AppEnvConfigurerService {
   private final PojaConfFileMapper mapper;
   private final ExtendedBucketComponent bucketComponent;
   private final EventProducer<PojaConfUploaded> pojaConfUploadedEventProducer;
+  private final EnvironmentRepository environmentRepository;
 
+  @Transactional
   public OneOfPojaConf configureEnvironment(
       String userId, String appId, String environmentId, OneOfPojaConf pojaConf) {
     var validatedFile = mapper.write(pojaConf);
-    bucketComponent.upload(
-        validatedFile,
-        getBucketKey(userId, appId, environmentId, POJA_CONF, validatedFile.getName()));
+    String nonFormattedFilename = validatedFile.getName();
+    String formattedFilename =
+        getBucketKey(userId, appId, environmentId, POJA_CONF, nonFormattedFilename);
+    bucketComponent.upload(validatedFile, formattedFilename);
+    environmentRepository.updateEnvironmentConfigFileKey(environmentId, nonFormattedFilename);
     PojaConf baseClass = (PojaConf) pojaConf.getActualInstance();
     PojaVersion pojaVersion =
         PojaVersion.fromHumanReadableValue(baseClass.getVersion())
             .orElseThrow(() -> new ApiException(SERVER_EXCEPTION, "unable to get poja version"));
     PojaConfUploaded relatedEvent =
-        new PojaConfUploaded(pojaVersion, environmentId, userId, validatedFile.getName(), appId);
+        new PojaConfUploaded(pojaVersion, environmentId, userId, nonFormattedFilename, appId);
     pojaConfUploadedEventProducer.accept(List.of(relatedEvent));
     return pojaConf;
   }
