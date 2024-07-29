@@ -1,3 +1,19 @@
+# [3.8.0](https://github.com/jcloudify/jcloudify-api/compare/v3.7.0...v3.8.0) (2024-07-29)
+
+
+### Bug Fixes
+
+* only one prod and preprod env by application can be created ([925224e](https://github.com/jcloudify/jcloudify-api/commit/925224e49584c08842f55d6b62965e86df7aec5f))
+
+
+### Features
+
+* app installations ([79dafa8](https://github.com/jcloudify/jcloudify-api/commit/79dafa8e553f8db6c12862779749316f4600e9d5))
+* get envionment by id ([e0d69ba](https://github.com/jcloudify/jcloudify-api/commit/e0d69bad398ebe788b8541434e24afd0f206ae81))
+* poja cli integration with git repo push ([c22b8ba](https://github.com/jcloudify/jcloudify-api/commit/c22b8ba58d1534698d88e9e8ebbc274341e8a729))
+
+
+
 # [3.7.0](https://github.com/jcloudify/jcloudify-api/compare/v3.6.0...v3.7.0) (2024-07-26)
 
 
@@ -106,15 +122,6 @@
 
 * can crupdate applications at PUT /applications ([1ff2575](https://github.com/jcloudify/jcloudify-api/commit/1ff2575f40bdc329ef22993847ae7a4db326f08f))
 * list poja-versions read from resources/files/poja_versions.json ([ee6d7f5](https://github.com/jcloudify/jcloudify-api/commit/ee6d7f5ab1d5b739424f0f5d763e3bcbcf880784))
-
-
-
-## [3.0.1](https://github.com/jcloudify/jcloudify-api/compare/v3.0.0...v3.0.1) (2024-07-10)
-
-
-### Bug Fixes
-
-* replace old stack type EVENT_1 and EVENT_2 by only EVENT ([def3e95](https://github.com/jcloudify/jcloudify-api/commit/def3e95bf23a7161ddc96a45763e74b449b56b36))
 
 
 
