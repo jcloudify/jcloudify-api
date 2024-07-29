@@ -21,6 +21,7 @@ import api.jcloudify.app.endpoint.rest.model.GithubRepository;
 import api.jcloudify.app.endpoint.rest.model.Integration1;
 import api.jcloudify.app.endpoint.rest.model.MailingConf1;
 import api.jcloudify.app.endpoint.rest.model.PojaConf1;
+import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackType;
@@ -216,5 +217,12 @@ public class TestMocks {
             .resourceStatus(UPDATE_IN_PROGRESS)
             .statusMessage("User Initiated");
     return List.of(createInProgress, createComplete, updateInProgress);
+  }
+
+  public static SsmParameter ssmParameter(String id, String name, String value) {
+    return new SsmParameter()
+            .id(id)
+            .name(name)
+            .value(value);
   }
 }
