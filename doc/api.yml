@@ -667,6 +667,8 @@ paths:
           schema:
             type: string
           required: false
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
       tags:
         - Environment
       operationId: getApplicationEnvironmentSsmParameters
@@ -1243,6 +1245,8 @@ components:
     SsmParameter:
       type: object
       properties:
+        id:
+          type: string
         name:
           type: string
           example: /poja/app/env/name
@@ -1490,7 +1494,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/PagedResponse"
         - properties:
-            date:
+            data:
               type: array
               items:
                 $ref: '#/components/schemas/SsmParameter'
