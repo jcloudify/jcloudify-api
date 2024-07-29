@@ -10,7 +10,7 @@ plugins {
 
     id 'jacoco'
 
-
+    
 }
 
 jacoco {
@@ -219,4 +219,5 @@ implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
 implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
 implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
+
 }
