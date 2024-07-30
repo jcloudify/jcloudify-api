@@ -39,7 +39,6 @@ public class SsmComponent {
 
   public List<Parameter> getSsmParametersByNames(List<String> parameterNames) {
     GetParametersRequest request = GetParametersRequest.builder().names(parameterNames).build();
-
     return ssmClient.getParameters(request).parameters();
   }
 

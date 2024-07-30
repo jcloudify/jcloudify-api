@@ -11,6 +11,7 @@ import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.repository.jpa.SsmParameterRepository;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.Environment;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -48,13 +49,20 @@ public class SsmParameterService {
       BoundedPageSize boundedPageSize) {
     List<api.jcloudify.app.repository.model.SsmParameter> actualStored =
         findAllByCriteria(userId, appId, envId, pageFromOne, boundedPageSize);
-    List<Parameter> actualWithValues =
-        ssmComponent.getSsmParametersByNames(
-            actualStored.stream()
-                .map(api.jcloudify.app.repository.model.SsmParameter::getName)
-                .toList());
-    List<SsmParameter> result = mapper.toRest(actualStored, actualWithValues);
-    return new Page<>(pageFromOne, boundedPageSize, result);
+    if (actualStored.isEmpty()) {
+      return new Page<>(
+          pageFromOne,
+          boundedPageSize,
+          new ArrayList<>()); // Just return an empty array if there's no ssm parameters yet
+    } else {
+      List<Parameter> actualWithValues =
+          ssmComponent.getSsmParametersByNames(
+              actualStored.stream()
+                  .map(api.jcloudify.app.repository.model.SsmParameter::getName)
+                  .toList());
+      List<SsmParameter> result = mapper.toRest(actualStored, actualWithValues);
+      return new Page<>(pageFromOne, boundedPageSize, result);
+    }
   }
 
   private List<api.jcloudify.app.repository.model.SsmParameter> saveAll(
