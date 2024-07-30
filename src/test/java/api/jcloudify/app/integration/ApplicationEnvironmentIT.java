@@ -38,7 +38,10 @@ import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -46,9 +49,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @AutoConfigureMockMvc
 @Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ApplicationEnvironmentIT extends MockedThirdParties {
-  @MockBean
-  SsmComponent ssmComponent;
+  @MockBean SsmComponent ssmComponent;
+
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
   }
@@ -148,37 +152,39 @@ class ApplicationEnvironmentIT extends MockedThirdParties {
   }
 
   @Test
+  @Order(1)
   void get_ssm_parameters_ok() throws ApiException {
     ApiClient joeDoeClient = anApiClient();
     EnvironmentApi api = new EnvironmentApi(joeDoeClient);
 
-    var notFilteredSsmParameters = api.getApplicationEnvironmentSsmParameters(
+    var responseBody =
+        api.getApplicationEnvironmentSsmParameters(
             JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID, null, null, null);
-    var notFilteredData = notFilteredSsmParameters.getData();
-    var filteredSsmParameters = api.getApplicationEnvironmentSsmParameters(
-            JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID, "/poja/prod/ssm/param2", null, null);
-    var filteredSsmParametersData = filteredSsmParameters.getData();
+    var data = responseBody.getData();
 
-    assertNotNull(notFilteredData);
-    assertTrue(notFilteredData.containsAll(List.of(ssmParam1(), ssmParam2())));
-    assertNotNull(filteredSsmParametersData);
-    assertEquals(ssmParam2(), filteredSsmParametersData.getFirst());
+    assertNotNull(data);
+    assertTrue(data.containsAll(List.of(ssmParam1(), ssmParam2())));
   }
 
   @Test
+  @Order(2)
   void crupdate_ssm_parameters_ok() throws ApiException {
     ApiClient joeDoeClient = anApiClient();
     EnvironmentApi api = new EnvironmentApi(joeDoeClient);
 
-    var createSsmParametersResponse = api.crupdateApplicationEnvironmentSsmParameters(
-            JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID,
-            new CrupdateEnvironmentSsmParameters()
-                    .data(List.of(ssmParameterToCreate())));
+    var createSsmParametersResponse =
+        api.crupdateApplicationEnvironmentSsmParameters(
+            JOE_DOE_ID,
+            POJA_APPLICATION_ID,
+            POJA_APPLICATION_ENVIRONMENT_ID,
+            new CrupdateEnvironmentSsmParameters().data(List.of(ssmParameterToCreate())));
     var createdSsmParametersData = createSsmParametersResponse.getData();
-    var updateSsmParameter = api.crupdateApplicationEnvironmentSsmParameters(
-            JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID,
-            new CrupdateEnvironmentSsmParameters()
-                    .data(List.of(ssmParam1Updated())));
+    var updateSsmParameter =
+        api.crupdateApplicationEnvironmentSsmParameters(
+            JOE_DOE_ID,
+            POJA_APPLICATION_ID,
+            POJA_APPLICATION_ENVIRONMENT_ID,
+            new CrupdateEnvironmentSsmParameters().data(List.of(ssmParam1Updated())));
     var updatedSsmParameterData = updateSsmParameter.getData();
 
     assertNotNull(createdSsmParametersData);

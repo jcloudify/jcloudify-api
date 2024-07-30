@@ -8,14 +8,14 @@ import software.amazon.awssdk.services.ssm.SsmClient;
 
 @Configuration
 public class SsmConf {
-    private final Region region;
+  private final Region region;
 
-    public SsmConf(@Value("${aws.region}") Region region) {
-        this.region = region;
-    }
+  public SsmConf(@Value("${aws.region}") Region region) {
+    this.region = region;
+  }
 
-    @Bean
-    public SsmClient getSsmClient() {
-        return SsmClient.builder().region(region).build();
-    }
+  @Bean
+  public SsmClient getSsmClient() {
+    return SsmClient.builder().region(region).build();
+  }
 }

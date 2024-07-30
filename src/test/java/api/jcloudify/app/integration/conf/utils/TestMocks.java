@@ -27,11 +27,10 @@ import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.model.TestingConf1;
 import api.jcloudify.app.endpoint.rest.model.User;
-import software.amazon.awssdk.services.ssm.model.Parameter;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import software.amazon.awssdk.services.ssm.model.Parameter;
 
 public class TestMocks {
   public static final String JOE_DOE_ID = "joe_doe_id";
@@ -222,24 +221,15 @@ public class TestMocks {
   }
 
   public static SsmParameter ssmParameter(String id, String name, String value) {
-    return new SsmParameter()
-            .id(id)
-            .name(name)
-            .value(value);
+    return new SsmParameter().id(id).name(name).value(value);
   }
 
   public static Parameter awsSsmParameterModelToCreate() {
-    return Parameter.builder()
-            .name("/poja/prod/ssm/new/param")
-            .value("dummy")
-            .build();
+    return Parameter.builder().name("/poja/prod/ssm/new/param").value("dummy").build();
   }
 
   public static Parameter awsSsmParameterModelToUpdate() {
-    return Parameter.builder()
-            .name("/poja/prod/ssm/param1")
-            .value("param1")
-            .build();
+    return Parameter.builder().name("/poja/prod/ssm/param1").value("param1").build();
   }
 
   public static SsmParameter ssmParameterToCreate() {
@@ -248,5 +238,9 @@ public class TestMocks {
 
   public static SsmParameter ssmParam1Updated() {
     return ssmParameter("ssm_param_1_id", "/poja/prod/ssm/param1", "param1");
+  }
+
+  public static Parameter ssmParameter(String name, String value) {
+    return Parameter.builder().name(name).value(value).build();
   }
 }
