@@ -27,6 +27,8 @@ import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.model.TestingConf1;
 import api.jcloudify.app.endpoint.rest.model.User;
+import com.stripe.model.Customer;
+import com.stripe.model.PaymentMethod;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class TestMocks {
   public static final String JOE_DOE_USERNAME = "JoeDoe";
   public static final String JOE_DOE_AVATAR =
       "https://github.com/images/" + JOE_DOE_USERNAME + ".png";
+  public static final String JOE_DOE_STRIPE_ID = "joe_stripe_id";
   public static final String JANE_DOE_ID = "jane_doe_id";
   public static final String JANE_DOE_TOKEN = "jane_doe_token";
   public static final String JANE_DOE_EMAIL = "jane@email.com";
@@ -47,6 +50,7 @@ public class TestMocks {
   public static final String JANE_DOE_USERNAME = "JaneDoe";
   public static final String JANE_DOE_AVATAR =
       "https://github.com/images/" + JANE_DOE_USERNAME + ".png";
+  public static final String JANE_DOE_STRIPE_ID = "jane_stripe_id";
   public static final String POJA_CREATED_STACK_ID = "poja_created_stack_id";
   public static final String POJA_CF_STACK_ID = "poja_cf_stack_id";
   public static final String POJA_APPLICATION_ID = "poja_application_id";
@@ -71,6 +75,33 @@ public class TestMocks {
   public static final String OTHER_POJA_APPLICATION_ENVIRONMENT_ID =
       "other_poja_application_environment_id";
 
+  public static Customer stripeCustomer() {
+    Customer customer = new Customer();
+    customer.setId(JOE_DOE_STRIPE_ID);
+    customer.setName("stripe customer");
+    customer.setEmail("test@example.com");
+    return customer;
+  }
+
+  public static PaymentMethod paymentMethod() {
+    PaymentMethod.Card card = new PaymentMethod.Card();
+    card.setBrand("visa");
+    card.setLast4("4242");
+
+    PaymentMethod paymentMethod = new PaymentMethod();
+    paymentMethod.setId("payment_method_id");
+    paymentMethod.setType("card");
+    paymentMethod.setCard(card);
+    paymentMethod.setCustomer(JOE_DOE_STRIPE_ID);
+    return paymentMethod;
+  }
+
+  public static List<PaymentMethod> paymentMethods() {
+    List<PaymentMethod> paymentMethods = new ArrayList<>();
+    paymentMethods.add(paymentMethod());
+    return paymentMethods;
+  }
+
   public static User joeDoeUser() {
     return new User()
         .id(JOE_DOE_ID)
@@ -80,7 +111,8 @@ public class TestMocks {
         .firstName("Joe")
         .lastName("Doe")
         .githubId(JOE_DOE_GITHUB_ID)
-        .avatar(JOE_DOE_AVATAR);
+        .avatar(JOE_DOE_AVATAR)
+        .stripeId(JOE_DOE_STRIPE_ID);
   }
 
   public static User janeDoeUser() {

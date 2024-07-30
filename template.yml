@@ -42,6 +42,8 @@ Globals:
         GITHUB_APPID: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/app/id}}'
         POJA_SAM_API_KEY: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/poja/sam/api/key}}'
 
+        STRIPE_API_KEY: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/stripe-api-key}}'
+        
 
 Parameters:
   Env:

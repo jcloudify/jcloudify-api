@@ -801,6 +801,63 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /users/{userId}/payment-methods:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      operationId: getPaymentMethods
+      summary: Get customer's payment methods
+      responses:
+        '200':
+          description: List of customer's payment methods
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      operationId: managePaymentMethods
+      summary: Manage user's payment methods
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentMethodsAction"
+      responses:
+        '200':
+          description: Updated payment methods
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
 components:
   securitySchemes:
@@ -952,6 +1009,8 @@ components:
           type: string
           example: Randrianary
         plan_name:
+          type: string
+        stripe_id:
           type: string
 
     Whoami:
@@ -1371,7 +1430,30 @@ components:
           type: string
         is_org:
           type: boolean
-
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        brand:
+          type: string
+        last4:
+          type: string
+    PaymentMethodsAction:
+      type: object
+      properties:
+        payment_method_id:
+          type: string
+        action:
+          type: string
+          enum:
+            - ATTACH
+            - DETACH
+        set_default:
+          type: boolean
+          default: false
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
@@ -1519,6 +1601,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AppInstallation"
+    PaymentMethodResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentMethod"
     PagedLogs:
       type: object
       allOf:

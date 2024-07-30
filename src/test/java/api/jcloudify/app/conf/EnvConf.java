@@ -16,5 +16,6 @@ public class EnvConf {
     registry.add("apps.envs.networking", () -> NETWORKING_CONFIG_STRING_VALUE);
     registry.add("github.api.baseuri", () -> "https://api.github.com");
     registry.add("poja.sam.api.key", () -> "dummy");
+    registry.add("stripe.api.key", () -> "dummy");
   }
 }

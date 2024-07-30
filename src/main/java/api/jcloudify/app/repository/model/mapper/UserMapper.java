@@ -14,7 +14,7 @@ public class UserMapper {
 
   public static final UserRole[] CREATE_USER_DEFAULT_ROLE = {USER};
 
-  public User toModel(CreateUser toCreate, GHMyself githubUser) {
+  public User toModel(CreateUser toCreate, GHMyself githubUser, String stripeId) {
     return User.builder()
         .firstName(toCreate.getFirstName())
         .lastName(toCreate.getLastName())
@@ -24,6 +24,7 @@ public class UserMapper {
         .avatar(githubUser.getAvatarUrl())
         .roles(CREATE_USER_DEFAULT_ROLE)
         .pricingMethod(TEN_MICRO)
+        .stripeId(stripeId)
         .build();
   }
 }

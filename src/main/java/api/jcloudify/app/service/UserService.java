@@ -9,6 +9,7 @@ import api.jcloudify.app.repository.jpa.UserRepository;
 import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.repository.model.mapper.UserMapper;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHMyself;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,28 @@ public class UserService {
   private final GithubComponent githubComponent;
   private final UserMapper mapper;
 
+  private final StripeService stripeService;
+
   public List<User> createUsers(List<CreateUser> toCreate) {
     List<User> toSave = toCreate.stream().map(this::createUserFrom).toList();
     return repository.saveAll(toSave);
   }
 
+  public User getUserById(String userId) {
+    return findById(userId)
+        .orElseThrow(
+            () -> new NotFoundException("The user identified by id " + userId + " is not found"));
+  }
+
+  public Optional<User> findById(String userId) {
+    return repository.findById(userId);
+  }
+
   private User createUserFrom(CreateUser createUser) {
+    String stripeName = createUser.getFirstName() + " " + createUser.getLastName();
     GHMyself githubUser = getUserByToken(createUser.getToken());
-    User user = mapper.toModel(createUser, githubUser);
+    String customerId = stripeService.createCustomer(stripeName, createUser.getEmail()).getId();
+    User user = mapper.toModel(createUser, githubUser, customerId);
     if (repository.existsByEmail(user.getEmail()))
       throw new BadRequestException("An account with the same email already exists");
     return user;
