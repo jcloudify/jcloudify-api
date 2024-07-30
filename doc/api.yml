@@ -690,26 +690,56 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: createApplicationEnvironmentSsmParameters
+      summary: create ssm parameters for an application environment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createEnvironmentSsmParameters'
+        required: true
+      responses:
+        '200':
+          description: The created ssm parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/crupdateEnvironmentSsmParametersResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
     put:
       security:
         - bearerAuth: [ ]
       tags:
         - Environment
-      operationId: crupdateApplicationEnvironmentSsmParameters
-      summary: crupdate ssm parameters for an application environment
+      operationId: updateApplicationEnvironmentSsmParameters
+      summary: update ssm parameters for an application environment
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CrupdateEnvironmentSsmParameters'
+              $ref: '#/components/schemas/updateEnvironmentSsmParameters'
         required: true
       responses:
         '200':
-          description: The crupdated ssm parameters
+          description: The updated ssm parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CrupdateEnvironmentSsmParameters'
+                $ref: '#/components/schemas/crupdateEnvironmentSsmParametersResponse'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1301,15 +1331,20 @@ components:
       properties:
         environmentId:
           type: string
-    SsmParameter:
+    CreateSsmParameter:
       type: object
       properties:
-        id:
-          type: string
         name:
           type: string
           example: /poja/app/env/name
         value:
+          type: string
+    SsmParameter:
+      allOf:
+        - $ref: '#/components/schemas/CreateSsmParameter'
+      type: object
+      properties:
+        id:
           type: string
     Log:
       type: object
@@ -1571,7 +1606,21 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnvironmentVariable"
-    CrupdateEnvironmentSsmParameters:
+    createEnvironmentSsmParameters:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSsmParameter'
+    updateEnvironmentSsmParameters:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SsmParameter'
+    crupdateEnvironmentSsmParametersResponse:
       type: object
       properties:
         data:
