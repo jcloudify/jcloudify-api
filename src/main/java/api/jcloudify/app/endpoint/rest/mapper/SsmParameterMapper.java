@@ -1,5 +1,8 @@
 package api.jcloudify.app.endpoint.rest.mapper;
 
+import static java.util.UUID.randomUUID;
+
+import api.jcloudify.app.endpoint.rest.model.CreateSsmParameter;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.model.exception.NotFoundException;
 import java.util.List;
@@ -36,8 +39,22 @@ public class SsmParameterMapper {
         .build();
   }
 
+  public api.jcloudify.app.repository.model.SsmParameter toDomain(
+      CreateSsmParameter rest, String envId) {
+    return api.jcloudify.app.repository.model.SsmParameter.builder()
+        .id(randomUUID().toString())
+        .name(rest.getName())
+        .environmentId(envId)
+        .build();
+  }
+
   public List<api.jcloudify.app.repository.model.SsmParameter> toDomain(
       List<SsmParameter> rest, String envId) {
+    return rest.stream().map(ssmParameter -> this.toDomain(ssmParameter, envId)).toList();
+  }
+
+  public List<api.jcloudify.app.repository.model.SsmParameter> toDomainToCreate(
+      List<CreateSsmParameter> rest, String envId) {
     return rest.stream().map(ssmParameter -> this.toDomain(ssmParameter, envId)).toList();
   }
 }

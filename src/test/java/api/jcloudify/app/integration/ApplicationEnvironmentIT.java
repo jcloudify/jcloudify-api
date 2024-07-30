@@ -9,6 +9,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATIO
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.pojaAppProdEnvironment;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.ssmParam1Updated;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.ssmParamCreated;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.ssmParameter;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.ssmParameterToCreate;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
@@ -28,11 +29,12 @@ import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.api.EnvironmentApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
+import api.jcloudify.app.endpoint.rest.model.CreateEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironment;
-import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
+import api.jcloudify.app.endpoint.rest.model.UpdateEnvironmentSsmParameters;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.io.IOException;
 import java.util.List;
@@ -173,22 +175,22 @@ class ApplicationEnvironmentIT extends MockedThirdParties {
     EnvironmentApi api = new EnvironmentApi(joeDoeClient);
 
     var createSsmParametersResponse =
-        api.crupdateApplicationEnvironmentSsmParameters(
+        api.createApplicationEnvironmentSsmParameters(
             JOE_DOE_ID,
             POJA_APPLICATION_ID,
             POJA_APPLICATION_ENVIRONMENT_ID,
-            new CrupdateEnvironmentSsmParameters().data(List.of(ssmParameterToCreate())));
+            new CreateEnvironmentSsmParameters().data(List.of(ssmParameterToCreate())));
     var createdSsmParametersData = createSsmParametersResponse.getData();
     var updateSsmParameter =
-        api.crupdateApplicationEnvironmentSsmParameters(
+        api.updateApplicationEnvironmentSsmParameters(
             JOE_DOE_ID,
             POJA_APPLICATION_ID,
             POJA_APPLICATION_ENVIRONMENT_ID,
-            new CrupdateEnvironmentSsmParameters().data(List.of(ssmParam1Updated())));
+            new UpdateEnvironmentSsmParameters().data(List.of(ssmParam1Updated())));
     var updatedSsmParameterData = updateSsmParameter.getData();
 
     assertNotNull(createdSsmParametersData);
-    assertTrue(createdSsmParametersData.contains(ssmParameterToCreate()));
+    assertTrue(ignoreIds(createdSsmParametersData).contains(ssmParamCreated()));
     assertNotNull(updatedSsmParameterData);
     assertTrue(updatedSsmParameterData.contains(ssmParam1Updated()));
   }
@@ -202,5 +204,9 @@ class ApplicationEnvironmentIT extends MockedThirdParties {
         .id(environment.getId())
         .environmentType(environment.getEnvironmentType())
         .archived(environment.getArchived());
+  }
+
+  private List<SsmParameter> ignoreIds(List<SsmParameter> actual) {
+    return actual.stream().map(p -> p.id(null)).toList();
   }
 }

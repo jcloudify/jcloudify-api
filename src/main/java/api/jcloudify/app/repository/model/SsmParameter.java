@@ -1,7 +1,10 @@
 package api.jcloudify.app.repository.model;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.io.Serializable;
@@ -24,6 +27,8 @@ import lombok.ToString;
 @ToString
 public class SsmParameter implements Serializable {
   @Id private String id;
+
+  @GeneratedValue(strategy = IDENTITY)
   private String name;
 
   @Column(name = "id_environment")

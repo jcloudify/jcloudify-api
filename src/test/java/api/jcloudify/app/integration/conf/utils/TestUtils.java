@@ -74,9 +74,9 @@ public class TestUtils {
   }
 
   public static void setUpSsmComponent(SsmComponent ssmComponent) {
-    when(ssmComponent.crupdateSsmParameters(eq(List.of(ssmParameterToCreate())), any()))
+    when(ssmComponent.createSsmParameters(eq(List.of(ssmParameterToCreate())), any()))
         .thenReturn(List.of(awsSsmParameterModelToCreate()));
-    when(ssmComponent.crupdateSsmParameters(eq(List.of(ssmParam1Updated())), any()))
+    when(ssmComponent.updateSsmParameters(eq(List.of(ssmParam1Updated()))))
         .thenReturn(List.of(awsSsmParameterModelToUpdate()));
     when(ssmComponent.getSsmParametersByNames(
             eq(List.of("/poja/prod/ssm/param1", "/poja/prod/ssm/param2"))))
