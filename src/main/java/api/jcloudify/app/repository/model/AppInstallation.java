@@ -25,5 +25,6 @@ public class AppInstallation {
   private long ghId;
   private String userId;
   private String ownerGithubLogin;
-  private boolean isOrg;
+  private String type;
+  private String avatarUrl;
 }

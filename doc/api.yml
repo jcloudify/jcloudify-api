@@ -135,7 +135,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - GithubApp
+        - GithubAppInstallation
       operationId: getUserInstallations
       summary: get all user installations of jcloudify app
       responses:
@@ -159,7 +159,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - GithubApp
+        - GithubAppInstallation
       operationId: crupdateGithubAppInstallations
       summary: for each installation, it will create if id exist, update it otherwise
       requestBody:
@@ -1418,7 +1418,7 @@ components:
           type: integer
         human_readable_value:
           type: string
-    AppInstallation:
+    CreateGithubAppInstallation:
       type: object
       properties:
         id:
@@ -1426,10 +1426,17 @@ components:
         gh_installation_id:
           type: integer
           format: int64
+    GithubAppInstallation:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/CreateGithubAppInstallation"
+      properties:
         owner:
           type: string
-        is_org:
-          type: boolean
+        type:
+          type: string
+        gh_avatar_url:
+          type: string
     PaymentMethod:
       type: object
       properties:
@@ -1586,21 +1593,21 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/AppInstallation"
+            $ref: "#/components/schemas/GithubAppInstallation"
     CrupdateGithubAppInstallationsRequestBody:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/AppInstallation"
+            $ref: "#/components/schemas/CreateGithubAppInstallation"
     CrupdateGithubAppInstallationsResponse:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/AppInstallation"
+            $ref: "#/components/schemas/GithubAppInstallation"
     PaymentMethodResponse:
       type: object
       properties:
