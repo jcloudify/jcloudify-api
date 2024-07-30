@@ -4,13 +4,13 @@ import static api.jcloudify.app.service.StackService.setUpTags;
 
 import api.jcloudify.app.aws.ssm.SsmComponent;
 import api.jcloudify.app.endpoint.rest.mapper.SsmParameterMapper;
+import api.jcloudify.app.endpoint.rest.model.CreateSsmParameter;
+import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.Page;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.repository.jpa.SsmParameterRepository;
-import api.jcloudify.app.repository.model.Application;
-import api.jcloudify.app.repository.model.Environment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +29,28 @@ public class SsmParameterService {
   private final EnvironmentService environmentService;
   private final SsmParameterMapper mapper;
 
-  public List<SsmParameter> crupdateParameters(
+  public List<SsmParameter> createParameters(
+      String appId, String envId, List<CreateSsmParameter> parameters) {
+    String applicationName = getApplicationName(appId);
+    EnvironmentType environmentType = getEnvironmentType(envId);
+    Map<String, String> tags = setUpTags(applicationName, environmentType.toString().toLowerCase());
+    List<Parameter> createdParameters = ssmComponent.createSsmParameters(parameters, tags);
+    List<api.jcloudify.app.repository.model.SsmParameter> saved =
+        saveAll(mapper.toDomainToCreate(parameters, envId));
+    return mapper.toRest(saved, createdParameters);
+  }
+
+  private EnvironmentType getEnvironmentType(String envId) {
+    return environmentService.getById(envId).getEnvironmentType();
+  }
+
+  private String getApplicationName(String appId) {
+    return applicationService.getById(appId).getName();
+  }
+
+  public List<SsmParameter> updateParameters(
       String appId, String envId, List<SsmParameter> parameters) {
-    Application application = applicationService.getById(appId);
-    Environment environment = environmentService.getById(envId);
-    Map<String, String> tags =
-        setUpTags(application.getName(), environment.getEnvironmentType().toString().toLowerCase());
-    List<Parameter> createdParameters = ssmComponent.crupdateSsmParameters(parameters, tags);
+    List<Parameter> createdParameters = ssmComponent.updateSsmParameters(parameters);
     List<api.jcloudify.app.repository.model.SsmParameter> saved =
         saveAll(mapper.toDomain(parameters, envId));
     return mapper.toRest(saved, createdParameters);

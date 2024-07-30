@@ -1,5 +1,8 @@
 package api.jcloudify.app.aws.ssm;
 
+import static software.amazon.awssdk.services.ssm.model.ParameterType.STRING;
+
+import api.jcloudify.app.endpoint.rest.model.CreateSsmParameter;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import java.util.List;
 import java.util.Map;
@@ -17,20 +20,37 @@ import software.amazon.awssdk.services.ssm.model.Tag;
 public class SsmComponent {
   private final SsmClient ssmClient;
 
-  public List<Parameter> crupdateSsmParameters(
-      List<SsmParameter> ssmParameters, Map<String, String> tags) {
-    return ssmParameters.stream().map(parameter -> crupdateSsmParameter(parameter, tags)).toList();
+  public List<Parameter> updateSsmParameters(List<SsmParameter> ssmParameters) {
+    return ssmParameters.stream().map(this::updateSsmParameter).toList();
   }
 
-  private Parameter crupdateSsmParameter(SsmParameter parameter, Map<String, String> tags) {
+  public List<Parameter> createSsmParameters(
+      List<CreateSsmParameter> ssmParameters, Map<String, String> tags) {
+    return ssmParameters.stream().map(parameter -> createSsmParameter(parameter, tags)).toList();
+  }
+
+  private Parameter createSsmParameter(CreateSsmParameter parameter, Map<String, String> tags) {
     PutParameterRequest crupdateRequest =
         PutParameterRequest.builder()
             .name(parameter.getName())
             .value(parameter.getValue())
             .tags(setUpTags(tags))
-            .overwrite(true) // directly set to true to allow updating parameter
+            .type(STRING) // We only take in charge of STRING parameter types
             .build();
+    ssmClient.putParameter(crupdateRequest);
+    GetParameterRequest getRequest =
+        GetParameterRequest.builder().name(parameter.getName()).build();
+    return ssmClient.getParameter(getRequest).parameter();
+  }
 
+  private Parameter updateSsmParameter(SsmParameter parameter) {
+    PutParameterRequest crupdateRequest =
+        PutParameterRequest.builder()
+            .name(parameter.getName())
+            .value(parameter.getValue())
+            .overwrite(true)
+            .type(STRING) // We only take in charge of STRING parameter types
+            .build();
     ssmClient.putParameter(crupdateRequest);
     GetParameterRequest getRequest =
         GetParameterRequest.builder().name(parameter.getName()).build();

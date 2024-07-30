@@ -13,6 +13,7 @@ import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.ComputeConf1;
 import api.jcloudify.app.endpoint.rest.model.ConcurrencyConf1;
+import api.jcloudify.app.endpoint.rest.model.CreateSsmParameter;
 import api.jcloudify.app.endpoint.rest.model.DatabaseConf1;
 import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.GenApiClient1;
@@ -264,8 +265,12 @@ public class TestMocks {
     return Parameter.builder().name("/poja/prod/ssm/param1").value("param1").build();
   }
 
-  public static SsmParameter ssmParameterToCreate() {
-    return ssmParameter("ssm_param_to_create_id", "/poja/prod/ssm/new/param", "dummy");
+  public static CreateSsmParameter ssmParameterToCreate() {
+    return new CreateSsmParameter().name("/poja/prod/ssm/new/param").value("dummy");
+  }
+
+  public static SsmParameter ssmParamCreated() {
+    return ssmParameter(null, "/poja/prod/ssm/new/param", "dummy");
   }
 
   public static SsmParameter ssmParam1Updated() {

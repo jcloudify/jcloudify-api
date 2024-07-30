@@ -3,7 +3,8 @@ package api.jcloudify.app.endpoint.rest.controller;
 import static java.util.Objects.requireNonNull;
 
 import api.jcloudify.app.endpoint.rest.mapper.EnvironmentMapper;
-import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentSsmParameters;
+import api.jcloudify.app.endpoint.rest.model.CreateEnvironmentSsmParameters;
+import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentSsmParametersResponse;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsResponse;
 import api.jcloudify.app.endpoint.rest.model.Environment;
@@ -11,7 +12,8 @@ import api.jcloudify.app.endpoint.rest.model.EnvironmentsResponse;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PagedEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
-import api.jcloudify.app.endpoint.validator.CrupdateEnvironmentSsmParametersValidator;
+import api.jcloudify.app.endpoint.rest.model.UpdateEnvironmentSsmParameters;
+import api.jcloudify.app.endpoint.validator.CreateEnvironmentSsmParametersValidator;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.service.EnvironmentService;
@@ -20,6 +22,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +34,7 @@ public class ApplicationEnvironmentController {
   private final EnvironmentService service;
   private final EnvironmentMapper mapper;
   private final SsmParameterService ssmParameterService;
-  private final CrupdateEnvironmentSsmParametersValidator crupdateEnvironmentSsmParametersValidator;
+  private final CreateEnvironmentSsmParametersValidator createEnvironmentSsmParametersValidator;
 
   @GetMapping("/users/{userId}/applications/{applicationId}/environments")
   public EnvironmentsResponse getApplicationEnvironments(
@@ -80,17 +83,29 @@ public class ApplicationEnvironmentController {
         service.getUserApplicationEnvironmentById(userId, applicationId, environmentId));
   }
 
-  @PutMapping(
+  @PostMapping(
       "/users/{userId}/applications/{applicationId}/environments/{environmentId}/ssmparameters")
-  public CrupdateEnvironmentSsmParameters crupdateEnvironmentSsmParameters(
+  public CrupdateEnvironmentSsmParametersResponse createEnvironmentSsmParameters(
       @PathVariable String userId,
       @PathVariable String applicationId,
       @PathVariable String environmentId,
-      @RequestBody CrupdateEnvironmentSsmParameters requestBody) {
-    crupdateEnvironmentSsmParametersValidator.accept(requestBody);
-    List<SsmParameter> crupdatedSsmParameters =
-        ssmParameterService.crupdateParameters(applicationId, environmentId, requestBody.getData());
-    return new CrupdateEnvironmentSsmParameters().data(crupdatedSsmParameters);
+      @RequestBody CreateEnvironmentSsmParameters requestBody) {
+    createEnvironmentSsmParametersValidator.accept(requestBody);
+    List<SsmParameter> createdSsmParameters =
+        ssmParameterService.createParameters(applicationId, environmentId, requestBody.getData());
+    return new CrupdateEnvironmentSsmParametersResponse().data(createdSsmParameters);
+  }
+
+  @PutMapping(
+      "/users/{userId}/applications/{applicationId}/environments/{environmentId}/ssmparameters")
+  public CrupdateEnvironmentSsmParametersResponse updateEnvironmentSsmParameters(
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @PathVariable String environmentId,
+      @RequestBody UpdateEnvironmentSsmParameters requestBody) {
+    List<SsmParameter> createdSsmParameters =
+        ssmParameterService.updateParameters(applicationId, environmentId, requestBody.getData());
+    return new CrupdateEnvironmentSsmParametersResponse().data(createdSsmParameters);
   }
 
   @GetMapping(
