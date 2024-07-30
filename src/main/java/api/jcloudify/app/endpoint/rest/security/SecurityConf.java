@@ -81,6 +81,7 @@ public class SecurityConf {
                     antMatcher(PUT, "/users/*/applications/*/environments"),
                     antMatcher(GET, "/users/*/applications/*/environments/*"),
                     antMatcher(PUT, "/users/*/applications/*/environments/*/ssmparameters"),
+                    antMatcher(GET, "/users/*/applications/*/environments/*/ssmparameters"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/events"),
@@ -158,9 +159,15 @@ public class SecurityConf {
                             "/users/*/applications/*/environments/*",
                             authenticatedResourceProvider))
                     .authenticated()
-                        .requestMatchers(
+                    .requestMatchers(
                         new SelfApplicationMatcher(
                             PUT,
+                            "/users/*/applications/*/environments/*/ssmparameters",
+                            authenticatedResourceProvider))
+                    .authenticated()
+                    .requestMatchers(
+                        new SelfApplicationMatcher(
+                            GET,
                             "/users/*/applications/*/environments/*/ssmparameters",
                             authenticatedResourceProvider))
                     .authenticated()

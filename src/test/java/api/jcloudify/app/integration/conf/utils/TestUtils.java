@@ -60,8 +60,16 @@ public class TestUtils {
   }
 
   public static void setUpSsmComponent(SsmComponent ssmComponent) {
-    when(ssmComponent.crupdateSsmParameters(eq(List.of(ssmParameterToCreate())), any())).thenReturn(List.of(awsSsmParameterModelToCreate()));
-    when(ssmComponent.crupdateSsmParameters(eq(List.of(ssmParam1Updated())), any())).thenReturn(List.of(awsSsmParameterModelToUpdate()));
+    when(ssmComponent.crupdateSsmParameters(eq(List.of(ssmParameterToCreate())), any()))
+        .thenReturn(List.of(awsSsmParameterModelToCreate()));
+    when(ssmComponent.crupdateSsmParameters(eq(List.of(ssmParam1Updated())), any()))
+        .thenReturn(List.of(awsSsmParameterModelToUpdate()));
+    when(ssmComponent.getSsmParametersByNames(
+            eq(List.of("/poja/prod/ssm/param1", "/poja/prod/ssm/param2"))))
+        .thenReturn(
+            List.of(
+                ssmParameter("/poja/prod/ssm/param1", "dummy"),
+                ssmParameter("/poja/prod/ssm/param2", "dummy")));
   }
 
   public static void setUpCloudformationComponent(CloudformationComponent cloudformationComponent) {

@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -11,8 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serializable;
 
 @Entity
 @Builder(toBuilder = true)
@@ -24,9 +23,9 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @ToString
 public class SsmParameter implements Serializable {
-    @Id
-    private String id;
-    private String name;
-    @Column(name = "id_environment")
-    private String environmentId;
+  @Id private String id;
+  private String name;
+
+  @Column(name = "id_environment")
+  private String environmentId;
 }
