@@ -1,6 +1,7 @@
 package api.jcloudify.app.integration.conf.utils;
 
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
+import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_IN_PROGRESS;
@@ -96,6 +97,13 @@ public class TestMocks {
     return new Environment()
         .id(POJA_APPLICATION_ENVIRONMENT_ID)
         .environmentType(PROD)
+        .state(HEALTHY);
+  }
+
+  public static Environment pojaAppPreprodEnvironment() {
+    return new Environment()
+        .id("other_poja_application_2_id")
+        .environmentType(PREPROD)
         .state(HEALTHY);
   }
 

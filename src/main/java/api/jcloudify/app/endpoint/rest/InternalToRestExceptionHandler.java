@@ -1,5 +1,10 @@
 package api.jcloudify.app.endpoint.rest;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import api.jcloudify.app.endpoint.rest.model.ExceptionModel;
 import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.ForbiddenException;
@@ -19,20 +24,19 @@ public class InternalToRestExceptionHandler {
   @ExceptionHandler(value = {BadRequestException.class})
   ResponseEntity<ExceptionModel> handleBadRequest(BadRequestException e) {
     log.info("Bad request", e);
-    return new ResponseEntity<>(toRest(e, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(toRest(e, BAD_REQUEST), BAD_REQUEST);
   }
 
   @ExceptionHandler(value = {NotFoundException.class})
   ResponseEntity<ExceptionModel> handleNotFound(NotFoundException e) {
     log.info("Not found", e);
-    return new ResponseEntity<>(toRest(e, HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(toRest(e, NOT_FOUND), NOT_FOUND);
   }
 
   @ExceptionHandler(value = {java.lang.Exception.class})
   ResponseEntity<ExceptionModel> handleDefault(java.lang.Exception e) {
     log.error("Internal error", e);
-    return new ResponseEntity<>(
-        toRest(e, HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(toRest(e, INTERNAL_SERVER_ERROR), INTERNAL_SERVER_ERROR);
   }
 
   @ExceptionHandler(
@@ -48,20 +52,20 @@ public class InternalToRestExceptionHandler {
      * https://stackoverflow.com/questions/3297048/403-forbidden-vs-401-unauthorized-http-responses */
     log.info("Forbidden", e);
     var restException = new ExceptionModel();
-    restException.setType(HttpStatus.FORBIDDEN.toString());
+    restException.setType(FORBIDDEN.toString());
     restException.setMessage(e.getMessage());
-    return new ResponseEntity<>(restException, HttpStatus.FORBIDDEN);
+    return new ResponseEntity<>(restException, FORBIDDEN);
   }
 
   @ExceptionHandler(value = {DataIntegrityViolationException.class})
   ResponseEntity<ExceptionModel> handleDataIntegrityViolation(DataIntegrityViolationException e) {
     log.info("Bad request", e);
-    return new ResponseEntity<>(toRest(e, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(toRest(e, BAD_REQUEST), BAD_REQUEST);
   }
 
-  private ExceptionModel toRest(java.lang.Exception e, HttpStatus notFound) {
+  private ExceptionModel toRest(java.lang.Exception e, HttpStatus httpStatus) {
     var restException = new ExceptionModel();
-    restException.setType(HttpStatus.BAD_REQUEST.toString());
+    restException.setType(httpStatus.toString());
     restException.setMessage(e.getMessage());
     return restException;
   }
