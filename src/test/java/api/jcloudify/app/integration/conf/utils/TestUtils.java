@@ -52,7 +52,7 @@ public class TestUtils {
     when(githubComponent.getGithubUserId(JANE_DOE_TOKEN))
         .thenReturn(Optional.of(JANE_DOE_GITHUB_ID));
     Set<GhAppInstallation> t = ghApps();
-    when(githubComponent.listApplications()).thenReturn(t);
+    when(githubComponent.listInstallations()).thenReturn(t);
     when(githubComponent.getApplicationById(APP_INSTALLATION_1_ID))
         .thenReturn(GH_APP_JOE_DOE_INSTALLATION_1);
     when(githubComponent.getApplicationById(APP_INSTALLATION_2_ID))

@@ -1,16 +1,16 @@
 package api.jcloudify.app.endpoint.rest.security.github;
 
-import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import api.jcloudify.app.endpoint.rest.model.Token;
-import api.jcloudify.app.model.exception.ApiException;
 import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
 import api.jcloudify.app.service.github.model.CreateRepoResponse;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
+import api.jcloudify.app.service.github.model.GhAppInstallationResponse;
 import api.jcloudify.app.service.github.model.UpdateRepoRequestBody;
 import api.jcloudify.app.service.github.model.UpdateRepoResponse;
 import api.jcloudify.app.service.jwt.JwtGenerator;
@@ -26,9 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.kohsuke.github.GHAppInstallation;
 import org.kohsuke.github.GHMyself;
-import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -148,6 +146,18 @@ public class GithubComponent {
         .buildAndExpand(githubUsername, repositoryName);
   }
 
+  private UriComponents getListAppUri() {
+    return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
+        .path("/app/installations")
+        .build();
+  }
+
+  private UriComponents getAppUri(long installationId) {
+    return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
+        .path("/app/installations/{id}")
+        .buildAndExpand(installationId);
+  }
+
   private static HttpHeaders getGithubHttpHeaders(String token) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(APPLICATION_JSON);
@@ -179,34 +189,37 @@ public class GithubComponent {
     }
   }
 
-  public Set<GhAppInstallation> listApplications() {
-    var jwtToken = jwtGenerator.createJwt(githubAppId, Duration.ofSeconds(30));
-    try {
-      var gitHubApp = new GitHubBuilder().withJwtToken(jwtToken).build();
-      return gitHubApp.getApp().listInstallations().toList().stream()
-          .map(GithubComponent::toDomain)
-          .collect(Collectors.toUnmodifiableSet());
-    } catch (IOException e) {
-      throw new ApiException(SERVER_EXCEPTION, e);
-    }
+  public Set<GhAppInstallation> listInstallations() {
+    var jwtToken = jwtGenerator.createJwt(githubAppId, Duration.ofSeconds(600));
+    HttpHeaders headers = getGithubHttpHeaders(jwtToken);
+    HttpEntity<GhAppInstallationResponse> entity = new HttpEntity<>(headers);
+
+    ParameterizedTypeReference<List<GhAppInstallationResponse>> typeRef =
+        new ParameterizedTypeReference<>() {};
+    var response =
+        restTemplate.exchange(getListAppUri().toUriString(), GET, entity, typeRef).getBody();
+
+    return response.stream().map(GithubComponent::toDomain).collect(Collectors.toSet());
   }
 
   public GhAppInstallation getApplicationById(long id) {
     var jwtToken = jwtGenerator.createJwt(githubAppId, Duration.ofSeconds(30));
-    try {
-      var gitHubApp = new GitHubBuilder().withJwtToken(jwtToken).build();
-      return toDomain(gitHubApp.getApp().getInstallationById(id));
-    } catch (IOException e) {
-      throw new ApiException(SERVER_EXCEPTION, e);
-    }
+    HttpHeaders headers = getGithubHttpHeaders(jwtToken);
+    HttpEntity<GhAppInstallationResponse> entity = new HttpEntity<>(headers);
+
+    var response =
+        restTemplate
+            .exchange(getListAppUri().toUriString(), GET, entity, GhAppInstallationResponse.class)
+            .getBody();
+    return toDomain(response);
   }
 
   @SneakyThrows
-  private static GhAppInstallation toDomain(GHAppInstallation installation) {
-    GHUser account = installation.getAccount();
-    var ownerLogin = account.getLogin();
-    String type = account.getType();
-    String avatarUrl = account.getAvatarUrl();
-    return new GhAppInstallation(installation.getId(), ownerLogin, type, avatarUrl);
+  private static GhAppInstallation toDomain(GhAppInstallationResponse installation) {
+    var account = installation.account();
+    var ownerLogin = account.login();
+    String type = account.type();
+    String avatarUrl = account.avatarUrl();
+    return new GhAppInstallation(installation.id(), ownerLogin, type, avatarUrl);
   }
 }

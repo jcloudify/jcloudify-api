@@ -33,7 +33,7 @@ public class GithubService {
   }
 
   public Set<GhAppInstallation> listApplications() {
-    return githubComponent.listApplications();
+    return githubComponent.listInstallations();
   }
 
   public String getInstallationToken(long installationId, Duration duration) {
