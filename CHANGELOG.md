@@ -1,3 +1,14 @@
+# [3.9.0](https://github.com/jcloudify/jcloudify-api/compare/v3.8.0...v3.9.0) (2024-07-30)
+
+
+### Features
+
+* crupdate ssm parameters ([de4ff05](https://github.com/jcloudify/jcloudify-api/commit/de4ff0529dddac330b691488c64c23678c13e947))
+* get ssm parameters ([514a589](https://github.com/jcloudify/jcloudify-api/commit/514a589b2b9143356dd6e8d95277906c7fb7e024))
+* manage payment method ([3ddba4b](https://github.com/jcloudify/jcloudify-api/commit/3ddba4b617217d6966016c10116b8ee50d6ede64))
+
+
+
 # [3.8.0](https://github.com/jcloudify/jcloudify-api/compare/v3.7.0...v3.8.0) (2024-07-29)
 
 
@@ -112,16 +123,6 @@
 * create and list environments, created environments have UNKNOWN state by default ([fa337e4](https://github.com/jcloudify/jcloudify-api/commit/fa337e44778195606b3bc4fd3bf117812d60cd80))
 * get all applications filtered by name and userId ([04b42fa](https://github.com/jcloudify/jcloudify-api/commit/04b42fa63dbda469ef05243a222aeb8e53f52320))
 * pricing is directly attached to user, defaulting to TEN_MICRO, there is no other ref ([301a12e](https://github.com/jcloudify/jcloudify-api/commit/301a12e5c4ffe04235744484d017a06045406420))
-
-
-
-# [3.1.0](https://github.com/jcloudify/jcloudify-api/compare/v3.0.1...v3.1.0) (2024-07-16)
-
-
-### Features
-
-* can crupdate applications at PUT /applications ([1ff2575](https://github.com/jcloudify/jcloudify-api/commit/1ff2575f40bdc329ef22993847ae7a4db326f08f))
-* list poja-versions read from resources/files/poja_versions.json ([ee6d7f5](https://github.com/jcloudify/jcloudify-api/commit/ee6d7f5ab1d5b739424f0f5d763e3bcbcf880784))
 
 
 
