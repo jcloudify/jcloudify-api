@@ -1,7 +1,10 @@
 package api.jcloudify.app.service;
 
+import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
+
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
+import api.jcloudify.app.model.exception.ApiException;
 import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.EnvironmentRepository;
@@ -46,6 +49,16 @@ public class EnvironmentService {
   public final OneOfPojaConf getConfig(String userId, String appId, String environmentId) {
     Environment linkedEnvironment = getById(environmentId);
     String configurationFileKey = linkedEnvironment.getConfigurationFileKey();
+    if (configurationFileKey == null) {
+      throw new ApiException(
+          SERVER_EXCEPTION,
+          "config not found in DB for user.Id = "
+              + userId
+              + " app.Id = "
+              + appId
+              + " environment.Id = "
+              + environmentId);
+    }
     return configurerService.readConfig(userId, appId, environmentId, configurationFileKey);
   }
 

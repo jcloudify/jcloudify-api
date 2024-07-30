@@ -8,7 +8,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.applicationToCr
 import static api.jcloudify.app.integration.conf.utils.TestMocks.janePojaApplication;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication1;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joePojaApplication2;
-import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsNotFoundException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
@@ -126,7 +126,7 @@ class ApplicationIT extends MockedThirdParties {
     ApiClient joeDoeClient = anApiClient();
     ApplicationApi api = new ApplicationApi(joeDoeClient);
 
-    assertThrowsBadRequestException(
+    assertThrowsNotFoundException(
         () -> api.getApplicationById(JOE_DOE_ID, "non_existent_application_id"),
         "Application identified by id=non_existent_application_id not found");
   }

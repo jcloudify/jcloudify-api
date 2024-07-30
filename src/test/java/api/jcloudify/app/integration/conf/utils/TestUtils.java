@@ -121,4 +121,17 @@ public class TestUtils {
     assertEquals(
         "{" + "\"type\":\"400 BAD_REQUEST\"," + "\"message\":\"" + message + "\"}", responseBody);
   }
+
+  public static void assertThrowsNotFoundException(Executable executable, String message) {
+    ApiException apiException = assertThrows(ApiException.class, executable);
+    String responseBody = apiException.getResponseBody();
+    assertEquals(
+        "{" + "\"type\":\"404 NOT_FOUND\"," + "\"message\":\"" + message + "\"}", responseBody);
+  }
+
+  public static void assertThrowsApiException(Executable executable, String message) {
+    ApiException apiException = assertThrows(ApiException.class, executable);
+    String responseBody = apiException.getResponseBody();
+    assertEquals(message, responseBody);
+  }
 }

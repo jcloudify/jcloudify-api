@@ -11,6 +11,7 @@ import api.jcloudify.app.endpoint.rest.model.PojaConf;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.PojaVersion;
 import api.jcloudify.app.model.exception.ApiException;
+import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.EnvironmentRepository;
 import api.jcloudify.app.service.appEnvConfigurer.mapper.PojaConfFileMapper;
 import java.util.List;
@@ -47,8 +48,17 @@ public class AppEnvConfigurerService {
 
   public OneOfPojaConf readConfig(
       String userId, String appId, String environmentId, String filename) {
-    var file =
-        bucketComponent.download(getBucketKey(userId, appId, environmentId, POJA_CONF, filename));
+    String bucketKey = getBucketKey(userId, appId, environmentId, POJA_CONF, filename);
+    if (!bucketComponent.doesExist(bucketKey)) {
+      throw new NotFoundException(
+          "config not found in S3 for user.Id = "
+              + userId
+              + " app.Id = "
+              + appId
+              + " environment.Id = "
+              + environmentId);
+    }
+    var file = bucketComponent.download(bucketKey);
     return mapper.read(file);
   }
 }

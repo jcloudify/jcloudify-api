@@ -9,6 +9,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATIO
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.pojaAppProdEnvironment;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
+import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsNotFoundException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
@@ -101,7 +102,7 @@ class ApplicationEnvironmentIT extends MockedThirdParties {
   }
 
   @Test
-  void get_envionment_by_id_ok() throws ApiException {
+  void get_environment_by_id_ok() throws ApiException {
     ApiClient joeDoeClient = anApiClient();
     EnvironmentApi api = new EnvironmentApi(joeDoeClient);
 
@@ -113,11 +114,11 @@ class ApplicationEnvironmentIT extends MockedThirdParties {
   }
 
   @Test
-  void get_envionment_by_id_ko() throws ApiException {
+  void get_environment_by_id_ko() {
     ApiClient joeDoeClient = anApiClient();
     EnvironmentApi api = new EnvironmentApi(joeDoeClient);
 
-    assertThrowsBadRequestException(
+    assertThrowsNotFoundException(
         () -> api.getApplicationEnvironmentById(JOE_DOE_ID, POJA_APPLICATION_ID, "dummy"),
         "Environment identified by id dummy for application "
             + POJA_APPLICATION_ID
