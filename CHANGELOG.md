@@ -1,3 +1,12 @@
+# [3.10.0](https://github.com/jcloudify/jcloudify-api/compare/v3.9.0...v3.10.0) (2024-07-30)
+
+
+### Features
+
+* add avatar url and type to app installation, also rename app installation to a more precise GithubAppInstallation ([c1d4ab3](https://github.com/jcloudify/jcloudify-api/commit/c1d4ab34ca2fdd83209e1cde196ed2494bd8bbbc))
+
+
+
 # [3.9.0](https://github.com/jcloudify/jcloudify-api/compare/v3.8.0...v3.9.0) (2024-07-30)
 
 
@@ -106,23 +115,6 @@
 
 * get stack by id ([7834ded](https://github.com/jcloudify/jcloudify-api/commit/7834ded5c984df186fc45aa55c304b1bb29dedb1))
 * **to-continue:** get stack list ([fe737eb](https://github.com/jcloudify/jcloudify-api/commit/fe737eb0d36ea7291abca2dd413312fe757f411d))
-
-
-
-# [3.2.0](https://github.com/jcloudify/jcloudify-api/compare/v3.1.0...v3.2.0) (2024-07-23)
-
-
-### Bug Fixes
-
-* check user github id by token instead of email ([7751c5b](https://github.com/jcloudify/jcloudify-api/commit/7751c5b51373b7fba2d06d7c40d3005825c96546))
-
-
-### Features
-
-* add humanReadableVersion to PojaVersion in order to have the same string representation over api and consumers ([d919513](https://github.com/jcloudify/jcloudify-api/commit/d919513b777b4a77090ea4d7c342884e14294eb2))
-* create and list environments, created environments have UNKNOWN state by default ([fa337e4](https://github.com/jcloudify/jcloudify-api/commit/fa337e44778195606b3bc4fd3bf117812d60cd80))
-* get all applications filtered by name and userId ([04b42fa](https://github.com/jcloudify/jcloudify-api/commit/04b42fa63dbda469ef05243a222aeb8e53f52320))
-* pricing is directly attached to user, defaulting to TEN_MICRO, there is no other ref ([301a12e](https://github.com/jcloudify/jcloudify-api/commit/301a12e5c4ffe04235744484d017a06045406420))
 
 
 
