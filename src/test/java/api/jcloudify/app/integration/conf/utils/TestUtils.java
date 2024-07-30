@@ -29,6 +29,14 @@ import org.kohsuke.github.GHMyself;
 import org.springframework.core.io.ClassPathResource;
 
 public class TestUtils {
+
+  public static final long APP_INSTALLATION_1_ID = 12344;
+  public static final GhAppInstallation GH_APP_JOE_DOE_INSTALLATION_1 =
+      new GhAppInstallation(APP_INSTALLATION_1_ID, "joeDoe", "User", "http://testimage.com");
+  public static final long APP_INSTALLATION_2_ID = 12346;
+  public static final GhAppInstallation GH_APP_JOE_DOE_INSTALLATION_2 =
+      new GhAppInstallation(APP_INSTALLATION_2_ID, "joeDoe", "User", "http://testimage.com");
+
   public static ApiClient anApiClient(String token, int serverPort) {
     ApiClient client = new ApiClient();
     client.setScheme("http");
@@ -43,11 +51,16 @@ public class TestUtils {
     when(githubComponent.getGithubUserId(JOE_DOE_TOKEN)).thenReturn(Optional.of(JOE_DOE_GITHUB_ID));
     when(githubComponent.getGithubUserId(JANE_DOE_TOKEN))
         .thenReturn(Optional.of(JANE_DOE_GITHUB_ID));
-    when(githubComponent.listApplications()).thenReturn(ghApps());
+    Set<GhAppInstallation> t = ghApps();
+    when(githubComponent.listApplications()).thenReturn(t);
+    when(githubComponent.getApplicationById(APP_INSTALLATION_1_ID))
+        .thenReturn(GH_APP_JOE_DOE_INSTALLATION_1);
+    when(githubComponent.getApplicationById(APP_INSTALLATION_2_ID))
+        .thenReturn(GH_APP_JOE_DOE_INSTALLATION_2);
   }
 
   private static Set<GhAppInstallation> ghApps() {
-    return Set.of(new GhAppInstallation(12344), new GhAppInstallation(12346));
+    return Set.of(GH_APP_JOE_DOE_INSTALLATION_1, GH_APP_JOE_DOE_INSTALLATION_2);
   }
 
   @SneakyThrows

@@ -39,4 +39,8 @@ public class GithubService {
   public String getInstallationToken(long installationId, Duration duration) {
     return githubComponent.getAppInstallationToken(installationId, duration);
   }
+
+  public GhAppInstallation getInstallationByGhId(long ghId) {
+    return githubComponent.getApplicationById(ghId);
+  }
 }

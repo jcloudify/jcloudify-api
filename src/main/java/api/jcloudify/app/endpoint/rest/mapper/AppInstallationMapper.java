@@ -1,25 +1,35 @@
 package api.jcloudify.app.endpoint.rest.mapper;
 
-import api.jcloudify.app.endpoint.rest.model.AppInstallation;
+import api.jcloudify.app.endpoint.rest.model.CreateGithubAppInstallation;
+import api.jcloudify.app.endpoint.rest.model.GithubAppInstallation;
+import api.jcloudify.app.service.github.GithubService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class AppInstallationMapper {
-  public AppInstallation toRest(api.jcloudify.app.repository.model.AppInstallation domain) {
-    return new AppInstallation()
+  private final GithubService githubService;
+
+  public GithubAppInstallation toRest(api.jcloudify.app.repository.model.AppInstallation domain) {
+    return new GithubAppInstallation()
         .owner(domain.getOwnerGithubLogin())
         .ghInstallationId(domain.getGhId())
         .id(domain.getId())
-        .isOrg(domain.isOrg());
+        .type(domain.getType())
+        .ghAvatarUrl(domain.getAvatarUrl());
   }
 
   public api.jcloudify.app.repository.model.AppInstallation toDomain(
-      String userId, AppInstallation rest) {
+      String userId, CreateGithubAppInstallation rest) {
+    var app = githubService.getInstallationByGhId(rest.getGhInstallationId());
+    String ownerGithubLogin = app.ownerGithubLogin();
     return api.jcloudify.app.repository.model.AppInstallation.builder()
         .id(rest.getId())
-        .ownerGithubLogin(rest.getOwner())
+        .ownerGithubLogin(ownerGithubLogin)
         .ghId(rest.getGhInstallationId())
-        .isOrg(rest.getIsOrg())
+        .type(app.type())
+        .avatarUrl(app.avatarUrl())
         .userId(userId)
         .build();
   }

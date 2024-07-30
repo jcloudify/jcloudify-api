@@ -24,9 +24,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.GHAppInstallation;
 import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -189,7 +191,22 @@ public class GithubComponent {
     }
   }
 
+  public GhAppInstallation getApplicationById(long id) {
+    var jwtToken = jwtGenerator.createJwt(githubAppId, Duration.ofSeconds(30));
+    try {
+      var gitHubApp = new GitHubBuilder().withJwtToken(jwtToken).build();
+      return toDomain(gitHubApp.getApp().getInstallationById(id));
+    } catch (IOException e) {
+      throw new ApiException(SERVER_EXCEPTION, e);
+    }
+  }
+
+  @SneakyThrows
   private static GhAppInstallation toDomain(GHAppInstallation installation) {
-    return new GhAppInstallation(installation.getId());
+    GHUser account = installation.getAccount();
+    var ownerLogin = account.getLogin();
+    String type = account.getType();
+    String avatarUrl = account.getAvatarUrl();
+    return new GhAppInstallation(installation.getId(), ownerLogin, type, avatarUrl);
   }
 }
