@@ -71,8 +71,8 @@ public class TestUtils {
             List.of(
                 ssmParameter("/poja/prod/ssm/param1", "dummy"),
                 ssmParameter("/poja/prod/ssm/param2", "dummy")));
-              }
-              
+  }
+
   @SneakyThrows
   public static void setUpStripe(StripeService stripeService) {
     when(stripeService.createCustomer(any(), any())).thenReturn(stripeCustomer());

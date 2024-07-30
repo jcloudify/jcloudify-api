@@ -1,5 +1,7 @@
 package api.jcloudify.app.service;
 
+import static java.lang.Boolean.TRUE;
+
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
 import api.jcloudify.app.repository.model.User;
@@ -26,22 +28,16 @@ public class PaymentService {
     String stripeId = user.getStripeId();
     String pmId = pmAction.getPaymentMethodId();
     PaymentMethodsAction.ActionEnum action = pmAction.getAction();
-    switch (action) {
+    return switch (action) {
       case ATTACH:
         PaymentMethod paymentMethod = stripeService.attachPaymentMethod(stripeId, pmId);
-        if (pmAction.getSetDefault()) {
+        if (TRUE.equals(pmAction.getSetDefault())) {
           stripeService.setDefaultPaymentMethod(stripeId, pmId);
         }
-        return paymentMethod;
+        yield paymentMethod;
       case DETACH:
-        return stripeService.detachPaymentMethod(pmId);
-      default:
-        return stripeService.setDefaultPaymentMethod(stripeId, pmId);
-    }
-  }
-
-  public void initiatePayment(Long amount, String returnUrl, String customerId) {
-    stripeService.createPaymentIntent(amount, returnUrl, customerId);
+        yield stripeService.detachPaymentMethod(pmId);
+    };
   }
 
   public List<PaymentMethod> getPaymentMethods(String userId) {

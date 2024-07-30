@@ -1,5 +1,8 @@
 package api.jcloudify.app.service;
 
+import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
+
+import api.jcloudify.app.model.exception.ApiException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
@@ -25,25 +28,23 @@ public class StripeService {
           CustomerCreateParams.builder().setName(name).setEmail(email).build();
       return Customer.create(params, getRequestOption());
     } catch (StripeException e) {
-      throw new RuntimeException(e);
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
   }
 
   public List<PaymentMethod> getPaymentMethods(String customerId) {
     try {
       Customer customer = Customer.retrieve(customerId);
-
       PaymentMethodCollection pmCollection = customer.listPaymentMethods();
       return pmCollection.getData();
     } catch (StripeException e) {
-      throw new RuntimeException(e);
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
   }
 
   public PaymentMethod setDefaultPaymentMethod(String customerId, String paymentMethodId) {
     try {
       Customer customer = Customer.retrieve(customerId);
-
       CustomerUpdateParams.InvoiceSettings invoiveSettingParams =
           CustomerUpdateParams.InvoiceSettings.builder()
               .setDefaultPaymentMethod(paymentMethodId)
@@ -53,7 +54,7 @@ public class StripeService {
       customer.update(params);
       return PaymentMethod.retrieve(paymentMethodId);
     } catch (StripeException e) {
-      throw new RuntimeException(e);
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
   }
 
@@ -65,7 +66,7 @@ public class StripeService {
           PaymentMethodAttachParams.builder().setCustomer(customerId).build();
       return paymentMethod.attach(params);
     } catch (StripeException e) {
-      throw new RuntimeException(e);
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
   }
 
@@ -76,7 +77,7 @@ public class StripeService {
       PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().build();
       return paymentMethod.attach(params);
     } catch (StripeException e) {
-      throw new RuntimeException(e);
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
   }
 
@@ -96,7 +97,7 @@ public class StripeService {
 
       return PaymentIntent.create(params);
     } catch (StripeException e) {
-      throw new RuntimeException(e);
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
   }
 

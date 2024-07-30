@@ -19,14 +19,14 @@ public class PaymentController {
   private final PaymentService paymentService;
   private final PaymentMapper mapper;
 
-  @GetMapping("/users/{userId}/payment-method")
+  @GetMapping("/users/{userId}/payment-methods")
   public PaymentMethodResponse getPaymentMethods(@PathVariable String userId) {
     List<PaymentMethod> data =
         paymentService.getPaymentMethods(userId).stream().map(mapper::toRest).toList();
     return new PaymentMethodResponse().data(data);
   }
 
-  @PutMapping("/users/{userId}/payment-method")
+  @PutMapping("/users/{userId}/payment-methods")
   public PaymentMethodResponse managePaymentMethod(
       @PathVariable String userId, @RequestBody PaymentMethodsAction paymentMethodsAction) {
     paymentService.managePaymentMethod(userId, paymentMethodsAction);

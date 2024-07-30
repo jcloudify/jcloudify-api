@@ -9,6 +9,7 @@ import api.jcloudify.app.repository.jpa.UserRepository;
 import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.repository.model.mapper.UserMapper;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.kohsuke.github.GHMyself;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,13 @@ public class UserService {
   }
 
   public User getUserById(String userId) {
-    return repository
-        .findById(userId)
+    return findById(userId)
         .orElseThrow(
             () -> new NotFoundException("The user identified by id " + userId + " is not found"));
+  }
+
+  public Optional<User> findById(String userId) {
+    return repository.findById(userId);
   }
 
   private User createUserFrom(CreateUser createUser) {

@@ -87,8 +87,8 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/events"),
                     antMatcher(PUT, "/users/*/applications/*/environments/*/config"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/config"),
-                    antMatcher(GET, "/users/*/payment-method"),
-                    antMatcher(PUT, "/users/*/payment-method"))),
+                    antMatcher(GET, "/users/*/payment-methods"),
+                    antMatcher(PUT, "/users/*/payment-methods"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -117,9 +117,9 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
                     .authenticated()
-                    .requestMatchers(GET, "/users/*/payment-method")
+                    .requestMatchers(GET, "/users/*/payment-methods")
                     .authenticated()
-                    .requestMatchers(PUT, "/users/*/payment-method")
+                    .requestMatchers(PUT, "/users/*/payment-methods")
                     .authenticated()
                     .requestMatchers(
                         new SelfUserMatcher(
