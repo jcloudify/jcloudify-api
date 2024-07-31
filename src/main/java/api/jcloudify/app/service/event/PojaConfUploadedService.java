@@ -145,10 +145,11 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     try {
       git.add().addFilepattern(".").call();
       git.rm().addFilepattern("cf-stacks/");
-      git.rm().addFilepattern("oja-custom-java-env-vars.txt");
+      git.rm().addFilepattern("poja-custom-java-env-vars.txt");
       git.rm().addFilepattern("poja-custom-java-repositories.txt");
       git.rm().addFilepattern("poja-custom-java-deps.txt");
       git.rm().addFilepattern("template.yml");
+      git.rm().addFilepattern("poja.yml");
     } catch (GitAPIException e) {
       throw new RuntimeException(e);
     }
