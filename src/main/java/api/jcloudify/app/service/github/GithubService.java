@@ -41,6 +41,6 @@ public class GithubService {
   }
 
   public GhAppInstallation getInstallationByGhId(long ghId) {
-    return githubComponent.getApplicationById(ghId);
+    return githubComponent.getInstallationById(ghId);
   }
 }

@@ -146,13 +146,13 @@ public class GithubComponent {
         .buildAndExpand(githubUsername, repositoryName);
   }
 
-  private UriComponents getListAppUri() {
+  private UriComponents getListAppInstallationUri() {
     return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
         .path("/app/installations")
         .build();
   }
 
-  private UriComponents getAppUri(long installationId) {
+  private UriComponents getAppInstallationByIdUri(long installationId) {
     return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
         .path("/app/installations/{id}")
         .buildAndExpand(installationId);
@@ -197,19 +197,25 @@ public class GithubComponent {
     ParameterizedTypeReference<List<GhAppInstallationResponse>> typeRef =
         new ParameterizedTypeReference<>() {};
     var response =
-        restTemplate.exchange(getListAppUri().toUriString(), GET, entity, typeRef).getBody();
+        restTemplate
+            .exchange(getListAppInstallationUri().toUriString(), GET, entity, typeRef)
+            .getBody();
 
     return response.stream().map(GithubComponent::toDomain).collect(Collectors.toSet());
   }
 
-  public GhAppInstallation getApplicationById(long id) {
+  public GhAppInstallation getInstallationById(long id) {
     var jwtToken = jwtGenerator.createJwt(githubAppId, Duration.ofSeconds(30));
     HttpHeaders headers = getGithubHttpHeaders(jwtToken);
     HttpEntity<GhAppInstallationResponse> entity = new HttpEntity<>(headers);
 
     var response =
         restTemplate
-            .exchange(getListAppUri().toUriString(), GET, entity, GhAppInstallationResponse.class)
+            .exchange(
+                getAppInstallationByIdUri(id).toUriString(),
+                GET,
+                entity,
+                GhAppInstallationResponse.class)
             .getBody();
     return toDomain(response);
   }

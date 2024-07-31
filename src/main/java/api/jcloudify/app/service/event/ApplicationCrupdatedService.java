@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -21,6 +22,7 @@ public class ApplicationCrupdatedService implements Consumer<ApplicationCrupdate
   private final ApplicationRepository repository;
 
   @Override
+  @Transactional
   public void accept(ApplicationCrupdated applicationCrupdated) {
     var persistedInstallation =
         installationService.getById(applicationCrupdated.getInstallationId());

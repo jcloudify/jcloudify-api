@@ -53,9 +53,9 @@ public class TestUtils {
         .thenReturn(Optional.of(JANE_DOE_GITHUB_ID));
     Set<GhAppInstallation> t = ghApps();
     when(githubComponent.listInstallations()).thenReturn(t);
-    when(githubComponent.getApplicationById(APP_INSTALLATION_1_ID))
+    when(githubComponent.getInstallationById(APP_INSTALLATION_1_ID))
         .thenReturn(GH_APP_JOE_DOE_INSTALLATION_1);
-    when(githubComponent.getApplicationById(APP_INSTALLATION_2_ID))
+    when(githubComponent.getInstallationById(APP_INSTALLATION_2_ID))
         .thenReturn(GH_APP_JOE_DOE_INSTALLATION_2);
   }
 
