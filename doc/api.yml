@@ -459,6 +459,44 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/package:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      operationId: uploadProjectPackageBuild
+      summary: Upload the build directory of an environment
+      requestBody:
+        required: true
+        content:
+          application/zip:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: The id and S3 key of the package
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadBuildPackageResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -1698,6 +1736,13 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/StackEvent'
+    UploadBuildPackageResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        s3_key:
+          type: string
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
