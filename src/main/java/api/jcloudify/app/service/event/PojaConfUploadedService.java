@@ -144,12 +144,20 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static void gitAddAllChanges(Git git) {
     try {
       git.add().addFilepattern(".").call();
-      git.rm().addFilepattern("cf-stacks/");
-      git.rm().addFilepattern("poja-custom-java-env-vars.txt");
-      git.rm().addFilepattern("poja-custom-java-repositories.txt");
-      git.rm().addFilepattern("poja-custom-java-deps.txt");
-      git.rm().addFilepattern("template.yml");
-      git.rm().addFilepattern("poja.yml");
+      git.rm().addFilepattern("cf-stacks/").call();
+      git.rm().addFilepattern("poja-custom-java-env-vars.txt").call();
+      git.rm().addFilepattern("poja-custom-java-repositories.txt").call();
+      git.rm().addFilepattern("poja-custom-java-deps.txt").call();
+      git.rm().addFilepattern("template.yml").call();
+      git.rm().addFilepattern("poja.yml").call();
+      git.rm().addFilepattern(".github/workflows/cd-compute.yml").call();
+      git.rm().addFilepattern(".github/workflows/cd-compute-permission.yml").call();
+      git.rm().addFilepattern(".github/workflows/cd-event.yml").call();
+      git.rm().addFilepattern(".github/workflows/cd-storage-bucket.yml").call();
+      git.rm().addFilepattern(".github/workflows/cd-storage-database.yml").call();
+      git.rm().addFilepattern(".github/workflows/health-check-email.yml").call();
+      git.rm().addFilepattern(".github/workflows/health-check-infra.yml").call();
+      git.rm().addFilepattern(".github/workflows/health-check-poja.yml").call();
     } catch (GitAPIException e) {
       throw new RuntimeException(e);
     }
