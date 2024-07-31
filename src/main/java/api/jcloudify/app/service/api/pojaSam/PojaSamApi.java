@@ -46,10 +46,10 @@ public class PojaSamApi {
     MultiValueMap<String, HttpEntity<?>> multipartBody = bodies.build();
     HttpEntity<MultiValueMap<String, HttpEntity<?>>> request =
         new HttpEntity<>(multipartBody, headers);
+    URI formattedSamUri = getFormattedSamUri(pojaVersion);
 
-    return restTemplate
-        .exchange(getFormattedSamUri(pojaVersion), PUT, request, CodeUri.class)
-        .getBody();
+    log.info("downloading code from {}", formattedSamUri);
+    return restTemplate.exchange(formattedSamUri, PUT, request, CodeUri.class).getBody();
   }
 
   private HttpHeaders getPojaSamApiHttpHeaders() {

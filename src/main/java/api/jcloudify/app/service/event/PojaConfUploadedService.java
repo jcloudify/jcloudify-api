@@ -132,10 +132,12 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
 
   private ZipFile generateCodeFromPojaConf(
       PojaConfUploaded pojaConfUploaded, String userId, String appId, String environmentId) {
-    var pojaConfFile =
-        bucketComponent.download(
-            ExtendedBucketComponent.getBucketKey(
-                userId, appId, environmentId, POJA_CONF, pojaConfUploaded.getFilename()));
+    String formattedFilename =
+        ExtendedBucketComponent.getBucketKey(
+            userId, appId, environmentId, POJA_CONF, pojaConfUploaded.getFilename());
+    log.info("downloading pojaConfFile: {}", formattedFilename);
+    var pojaConfFile = bucketComponent.download(formattedFilename);
+    log.info("downloaded pojaConfFile: {}", pojaConfFile.getName());
     return pojaSamApi.genCodeTo(pojaConfUploaded.getPojaVersion(), pojaConfFile);
   }
 
