@@ -1199,7 +1199,7 @@ components:
         app_name:
           type: string
         with_snapstart:
-          type: string
+          type: boolean
         with_queues_nb:
           $ref: "#/components/schemas/WithQueuesNbEnum"
         package_full_name:
