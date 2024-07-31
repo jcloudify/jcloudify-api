@@ -159,7 +159,6 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static void configureGitRepositoryGpg(Git git) {
     StoredConfig storedConfig = git.getRepository().getConfig();
     storedConfig.setString("gpg", null, "format", "openpgp");
-    storedConfig.save();
   }
 
   private static void unsignedCommitAsBot(
