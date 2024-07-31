@@ -1,3 +1,14 @@
+## [3.10.1](https://github.com/jcloudify/jcloudify-api/compare/v3.10.0...v3.10.1) (2024-07-31)
+
+
+### Bug Fixes
+
+* pojaConf snapstart is boolean ([1d55fed](https://github.com/jcloudify/jcloudify-api/commit/1d55fedcb937637f0e70b9f775769c8c7b94c419))
+* return an empty list when there's no ssm param yet ([e181a41](https://github.com/jcloudify/jcloudify-api/commit/e181a413c0550787458a39754015a6dc67aefda3))
+* separate endpoint to create and update ssm parameters ([2798bb0](https://github.com/jcloudify/jcloudify-api/commit/2798bb0641ff89d389d426ecd45a311df2b68aae))
+
+
+
 # [3.10.0](https://github.com/jcloudify/jcloudify-api/compare/v3.9.0...v3.10.0) (2024-07-30)
 
 
@@ -105,16 +116,6 @@
 
 * configure application environment ([3e47e95](https://github.com/jcloudify/jcloudify-api/commit/3e47e9571e1175def69d0ef6bafe2b6925be4d9e))
 * github repository name and scope(private or public) ([f5b86db](https://github.com/jcloudify/jcloudify-api/commit/f5b86db8c88b5c45b13a422daa9e578f62d513f4))
-
-
-
-# [3.3.0](https://github.com/jcloudify/jcloudify-api/compare/v3.2.0...v3.3.0) (2024-07-24)
-
-
-### Features
-
-* get stack by id ([7834ded](https://github.com/jcloudify/jcloudify-api/commit/7834ded5c984df186fc45aa55c304b1bb29dedb1))
-* **to-continue:** get stack list ([fe737eb](https://github.com/jcloudify/jcloudify-api/commit/fe737eb0d36ea7291abca2dd413312fe757f411d))
 
 
 
