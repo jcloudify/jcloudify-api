@@ -1,3 +1,12 @@
+# [3.11.0](https://github.com/jcloudify/jcloudify-api/compare/v3.10.1...v3.11.0) (2024-08-01)
+
+
+### Features
+
+* return refresh token with access token ([3caf931](https://github.com/jcloudify/jcloudify-api/commit/3caf931588e57eeafd6b736cb4bc0227b15a8302))
+
+
+
 ## [3.10.1](https://github.com/jcloudify/jcloudify-api/compare/v3.10.0...v3.10.1) (2024-07-31)
 
 
@@ -106,16 +115,6 @@
 * add repository description to application, and fix poja-conf tests ([28b8a46](https://github.com/jcloudify/jcloudify-api/commit/28b8a463c0264aae19b0d72dd7d678409e55c31d))
 * PojaConfV17_0_0 ([d29fd7b](https://github.com/jcloudify/jcloudify-api/commit/d29fd7b7c3b5b5d8e3da50cbad18729bd9b5905b))
 * save stack logs in s3 ([d97c8af](https://github.com/jcloudify/jcloudify-api/commit/d97c8af8427f4467a33196be61f81d20f84d082a))
-
-
-
-# [3.4.0](https://github.com/jcloudify/jcloudify-api/compare/v3.3.0...v3.4.0) (2024-07-24)
-
-
-### Features
-
-* configure application environment ([3e47e95](https://github.com/jcloudify/jcloudify-api/commit/3e47e9571e1175def69d0ef6bafe2b6925be4d9e))
-* github repository name and scope(private or public) ([f5b86db](https://github.com/jcloudify/jcloudify-api/commit/f5b86db8c88b5c45b13a422daa9e578f62d513f4))
 
 
 
