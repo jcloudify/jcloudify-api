@@ -3,9 +3,10 @@ package api.jcloudify.app.service.github;
 import api.jcloudify.app.endpoint.rest.model.Token;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
+import api.jcloudify.app.service.github.model.CreateRepoResponse;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
 import api.jcloudify.app.service.github.model.UpdateRepoRequestBody;
-import java.net.URI;
+import api.jcloudify.app.service.github.model.UpdateRepoResponse;
 import java.time.Duration;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -20,11 +21,11 @@ public class GithubService {
     return githubComponent.exchangeCodeToToken(code);
   }
 
-  public URI createRepoFor(CreateRepoRequestBody requestBody, String token) {
+  public CreateRepoResponse createRepoFor(CreateRepoRequestBody requestBody, String token) {
     return githubComponent.createRepoFor(requestBody, token);
   }
 
-  public URI updateRepoFor(
+  public UpdateRepoResponse updateRepoFor(
       UpdateRepoRequestBody application,
       String repositoryName,
       String token,

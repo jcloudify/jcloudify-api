@@ -51,8 +51,11 @@ public class Application implements Serializable {
   @OneToMany(mappedBy = "applicationId", cascade = CascadeType.ALL)
   private List<Environment> environments;
 
+  @Column(insertable = false, name = "repo_http_url")
+  private String githubRepositoryUrl;
+
   @Column(insertable = false)
-  private String repoHttpUrl;
+  private String githubRepositoryId;
 
   @JsonIgnore
   public String getFormattedName() {
