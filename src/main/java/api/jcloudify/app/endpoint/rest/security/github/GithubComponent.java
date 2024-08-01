@@ -113,11 +113,18 @@ public class GithubComponent {
     HttpHeaders headers = getGithubHttpHeaders(token);
     HttpEntity<GhAppInstallationRepositoriesResponse> entity = new HttpEntity<>(headers);
 
-    var response = restTemplate.exchange(getAppInstallationRepositories().toUriString(), GET,
-            entity, GhAppInstallationRepositoriesResponse.class);
+    var response =
+        restTemplate.exchange(
+            getAppInstallationRepositoriesUri().toUriString(),
+            GET,
+            entity,
+            GhAppInstallationRepositoriesResponse.class);
     var responseBody = response.getBody();
 
-    assert responseBody != null;
+    if (responseBody == null) {
+      return Optional.empty();
+    }
+    log.info("Installation repositories: {}", responseBody);
     return Optional.of(String.valueOf(responseBody.repositories().getFirst().id()));
   }
 
@@ -167,10 +174,10 @@ public class GithubComponent {
         .buildAndExpand(installationId);
   }
 
-  private UriComponents getAppInstallationRepositories() {
+  private UriComponents getAppInstallationRepositoriesUri() {
     return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
-            .path("/installation/repositories")
-            .build();
+        .path("/installation/repositories")
+        .build();
   }
 
   private static HttpHeaders getGithubHttpHeaders(String token) {
