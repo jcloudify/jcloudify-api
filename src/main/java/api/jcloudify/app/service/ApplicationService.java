@@ -87,9 +87,12 @@ public class ApplicationService {
   }
 
   public Application findByRepositoryId(String repositoryId) {
-    return repository.findByGithubRepositoryId(repositoryId)
-            .orElseThrow(
-                    () -> new NotFoundException("Application identified by repository id=" + repositoryId + " not found"));
+    return repository
+        .findByGithubRepositoryId(repositoryId)
+        .orElseThrow(
+            () ->
+                new NotFoundException(
+                    "Application identified by repository id=" + repositoryId + " not found"));
   }
 
   public Application getById(String id, String userId) {
