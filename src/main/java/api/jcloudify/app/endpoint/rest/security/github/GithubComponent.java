@@ -101,7 +101,8 @@ public class GithubComponent {
     if (responseBody != null && !responseBody.containsKey("error")) {
       String accessToken = (String) responseBody.get("access_token");
       String tokenType = (String) responseBody.get("token_type");
-      return new Token().accessToken(accessToken).tokenType(tokenType);
+      String refreshToken = (String) responseBody.get("refresh_token");
+      return new Token().accessToken(accessToken).refreshToken(refreshToken).tokenType(tokenType);
     }
     assert responseBody != null;
     throw new BadRequestException((String) responseBody.get("error_description"));
