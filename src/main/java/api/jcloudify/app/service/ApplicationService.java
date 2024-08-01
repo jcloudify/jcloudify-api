@@ -86,6 +86,12 @@ public class ApplicationService {
     return new Page<>(pageFromOne, boundedPageSize, data);
   }
 
+  public Application findByRepositoryId(String repositoryId) {
+    return repository.findByGithubRepositoryId(repositoryId)
+            .orElseThrow(
+                    () -> new NotFoundException("Application identified by repository id=" + repositoryId + " not found"));
+  }
+
   public Application getById(String id, String userId) {
     return repository
         .findByIdAndUserId(id, userId)

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 public interface ApplicationRepository extends JpaRepository<Application, String> {
   Optional<Application> findByIdAndUserId(String id, String userId);
 
+  Optional<Application> findByGithubRepositoryId(String repositoryId);
+
   @Modifying
   @Query(
       """
