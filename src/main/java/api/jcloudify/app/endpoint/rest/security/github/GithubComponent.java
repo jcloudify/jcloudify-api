@@ -10,6 +10,7 @@ import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
 import api.jcloudify.app.service.github.model.CreateRepoResponse;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
+import api.jcloudify.app.service.github.model.GhAppInstallationRepositoriesResponse;
 import api.jcloudify.app.service.github.model.GhAppInstallationResponse;
 import api.jcloudify.app.service.github.model.UpdateRepoRequestBody;
 import api.jcloudify.app.service.github.model.UpdateRepoResponse;
@@ -108,6 +109,18 @@ public class GithubComponent {
     throw new BadRequestException((String) responseBody.get("error_description"));
   }
 
+  public Optional<String> getRepositoryIdByAppToken(String token) {
+    HttpHeaders headers = getGithubHttpHeaders(token);
+    HttpEntity<GhAppInstallationRepositoriesResponse> entity = new HttpEntity<>(headers);
+
+    var response = restTemplate.exchange(getAppInstallationRepositories().toUriString(), GET,
+            entity, GhAppInstallationRepositoriesResponse.class);
+    var responseBody = response.getBody();
+
+    assert responseBody != null;
+    return Optional.of(String.valueOf(responseBody.repositories().getFirst().id()));
+  }
+
   public CreateRepoResponse createRepoFor(CreateRepoRequestBody requestBody, String token) {
     log.info("creating repo for {}", requestBody);
     HttpHeaders headers = getGithubHttpHeaders(token);
@@ -152,6 +165,12 @@ public class GithubComponent {
     return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
         .path("/app/installations/{id}")
         .buildAndExpand(installationId);
+  }
+
+  private UriComponents getAppInstallationRepositories() {
+    return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
+            .path("/installation/repositories")
+            .build();
   }
 
   private static HttpHeaders getGithubHttpHeaders(String token) {
