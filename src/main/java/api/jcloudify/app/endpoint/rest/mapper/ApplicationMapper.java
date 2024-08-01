@@ -45,7 +45,7 @@ public class ApplicationMapper {
         .userId(domain.getUserId())
         .creationDatetime(domain.getCreationDatetime())
         .environments(getEnvironmentsByApplicationId(domain.getId()))
-        .repositoryUrl(domain.getRepoHttpUrl());
+        .repositoryUrl(domain.getGithubRepositoryUrl());
   }
 
   private List<Environment> getEnvironmentsByApplicationId(String applicationId) {

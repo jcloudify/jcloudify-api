@@ -107,37 +107,32 @@ public class GithubComponent {
     throw new BadRequestException((String) responseBody.get("error_description"));
   }
 
-  public URI createRepoFor(CreateRepoRequestBody requestBody, String token) {
+  public CreateRepoResponse createRepoFor(CreateRepoRequestBody requestBody, String token) {
     log.info("creating repo for {}", requestBody);
     HttpHeaders headers = getGithubHttpHeaders(token);
-
     HttpEntity<CreateRepoRequestBody> entity = new HttpEntity<>(requestBody, headers);
 
-    CreateRepoResponse response =
-        restTemplate.exchange(getCreateRepoUri(), POST, entity, CreateRepoResponse.class).getBody();
-    return response.htmlUrl();
+    return restTemplate
+        .exchange(getCreateRepoUri(), POST, entity, CreateRepoResponse.class)
+        .getBody();
   }
 
-  public URI updateRepoFor(
+  public UpdateRepoResponse updateRepoFor(
       UpdateRepoRequestBody requestBody,
       String repositoryName,
       String token,
       String repoOwnerUsername) {
     log.info("updating repo for {}", requestBody);
     HttpHeaders headers = getGithubHttpHeaders(token);
-
     HttpEntity<UpdateRepoRequestBody> entity = new HttpEntity<>(requestBody, headers);
 
-    UpdateRepoResponse response =
-        restTemplate
-            .exchange(
-                getUpdateRepoUri(repositoryName, repoOwnerUsername).toUriString(),
-                PATCH,
-                entity,
-                UpdateRepoResponse.class)
-            .getBody();
-
-    return response.htmlUrl();
+    return restTemplate
+        .exchange(
+            getUpdateRepoUri(repositoryName, repoOwnerUsername).toUriString(),
+            PATCH,
+            entity,
+            UpdateRepoResponse.class)
+        .getBody();
   }
 
   private UriComponents getUpdateRepoUri(String repositoryName, String githubUsername) {
@@ -190,7 +185,7 @@ public class GithubComponent {
   }
 
   public Set<GhAppInstallation> listInstallations() {
-    var jwtToken = jwtGenerator.createJwt(githubAppId, Duration.ofSeconds(600));
+    var jwtToken = jwtGenerator.createJwt(githubAppId, Duration.ofSeconds(60));
     HttpHeaders headers = getGithubHttpHeaders(jwtToken);
     HttpEntity<GhAppInstallationResponse> entity = new HttpEntity<>(headers);
 

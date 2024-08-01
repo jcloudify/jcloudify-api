@@ -77,7 +77,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
         Git.cloneRepository()
             .setCredentialsProvider(ghCredentialsProvider)
             .setDirectory(cloneDir.toFile())
-            .setURI(app.getRepoHttpUrl())
+            .setURI(app.getGithubRepositoryUrl())
             .setDepth(1)
             .call()) {
       String branchName = env.getEnvironmentType().name().toLowerCase(ROOT);

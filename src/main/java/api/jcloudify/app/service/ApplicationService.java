@@ -59,7 +59,7 @@ public class ApplicationService {
     return ApplicationCrupdated.builder()
         .applicationId(entity.getId())
         .applicationRepoName(entity.getGithubRepositoryName())
-        .repoUrl(entity.getRepoHttpUrl())
+        .repoUrl(entity.getGithubRepositoryUrl())
         .installationId(entity.getInstallationId())
         .description(entity.getDescription())
         .isRepoPrivate(entity.isGithubRepositoryPrivate())
