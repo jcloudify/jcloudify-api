@@ -69,6 +69,7 @@ public class SecurityConf {
         .addFilterBefore(
             bearerFilter(
                 new OrRequestMatcher(
+                    antMatcher(POST, "/application/package"),
                     antMatcher(GET, "/whoami"),
                     antMatcher(GET, "/users/*/installations"),
                     antMatcher(PUT, "/users/*/installations"),
@@ -117,6 +118,8 @@ public class SecurityConf {
                     .requestMatchers(GET, "/whoami")
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
+                    .authenticated()
+                    .requestMatchers(POST, "/application/package")
                     .authenticated()
                     .requestMatchers(GET, "/users/*/payment-methods")
                     .authenticated()
