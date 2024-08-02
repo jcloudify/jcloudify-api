@@ -64,6 +64,9 @@ Resources:
       MemorySize: 2048
       Timeout: 30
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
+      FunctionUrlConfig:
+        AuthType: NONE
+        InvokeMode: BUFFERED
 
       Events:
         ApiCall:

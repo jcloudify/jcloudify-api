@@ -75,33 +75,33 @@ public class EnvironmentService {
 
   public Environment getUserApplicationEnvironmentById(
       String userId, String applicationId, String environmentId) {
-      return repository
-            .findByCriteria(userId, applicationId, environmentId)
-            .orElseThrow(
-                () ->
-                    new NotFoundException(
-                        "Environment identified by id "
-                            + environmentId
-                            + " for application "
-                            + applicationId
-                            + " of user "
-                            + userId
-                            + " not found"));
+    return repository
+        .findByCriteria(userId, applicationId, environmentId)
+        .orElseThrow(
+            () ->
+                new NotFoundException(
+                    "Environment identified by id "
+                        + environmentId
+                        + " for application "
+                        + applicationId
+                        + " of user "
+                        + userId
+                        + " not found"));
   }
 
   public Environment getUserApplicationEnvironmentByIdAndType(
-          String userId, String applicationId, EnvironmentType environmentType) {
-          return repository
-                    .findByCriteria(userId, applicationId, environmentType)
-                    .orElseThrow(
-                            () ->
-                                    new NotFoundException(
-                                            "Environment identified by type "
-                                                    + environmentType
-                                                    + " for application "
-                                                    + applicationId
-                                                    + " of user "
-                                                    + userId
-                                                    + " not found"));
+      String userId, String applicationId, EnvironmentType environmentType) {
+    return repository
+        .findByCriteria(userId, applicationId, environmentType)
+        .orElseThrow(
+            () ->
+                new NotFoundException(
+                    "Environment identified by type "
+                        + environmentType
+                        + " for application "
+                        + applicationId
+                        + " of user "
+                        + userId
+                        + " not found"));
   }
 }

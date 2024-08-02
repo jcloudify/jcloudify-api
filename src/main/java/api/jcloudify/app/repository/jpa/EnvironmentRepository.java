@@ -22,9 +22,10 @@ public interface EnvironmentRepository extends JpaRepository<Environment, String
   Optional<Environment> findByCriteria(String userId, String appId, String id);
 
   @Query(
-          "SELECT e FROM Environment e INNER JOIN Application a ON a.id = e.applicationId WHERE e.applicationId = ?2 " +
-                  "AND a.userId = ?1 AND e.environmentType = ?3")
-  Optional<Environment> findByCriteria(String userId, String appId, EnvironmentType environmentType);
+      "SELECT e FROM Environment e INNER JOIN Application a ON a.id = e.applicationId WHERE"
+          + " e.applicationId = ?2 AND a.userId = ?1 AND e.environmentType = ?3")
+  Optional<Environment> findByCriteria(
+      String userId, String appId, EnvironmentType environmentType);
 
   @Modifying
   @Query("update Environment e set e.configurationFileKey = ?2 where e.id = ?1")
