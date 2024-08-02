@@ -1,7 +1,9 @@
 package api.jcloudify.app.endpoint.rest.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Utils {
   public static final String BEARER_PREFIX = "Bearer ";
 

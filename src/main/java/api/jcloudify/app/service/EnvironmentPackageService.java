@@ -1,7 +1,7 @@
 package api.jcloudify.app.service;
 
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
-import static api.jcloudify.app.file.FileType.ZIPPED_PACKAGE;
+import static api.jcloudify.app.file.FileType.BUILT_PACKAGE;
 
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.security.AuthenticatedResourceProvider;
@@ -29,6 +29,6 @@ public class EnvironmentPackageService {
             .getUserApplicationEnvironmentByIdAndType(userId, appId, environmentType)
             .getId();
     bucketComponent.upload(
-        zippedPackage, getBucketKey(userId, appId, environmentId, ZIPPED_PACKAGE, filename));
+        zippedPackage, getBucketKey(userId, appId, environmentId, BUILT_PACKAGE, filename));
   }
 }

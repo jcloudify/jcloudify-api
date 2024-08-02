@@ -6,26 +6,24 @@ import api.jcloudify.app.service.EnvironmentPackageService;
 import java.io.File;
 import java.io.IOException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @AllArgsConstructor
-@Slf4j
 public class EnvironmentPackageController {
   private final EnvironmentPackageService environmentPackageService;
 
   @PostMapping("/application/package")
   public ResponseEntity<String> uploadPackage(
-      @RequestParam("file") MultipartFile file, @RequestParam String environmentType) {
-    EnvironmentType type = Enum.valueOf(EnvironmentType.class, environmentType);
+      @RequestPart("file") MultipartFile file, @RequestParam EnvironmentType environmentType) {
     environmentPackageService.uploadZippedPackage(
-        type, file.getOriginalFilename(), convertToFile(file));
+        environmentType, file.getOriginalFilename(), convertToFile(file));
     return new ResponseEntity<>("OK", HttpStatus.OK);
   }
 
