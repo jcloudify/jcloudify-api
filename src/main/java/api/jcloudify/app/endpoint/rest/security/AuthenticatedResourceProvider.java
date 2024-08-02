@@ -16,6 +16,10 @@ public class AuthenticatedResourceProvider {
     return AuthProvider.getPrincipal().getUser();
   }
 
+  public Application getAuthenticatedApplication() {
+    return AuthProvider.getApplicationPrincipal().getApplication();
+  }
+
   public boolean isApplicationOwner(String userId, String applicationId) {
     Optional<Application> application = applicationService.findById(applicationId);
     return application.isPresent() && application.get().getUserId().equals(userId);
