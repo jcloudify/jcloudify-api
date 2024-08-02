@@ -1,5 +1,6 @@
 package api.jcloudify.app.endpoint.rest.security;
 
+import api.jcloudify.app.endpoint.rest.security.model.ApplicationPrincipal;
 import api.jcloudify.app.endpoint.rest.security.model.Principal;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,12 @@ public class AuthProvider extends AbstractUserDetailsAuthenticationProvider {
     SecurityContext context = SecurityContextHolder.getContext();
     Authentication authentication = context.getAuthentication();
     return (Principal) authentication.getPrincipal();
+  }
+
+  public static ApplicationPrincipal getApplicationPrincipal() {
+    SecurityContext context = SecurityContextHolder.getContext();
+    Authentication authentication = context.getAuthentication();
+    return (ApplicationPrincipal) authentication.getPrincipal();
   }
 
   @Override
