@@ -29,7 +29,7 @@ ssm_sg_id: /jcloudify-api/sg/id
 ssm_subnet1_id: /jcloudify-api/private/subnet1/id
 ssm_subnet2_id: /jcloudify-api/private/subnet2/id
 ts_client_api_url_env_var_name: REACT_APP_JCLOUDIFY_API_URL
-ts_client_default_openapi_server_url: jcloudify-api.preprod.hei.school
+ts_client_default_openapi_server_url: api.preprod.jcloudify.com
 with_codeql: 'false'
 with_database: non-poja-managed-postgres
 with_file_storage: 'true'
