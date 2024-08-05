@@ -1,5 +1,6 @@
 package api.jcloudify.app.endpoint.rest.security;
 
+import api.jcloudify.app.model.exception.ApiException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +20,7 @@ public class UsernamePasswordAuthenticatorFacade implements UsernamePasswordAuth
       String username, UsernamePasswordAuthenticationToken authentication) {
     try {
       return githubAppBearerAuthenticator.retrieveUser(username, authentication);
-    } catch (AuthenticationException ignored) {
+    } catch (AuthenticationException | ApiException ignored) {
       return githubUserBearerAuthenticator.retrieveUser(username, authentication);
     }
   }
