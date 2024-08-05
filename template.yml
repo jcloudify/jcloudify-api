@@ -127,7 +127,17 @@ Resources:
       Type: String
       Value: !Sub "https://${FrontalServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
 
+  ApiFunctionUrlSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Join [ '', [ /jcloudify-api/, !Ref Env, /api/function/url ] ]
+      Type: String
+      Value: !GetAtt FrontalFunctionUrl.FunctionUrl
+
 Outputs:
   ApiUrl:
     Description: API Gateway endpoint URL
     Value: !GetAtt ApiUrlSSM.Value
+  FrontalFunctionUrl:
+    Description: API Frontal function URL
+    Value: !GetAtt ApiFunctionUrlSSM.Value
