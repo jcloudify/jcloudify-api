@@ -83,30 +83,64 @@ public class GithubComponent {
   }
 
   public Token exchangeCodeToToken(String code) {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(APPLICATION_JSON);
-    headers.setAccept(List.of(APPLICATION_JSON));
+    HttpHeaders headers = getHttpHeaders();
 
+    Map<String, String> body = getBody();
+    body.put("code", code);
+
+    var responseBody = sendTokenRequest(body, headers);
+    if (responseBody != null && !responseBody.containsKey("error")) {
+      return extractToken(responseBody);
+    }
+    assert responseBody != null;
+    throw new BadRequestException((String) responseBody.get("error_description"));
+  }
+
+  private Map<String, String> getBody() {
     Map<String, String> body = new HashMap<>();
     body.put("client_id", conf.getClientId());
     body.put("client_secret", conf.getClientSecret());
-    body.put("code", code);
     body.put("redirect_uri", conf.getRedirectUri());
+    return body;
+  }
 
+  private static HttpHeaders getHttpHeaders() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(APPLICATION_JSON);
+    headers.setAccept(List.of(APPLICATION_JSON));
+    return headers;
+  }
+
+  public Token refreshToken(String tokenToRefresh) {
+    HttpHeaders headers = getHttpHeaders();
+
+    Map<String, String> body = getBody();
+    body.put("grant_type", "refresh_token");
+    body.put("refresh_token", tokenToRefresh);
+
+    var responseBody = sendTokenRequest(body, headers);
+
+    if (responseBody != null && !responseBody.containsKey("error")) {
+      return extractToken(responseBody);
+    }
+    assert responseBody != null;
+    throw new BadRequestException((String) responseBody.get("error_description"));
+  }
+
+  private static Token extractToken(Map<String, Object> responseBody) {
+    String accessToken = (String) responseBody.get("access_token");
+    String tokenType = (String) responseBody.get("token_type");
+    String refreshToken = (String) responseBody.get("refresh_token");
+    return new Token().accessToken(accessToken).refreshToken(refreshToken).tokenType(tokenType);
+  }
+
+  private Map<String, Object> sendTokenRequest(Map<String, String> body, HttpHeaders headers) {
     HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
     ParameterizedTypeReference<Map<String, Object>> typeReference =
         new ParameterizedTypeReference<>() {};
     var response = restTemplate.exchange(conf.getTokenUrl(), POST, entity, typeReference);
     var responseBody = response.getBody();
-
-    if (responseBody != null && !responseBody.containsKey("error")) {
-      String accessToken = (String) responseBody.get("access_token");
-      String tokenType = (String) responseBody.get("token_type");
-      String refreshToken = (String) responseBody.get("refresh_token");
-      return new Token().accessToken(accessToken).refreshToken(refreshToken).tokenType(tokenType);
-    }
-    assert responseBody != null;
-    throw new BadRequestException((String) responseBody.get("error_description"));
+    return responseBody;
   }
 
   public Optional<String> getRepositoryIdByAppToken(String token) {
