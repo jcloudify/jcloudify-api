@@ -42,7 +42,7 @@ public class PojaSamApi {
   private CodeUri generateFromApi(PojaVersion pojaVersion, File pojaConfFile) {
     HttpHeaders headers = getPojaSamApiHttpHeaders();
     MultipartBodyBuilder bodies = new MultipartBodyBuilder();
-    bodies.part("conf_file", generatePojaConf(pojaConfFile));
+    bodies.part("conf", generatePojaConf(pojaConfFile));
     MultiValueMap<String, HttpEntity<?>> multipartBody = bodies.build();
     HttpEntity<MultiValueMap<String, HttpEntity<?>>> request =
         new HttpEntity<>(multipartBody, headers);
