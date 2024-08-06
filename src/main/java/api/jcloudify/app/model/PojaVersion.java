@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 public enum PojaVersion implements Comparable<PojaVersion> {
-  POJA_1(3, 6, 2, create("https://jcpfilsifxb46wb5skipmzbycq0tqgsm.lambda-url.eu-west-3.on.aws")) {
+  POJA_1(3, 6, 2, create("https://g7ztepcqfgwmiumrhbhzl674o40iqdip.lambda-url.eu-west-3.on.aws")) {
     @Override
     public String getCliVersion() {
       return "17.0.0";
