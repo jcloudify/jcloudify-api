@@ -28,8 +28,8 @@ Globals:
         AWS_EVENTBRIDGE_BUS: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/eventbridge/bus-name}}'
         AWS_EVENT_STACK_1_SQS_QUEUE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/1/sqs/mailbox-queue-url}}'
         AWS_EVENT_STACK_2_SQS_QUEUE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/2/sqs/mailbox-queue-url}}'
-
-
+        
+        
         GITHUB_CLIENT_ID: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/client/id}}'
         GITHUB_CLIENT_SECRET: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/client/secret}}'
         GITHUB_REDIRECT_URI: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/github/redirect/uri}}'
@@ -43,7 +43,7 @@ Globals:
         SPRING_DATASOURCE_URL: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/db/url}}'
         SPRING_DATASOURCE_USERNAME: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/db/user/username}}'
         SPRING_DATASOURCE_PASSWORD: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/db/user/password}}'
-
+        
 
 Parameters:
   Env:
@@ -64,10 +64,10 @@ Resources:
       MemorySize: 1024
       Timeout: 30
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
+      
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: BUFFERED
-
       Events:
         ApiCall:
           Type: Api
@@ -84,7 +84,7 @@ Resources:
       MemorySize: 512
       Timeout: 600 #note(sqs-visibility)
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
-
+      
       Events:
         AllEvents:
           Type: SQS
@@ -99,7 +99,7 @@ Resources:
       MemorySize: 512
       Timeout: 600 #note(sqs-visibility)
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
-
+      
       Events:
         AllEvents:
           Type: SQS
@@ -130,7 +130,7 @@ Resources:
   ApiFunctionUrlSSM:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Join [ '', [ /jcloudify-api/, !Ref Env, /api/function/url ] ]
+      Name: !Join [ '', [ jcloudify-api/, !Ref Env, /api/function/url ] ]
       Type: String
       Value: !GetAtt FrontalFunctionUrl.FunctionUrl
 
