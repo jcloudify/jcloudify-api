@@ -76,6 +76,32 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+    post:
+      tags:
+        - Security
+      summary: Refresh a token
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+        required: true
+      responses:
+        '200':
+          description: Github access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
   /users:
     post:
@@ -992,7 +1018,13 @@ components:
     #############################################
     ###############  Components #################
     #############################################
+    RefreshToken:
+      type: object
+      properties:
+        refresh_token:
+          type: string
     Token:
+      type: object
       properties:
         access_token:
           type: string
