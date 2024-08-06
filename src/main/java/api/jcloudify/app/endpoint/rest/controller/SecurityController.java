@@ -1,6 +1,7 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
 import api.jcloudify.app.endpoint.rest.mapper.UserMapper;
+import api.jcloudify.app.endpoint.rest.model.RefreshToken;
 import api.jcloudify.app.endpoint.rest.model.Token;
 import api.jcloudify.app.endpoint.rest.model.Whoami;
 import api.jcloudify.app.endpoint.rest.security.model.Principal;
@@ -8,6 +9,8 @@ import api.jcloudify.app.service.github.GithubService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,5 +28,10 @@ public class SecurityController {
   @GetMapping("/token")
   public Token exchangeCodeToToken(@RequestParam String code) {
     return githubService.exchangeCodeToToken(code);
+  }
+
+  @PostMapping("/token")
+  public Token refreshToken(@RequestBody RefreshToken refreshToken) {
+    return githubService.refreshToken(refreshToken);
   }
 }

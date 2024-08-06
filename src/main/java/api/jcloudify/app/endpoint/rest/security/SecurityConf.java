@@ -101,6 +101,8 @@ public class SecurityConf {
                     .permitAll()
                     .requestMatchers(GET, "/token")
                     .permitAll()
+                    .requestMatchers(POST, "/token")
+                    .permitAll()
                     .requestMatchers(GET, "/health/db")
                     .permitAll()
                     .requestMatchers(GET, "/health/bucket")

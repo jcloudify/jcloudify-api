@@ -1,5 +1,6 @@
 package api.jcloudify.app.service.github;
 
+import api.jcloudify.app.endpoint.rest.model.RefreshToken;
 import api.jcloudify.app.endpoint.rest.model.Token;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.service.github.model.CreateRepoRequestBody;
@@ -43,5 +44,9 @@ public class GithubService {
 
   public GhAppInstallation getInstallationByGhId(long ghId) {
     return githubComponent.getInstallationById(ghId);
+  }
+
+  public Token refreshToken(RefreshToken refreshToken) {
+    return githubComponent.refreshToken(refreshToken.getRefreshToken());
   }
 }
