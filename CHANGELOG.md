@@ -1,3 +1,19 @@
+# [3.12.0](https://github.com/jcloudify/jcloudify-api/compare/v3.11.0...v3.12.0) (2024-08-06)
+
+
+### Bug Fixes
+
+* wrong exception caught during authentication ([ae73a60](https://github.com/jcloudify/jcloudify-api/commit/ae73a60a4830754d1de3a5321928d15077b39b29))
+
+
+### Features
+
+* authenticate either with github user token or app token ([e25dc17](https://github.com/jcloudify/jcloudify-api/commit/e25dc17c170a490e08c87da662491409ae39b413))
+* refresh github access token ([13b0337](https://github.com/jcloudify/jcloudify-api/commit/13b033751fb952170f00cab906673f6647418469))
+* upload project package file ([75e661f](https://github.com/jcloudify/jcloudify-api/commit/75e661f83fd2934bf4dc608d1fe32fb2e805749d))
+
+
+
 # [3.11.0](https://github.com/jcloudify/jcloudify-api/compare/v3.10.1...v3.11.0) (2024-08-01)
 
 
@@ -98,23 +114,6 @@
 ### Bug Fixes
 
 * **poja-conf:** poja custom are HashMaps ([73cd8a3](https://github.com/jcloudify/jcloudify-api/commit/73cd8a36ad9527f330ffcd0b80489e8a96559103))
-
-
-
-# [3.5.0](https://github.com/jcloudify/jcloudify-api/compare/v3.4.0...v3.5.0) (2024-07-25)
-
-
-### Bug Fixes
-
-* remove duplicated stack id ([5618141](https://github.com/jcloudify/jcloudify-api/commit/561814123d2530148dfeffb72b4fa2cc6f85f27d))
-* update stack when it already exists ([bda3bf6](https://github.com/jcloudify/jcloudify-api/commit/bda3bf6892a699f3789d7c608fd06ab8b1d29b7b))
-
-
-### Features
-
-* add repository description to application, and fix poja-conf tests ([28b8a46](https://github.com/jcloudify/jcloudify-api/commit/28b8a463c0264aae19b0d72dd7d678409e55c31d))
-* PojaConfV17_0_0 ([d29fd7b](https://github.com/jcloudify/jcloudify-api/commit/d29fd7b7c3b5b5d8e3da50cbad18729bd9b5905b))
-* save stack logs in s3 ([d97c8af](https://github.com/jcloudify/jcloudify-api/commit/d97c8af8427f4467a33196be61f81d20f84d082a))
 
 
 
