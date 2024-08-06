@@ -1,5 +1,7 @@
 package api.jcloudify.app.file;
 
+import static api.jcloudify.app.file.FileType.DEPLOYMENT_FOLDER;
+
 import java.io.File;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -37,7 +39,15 @@ public class ExtendedBucketComponent {
           "users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
       case BUILT_PACKAGE -> String.format(
           "users/%s/apps/%s/envs/%s/built-packages/%s", userId, appId, envId, filename);
+      case DEPLOYMENT_FOLDER -> throw new UnsupportedOperationException();
     };
+  }
+
+  public static String getBucketKey(String userId, String appId, String envId, FileType fileType) {
+    if (DEPLOYMENT_FOLDER == fileType) {
+      return String.format("users/%s/apps/%s/envs/%s/deployment-files/", userId, appId, envId);
+    }
+    throw new UnsupportedOperationException();
   }
 
   public final File download(String key) {

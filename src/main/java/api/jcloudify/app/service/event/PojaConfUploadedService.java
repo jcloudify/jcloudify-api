@@ -1,6 +1,8 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.file.FileType.DEPLOYMENT_FOLDER;
 import static api.jcloudify.app.file.FileType.POJA_CONF;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Locale.ROOT;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.OK;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.UP_TO_DATE;
@@ -10,14 +12,19 @@ import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileUnzipper;
 import api.jcloudify.app.model.PojaVersion;
 import api.jcloudify.app.repository.model.Application;
+import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.service.AppInstallationService;
 import api.jcloudify.app.service.ApplicationService;
+import api.jcloudify.app.service.EnvDeploymentConfService;
 import api.jcloudify.app.service.EnvironmentService;
 import api.jcloudify.app.service.api.pojaSam.PojaSamApi;
 import api.jcloudify.app.service.github.GithubService;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.zip.ZipFile;
 import lombok.AllArgsConstructor;
@@ -43,6 +50,12 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Slf4j
 public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
+  private static final String BUILD_TEMPLATE_FILENAME_YML = "template.yml";
+  private static final String CF_STACKS_CD_COMPUTE_PERMISSION_YML_PATH =
+      "cf-stacks/cd-compute-permission.yml";
+  private static final String CF_STACKS_EVENT_STACK_YML_PATH = "cf-stacks/event-stack.yml";
+  private static final String CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH =
+      "cf-stacks/storage-bucket-stack.yml";
   private final ExtendedBucketComponent bucketComponent;
   private final PojaSamApi pojaSamApi;
   private final GithubService githubService;
@@ -50,6 +63,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private final EnvironmentService envService;
   private final ApplicationService appService;
   private final FileUnzipper unzipper;
+  private final EnvDeploymentConfService envDeploymentConfService;
 
   @Override
   public void accept(PojaConfUploaded pojaConfUploaded) {
@@ -62,8 +76,69 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     var appInstallationToken = getInstallationToken(pojaConfUploaded, appId);
     UsernamePasswordCredentialsProvider ghCredentialsProvider =
         new UsernamePasswordCredentialsProvider("x-access-token", appInstallationToken);
+    var cloneDirPath = createTempDir("github_clone");
     pushChangesFromCodeToAppRepository(
-        ghCredentialsProvider, pojaConfUploaded.getPojaVersion(), app, env, generatedCode);
+        ghCredentialsProvider,
+        pojaConfUploaded.getPojaVersion(),
+        app,
+        env,
+        generatedCode,
+        cloneDirPath);
+    uploadAndSaveDeploymentFiles(cloneDirPath, userId, appId, environmentId);
+  }
+
+  private void uploadAndSaveDeploymentFiles(
+      Path cloneDirPath, String userId, String appId, String environmentId) {
+    var tempDirPath = createTempDir("deployment_files");
+    var templateBuildFile = cloneDirPath.resolve(BUILD_TEMPLATE_FILENAME_YML);
+    var computePermissionStackFile = cloneDirPath.resolve(CF_STACKS_CD_COMPUTE_PERMISSION_YML_PATH);
+    var eventStackFile = cloneDirPath.resolve(CF_STACKS_EVENT_STACK_YML_PATH);
+    var storageBucketStackFile = cloneDirPath.resolve(CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH);
+    UUID random = UUID.randomUUID();
+    String buildTemplateFilename = "template" + random + ".yml";
+    copyFile(templateBuildFile, tempDirPath, buildTemplateFilename);
+    String computePermissionStackFilename = "compute-permission" + random + ".yml";
+    copyFile(computePermissionStackFile, tempDirPath, computePermissionStackFilename);
+    String eventStackFilename = "event-stack" + random + ".yml";
+    copyFile(eventStackFile, tempDirPath, eventStackFilename);
+    String storageBucketStackFilename = "storage-bucket-stack" + random + ".yml";
+    var storageBucketStackFileCopyResult =
+        copyFile(storageBucketStackFile, tempDirPath, storageBucketStackFilename);
+    bucketComponent.upload(
+        tempDirPath.toFile(),
+        ExtendedBucketComponent.getBucketKey(userId, appId, environmentId, DEPLOYMENT_FOLDER));
+    envDeploymentConfService.save(
+        EnvDeploymentConf.builder()
+            .envId(environmentId)
+            .computePermissionStackFileKey(computePermissionStackFilename)
+            .storageBucketStackFileKey(
+                storageBucketStackFileCopyResult ? storageBucketStackFilename : null)
+            .eventStackFileKey(eventStackFilename)
+            .buildTemplateFile(buildTemplateFilename)
+            .creationDatetime(Instant.now())
+            .build());
+  }
+
+  /**
+   * copies a file from source to target with the new filename. if copy fails, it throws
+   * RuntimeException if file does not exist, it returns false if file exists, it returns true the
+   * boolean return value is used to handle non-existing file copies e.g: storage-bucket-stack does
+   * not exist if with_file_storage is false in the code_gen conf, hence the need to check whether
+   * the file exists or not on copy result
+   */
+  private static boolean copyFile(Path source, Path target, String newFilename) {
+    if (source.toFile().exists()) {
+      Path newFilenameResolved = target.resolve(newFilename);
+      log.info("Copying {} to {}", source, newFilenameResolved);
+      try {
+        Files.copy(source, newFilenameResolved, REPLACE_EXISTING);
+      } catch (IOException e) {
+        log.info("failed to copy");
+        throw new RuntimeException(e);
+      }
+      return true;
+    }
+    return false;
   }
 
   private void pushChangesFromCodeToAppRepository(
@@ -71,19 +146,19 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       PojaVersion pojaVersion,
       Application app,
       Environment env,
-      ZipFile toUnzip) {
-    var cloneDir = createTempDirForGithub();
+      ZipFile toUnzip,
+      Path cloneDirPath) {
     try (Git git =
         Git.cloneRepository()
             .setCredentialsProvider(ghCredentialsProvider)
-            .setDirectory(cloneDir.toFile())
+            .setDirectory(cloneDirPath.toFile())
             .setURI(app.getGithubRepositoryUrl())
             .setDepth(1)
             .call()) {
       String branchName = env.getEnvironmentType().name().toLowerCase(ROOT);
       createAndCheckoutBranchIfNotExists(git, branchName);
-      log.info("successfully cloned in {}", cloneDir.toAbsolutePath());
-      unzip(toUnzip, cloneDir);
+      log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
+      unzip(toUnzip, cloneDirPath);
       configureGitRepositoryGpg(git);
       gitAddAllChanges(git);
       unsignedCommitAsBot(
@@ -99,10 +174,13 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
         }
       }
     } catch (InvalidRemoteException e) {
+      log.info("Invalid Remote");
       throw new RuntimeException(e);
     } catch (TransportException e) {
+      log.info("Transport Exception");
       throw new RuntimeException(e);
     } catch (GitAPIException e) {
+      log.info("Git Api Exception");
       throw new RuntimeException(e);
     }
   }
@@ -148,7 +226,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       git.rm().addFilepattern("poja-custom-java-env-vars.txt").call();
       git.rm().addFilepattern("poja-custom-java-repositories.txt").call();
       git.rm().addFilepattern("poja-custom-java-deps.txt").call();
-      git.rm().addFilepattern("template.yml").call();
+      git.rm().addFilepattern(BUILD_TEMPLATE_FILENAME_YML).call();
       git.rm().addFilepattern("poja.yml").call();
       git.rm().addFilepattern(".github/workflows/cd-compute.yml").call();
       git.rm().addFilepattern(".github/workflows/cd-compute-permission.yml").call();
@@ -194,7 +272,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   }
 
   @SneakyThrows
-  private static Path createTempDirForGithub() {
-    return Files.createTempDirectory("github_clone");
+  private static Path createTempDir(String prefix) {
+    return Files.createTempDirectory(prefix);
   }
 }
