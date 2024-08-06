@@ -1,6 +1,8 @@
 package api.jcloudify.app.repository.model;
 
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
+import static java.util.Comparator.comparing;
 import static org.hibernate.type.SqlTypes.NAMED_ENUM;
 
 import api.jcloudify.app.endpoint.rest.model.Environment.StateEnum;
@@ -10,8 +12,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -60,7 +65,8 @@ public class Environment implements Serializable {
       String applicationId,
       StateEnum state,
       String configurationFileKey,
-      String codeFileKey) {
+      String codeFileKey,
+      List<EnvDeploymentConf> envDeploymentConfs) {
     this.id = id;
     this.environmentType = environmentType;
     this.archived = archived;
@@ -68,6 +74,19 @@ public class Environment implements Serializable {
     this.state = state;
     this.configurationFileKey = configurationFileKey;
     this.codeFileKey = codeFileKey;
+    this.envDeploymentConfs = envDeploymentConfs;
+  }
+
+  @OneToMany(cascade = ALL)
+  @JoinColumn(name = "env_id", insertable = false, updatable = false)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private List<EnvDeploymentConf> envDeploymentConfs;
+
+  public EnvDeploymentConf getLatestDeploymentConf() {
+    return envDeploymentConfs.stream()
+        .max(comparing(EnvDeploymentConf::getCreationDatetime))
+        .orElseThrow();
   }
 
   @JsonIgnore
