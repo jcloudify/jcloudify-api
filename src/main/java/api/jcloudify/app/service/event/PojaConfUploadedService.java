@@ -162,7 +162,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       configureGitRepositoryGpg(git);
       gitAddAllChanges(git);
       unsignedCommitAsBot(
-          git, "poja-upgrade: " + pojaVersion.toHumanReadableValue(), ghCredentialsProvider);
+          git, "jcloudify: generate code using v." + pojaVersion.toHumanReadableValue(), ghCredentialsProvider);
       var results = git.push().setCredentialsProvider(ghCredentialsProvider).call();
       for (PushResult r : results) {
         for (RemoteRefUpdate update : r.getRemoteUpdates()) {
