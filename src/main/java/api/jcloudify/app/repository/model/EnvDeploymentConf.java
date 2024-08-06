@@ -34,6 +34,7 @@ public class EnvDeploymentConf {
   private String eventStackFileKey;
   private String storageBucketStackFileKey;
   private Instant creationDatetime;
+  private String buildTemplateFile;
 
   @Column(name = "env_id")
   private String envId;

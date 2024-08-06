@@ -51,10 +51,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static final String BUILD_TEMPLATE_FILENAME_YML = "template.yml";
-  private static final String CF_STACKS_CD_COMPUTE_PERMISSION_YML =
+  private static final String CF_STACKS_CD_COMPUTE_PERMISSION_YML_PATH =
       "cf-stacks/cd-compute-permission.yml";
-  private static final String CF_STACKS_EVENT_STACK_YML = "cf-stacks/event-stack.yml";
-  private static final String CF_STACKS_STORAGE_BUCKET_STACK_YML =
+  private static final String CF_STACKS_EVENT_STACK_YML_PATH = "cf-stacks/event-stack.yml";
+  private static final String CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH =
       "cf-stacks/storage-bucket-stack.yml";
   private final ExtendedBucketComponent bucketComponent;
   private final PojaSamApi pojaSamApi;
@@ -91,11 +91,12 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       Path cloneDirPath, String userId, String appId, String environmentId) {
     var tempDirPath = createTempDir("deployment_files");
     var templateBuildFile = cloneDirPath.resolve(BUILD_TEMPLATE_FILENAME_YML);
-    var computePermissionStackFile = cloneDirPath.resolve(CF_STACKS_CD_COMPUTE_PERMISSION_YML);
-    var eventStackFile = cloneDirPath.resolve(CF_STACKS_EVENT_STACK_YML);
-    var storageBucketStackFile = cloneDirPath.resolve(CF_STACKS_STORAGE_BUCKET_STACK_YML);
+    var computePermissionStackFile = cloneDirPath.resolve(CF_STACKS_CD_COMPUTE_PERMISSION_YML_PATH);
+    var eventStackFile = cloneDirPath.resolve(CF_STACKS_EVENT_STACK_YML_PATH);
+    var storageBucketStackFile = cloneDirPath.resolve(CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH);
     UUID random = UUID.randomUUID();
-    copyFile(templateBuildFile, tempDirPath, "template" + random + ".yml");
+    String buildTemplateFilename = "template" + random + ".yml";
+    copyFile(templateBuildFile, tempDirPath, buildTemplateFilename);
     String computePermissionStackFilename = "compute-permission" + random + ".yml";
     copyFile(computePermissionStackFile, tempDirPath, computePermissionStackFilename);
     String eventStackFilename = "event-stack" + random + ".yml";
@@ -113,6 +114,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
             .storageBucketStackFileKey(
                 storageBucketStackFileCopyResult ? storageBucketStackFilename : null)
             .eventStackFileKey(eventStackFilename)
+            .buildTemplateFile(buildTemplateFilename)
             .creationDatetime(Instant.now())
             .build());
   }
