@@ -10,21 +10,29 @@ import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.UP_TO_DATE;
 import api.jcloudify.app.endpoint.event.model.PojaConfUploaded;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileUnzipper;
+import api.jcloudify.app.mail.Email;
+import api.jcloudify.app.mail.Mailer;
 import api.jcloudify.app.model.PojaVersion;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.repository.model.Environment;
+import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.service.AppInstallationService;
 import api.jcloudify.app.service.ApplicationService;
 import api.jcloudify.app.service.EnvDeploymentConfService;
 import api.jcloudify.app.service.EnvironmentService;
+import api.jcloudify.app.service.UserService;
 import api.jcloudify.app.service.api.pojaSam.PojaSamApi;
 import api.jcloudify.app.service.github.GithubService;
+import jakarta.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.zip.ZipFile;
 import lombok.AllArgsConstructor;
@@ -64,27 +72,81 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private final ApplicationService appService;
   private final FileUnzipper unzipper;
   private final EnvDeploymentConfService envDeploymentConfService;
+  private final Mailer mailer;
+  private final UserService userService;
 
   @Override
   public void accept(PojaConfUploaded pojaConfUploaded) {
-    String userId = pojaConfUploaded.getUserId();
-    String environmentId = pojaConfUploaded.getEnvironmentId();
-    String appId = pojaConfUploaded.getAppId();
-    Environment env = envService.getById(environmentId);
-    Application app = appService.getById(appId);
-    var generatedCode = generateCodeFromPojaConf(pojaConfUploaded, userId, appId, environmentId);
-    var appInstallationToken = getInstallationToken(pojaConfUploaded, appId);
-    UsernamePasswordCredentialsProvider ghCredentialsProvider =
-        new UsernamePasswordCredentialsProvider("x-access-token", appInstallationToken);
-    var cloneDirPath = createTempDir("github_clone");
-    pushChangesFromCodeToAppRepository(
-        ghCredentialsProvider,
-        pojaConfUploaded.getPojaVersion(),
-        app,
-        env,
-        generatedCode,
-        cloneDirPath);
-    uploadAndSaveDeploymentFiles(cloneDirPath, userId, appId, environmentId);
+    try {
+      Objects.requireNonNull(handlePojaConfUploaded(pojaConfUploaded)).call();
+      handleEventSuccess(pojaConfUploaded);
+    } catch (Exception e) {
+      handleEventFailure(pojaConfUploaded);
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void handleEventFailure(PojaConfUploaded pojaConfUploaded) {
+    Application app = appService.getById(pojaConfUploaded.getAppId());
+    String userId = app.getUserId();
+    User user = userService.getUserById(userId);
+    String address = user.getEmail();
+    mailer.accept(
+        new Email(
+            internetAddressFrom(address),
+            List.of(),
+            List.of(),
+            "failed push [Jcloudify]",
+            "<p> [jcloudifybot] has failed to push the generated code to your repository"
+                + app.getGithubRepositoryUrl()
+                + " </p>",
+            List.of()));
+  }
+
+  private void handleEventSuccess(PojaConfUploaded pojaConfUploaded) {
+    Application app = appService.getById(pojaConfUploaded.getAppId());
+    String userId = app.getUserId();
+    User user = userService.getUserById(userId);
+    String address = user.getEmail();
+    mailer.accept(
+        new Email(
+            internetAddressFrom(address),
+            List.of(),
+            List.of(),
+            "successful push [Jcloudify]",
+            "<p> [jcloudifybot] has successfully pushed the generated code to your repository"
+                + app.getGithubRepositoryUrl()
+                + " </p>",
+            List.of()));
+  }
+
+  @SneakyThrows
+  private static InternetAddress internetAddressFrom(String address) {
+    return new InternetAddress(address);
+  }
+
+  private Callable<Void> handlePojaConfUploaded(PojaConfUploaded pojaConfUploaded) {
+    return () -> {
+      String userId = pojaConfUploaded.getUserId();
+      String environmentId = pojaConfUploaded.getEnvironmentId();
+      String appId = pojaConfUploaded.getAppId();
+      Environment env = envService.getById(environmentId);
+      Application app = appService.getById(appId);
+      var generatedCode = generateCodeFromPojaConf(pojaConfUploaded, userId, appId, environmentId);
+      var appInstallationToken = getInstallationToken(pojaConfUploaded, appId);
+      UsernamePasswordCredentialsProvider ghCredentialsProvider =
+          new UsernamePasswordCredentialsProvider("x-access-token", appInstallationToken);
+      var cloneDirPath = createTempDir("github_clone");
+      pushChangesFromCodeToAppRepository(
+          ghCredentialsProvider,
+          pojaConfUploaded.getPojaVersion(),
+          app,
+          env,
+          generatedCode,
+          cloneDirPath);
+      uploadAndSaveDeploymentFiles(cloneDirPath, userId, appId, environmentId);
+      return null;
+    };
   }
 
   private void uploadAndSaveDeploymentFiles(
