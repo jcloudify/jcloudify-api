@@ -80,7 +80,9 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     try {
       Objects.requireNonNull(handlePojaConfUploaded(pojaConfUploaded)).call();
       handleEventSuccess(pojaConfUploaded);
+      log.info("Success at PojaConfUploaded");
     } catch (Exception e) {
+      log.info("Failure at PojaConfUploaded");
       handleEventFailure(pojaConfUploaded);
       throw new RuntimeException(e);
     }
@@ -91,6 +93,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     String userId = app.getUserId();
     User user = userService.getUserById(userId);
     String address = user.getEmail();
+    log.info("mailing {}", address);
     mailer.accept(
         new Email(
             internetAddressFrom(address),
@@ -108,6 +111,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     String userId = app.getUserId();
     User user = userService.getUserById(userId);
     String address = user.getEmail();
+    log.info("mailing {}", address);
     mailer.accept(
         new Email(
             internetAddressFrom(address),
