@@ -1,7 +1,6 @@
 compute:
   frontal_function_timeout: 30
   frontal_memory: 1024
-  with_frontal_function_url: 'true'
   worker_batch: 5
   worker_function_1_timeout: 600
   worker_function_2_timeout: 600
