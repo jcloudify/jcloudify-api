@@ -313,8 +313,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
 
   private static void unsignedCommitAsBot(
       Git git, String commitMessage, CredentialsProvider credentialsProvider) {
-    PersonIdent author =
-        new PersonIdent("jcloudify[bot]", "jcloudifybot@noreply.com");
+    PersonIdent author = new PersonIdent("jcloudify[bot]", "jcloudifybot@noreply.com");
     try {
       git.commit()
           .setMessage(commitMessage)
