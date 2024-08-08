@@ -914,6 +914,63 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /users/{userId}/payment-methods/customers:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      operationId: getCustomer
+      summary: Get stripe customer
+      responses:
+        '200':
+          description: stripe customer object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCustomer'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      operationId: updatePaymentCustomer
+      summary: Update stripe customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentCustomer"
+      responses:
+        '200':
+          description: Updated payment customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCustomer'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
 components:
   securitySchemes:
@@ -1530,6 +1587,19 @@ components:
         set_default:
           type: boolean
           default: false
+    PaymentCustomer:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        default_payment_method:
+          $ref: "#/components/schemas/PaymentMethod"
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
