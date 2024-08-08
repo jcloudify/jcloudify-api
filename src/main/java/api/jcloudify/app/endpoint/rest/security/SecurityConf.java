@@ -1,5 +1,6 @@
 package api.jcloudify.app.endpoint.rest.security;
 
+import static api.jcloudify.app.endpoint.rest.security.model.ApplicationRole.GITHUB_APPLICATION;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.OPTIONS;
 import static org.springframework.http.HttpMethod.POST;
@@ -69,7 +70,6 @@ public class SecurityConf {
         .addFilterBefore(
             bearerFilter(
                 new OrRequestMatcher(
-                    antMatcher(POST, "/application/package"),
                     antMatcher(GET, "/whoami"),
                     antMatcher(GET, "/users/*/installations"),
                     antMatcher(PUT, "/users/*/installations"),
@@ -89,10 +89,12 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/events"),
                     antMatcher(PUT, "/users/*/applications/*/environments/*/config"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/config"),
+                    antMatcher(GET, "/users/*/payment-methods"),
+                    antMatcher(GET, "/gh-repos/*/*/upload-build-uri"),
                     antMatcher(GET, "/users/*/payment-details"),
                     antMatcher(PUT, "/users/*/payment-details"),
-                    antMatcher(GET, "/users/{userId}/payment-details/payment-methods"),
-                    antMatcher(PUT, "/users/{userId}/payment-details/payment-methods"))),
+                    antMatcher(GET, "/users/*/payment-details/payment-methods"),
+                    antMatcher(PUT, "/users/*/payment-details/payment-methods"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -122,8 +124,6 @@ public class SecurityConf {
                     .requestMatchers(GET, "/whoami")
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
-                    .authenticated()
-                    .requestMatchers(POST, "/application/package")
                     .authenticated()
                     .requestMatchers(GET, "/users/*/payment-details")
                     .authenticated()
@@ -225,6 +225,8 @@ public class SecurityConf {
                             "/users/*/applications/*/environments/*/config",
                             authenticatedResourceProvider))
                     .authenticated()
+                    .requestMatchers(GET, "/gh-repos/*/*/upload-build-uri")
+                    .hasRole(GITHUB_APPLICATION.getRole())
                     .requestMatchers("/**")
                     .denyAll())
         // disable superfluous protections

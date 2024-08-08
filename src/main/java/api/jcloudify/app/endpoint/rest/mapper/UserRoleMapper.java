@@ -1,7 +1,7 @@
 package api.jcloudify.app.endpoint.rest.mapper;
 
 import api.jcloudify.app.endpoint.rest.model.User;
-import api.jcloudify.app.repository.model.enums.UserRole;
+import api.jcloudify.app.endpoint.rest.security.model.UserRole;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -38,6 +38,7 @@ import software.amazon.awssdk.services.ssm.model.Parameter;
 public class TestMocks {
   public static final String JOE_DOE_ID = "joe_doe_id";
   public static final String JOE_DOE_TOKEN = "joe_doe_token";
+  public static final String A_GITHUB_APP_TOKEN = "github_app_token";
   public static final String JOE_DOE_EMAIL = "joe@email.com";
   public static final String JOE_DOE_GITHUB_ID = "1234";
   public static final String JOE_DOE_USERNAME = "JoeDoe";
