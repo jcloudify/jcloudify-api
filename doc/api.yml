@@ -857,7 +857,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /users/{userId}/payment-methods:
+  /users/{userId}/payment-details/payment-methods:
     parameters:
       - $ref: "#/components/parameters/userId"
     get:
@@ -914,7 +914,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /users/{userId}/payment-methods/customers:
+  /users/{userId}/payment-details:
     parameters:
       - $ref: "#/components/parameters/userId"
     get:
