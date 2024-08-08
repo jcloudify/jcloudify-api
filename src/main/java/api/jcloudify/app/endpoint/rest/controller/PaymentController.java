@@ -22,14 +22,14 @@ public class PaymentController {
   private final PaymentMapper mapper;
   private final PaymentCustomerMapper customerMapper;
 
-  @GetMapping("/users/{userId}/payment-methods")
+  @GetMapping("/users/{userId}/payment-details/payment-methods")
   public PaymentMethodResponse getPaymentMethods(@PathVariable String userId) {
     List<PaymentMethod> data =
         paymentService.getPaymentMethods(userId).stream().map(mapper::toRest).toList();
     return new PaymentMethodResponse().data(data);
   }
 
-  @PutMapping("/users/{userId}/payment-methods")
+  @PutMapping("/users/{userId}/payment-details/payment-methods")
   public PaymentMethodResponse managePaymentMethod(
       @PathVariable String userId, @RequestBody PaymentMethodsAction paymentMethodsAction) {
     paymentService.managePaymentMethod(userId, paymentMethodsAction);
@@ -38,12 +38,12 @@ public class PaymentController {
     return new PaymentMethodResponse().data(data);
   }
 
-  @GetMapping("/users/{userId}/payment-methods/customers")
+  @GetMapping("/users/{userId}/payment-details")
   public PaymentCustomer getPaymentCustomer(@PathVariable String userId) {
     return customerMapper.toRest(paymentService.getCustomer(userId));
   }
 
-  @PutMapping("/users/{userId}/paymnent-methods/customers")
+  @PutMapping("/users/{userId}/payment-details")
   public PaymentCustomer updatePaymentCustomer(
       @PathVariable String userId, @RequestBody PaymentCustomer customer) {
     return customerMapper.toRest(paymentService.updateCustomer(customer));

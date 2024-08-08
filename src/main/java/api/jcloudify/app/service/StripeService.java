@@ -46,12 +46,12 @@ public class StripeService {
   public PaymentMethod setDefaultPaymentMethod(String customerId, String paymentMethodId) {
     try {
       Customer customer = Customer.retrieve(customerId);
-      CustomerUpdateParams.InvoiceSettings invoiveSettingParams =
+      CustomerUpdateParams.InvoiceSettings invoiceSettingParams =
           CustomerUpdateParams.InvoiceSettings.builder()
               .setDefaultPaymentMethod(paymentMethodId)
               .build();
       CustomerUpdateParams params =
-          CustomerUpdateParams.builder().setInvoiceSettings(invoiveSettingParams).build();
+          CustomerUpdateParams.builder().setInvoiceSettings(invoiceSettingParams).build();
       customer.update(params);
       return PaymentMethod.retrieve(paymentMethodId);
     } catch (StripeException e) {

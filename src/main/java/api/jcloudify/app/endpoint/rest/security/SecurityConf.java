@@ -89,8 +89,10 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/events"),
                     antMatcher(PUT, "/users/*/applications/*/environments/*/config"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/config"),
-                    antMatcher(GET, "/users/*/payment-methods"),
-                    antMatcher(PUT, "/users/*/payment-methods"))),
+                    antMatcher(GET, "/users/*/payment-details"),
+                    antMatcher(PUT, "/users/*/payment-details"),
+                    antMatcher(GET, "/users/{userId}/payment-details/payment-methods"),
+                    antMatcher(PUT, "/users/{userId}/payment-details/payment-methods"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -123,9 +125,13 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(POST, "/application/package")
                     .authenticated()
-                    .requestMatchers(GET, "/users/*/payment-methods")
+                    .requestMatchers(GET, "/users/*/payment-details")
                     .authenticated()
-                    .requestMatchers(PUT, "/users/*/payment-methods")
+                    .requestMatchers(PUT, "/users/*/payment-details")
+                    .authenticated()
+                    .requestMatchers(GET, "/users/*/payment-details/payment-methods")
+                    .authenticated()
+                    .requestMatchers(PUT, "/users/*/payment-details/payment-methods")
                     .authenticated()
                     .requestMatchers(
                         new SelfUserMatcher(
