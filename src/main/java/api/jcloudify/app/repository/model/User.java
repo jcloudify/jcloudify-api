@@ -5,7 +5,7 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static org.hibernate.type.SqlTypes.NAMED_ENUM;
 
-import api.jcloudify.app.repository.model.enums.UserRole;
+import api.jcloudify.app.endpoint.rest.security.model.UserRole;
 import api.jcloudify.app.service.pricing.PricingMethod;
 import io.hypersistence.utils.hibernate.type.array.EnumArrayType;
 import jakarta.persistence.Column;

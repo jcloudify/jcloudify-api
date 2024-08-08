@@ -102,7 +102,48 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-
+  /gh-repos/{repo_owner}/{repo_name}/upload-build-uri:
+    get:
+      tags:
+        - Build_Handling
+      summary: creates an URI for zip package build upload
+      operationId: createFileUploadUri
+      parameters:
+        - name: repo_owner
+          description: github repository owner containing the app
+          schema:
+            type: string
+          required: true
+          in: path
+        - name: repo_name
+          description: github repository name containing the app
+          schema:
+            type: string
+          required: true
+          in: path
+        - name: environment_type
+          description: environment type
+          schema:
+            $ref: "#/components/schemas/EnvironmentType"
+          required: true
+          in: query
+      responses:
+        '200':
+          description: the presigned code uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadRequestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /users:
     post:
       tags:
@@ -1587,6 +1628,14 @@ components:
         set_default:
           type: boolean
           default: false
+    FileUploadRequestResponse:
+      type: object
+      properties:
+        uri:
+          type: string
+          format: uri
+        filename:
+          type: string
     PaymentCustomer:
       type: object
       properties:

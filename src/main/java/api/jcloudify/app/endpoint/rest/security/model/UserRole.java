@@ -1,4 +1,4 @@
-package api.jcloudify.app.repository.model.enums;
+package api.jcloudify.app.endpoint.rest.security.model;
 
 import org.springframework.security.core.GrantedAuthority;
 

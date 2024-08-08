@@ -1,22 +1,49 @@
 package api.jcloudify.app.file;
 
 import static api.jcloudify.app.file.FileType.DEPLOYMENT_FOLDER;
+import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
 
+import api.jcloudify.app.model.exception.ApiException;
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Duration;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 @AllArgsConstructor
 @Component
 public class ExtendedBucketComponent {
+  private static final String APPLICATION_ZIP_CONTENT_TYPE = "application/zip";
   private final BucketComponent bucketComponent;
   private final BucketConf bucketConf;
 
   public final FileHash upload(File file, String key) {
     return bucketComponent.upload(file, key);
+  }
+
+  public final URI getPresignedPutObjectUri(String key) {
+    try {
+      return bucketConf
+          .getS3Presigner()
+          .presignPutObject(
+              PutObjectPresignRequest.builder()
+                  .putObjectRequest(
+                      req ->
+                          req.bucket(bucketConf.getBucketName())
+                              .key(key)
+                              .contentType(APPLICATION_ZIP_CONTENT_TYPE))
+                  .signatureDuration(Duration.ofMinutes(2))
+                  .build())
+          .url()
+          .toURI();
+    } catch (URISyntaxException e) {
+      throw new ApiException(SERVER_EXCEPTION, e);
+    }
   }
 
   public boolean doesExist(String bucketKey) {
