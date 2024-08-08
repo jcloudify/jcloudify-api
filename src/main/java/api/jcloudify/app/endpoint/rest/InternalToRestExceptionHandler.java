@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -55,6 +56,12 @@ public class InternalToRestExceptionHandler {
     restException.setType(FORBIDDEN.toString());
     restException.setMessage(e.getMessage());
     return new ResponseEntity<>(restException, FORBIDDEN);
+  }
+
+  @ExceptionHandler(value = {MissingServletRequestParameterException.class})
+  ResponseEntity<ExceptionModel> handleDataIntegrityViolation(MissingServletRequestParameterException e) {
+    log.info("Missing parameter", e);
+    return new ResponseEntity<>(toRest(e, BAD_REQUEST), BAD_REQUEST);
   }
 
   @ExceptionHandler(value = {DataIntegrityViolationException.class})
