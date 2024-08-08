@@ -4,8 +4,8 @@ import static api.jcloudify.app.endpoint.rest.security.model.UserRole.USER;
 import static api.jcloudify.app.service.pricing.PricingMethod.TEN_MICRO;
 
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
-import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.endpoint.rest.security.model.UserRole;
+import api.jcloudify.app.repository.model.User;
 import org.kohsuke.github.GHMyself;
 import org.springframework.stereotype.Component;
 
