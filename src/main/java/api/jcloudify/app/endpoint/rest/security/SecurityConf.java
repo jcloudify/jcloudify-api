@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -133,97 +134,60 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(PUT, "/users/*/payment-details/payment-methods")
                     .authenticated()
-                    .requestMatchers(
-                        new SelfUserMatcher(
-                            PUT, "/users/*/installations", authenticatedResourceProvider))
+                    .requestMatchers(selfUserMatcher(PUT, "/users/*/installations"))
+                    .authenticated()
+                    .requestMatchers(selfUserMatcher(GET, "/users/*/installations"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfUserMatcher(
-                            GET, "/users/*/installations", authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            PUT, "/users/*/applications/*/environments/*/deploymentInitiation"))
+                    .authenticated()
+                    .requestMatchers(selfUserMatcher(PUT, "/users/*/applications"))
+                    .authenticated()
+                    .requestMatchers(selfUserMatcher(GET, "/users/*/applications"))
+                    .authenticated()
+                    .requestMatchers(selfUserMatcher(GET, "/users/*/applications/*"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfApplicationMatcher(
-                            PUT,
-                            "/users/*/applications/*/environments/*/deploymentInitiation",
-                            authenticatedResourceProvider))
+                        selfApplicationMatcher(GET, "/users/*/applications/*/environments"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfUserMatcher(
-                            PUT, "/users/*/applications", authenticatedResourceProvider))
+                        selfApplicationMatcher(PUT, "/users/*/applications/*/environments"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfUserMatcher(
-                            GET, "/users/*/applications", authenticatedResourceProvider))
+                        selfApplicationMatcher(GET, "/users/*/applications/*/environments/*"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfUserMatcher(
-                            GET, "/users/*/applications/*", authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            POST, "/users/*/applications/*/environments/*/ssmparameters"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfApplicationMatcher(
-                            GET,
-                            "/users/*/applications/*/environments",
-                            authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            PUT, "/users/*/applications/*/environments/*/ssmparameters"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfApplicationMatcher(
-                            PUT,
-                            "/users/*/applications/*/environments",
-                            authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            GET, "/users/*/applications/*/environments/*/ssmparameters"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfApplicationMatcher(
-                            GET,
-                            "/users/*/applications/*/environments/*",
-                            authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            GET, "/users/*/applications/*/environments/*/stacks"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfApplicationMatcher(
-                            POST,
-                            "/users/*/applications/*/environments/*/ssmparameters",
-                            authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            GET, "/users/*/applications/*/environments/*/stacks/*"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfApplicationMatcher(
-                            PUT,
-                            "/users/*/applications/*/environments/*/ssmparameters",
-                            authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            GET, "/users/*/applications/*/environments/*/stacks/*/events"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfApplicationMatcher(
-                            GET,
-                            "/users/*/applications/*/environments/*/ssmparameters",
-                            authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            PUT, "/users/*/applications/*/environments/*/config"))
                     .authenticated()
                     .requestMatchers(
-                        new SelfApplicationMatcher(
-                            GET,
-                            "/users/*/applications/*/environments/*/stacks",
-                            authenticatedResourceProvider))
-                    .authenticated()
-                    .requestMatchers(
-                        new SelfApplicationMatcher(
-                            GET,
-                            "/users/*/applications/*/environments/*/stacks/*",
-                            authenticatedResourceProvider))
-                    .authenticated()
-                    .requestMatchers(
-                        new SelfApplicationMatcher(
-                            GET,
-                            "/users/*/applications/*/environments/*/stacks/*/events",
-                            authenticatedResourceProvider))
-                    .authenticated()
-                    .requestMatchers(
-                        new SelfApplicationMatcher(
-                            PUT,
-                            "/users/*/applications/*/environments/*/config",
-                            authenticatedResourceProvider))
-                    .authenticated()
-                    .requestMatchers(
-                        new SelfApplicationMatcher(
-                            GET,
-                            "/users/*/applications/*/environments/*/config",
-                            authenticatedResourceProvider))
+                        selfApplicationMatcher(
+                            GET, "/users/*/applications/*/environments/*/config"))
                     .authenticated()
                     .requestMatchers(GET, "/gh-repos/*/*/upload-build-uri")
                     .hasRole(GITHUB_APPLICATION.getRole())
@@ -241,6 +205,14 @@ public class SecurityConf {
     return http.build();
   }
 
+  private RequestMatcher selfUserMatcher(HttpMethod method, String antPath) {
+    return new SelfUserMatcher(method, antPath, authenticatedResourceProvider);
+  }
+
+  private RequestMatcher selfApplicationMatcher(HttpMethod method, String antPath) {
+    return new SelfApplicationMatcher(method, antPath, authenticatedResourceProvider);
+  }
+
   private Exception forbiddenWithRemoteInfo(Exception e, HttpServletRequest req) {
     log.info(
         String.format(
@@ -254,7 +226,7 @@ public class SecurityConf {
     return new ProviderManager(authProvider);
   }
 
-  private BearerAuthFilter bearerFilter(RequestMatcher requestMatcher) throws Exception {
+  private BearerAuthFilter bearerFilter(RequestMatcher requestMatcher) {
     BearerAuthFilter bearerFilter = new BearerAuthFilter(requestMatcher, AUTHORIZATION_HEADER);
     bearerFilter.setAuthenticationManager(authenticationManager());
     bearerFilter.setAuthenticationSuccessHandler(
