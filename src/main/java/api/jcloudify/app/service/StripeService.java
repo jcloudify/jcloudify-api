@@ -46,12 +46,12 @@ public class StripeService {
   public PaymentMethod setDefaultPaymentMethod(String customerId, String paymentMethodId) {
     try {
       Customer customer = Customer.retrieve(customerId);
-      CustomerUpdateParams.InvoiceSettings invoiveSettingParams =
+      CustomerUpdateParams.InvoiceSettings invoiceSettingParams =
           CustomerUpdateParams.InvoiceSettings.builder()
               .setDefaultPaymentMethod(paymentMethodId)
               .build();
       CustomerUpdateParams params =
-          CustomerUpdateParams.builder().setInvoiceSettings(invoiveSettingParams).build();
+          CustomerUpdateParams.builder().setInvoiceSettings(invoiceSettingParams).build();
       customer.update(params);
       return PaymentMethod.retrieve(paymentMethodId);
     } catch (StripeException e) {
@@ -77,6 +77,34 @@ public class StripeService {
 
       PaymentMethodDetachParams params = PaymentMethodDetachParams.builder().build();
       return paymentMethod.detach(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  public PaymentMethod retrievePaymentMethod(String paymentMethodId) {
+    try {
+      return PaymentMethod.retrieve(paymentMethodId);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  // Customer
+  public Customer retrieveCustomer(String customerId) {
+    try {
+      return Customer.retrieve(customerId, getRequestOption());
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  public Customer updateCustomer(String id, String name, String email, String phone) {
+    try {
+      Customer resource = Customer.retrieve(id, getRequestOption());
+      CustomerUpdateParams params =
+          CustomerUpdateParams.builder().setName(name).setEmail(email).setPhone(phone).build();
+      return resource.update(params);
     } catch (StripeException e) {
       throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
