@@ -1,3 +1,17 @@
+# [3.13.0](https://github.com/jcloudify/jcloudify-api/compare/v3.12.0...v3.13.0) (2024-08-08)
+
+
+### Bug Fixes
+
+* detach payment method ([ce763b9](https://github.com/jcloudify/jcloudify-api/commit/ce763b9e75e25179f0f0ecff1b4447245fca7d52))
+
+
+### Features
+
+* payment customer ([9e782ac](https://github.com/jcloudify/jcloudify-api/commit/9e782acaaf27018fbfc89fa73e20cd0a54e56dd5))
+
+
+
 # [3.12.0](https://github.com/jcloudify/jcloudify-api/compare/v3.11.0...v3.12.0) (2024-08-06)
 
 
@@ -105,15 +119,6 @@
 
 * bucket key path does not starts with a slash ([755e817](https://github.com/jcloudify/jcloudify-api/commit/755e8177ab5c3cc102f69da030051c8b60d5ea64))
 * missing env var ([9bc347a](https://github.com/jcloudify/jcloudify-api/commit/9bc347a870c7f7acbc8c64a202d22f90d9c684a2))
-
-
-
-## [3.5.1](https://github.com/jcloudify/jcloudify-api/compare/v3.5.0...v3.5.1) (2024-07-25)
-
-
-### Bug Fixes
-
-* **poja-conf:** poja custom are HashMaps ([73cd8a3](https://github.com/jcloudify/jcloudify-api/commit/73cd8a36ad9527f330ffcd0b80489e8a96559103))
 
 
 
