@@ -99,6 +99,17 @@ public class StripeService {
     }
   }
 
+  public Customer updateCustomer(String id, String name, String email, String phone) {
+    try {
+      Customer resource = Customer.retrieve(id, getRequestOption());
+      CustomerUpdateParams params =
+          CustomerUpdateParams.builder().setName(name).setEmail(email).setPhone(phone).build();
+      return resource.update(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
   public PaymentIntent createPaymentIntent(Long amount, String returnUrl, String customerId) {
     try {
       Customer customer = Customer.retrieve(customerId);

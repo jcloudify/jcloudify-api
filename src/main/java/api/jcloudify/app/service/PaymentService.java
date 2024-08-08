@@ -3,6 +3,7 @@ package api.jcloudify.app.service;
 import static java.lang.Boolean.TRUE;
 
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
+import api.jcloudify.app.endpoint.rest.model.PaymentCustomer;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
 import api.jcloudify.app.repository.model.User;
 import com.stripe.model.Customer;
@@ -48,5 +49,10 @@ public class PaymentService {
   public Customer getCustomer(String userId) {
     User user = userService.getUserById(userId);
     return stripeService.retrieveCustomer(user.getStripeId());
+  }
+
+  public Customer updateCustomer(PaymentCustomer customer) {
+    return stripeService.updateCustomer(
+        customer.getId(), customer.getName(), customer.getEmail(), customer.getPhone());
   }
 }

@@ -42,4 +42,10 @@ public class PaymentController {
   public PaymentCustomer getPaymentCustomer(@PathVariable String userId) {
     return customerMapper.toRest(paymentService.getCustomer(userId));
   }
+
+  @PutMapping("/users/{userId}/paymnent-methods/customers")
+  public PaymentCustomer updatePaymentCustomer(
+      @PathVariable String userId, @RequestBody PaymentCustomer customer) {
+    return customerMapper.toRest(paymentService.updateCustomer(customer));
+  }
 }
