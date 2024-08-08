@@ -16,6 +16,7 @@ import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.file.BucketComponent;
 import api.jcloudify.app.file.ExtendedBucketComponent;
+import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.service.StripeService;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
 import java.io.IOException;
@@ -159,6 +160,11 @@ public class TestUtils {
     String responseBody = apiException.getResponseBody();
     assertEquals(
         "{" + "\"type\":\"400 BAD_REQUEST\"," + "\"message\":\"" + message + "\"}", responseBody);
+  }
+
+  public static void assertThrowsBadRequestException(String expectedBody, Executable executable) {
+    BadRequestException badRequestException = assertThrows(BadRequestException.class, executable);
+    assertEquals(expectedBody, badRequestException.getMessage());
   }
 
   public static void assertThrowsNotFoundException(Executable executable, String message) {
