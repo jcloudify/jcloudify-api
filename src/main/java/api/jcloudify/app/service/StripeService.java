@@ -13,6 +13,7 @@ import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerUpdateParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.PaymentMethodAttachParams;
+import com.stripe.param.PaymentMethodDetachParams;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -74,8 +75,8 @@ public class StripeService {
     try {
       PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
 
-      PaymentMethodAttachParams params = PaymentMethodAttachParams.builder().build();
-      return paymentMethod.attach(params);
+      PaymentMethodDetachParams params = PaymentMethodDetachParams.builder().build();
+      return paymentMethod.detach(params);
     } catch (StripeException e) {
       throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
