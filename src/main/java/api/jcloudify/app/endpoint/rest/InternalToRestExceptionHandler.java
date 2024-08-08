@@ -59,7 +59,8 @@ public class InternalToRestExceptionHandler {
   }
 
   @ExceptionHandler(value = {MissingServletRequestParameterException.class})
-  ResponseEntity<ExceptionModel> handleDataIntegrityViolation(MissingServletRequestParameterException e) {
+  ResponseEntity<ExceptionModel> handleDataIntegrityViolation(
+      MissingServletRequestParameterException e) {
     log.info("Missing parameter", e);
     return new ResponseEntity<>(toRest(e, BAD_REQUEST), BAD_REQUEST);
   }
