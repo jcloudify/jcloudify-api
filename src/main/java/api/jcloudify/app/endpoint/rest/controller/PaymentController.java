@@ -1,6 +1,8 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
+import api.jcloudify.app.endpoint.rest.mapper.PaymentCustomerMapper;
 import api.jcloudify.app.endpoint.rest.mapper.PaymentMapper;
+import api.jcloudify.app.endpoint.rest.model.PaymentCustomer;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethod;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodResponse;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
   private final PaymentService paymentService;
   private final PaymentMapper mapper;
+  private final PaymentCustomerMapper customerMapper;
 
   @GetMapping("/users/{userId}/payment-methods")
   public PaymentMethodResponse getPaymentMethods(@PathVariable String userId) {
@@ -33,5 +36,10 @@ public class PaymentController {
     List<PaymentMethod> data =
         paymentService.getPaymentMethods(userId).stream().map(mapper::toRest).toList();
     return new PaymentMethodResponse().data(data);
+  }
+
+  @GetMapping("/users/{userId}/payment-methods/customers")
+  public PaymentCustomer getPaymentCustomer(@PathVariable String userId) {
+    return customerMapper.toRest(paymentService.getCustomer(userId));
   }
 }

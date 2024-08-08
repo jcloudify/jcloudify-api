@@ -82,6 +82,23 @@ public class StripeService {
     }
   }
 
+  public PaymentMethod retrievePaymentMethod(String paymentMethodId) {
+    try {
+      return PaymentMethod.retrieve(paymentMethodId);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  // Customer
+  public Customer retrieveCustomer(String customerId) {
+    try {
+      return Customer.retrieve(customerId, getRequestOption());
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
   public PaymentIntent createPaymentIntent(Long amount, String returnUrl, String customerId) {
     try {
       Customer customer = Customer.retrieve(customerId);

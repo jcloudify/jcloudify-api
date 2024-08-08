@@ -44,4 +44,9 @@ public class PaymentService {
     User user = userService.getUserById(userId);
     return stripeService.getPaymentMethods(user.getStripeId());
   }
+
+  public Customer getCustomer(String userId) {
+    User user = userService.getUserById(userId);
+    return stripeService.retrieveCustomer(user.getStripeId());
+  }
 }
