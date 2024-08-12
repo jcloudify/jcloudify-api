@@ -1,6 +1,7 @@
 package api.jcloudify.app.service.event;
 
-import static api.jcloudify.app.file.FileType.DEPLOYMENT_FOLDER;
+import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
+import static api.jcloudify.app.file.FileType.DEPLOYMENT_FILE;
 import static api.jcloudify.app.file.FileType.POJA_CONF;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Locale.ROOT;
@@ -177,8 +178,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     var storageBucketStackFileCopyResult =
         copyFile(storageBucketStackFile, tempDirPath, storageBucketStackFilename);
     bucketComponent.upload(
-        tempDirPath.toFile(),
-        ExtendedBucketComponent.getBucketKey(userId, appId, environmentId, DEPLOYMENT_FOLDER));
+        tempDirPath.toFile(), getBucketKey(userId, appId, environmentId, DEPLOYMENT_FILE));
     envDeploymentConfService.save(
         EnvDeploymentConf.builder()
             .envId(environmentId)
@@ -311,8 +311,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private File generateCodeFromPojaConf(
       PojaConfUploaded pojaConfUploaded, String userId, String appId, String environmentId) {
     String formattedFilename =
-        ExtendedBucketComponent.getBucketKey(
-            userId, appId, environmentId, POJA_CONF, pojaConfUploaded.getFilename());
+        getBucketKey(userId, appId, environmentId, POJA_CONF, pojaConfUploaded.getFilename());
     log.info("downloading pojaConfFile: {}", formattedFilename);
     var pojaConfFile = bucketComponent.download(formattedFilename);
     log.info("downloaded pojaConfFile: {}", pojaConfFile.getName());

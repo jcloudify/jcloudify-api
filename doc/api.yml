@@ -105,7 +105,7 @@ paths:
   /gh-repos/{repo_owner}/{repo_name}/upload-build-uri:
     get:
       tags:
-        - Build_Handling
+        - Env_Deploy
       summary: creates an URI for zip package build upload
       operationId: createFileUploadUri
       parameters:
@@ -134,6 +134,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FileUploadRequestResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /gh-repos/{repo_owner}/{repo_name}/env-deploys:
+    put:
+      tags:
+        - Env_Deploy
+      summary: deploys all of the app env stacks
+      operationId: deployEnv
+      parameters:
+        - name: repo_owner
+          description: github repository owner containing the app
+          schema:
+            type: string
+          required: true
+          in: path
+        - name: repo_name
+          description: github repository name containing the app
+          schema:
+            type: string
+          required: true
+          in: path
+        - name: environment_type
+          description: environment type
+          schema:
+            $ref: "#/components/schemas/EnvironmentType"
+          required: true
+          in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BuiltEnvInfo"
+      responses:
+        '200':
+          description: OK if the deployment request has no issue
+          content:
+            application/json:
+              schema:
+                type: string
+                description: OK
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1649,6 +1697,15 @@ components:
           type: string
         default_payment_method:
           $ref: "#/components/schemas/PaymentMethod"
+    BuiltEnvInfo:
+      type: object
+      properties:
+        formatted_bucket_key:
+          type: string
+        id:
+          type: string
+        environment_type:
+          $ref: "#/components/schemas/EnvironmentType"
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
