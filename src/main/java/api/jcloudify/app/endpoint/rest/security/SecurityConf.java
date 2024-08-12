@@ -95,7 +95,8 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/payment-details"),
                     antMatcher(PUT, "/users/*/payment-details"),
                     antMatcher(GET, "/users/*/payment-details/payment-methods"),
-                    antMatcher(PUT, "/users/*/payment-details/payment-methods"))),
+                    antMatcher(PUT, "/users/*/payment-details/payment-methods"),
+                    antMatcher(PUT, "/gh-repos/*/*/env-deploys"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -190,6 +191,8 @@ public class SecurityConf {
                             GET, "/users/*/applications/*/environments/*/config"))
                     .authenticated()
                     .requestMatchers(GET, "/gh-repos/*/*/upload-build-uri")
+                    .hasRole(GITHUB_APPLICATION.getRole())
+                    .requestMatchers(PUT, "/gh-repos/*/*/env-deploys")
                     .hasRole(GITHUB_APPLICATION.getRole())
                     .requestMatchers("/**")
                     .denyAll())
