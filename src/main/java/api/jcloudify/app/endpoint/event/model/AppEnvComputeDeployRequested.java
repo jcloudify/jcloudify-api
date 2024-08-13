@@ -7,6 +7,7 @@ import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Duration;
 import java.time.Instant;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
+@Builder
 public class AppEnvComputeDeployRequested extends PojaEvent {
   @JsonProperty("formatted_bucket_key")
   private final String formattedBucketKey;
