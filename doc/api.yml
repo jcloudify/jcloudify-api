@@ -1337,7 +1337,7 @@ components:
             - NONE
             - SQLITE
             - AURORA_POSTGRES
-            - NON_MANAGED_POSTGRES
+            - NON_POJA_MANAGED_POSTGRES
         database_non_root_username:
           type: string
           nullable: true
