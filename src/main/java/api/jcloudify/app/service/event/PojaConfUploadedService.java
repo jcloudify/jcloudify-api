@@ -4,6 +4,8 @@ import static api.jcloudify.app.file.FileType.DEPLOYMENT_FOLDER;
 import static api.jcloudify.app.file.FileType.POJA_CONF;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Locale.ROOT;
+import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM;
+import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.TRACK;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.OK;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.UP_TO_DATE;
 
@@ -223,14 +225,16 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
             .setCredentialsProvider(ghCredentialsProvider)
             .setDirectory(cloneDirPath.toFile())
             .setURI(app.getGithubRepositoryUrl())
+            .setNoCheckout(true)
             .setDepth(1)
             .call()) {
+      log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
       String branchName = env.getEnvironmentType().name().toLowerCase(ROOT);
       createAndCheckoutBranchIfNotExists(git, branchName);
-      log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
       unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
       gitAddAllChanges(git);
+      git.rebase().setUpstream(getFormattedBranchName(branchName)).call();
       unsignedCommitAsBot(
           git,
           "jcloudify: generate code using v." + pojaVersion.toHumanReadableValue(),
@@ -267,13 +271,16 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   }
 
   private static void createAndCheckoutBranchIfNotExists(Git git, String branchName) {
-    String formattedBranchName = "refs/heads/" + branchName;
+    String formattedBranchName = getFormattedBranchName(branchName);
     try {
       if (git.branchList().call().stream()
           .noneMatch(a -> a.getName().equals(formattedBranchName))) {
         git.branchCreate().setName(branchName).call();
+        git.checkout().setName(branchName).setUpstreamMode(SET_UPSTREAM).call();
+      } else {
+        git.checkout().setUpstreamMode(TRACK).setName(branchName).call();
+        git.pull().call();
       }
-      git.checkout().setName(branchName).call();
       log.info("successfully checked out branch {}", branchName);
     } catch (RefNotFoundException | RefAlreadyExistsException | InvalidRefNameException e) {
       // unreachable
@@ -283,6 +290,11 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     } catch (GitAPIException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private static String getFormattedBranchName(String branchName) {
+    String formattedBranchName = "refs/heads/" + branchName;
+    return formattedBranchName;
   }
 
   /**
@@ -338,6 +350,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       git.commit()
           .setMessage(commitMessage)
           .setAuthor(author)
+          .setAllowEmpty(true)
           .setCommitter(author)
           .setCredentialsProvider(credentialsProvider)
           .setSign(false)
