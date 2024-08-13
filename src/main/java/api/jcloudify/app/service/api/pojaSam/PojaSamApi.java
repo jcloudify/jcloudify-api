@@ -8,8 +8,6 @@ import api.jcloudify.app.model.PojaVersion;
 import api.jcloudify.app.service.api.pojaSam.model.CodeUri;
 import java.io.File;
 import java.net.URI;
-import java.util.zip.ZipFile;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -62,19 +60,23 @@ public class PojaSamApi {
     return UriComponentsBuilder.fromUri(pojaVersion.getSamUri()).path("/gen").build().toUri();
   }
 
-  public ZipFile genCodeTo(PojaVersion pojaVersion, File pojaConfFile) {
+  /**
+   * @param pojaVersion
+   * @param pojaConfFile
+   * @return returns a zip but typed as File so we can re-use at will
+   */
+  public File genCodeTo(PojaVersion pojaVersion, File pojaConfFile) {
     var codeUri = generateFromApi(pojaVersion, pojaConfFile);
-    return downloadAsZipFile(randomUUID().toString(), codeUri.uri());
+    return downloadFile(randomUUID().toString(), codeUri.uri());
   }
 
   private Resource generatePojaConf(File file) {
     return new FileSystemResource(file);
   }
 
-  @SneakyThrows
-  private ZipFile downloadAsZipFile(String filename, URI uri) {
+  private File downloadFile(String filename, URI uri) {
     log.info("GET API CALL downloading {} from {}", filename, uri);
     var response = restTemplate.getForObject(uri, byte[].class);
-    return new ZipFile(fileWriter.apply(response, null));
+    return fileWriter.apply(response, null);
   }
 }

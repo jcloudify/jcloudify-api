@@ -25,6 +25,7 @@ import api.jcloudify.app.service.UserService;
 import api.jcloudify.app.service.api.pojaSam.PojaSamApi;
 import api.jcloudify.app.service.github.GithubService;
 import jakarta.mail.internet.InternetAddress;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -148,18 +149,20 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
           env,
           generatedCode,
           cloneDirPath);
-      uploadAndSaveDeploymentFiles(cloneDirPath, userId, appId, environmentId);
+      uploadAndSaveDeploymentFiles(generatedCode, userId, appId, environmentId);
       return null;
     };
   }
 
   private void uploadAndSaveDeploymentFiles(
-      Path cloneDirPath, String userId, String appId, String environmentId) {
+      File toUnzip, String userId, String appId, String environmentId) {
+    var unzippedCode = createTempDir("unzipped");
+    unzip(asZipFile(toUnzip), unzippedCode);
     var tempDirPath = createTempDir("deployment_files");
-    var templateBuildFile = cloneDirPath.resolve(BUILD_TEMPLATE_FILENAME_YML);
-    var computePermissionStackFile = cloneDirPath.resolve(CF_STACKS_CD_COMPUTE_PERMISSION_YML_PATH);
-    var eventStackFile = cloneDirPath.resolve(CF_STACKS_EVENT_STACK_YML_PATH);
-    var storageBucketStackFile = cloneDirPath.resolve(CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH);
+    var templateBuildFile = unzippedCode.resolve(BUILD_TEMPLATE_FILENAME_YML);
+    var computePermissionStackFile = unzippedCode.resolve(CF_STACKS_CD_COMPUTE_PERMISSION_YML_PATH);
+    var eventStackFile = unzippedCode.resolve(CF_STACKS_EVENT_STACK_YML_PATH);
+    var storageBucketStackFile = unzippedCode.resolve(CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH);
     UUID random = UUID.randomUUID();
     String buildTemplateFilename = "template" + random + ".yml";
     copyFile(templateBuildFile, tempDirPath, buildTemplateFilename);
@@ -204,6 +207,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       }
       return true;
     }
+    log.info("file does not exist {}", source.toAbsolutePath());
     return false;
   }
 
@@ -212,7 +216,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       PojaVersion pojaVersion,
       Application app,
       Environment env,
-      ZipFile toUnzip,
+      File toUnzip,
       Path cloneDirPath) {
     try (Git git =
         Git.cloneRepository()
@@ -224,7 +228,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       String branchName = env.getEnvironmentType().name().toLowerCase(ROOT);
       createAndCheckoutBranchIfNotExists(git, branchName);
       log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
-      unzip(toUnzip, cloneDirPath);
+      unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
       gitAddAllChanges(git);
       unsignedCommitAsBot(
@@ -253,6 +257,11 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     }
   }
 
+  @SneakyThrows
+  private static ZipFile asZipFile(File toUnzip) {
+    return new ZipFile(toUnzip);
+  }
+
   private void unzip(ZipFile downloaded, Path destination) {
     unzipper.apply(downloaded, destination);
   }
@@ -276,7 +285,14 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     }
   }
 
-  private ZipFile generateCodeFromPojaConf(
+  /**
+   * @param pojaConfUploaded
+   * @param userId
+   * @param appId
+   * @param environmentId
+   * @return zip file but we do not use ZipFile type so we can reuse this
+   */
+  private File generateCodeFromPojaConf(
       PojaConfUploaded pojaConfUploaded, String userId, String appId, String environmentId) {
     String formattedFilename =
         ExtendedBucketComponent.getBucketKey(
