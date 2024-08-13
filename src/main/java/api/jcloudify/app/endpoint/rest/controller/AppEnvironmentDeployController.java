@@ -1,8 +1,8 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
+import api.jcloudify.app.endpoint.rest.model.BuildUploadRequestResponse;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
-import api.jcloudify.app.endpoint.rest.model.FileUploadRequestResponse;
 import api.jcloudify.app.service.EnvironmentBuildService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class AppEnvironmentDeployController {
   private final EnvironmentBuildService environmentBuildService;
 
   @GetMapping("/gh-repos/{repo_owner}/{repo_name}/upload-build-uri")
-  public FileUploadRequestResponse createFileUploadUri(
+  public BuildUploadRequestResponse createFileUploadUri(
       @PathVariable("repo_owner") String repoOwner,
       @PathVariable("repo_name") String repoName,
       @RequestParam(name = "environment_type") EnvironmentType environmentType) {
@@ -26,12 +26,12 @@ public class AppEnvironmentDeployController {
   }
 
   @PutMapping("/gh-repos/{repo_owner}/{repo_name}/env-deploys")
-  public String deployEnv(
+  public BuiltEnvInfo deployEnv(
       @PathVariable("repo_owner") String repoOwner,
       @PathVariable("repo_name") String repoName,
       @RequestParam(name = "environment_type") EnvironmentType environmentType,
-      @RequestBody BuiltEnvInfo builtEnvInfo) {
-    environmentBuildService.initiateDeployment(builtEnvInfo);
-    return "ok";
+      @RequestBody BuiltEnvInfo payload) {
+    environmentBuildService.initiateDeployment(payload);
+    return payload;
   }
 }

@@ -19,6 +19,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
 
   @Override
   public void accept(AppEnvDeployRequested appEnvDeployRequested) {
+    // TODO: deploy other stacks needed before deploying compute
     var app = appService.getById(appEnvDeployRequested.getAppId());
     BuiltEnvInfo builtEnvInfo = appEnvDeployRequested.getBuiltEnvInfo();
     eventProducer.accept(

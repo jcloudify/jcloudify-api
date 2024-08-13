@@ -12,9 +12,9 @@ import static java.util.UUID.randomUUID;
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.AppEnvDeployRequested;
 import api.jcloudify.app.endpoint.event.model.PojaEvent;
+import api.jcloudify.app.endpoint.rest.model.BuildUploadRequestResponse;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
-import api.jcloudify.app.endpoint.rest.model.FileUploadRequestResponse;
 import api.jcloudify.app.endpoint.rest.security.AuthenticatedResourceProvider;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileHash;
@@ -25,8 +25,10 @@ import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvBuildRequest;
+import api.jcloudify.app.repository.model.Environment;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -46,20 +48,27 @@ public class EnvironmentBuildService {
   private final EventProducer<PojaEvent> eventProducer;
   private final EnvBuildRequestService envBuildRequestService;
 
-  public FileUploadRequestResponse getZippedBuildUploadRequestDetails(
+  public BuildUploadRequestResponse getZippedBuildUploadRequestDetails(
       EnvironmentType environmentType) {
     Application authenticatedApplication =
         authenticatedResourceProvider.getAuthenticatedApplication();
     String appId = authenticatedApplication.getId();
     String userId = authenticatedApplication.getUserId();
-    String environmentId =
-        environmentService
-            .getUserApplicationEnvironmentByIdAndType(userId, appId, environmentType)
-            .getId();
+    Environment env =
+        environmentService.getUserApplicationEnvironmentByIdAndType(userId, appId, environmentType);
+    String environmentId = env.getId();
     String bucketKey =
         getBucketKey(userId, appId, environmentId, BUILT_PACKAGE, "build" + randomUUID() + ".zip");
-    var uri = bucketComponent.getPresignedPutObjectUri(bucketKey);
-    return new FileUploadRequestResponse().uri(uri).filename(bucketKey);
+    var uri = bucketComponent.getPresignedPutObjectUri(bucketKey, Duration.ofMinutes(15));
+    var buildTemplateFilename = env.getLatestDeploymentConf().getBuildTemplateFile();
+    var buildTemplateUri =
+        bucketComponent.presignGetObject(
+            getBucketKey(userId, appId, environmentId, DEPLOYMENT_FILE, buildTemplateFilename),
+            Duration.ofMinutes(15));
+    return new BuildUploadRequestResponse()
+        .uri(uri)
+        .filename(bucketKey)
+        .buildTemplateFileUri(buildTemplateUri);
   }
 
   @Transactional
