@@ -53,6 +53,7 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.stereotype.Service;
@@ -226,7 +227,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
             .setDirectory(cloneDirPath.toFile())
             .setURI(app.getGithubRepositoryUrl())
             .setNoCheckout(true)
-            .setDepth(1)
+            .setDepth(2)
             .call()) {
       log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
       String branchName = env.getEnvironmentType().name().toLowerCase(ROOT);
@@ -234,12 +235,15 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
       gitAddAllChanges(git);
-      git.rebase().setUpstream(getFormattedBranchName(branchName)).call();
       unsignedCommitAsBot(
           git,
           "jcloudify: generate code using v." + pojaVersion.toHumanReadableValue(),
           ghCredentialsProvider);
-      var results = git.push().setCredentialsProvider(ghCredentialsProvider).call();
+      var results =
+          git.push()
+              .setRefSpecs(new RefSpec(getFormattedBranchName(branchName)))
+              .setCredentialsProvider(ghCredentialsProvider)
+              .call();
       for (PushResult r : results) {
         for (RemoteRefUpdate update : r.getRemoteUpdates()) {
           log.info("Having results: " + update);
