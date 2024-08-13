@@ -93,7 +93,7 @@ public class StripeService {
   // Customer
   public Customer retrieveCustomer(String customerId) {
     try {
-      return Customer.retrieve(customerId, getRequestOption());
+      return Customer.retrieve(customerId);
     } catch (StripeException e) {
       throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
@@ -101,7 +101,7 @@ public class StripeService {
 
   public Customer updateCustomer(String id, String name, String email, String phone) {
     try {
-      Customer resource = Customer.retrieve(id, getRequestOption());
+      Customer resource = Customer.retrieve(id);
       CustomerUpdateParams params =
           CustomerUpdateParams.builder().setName(name).setEmail(email).setPhone(phone).build();
       return resource.update(params);
