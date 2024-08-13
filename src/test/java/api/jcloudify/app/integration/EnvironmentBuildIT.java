@@ -1,6 +1,7 @@
 package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
+import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.A_GITHUB_APP_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
 import static java.util.UUID.randomUUID;
@@ -17,20 +18,23 @@ import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileHash;
-import api.jcloudify.app.file.FileHashAlgorithm;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ClassPathResource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @Slf4j
 public class EnvironmentBuildIT extends MockedThirdParties {
   private static final String POJA_APPLICATION_REPO_ID = "gh_repository_1_id";
+  public static final String MOCK_BUILT_ZIP_PATH = "mock_built_zip.zip";
+  public static final String MOCK_BUILT_ZIP_TEST_RESOURCE_PATH = "files/" + MOCK_BUILT_ZIP_PATH;
 
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(A_GITHUB_APP_TOKEN, port);
@@ -43,7 +47,7 @@ public class EnvironmentBuildIT extends MockedThirdParties {
   void setup() {
     when(githubComponent.getRepositoryIdByAppToken(A_GITHUB_APP_TOKEN))
         .thenReturn(Optional.of(POJA_APPLICATION_REPO_ID));
-    when(extendedBucketComponentMock.getPresignedPutObjectUri(any()))
+    when(extendedBucketComponentMock.getPresignedPutObjectUri(any(), any()))
         .thenReturn(URI.create("https://localhost:8080"));
   }
 
@@ -78,20 +82,23 @@ public class EnvironmentBuildIT extends MockedThirdParties {
   }
 
   @Test
-  void deploy_env_ok() throws ApiException {
+  void deploy_env_ok() throws ApiException, IOException {
     when(extendedBucketComponentMock.getFileHash(any()))
-        .thenReturn(new FileHash(FileHashAlgorithm.SHA256, "SHA256"));
+        .thenReturn(
+            new FileHash(
+                SHA256, "cb7a62143f21e9b08cc378371fa34d994943f7f39f6134c03089c0eec50fff16"));
+    String bucketKey = "mock/" + MOCK_BUILT_ZIP_PATH;
+    when(extendedBucketComponentMock.doesExist(bucketKey)).thenReturn(true);
+    when(extendedBucketComponentMock.download(bucketKey))
+        .thenReturn(new ClassPathResource(MOCK_BUILT_ZIP_TEST_RESOURCE_PATH).getFile());
     var apiClient = anApiClient();
     var api = new EnvDeployApi(apiClient);
 
     String id = randomUUID().toString();
-    var actual =
-        api.deployEnv(
-            "mock",
-            "mock",
-            PROD,
-            new BuiltEnvInfo().environmentType(PROD).formattedBucketKey("mock/mock.zip").id(id));
+    BuiltEnvInfo payload =
+        new BuiltEnvInfo().environmentType(PROD).formattedBucketKey(bucketKey).id(id);
+    var actual = api.deployEnv("mock", "mock", PROD, payload);
 
-    assertEquals("ok", actual);
+    assertEquals(payload, actual);
   }
 }

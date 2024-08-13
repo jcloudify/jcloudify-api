@@ -133,7 +133,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FileUploadRequestResponse'
+                $ref: '#/components/schemas/BuildUploadRequestResponse'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -180,8 +180,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                description: OK
+                $ref: "#/components/schemas/BuiltEnvInfo"
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1676,9 +1675,12 @@ components:
         set_default:
           type: boolean
           default: false
-    FileUploadRequestResponse:
+    BuildUploadRequestResponse:
       type: object
       properties:
+        build_template_file_uri:
+          type: string
+          format: uri
         uri:
           type: string
           format: uri

@@ -26,7 +26,7 @@ public class ExtendedBucketComponent {
     return bucketComponent.upload(file, key);
   }
 
-  public final URI getPresignedPutObjectUri(String key) {
+  public final URI getPresignedPutObjectUri(String key, Duration expiration) {
     try {
       return bucketConf
           .getS3Presigner()
@@ -37,7 +37,7 @@ public class ExtendedBucketComponent {
                           req.bucket(bucketConf.getBucketName())
                               .key(key)
                               .contentType(APPLICATION_ZIP_CONTENT_TYPE))
-                  .signatureDuration(Duration.ofMinutes(2))
+                  .signatureDuration(expiration)
                   .build())
           .url()
           .toURI();
@@ -62,24 +62,22 @@ public class ExtendedBucketComponent {
   public static String getBucketKey(
       String userId, String appId, String envId, FileType fileType, String filename) {
     return switch (fileType) {
-      case POJA_CONF ->
-          String.format("users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
-      case BUILT_PACKAGE ->
-          String.format(
-              "users/%s/apps/%s/envs/%s/built-packages/%s", userId, appId, envId, filename);
-      case DEPLOYMENT_FILE ->
-          String.format(
-              "users/%s/apps/%s/envs/%s/deployment-files/%s", userId, appId, envId, filename);
+      case POJA_CONF -> String.format(
+          "users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
+      case BUILT_PACKAGE -> String.format(
+          "users/%s/apps/%s/envs/%s/built-packages/%s", userId, appId, envId, filename);
+      case DEPLOYMENT_FILE -> String.format(
+          "users/%s/apps/%s/envs/%s/deployment-files/%s", userId, appId, envId, filename);
     };
   }
 
   public static String getBucketKey(String userId, String appId, String envId, FileType fileType) {
     return switch (fileType) {
       case POJA_CONF -> String.format("users/%s/apps/%s/envs/%s/poja-files/", userId, appId, envId);
-      case BUILT_PACKAGE ->
-          String.format("users/%s/apps/%s/envs/%s/built-packages/", userId, appId, envId);
-      case DEPLOYMENT_FILE ->
-          String.format("users/%s/apps/%s/envs/%s/deployment-files/", userId, appId, envId);
+      case BUILT_PACKAGE -> String.format(
+          "users/%s/apps/%s/envs/%s/built-packages/", userId, appId, envId);
+      case DEPLOYMENT_FILE -> String.format(
+          "users/%s/apps/%s/envs/%s/deployment-files/", userId, appId, envId);
     };
   }
 
@@ -93,5 +91,13 @@ public class ExtendedBucketComponent {
 
     String sha256 = bucketConf.getS3Client().headObject(headObjectRequest).checksumSHA256();
     return new FileHash(SHA256, sha256);
+  }
+
+  public URI presignGetObject(String key, Duration expiration) {
+    try {
+      return bucketComponent.presign(key, expiration).toURI();
+    } catch (URISyntaxException e) {
+      throw new ApiException(SERVER_EXCEPTION, e);
+    }
   }
 }
