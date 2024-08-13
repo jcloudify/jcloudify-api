@@ -60,7 +60,7 @@ import org.springframework.stereotype.Service;
 public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static final String BUILD_TEMPLATE_FILENAME_YML = "template.yml";
   private static final String CF_STACKS_CD_COMPUTE_PERMISSION_YML_PATH =
-      "cf-stacks/cd-compute-permission.yml";
+      "cf-stacks/compute-permission-stack.yml";
   private static final String CF_STACKS_EVENT_STACK_YML_PATH = "cf-stacks/event-stack.yml";
   private static final String CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH =
       "cf-stacks/storage-bucket-stack.yml";
@@ -197,7 +197,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       Path newFilenameResolved = target.resolve(newFilename);
       log.info("Copying {} to {}", source, newFilenameResolved);
       try {
-        Files.copy(source, newFilenameResolved, REPLACE_EXISTING);
+        Files.move(source, newFilenameResolved, REPLACE_EXISTING);
       } catch (IOException e) {
         log.info("failed to copy");
         throw new RuntimeException(e);
