@@ -1,6 +1,7 @@
 package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
+import static api.jcloudify.app.file.ExtendedBucketComponent.TEMP_FILES_BUCKET_PREFIX;
 import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.A_GITHUB_APP_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
@@ -95,7 +96,7 @@ public class EnvironmentBuildIT extends MockedThirdParties {
         .thenReturn(
             new FileHash(
                 SHA256, "cb7a62143f21e9b08cc378371fa34d994943f7f39f6134c03089c0eec50fff16"));
-    String bucketKey = "tmp/" + MOCK_BUILT_ZIP_PATH;
+    String bucketKey = TEMP_FILES_BUCKET_PREFIX + MOCK_BUILT_ZIP_PATH;
     when(extendedBucketComponentMock.doesExist(bucketKey)).thenReturn(true);
     when(extendedBucketComponentMock.download(bucketKey))
         .thenReturn(new ClassPathResource(MOCK_BUILT_ZIP_TEST_RESOURCE_PATH).getFile());

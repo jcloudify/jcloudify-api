@@ -1,6 +1,6 @@
 package api.jcloudify.app.endpoint.validator;
 
-import static api.jcloudify.app.file.ExtendedBucketComponent.TEMP_BUCKET_PATH;
+import static api.jcloudify.app.file.ExtendedBucketComponent.TEMP_FILES_BUCKET_PREFIX;
 
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.model.exception.BadRequestException;
@@ -17,9 +17,9 @@ public class BuiltEnvInfoValidator implements Consumer<BuiltEnvInfo> {
     if (builtEnvInfo.getFormattedBucketKey() == null) {
       throw new BadRequestException("formattedBucketKey is mandatory.");
     }
-    if (!builtEnvInfo.getFormattedBucketKey().startsWith(TEMP_BUCKET_PATH)) {
+    if (!builtEnvInfo.getFormattedBucketKey().startsWith(TEMP_FILES_BUCKET_PREFIX)) {
       throw new BadRequestException(
-          "cannot use files not from temporary bucket key. Use " + TEMP_BUCKET_PATH + " instead.");
+          "cannot use files not from temporary bucket key. Use " + TEMP_FILES_BUCKET_PREFIX + " instead.");
     }
   }
 }

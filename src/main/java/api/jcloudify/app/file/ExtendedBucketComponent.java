@@ -23,7 +23,7 @@ import software.amazon.awssdk.transfer.s3.progress.LoggingTransferListener;
 @Slf4j
 public class ExtendedBucketComponent {
   private static final String APPLICATION_ZIP_CONTENT_TYPE = "application/zip";
-  public static final String TEMP_BUCKET_PATH = "tmp/";
+  public static final String TEMP_FILES_BUCKET_PREFIX = "tmp-";
   private final BucketComponent bucketComponent;
   private final BucketConf bucketConf;
 
@@ -87,7 +87,7 @@ public class ExtendedBucketComponent {
   }
 
   public static String getTempBucketKey(String fileExtensionWithDot) {
-    return String.format(TEMP_BUCKET_PATH + "%s", randomUUID() + fileExtensionWithDot);
+    return String.format(TEMP_FILES_BUCKET_PREFIX + "%s", randomUUID() + fileExtensionWithDot);
   }
 
   public final File download(String key) {
