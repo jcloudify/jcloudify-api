@@ -1,13 +1,12 @@
 package api.jcloudify.app.service;
 
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
+import static api.jcloudify.app.file.ExtendedBucketComponent.getTempBucketKey;
 import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
-import static api.jcloudify.app.file.FileType.BUILT_PACKAGE;
 import static api.jcloudify.app.file.FileType.DEPLOYMENT_FILE;
 import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
 import static java.nio.file.Files.createTempDirectory;
 import static java.time.Instant.now;
-import static java.util.UUID.randomUUID;
 
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.AppEnvDeployRequested;
@@ -40,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class EnvironmentBuildService {
   public static final String TEMPLATE_YML_PATH_FROM_BUILD_FOLDER_ROOT = ".aws-build/template.yml";
+  private static final String ZIP_FILE_EXTENSION = ".zip";
   private final ExtendedBucketComponent bucketComponent;
   private final AuthenticatedResourceProvider authenticatedResourceProvider;
   private final EnvironmentService environmentService;
@@ -57,14 +57,14 @@ public class EnvironmentBuildService {
     Environment env =
         environmentService.getUserApplicationEnvironmentByIdAndType(userId, appId, environmentType);
     String environmentId = env.getId();
-    String bucketKey =
-        getBucketKey(userId, appId, environmentId, BUILT_PACKAGE, "build" + randomUUID() + ".zip");
-    var uri = bucketComponent.getPresignedPutObjectUri(bucketKey, Duration.ofMinutes(15));
+    String bucketKey = getTempBucketKey(ZIP_FILE_EXTENSION);
+    Duration fifteenMinutes = Duration.ofMinutes(15);
+    var uri = bucketComponent.getPresignedPutObjectUri(bucketKey, fifteenMinutes);
     var buildTemplateFilename = env.getLatestDeploymentConf().getBuildTemplateFile();
     var buildTemplateUri =
         bucketComponent.presignGetObject(
             getBucketKey(userId, appId, environmentId, DEPLOYMENT_FILE, buildTemplateFilename),
-            Duration.ofMinutes(15));
+            fifteenMinutes);
     return new BuildUploadRequestResponse()
         .uri(uri)
         .filename(bucketKey)
