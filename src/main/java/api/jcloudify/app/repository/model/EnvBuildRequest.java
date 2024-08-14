@@ -25,6 +25,8 @@ import org.hibernate.annotations.CreationTimestamp;
 public class EnvBuildRequest {
   @Id private String id;
   private String appId;
+  private String envId;
   private String userId;
   @CreationTimestamp private Instant creationTimestamp;
+  private String built_zip_file_key;
 }

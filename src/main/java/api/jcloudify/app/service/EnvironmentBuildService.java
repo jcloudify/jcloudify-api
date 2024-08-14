@@ -3,10 +3,12 @@ package api.jcloudify.app.service;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getTempBucketKey;
 import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
+import static api.jcloudify.app.file.FileType.BUILT_PACKAGE;
 import static api.jcloudify.app.file.FileType.DEPLOYMENT_FILE;
 import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
 import static java.nio.file.Files.createTempDirectory;
 import static java.time.Instant.now;
+import static java.util.UUID.randomUUID;
 
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.AppEnvDeployRequested;
@@ -95,12 +97,21 @@ public class EnvironmentBuildService {
             DEPLOYMENT_FILE,
             latestDeploymentConf.getBuildTemplateFile());
     var originalTemplateFileHash = bucketComponent.getFileHash(formattedOriginalTemplateFilename);
-    //compareWithOriginalTemplate(builtEnvInfo, originalTemplateFileHash);
+    // compareWithOriginalTemplate(builtEnvInfo, originalTemplateFileHash);
+    String builtPackageBucketKey =
+        getBucketKey(
+            userId,
+            appId,
+            environment.getId(),
+            BUILT_PACKAGE,
+            "build" + randomUUID() + ZIP_FILE_EXTENSION);
+    copyFromTempToRealKey(builtEnvInfo.getFormattedBucketKey(), builtPackageBucketKey);
     envBuildRequestService.save(
         EnvBuildRequest.builder()
             .id(builtEnvInfo.getId())
             .appId(appId)
             .userId(userId)
+            .built_zip_file_key(builtPackageBucketKey)
             .creationTimestamp(now())
             .build());
     eventProducer.accept(
@@ -113,6 +124,11 @@ public class EnvironmentBuildService {
                 .envId(environment.getId())
                 .appId(appId)
                 .build()));
+  }
+
+  private void copyFromTempToRealKey(String tempFilePath, String realFilePath) {
+    bucketComponent.moveFile(tempFilePath, realFilePath);
+    bucketComponent.deleteFile(tempFilePath);
   }
 
   private void compareWithOriginalTemplate(

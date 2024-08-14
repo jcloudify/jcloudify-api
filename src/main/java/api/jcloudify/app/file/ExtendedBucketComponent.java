@@ -10,14 +10,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+import software.amazon.awssdk.transfer.s3.progress.LoggingTransferListener;
 
 @AllArgsConstructor
 @Component
+@Slf4j
 public class ExtendedBucketComponent {
   private static final String APPLICATION_ZIP_CONTENT_TYPE = "application/zip";
   public static final String TEMP_BUCKET_PATH = "tmp/";
@@ -105,5 +108,31 @@ public class ExtendedBucketComponent {
     } catch (URISyntaxException e) {
       throw new ApiException(SERVER_EXCEPTION, e);
     }
+  }
+
+  public FileHash moveFile(String from, String to) {
+    var copy =
+        bucketConf
+            .getS3TransferManager()
+            .copy(
+                req ->
+                    req.copyObjectRequest(
+                            copyReq ->
+                                copyReq
+                                    .sourceKey(from)
+                                    .sourceBucket(bucketConf.getBucketName())
+                                    .destinationBucket(bucketConf.getBucketName())
+                                    .destinationKey(to))
+                        .addTransferListener(LoggingTransferListener.create()));
+    var copied = copy.completionFuture().join();
+    return new FileHash(SHA256, copied.response().copyObjectResult().checksumSHA256());
+  }
+
+  public String deleteFile(String key) {
+    bucketConf
+        .getS3Client()
+        .deleteObject(delReq -> delReq.bucket(bucketConf.getBucketName()).key(key));
+    log.info("deleted {}", key);
+    return key;
   }
 }
