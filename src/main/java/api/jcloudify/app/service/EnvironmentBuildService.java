@@ -15,6 +15,7 @@ import api.jcloudify.app.endpoint.rest.model.BuildUploadRequestResponse;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.security.AuthenticatedResourceProvider;
+import api.jcloudify.app.endpoint.validator.BuiltEnvInfoValidator;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileHash;
 import api.jcloudify.app.file.FileHasher;
@@ -47,6 +48,7 @@ public class EnvironmentBuildService {
   private final FileHasher fileHasher;
   private final EventProducer<PojaEvent> eventProducer;
   private final EnvBuildRequestService envBuildRequestService;
+  private final BuiltEnvInfoValidator builtEnvInfoValidator;
 
   public BuildUploadRequestResponse getZippedBuildUploadRequestDetails(
       EnvironmentType environmentType) {
@@ -76,6 +78,7 @@ public class EnvironmentBuildService {
     if (envBuildRequestService.existsById(builtEnvInfo.getId())) {
       throw new BadRequestException("EnvBuildRequest has already been sent");
     }
+    builtEnvInfoValidator.accept(builtEnvInfo);
     Application authenticatedApplication =
         authenticatedResourceProvider.getAuthenticatedApplication();
     String appId = authenticatedApplication.getId();

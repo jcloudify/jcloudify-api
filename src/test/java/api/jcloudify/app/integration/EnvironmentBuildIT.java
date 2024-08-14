@@ -4,10 +4,15 @@ import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.A_GITHUB_APP_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
+import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import api.jcloudify.app.conf.MockedThirdParties;
@@ -19,12 +24,14 @@ import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileHash;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
+import api.jcloudify.app.repository.jpa.EnvBuildRequestRepository;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -42,6 +49,7 @@ public class EnvironmentBuildIT extends MockedThirdParties {
 
   @MockBean ExtendedBucketComponent extendedBucketComponentMock;
   @MockBean EventProducer<?> eventProducerMock;
+  @Autowired EnvBuildRequestRepository envBuildRequestRepository;
 
   @BeforeEach
   void setup() {
@@ -87,7 +95,7 @@ public class EnvironmentBuildIT extends MockedThirdParties {
         .thenReturn(
             new FileHash(
                 SHA256, "cb7a62143f21e9b08cc378371fa34d994943f7f39f6134c03089c0eec50fff16"));
-    String bucketKey = "mock/" + MOCK_BUILT_ZIP_PATH;
+    String bucketKey = "tmp/" + MOCK_BUILT_ZIP_PATH;
     when(extendedBucketComponentMock.doesExist(bucketKey)).thenReturn(true);
     when(extendedBucketComponentMock.download(bucketKey))
         .thenReturn(new ClassPathResource(MOCK_BUILT_ZIP_TEST_RESOURCE_PATH).getFile());
@@ -98,7 +106,9 @@ public class EnvironmentBuildIT extends MockedThirdParties {
     BuiltEnvInfo payload =
         new BuiltEnvInfo().environmentType(PROD).formattedBucketKey(bucketKey).id(id);
     var actual = api.deployEnv("mock", "mock", PROD, payload);
+    verify(eventProducerMock, times(1)).accept(anyList());
 
+    assertTrue(envBuildRequestRepository.existsById(requireNonNull(payload.getId())));
     assertEquals(payload, actual);
   }
 }
