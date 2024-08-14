@@ -121,6 +121,7 @@ public class EnvironmentBuildService {
                 .builtEnvInfo(builtEnvInfo)
                 .deploymentConfId(latestDeploymentConf.getId())
                 .requestInstant(now())
+                .builtZipFormattedFilekey(builtPackageBucketKey)
                 .envId(environment.getId())
                 .appId(appId)
                 .build()));

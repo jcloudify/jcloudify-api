@@ -1,6 +1,9 @@
 package api.jcloudify.app.endpoint.event.model;
 
+import static api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo.JSON_PROPERTY_FORMATTED_BUCKET_KEY;
+
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Duration;
 import java.time.Instant;
@@ -27,7 +30,15 @@ public class AppEnvDeployRequested extends PojaEvent {
   private final Instant requestInstant;
 
   @JsonProperty("built_env_info")
+  @JsonIgnoreProperties(JSON_PROPERTY_FORMATTED_BUCKET_KEY)
   private final BuiltEnvInfo builtEnvInfo;
+
+  /**
+   * built_zip_formatted_key overrides built_env_info formatted bucket key as builtEnvInfo's value
+   * tend to be the temporary file storage
+   */
+  @JsonProperty("built_zip_formatted_key")
+  private final String builtZipFormattedFilekey;
 
   @JsonProperty("deployment_conf_id")
   private final String deploymentConfId;

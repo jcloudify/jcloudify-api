@@ -26,7 +26,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
         List.of(
             AppEnvComputeDeployRequested.builder()
                 .appName(app.getName())
-                .formattedBucketKey(builtEnvInfo.getFormattedBucketKey())
+                .formattedBucketKey(appEnvDeployRequested.getBuiltZipFormattedFilekey())
                 .requestInstant(Instant.now())
                 .environmentType(builtEnvInfo.getEnvironmentType())
                 .build()));
