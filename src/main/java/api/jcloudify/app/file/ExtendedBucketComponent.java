@@ -2,6 +2,7 @@ package api.jcloudify.app.file;
 
 import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
 import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
+import static java.util.UUID.randomUUID;
 
 import api.jcloudify.app.model.exception.ApiException;
 import java.io.File;
@@ -19,6 +20,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Component
 public class ExtendedBucketComponent {
   private static final String APPLICATION_ZIP_CONTENT_TYPE = "application/zip";
+  public static final String TEMP_BUCKET_PATH = "tmp/";
   private final BucketComponent bucketComponent;
   private final BucketConf bucketConf;
 
@@ -62,23 +64,29 @@ public class ExtendedBucketComponent {
   public static String getBucketKey(
       String userId, String appId, String envId, FileType fileType, String filename) {
     return switch (fileType) {
-      case POJA_CONF -> String.format(
-          "users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
-      case BUILT_PACKAGE -> String.format(
-          "users/%s/apps/%s/envs/%s/built-packages/%s", userId, appId, envId, filename);
-      case DEPLOYMENT_FILE -> String.format(
-          "users/%s/apps/%s/envs/%s/deployment-files/%s", userId, appId, envId, filename);
+      case POJA_CONF ->
+          String.format("users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
+      case BUILT_PACKAGE ->
+          String.format(
+              "users/%s/apps/%s/envs/%s/built-packages/%s", userId, appId, envId, filename);
+      case DEPLOYMENT_FILE ->
+          String.format(
+              "users/%s/apps/%s/envs/%s/deployment-files/%s", userId, appId, envId, filename);
     };
   }
 
   public static String getBucketKey(String userId, String appId, String envId, FileType fileType) {
     return switch (fileType) {
       case POJA_CONF -> String.format("users/%s/apps/%s/envs/%s/poja-files/", userId, appId, envId);
-      case BUILT_PACKAGE -> String.format(
-          "users/%s/apps/%s/envs/%s/built-packages/", userId, appId, envId);
-      case DEPLOYMENT_FILE -> String.format(
-          "users/%s/apps/%s/envs/%s/deployment-files/", userId, appId, envId);
+      case BUILT_PACKAGE ->
+          String.format("users/%s/apps/%s/envs/%s/built-packages/", userId, appId, envId);
+      case DEPLOYMENT_FILE ->
+          String.format("users/%s/apps/%s/envs/%s/deployment-files/", userId, appId, envId);
     };
+  }
+
+  public static String getTempBucketKey(String fileExtensionWithDot) {
+    return String.format(TEMP_BUCKET_PATH + "%s", randomUUID() + fileExtensionWithDot);
   }
 
   public final File download(String key) {
