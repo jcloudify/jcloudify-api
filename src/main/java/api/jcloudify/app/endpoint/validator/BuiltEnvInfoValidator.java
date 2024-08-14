@@ -19,7 +19,9 @@ public class BuiltEnvInfoValidator implements Consumer<BuiltEnvInfo> {
     }
     if (!builtEnvInfo.getFormattedBucketKey().startsWith(TEMP_FILES_BUCKET_PREFIX)) {
       throw new BadRequestException(
-          "cannot use files not from temporary bucket key. Use " + TEMP_FILES_BUCKET_PREFIX + " instead.");
+          "cannot use files not from temporary bucket key. Use "
+              + TEMP_FILES_BUCKET_PREFIX
+              + " instead.");
     }
   }
 }

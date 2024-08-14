@@ -28,9 +28,6 @@ public class PojaConf1RestValidator implements Consumer<PojaConf1> {
     DatabaseConf1 databaseConf = pojaConf1.getDatabase();
     ConcurrencyConf1 concurrencyConf = pojaConf1.getConcurrency();
 
-    if (pojaConf1.getVersion() == null) {
-      exceptionMessageBuilder.append("version is mandatory. ");
-    }
     if (generalConf == null) {
       exceptionMessageBuilder.append("general is mandatory. ");
     } else {
