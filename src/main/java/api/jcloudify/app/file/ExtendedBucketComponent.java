@@ -64,24 +64,22 @@ public class ExtendedBucketComponent {
   public static String getBucketKey(
       String userId, String appId, String envId, FileType fileType, String filename) {
     return switch (fileType) {
-      case POJA_CONF ->
-          String.format("users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
-      case BUILT_PACKAGE ->
-          String.format(
-              "users/%s/apps/%s/envs/%s/built-packages/%s", userId, appId, envId, filename);
-      case DEPLOYMENT_FILE ->
-          String.format(
-              "users/%s/apps/%s/envs/%s/deployment-files/%s", userId, appId, envId, filename);
+      case POJA_CONF -> String.format(
+          "users/%s/apps/%s/envs/%s/poja-files/%s", userId, appId, envId, filename);
+      case BUILT_PACKAGE -> String.format(
+          "users/%s/apps/%s/envs/%s/built-packages/%s", userId, appId, envId, filename);
+      case DEPLOYMENT_FILE -> String.format(
+          "users/%s/apps/%s/envs/%s/deployment-files/%s", userId, appId, envId, filename);
     };
   }
 
   public static String getBucketKey(String userId, String appId, String envId, FileType fileType) {
     return switch (fileType) {
       case POJA_CONF -> String.format("users/%s/apps/%s/envs/%s/poja-files/", userId, appId, envId);
-      case BUILT_PACKAGE ->
-          String.format("users/%s/apps/%s/envs/%s/built-packages/", userId, appId, envId);
-      case DEPLOYMENT_FILE ->
-          String.format("users/%s/apps/%s/envs/%s/deployment-files/", userId, appId, envId);
+      case BUILT_PACKAGE -> String.format(
+          "users/%s/apps/%s/envs/%s/built-packages/", userId, appId, envId);
+      case DEPLOYMENT_FILE -> String.format(
+          "users/%s/apps/%s/envs/%s/deployment-files/", userId, appId, envId);
     };
   }
 
