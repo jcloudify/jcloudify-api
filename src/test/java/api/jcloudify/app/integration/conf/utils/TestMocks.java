@@ -1,5 +1,6 @@
 package api.jcloudify.app.integration.conf.utils;
 
+import static api.jcloudify.app.endpoint.rest.model.DatabaseConf1.WithDatabaseEnum.NONE;
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
@@ -7,6 +8,7 @@ import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREA
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
+import static api.jcloudify.app.endpoint.rest.model.WithQueuesNbEnum.NUMBER_2;
 import static api.jcloudify.app.model.PojaVersion.POJA_1;
 
 import api.jcloudify.app.endpoint.rest.model.Application;
@@ -30,9 +32,11 @@ import api.jcloudify.app.endpoint.rest.model.TestingConf1;
 import api.jcloudify.app.endpoint.rest.model.User;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.services.ssm.model.Parameter;
 
 public class TestMocks {
@@ -216,14 +220,36 @@ public class TestMocks {
     String humanReadableValuePojaVersion = POJA_1.toHumanReadableValue();
     return new PojaConf1()
         .version(humanReadableValuePojaVersion)
-        .general(new GeneralPojaConf1().customJavaDeps(new ArrayList<>()))
-        .database(new DatabaseConf1())
-        .emailing(new MailingConf1())
+        .general(
+            new GeneralPojaConf1()
+                .appName("appname")
+                .packageFullName("com.test.api")
+                .withSnapstart(false)
+                .withQueuesNb(NUMBER_2)
+                .customJavaDeps(List.of())
+                .customJavaEnvVars(Map.of())
+                .customJavaRepositories(List.of()))
+        .database(new DatabaseConf1().withDatabase(NONE))
+        .emailing(new MailingConf1().sesSource("mail@mail.com"))
         .genApiClient(new GenApiClient1())
-        .integration(new Integration1())
-        .compute(new ComputeConf1())
+        .integration(
+            new Integration1()
+                .withSentry(false)
+                .withSwaggerUi(false)
+                .withSonar(false)
+                .withFileStorage(false)
+                .withCodeql(false))
+        .compute(
+            new ComputeConf1()
+                .frontalMemory(BigDecimal.valueOf(1024))
+                .frontalFunctionTimeout(BigDecimal.valueOf(600))
+                .workerMemory(BigDecimal.valueOf(512))
+                .workerBatch(BigDecimal.valueOf(5))
+                .workerFunction1Timeout(BigDecimal.valueOf(600))
+                .workerFunction2Timeout(BigDecimal.valueOf(600)))
         .concurrency(new ConcurrencyConf1())
-        .testing(new TestingConf1());
+        .testing(
+            new TestingConf1().jacocoMinCoverage(BigDecimal.valueOf(0.2)).javaFacadeIt("FacadeIT"));
   }
 
   public static List<StackEvent> permStackEvents() {

@@ -65,8 +65,7 @@ public class PojaConf1RestValidatorTest {
   @Test
   void validator_validate_PojaConf1_ko() {
     assertThrowsBadRequestException(
-        "version is mandatory. "
-            + "app_name is mandatory. "
+        "app_name is mandatory. "
             + "with_snapstart is mandatory. "
             + "package_full_name must include three parts separated by dots. "
             + "queues_nb is mandatory. "

@@ -3,7 +3,7 @@ package api.jcloudify.app.service.appEnvConfigurer.mapper;
 import static api.jcloudify.app.endpoint.rest.model.PojaConf1.JSON_PROPERTY_GENERAL;
 import static api.jcloudify.app.model.PojaVersion.POJA_1;
 import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
-import static api.jcloudify.app.model.pojaConf.conf1.PojaConf1.GeneralConf1.JSON_PROPERTY_CLI_VERSION;
+import static api.jcloudify.app.model.pojaConf.conf1.PojaConf1.General.JSON_PROPERTY_CLI_VERSION;
 
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PojaConf;
