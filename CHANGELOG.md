@@ -1,3 +1,18 @@
+# [3.14.0](https://github.com/jcloudify/jcloudify-api/compare/v3.13.0...v3.14.0) (2024-08-14)
+
+
+### Bug Fixes
+
+* rename build_template_file_url to build_template_file_uri ([e9f44cc](https://github.com/jcloudify/jcloudify-api/commit/e9f44cc98b46c10774d72dfa36a27b34869ca25d))
+* retrieve payment details ([5682086](https://github.com/jcloudify/jcloudify-api/commit/5682086cc0e1ceef5938ae7558c525ce8cddf749))
+
+
+### Features
+
+* handle s3 putobject presigned url ([197623d](https://github.com/jcloudify/jcloudify-api/commit/197623dd36e45b3bdbcd5b01f6758a44794f44cd))
+
+
+
 # [3.13.0](https://github.com/jcloudify/jcloudify-api/compare/v3.12.0...v3.13.0) (2024-08-08)
 
 
@@ -109,16 +124,6 @@
 
 * crupdate repo on application crupdate ([c9276f7](https://github.com/jcloudify/jcloudify-api/commit/c9276f7b28fc57cb7c67e1168f63bd1ee69daca3))
 * poja version is hidden as internal, shown version is jcloudifys and will be mapped internally ([c8739ff](https://github.com/jcloudify/jcloudify-api/commit/c8739ff196468ee50f07f60f2e0ca63e0c85dacc))
-
-
-
-## [3.5.2](https://github.com/jcloudify/jcloudify-api/compare/v3.5.1...v3.5.2) (2024-07-25)
-
-
-### Bug Fixes
-
-* bucket key path does not starts with a slash ([755e817](https://github.com/jcloudify/jcloudify-api/commit/755e8177ab5c3cc102f69da030051c8b60d5ea64))
-* missing env var ([9bc347a](https://github.com/jcloudify/jcloudify-api/commit/9bc347a870c7f7acbc8c64a202d22f90d9c684a2))
 
 
 
