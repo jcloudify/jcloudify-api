@@ -95,7 +95,7 @@ public class EnvironmentBuildService {
             DEPLOYMENT_FILE,
             latestDeploymentConf.getBuildTemplateFile());
     var originalTemplateFileHash = bucketComponent.getFileHash(formattedOriginalTemplateFilename);
-    compareWithOriginalTemplate(builtEnvInfo, originalTemplateFileHash);
+    //compareWithOriginalTemplate(builtEnvInfo, originalTemplateFileHash);
     envBuildRequestService.save(
         EnvBuildRequest.builder()
             .id(builtEnvInfo.getId())
