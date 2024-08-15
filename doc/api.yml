@@ -1574,7 +1574,6 @@ components:
         - EVENT
         - COMPUTE_PERMISSION
         - STORAGE_BUCKET
-        - STORAGE_DATABASE_POSTGRES
         - STORAGE_DATABASE_SQLITE
     StackEvent:
       type: object
