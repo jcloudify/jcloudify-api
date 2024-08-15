@@ -5,7 +5,6 @@ import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE_PERMISSION;
 import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT;
 import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_BUCKET;
-import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_DATABASE_POSTGRES;
 import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_DATABASE_SQLITE;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.BUCKET_STACK_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.BUCKET_STACK_NAME;
@@ -159,7 +158,6 @@ public class StackIT extends MockedThirdParties {
                         createStack("poja_app_event_stack_id", EVENT),
                         createStack("poja_app_perm_stack_id", COMPUTE_PERMISSION),
                         createStack("poja_app_bucket_stack_id", STORAGE_BUCKET),
-                        createStack("poja_app_postgres_stack_id", STORAGE_DATABASE_POSTGRES),
                         createStack("poja_app_sqlite_stack_id", STORAGE_DATABASE_SQLITE))));
     var actualCreatedStacksData = requireNonNull(actualCreatedStacks.getData());
 
@@ -173,9 +171,6 @@ public class StackIT extends MockedThirdParties {
     assertTrue(
         ignoreStackIdsAndDatetime(actualCreatedStacksData)
             .contains(stackDeploymentInitiated(STORAGE_BUCKET)));
-    assertTrue(
-        ignoreStackIdsAndDatetime(actualCreatedStacksData)
-            .contains(stackDeploymentInitiated(STORAGE_DATABASE_POSTGRES)));
     assertTrue(
         ignoreStackIdsAndDatetime(actualCreatedStacksData)
             .contains(stackDeploymentInitiated(STORAGE_DATABASE_SQLITE)));
