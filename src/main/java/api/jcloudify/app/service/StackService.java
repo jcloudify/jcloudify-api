@@ -205,8 +205,6 @@ public class StackService {
           case COMPUTE_PERMISSION -> cloudformationTemplateConf
               .getComputePermissionStackTemplateUrl();
           case STORAGE_BUCKET -> cloudformationTemplateConf.getStorageBucketStackTemplateUrl();
-          case STORAGE_DATABASE_POSTGRES -> cloudformationTemplateConf
-              .getStorageDatabasePostgresStackTemplateUrl();
           case STORAGE_DATABASE_SQLITE -> cloudformationTemplateConf
               .getStorageDatabaseSQliteStackTemplateUrl();
         })
