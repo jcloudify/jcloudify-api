@@ -45,7 +45,7 @@ public class StackService {
   private final StackRepository repository;
   private final StackMapper mapper;
   private final StackDao dao;
-  private final EventProducer eventProducer;
+  private final EventProducer<StackCrupdated> eventProducer;
   private final ExtendedBucketComponent bucketComponent;
   private final ObjectMapper om;
 
