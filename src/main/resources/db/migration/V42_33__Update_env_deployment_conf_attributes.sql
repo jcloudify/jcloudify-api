@@ -1,0 +1,1 @@
+alter table "env_deployment_conf" add column storage_datanase_sqlite_stack_file_key varchar;

@@ -33,6 +33,7 @@ public class EnvDeploymentConf {
   private String computePermissionStackFileKey;
   private String eventStackFileKey;
   private String storageBucketStackFileKey;
+  private String storageDatabaseSqliteStackFileKey;
   private Instant creationDatetime;
   private String buildTemplateFile;
 
