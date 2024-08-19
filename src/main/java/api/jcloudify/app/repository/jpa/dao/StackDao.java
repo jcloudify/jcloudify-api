@@ -43,7 +43,8 @@ public class StackDao {
         .getResultList();
   }
 
-  public Optional<Stack> findByCriteria(String applicationId, String environmentId, StackType type) {
+  public Optional<Stack> findByCriteria(
+      String applicationId, String environmentId, StackType type) {
     assert applicationId != null;
     assert environmentId != null;
     assert type != null;
