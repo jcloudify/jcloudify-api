@@ -2,6 +2,7 @@ package api.jcloudify.app.integration.conf.utils;
 
 import static api.jcloudify.app.endpoint.rest.model.DatabaseConf1.WithDatabaseEnum.NONE;
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
+import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.UNKNOWN;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
@@ -142,9 +143,9 @@ public class TestMocks {
 
   public static Environment pojaAppPreprodEnvironment() {
     return new Environment()
-        .id("other_poja_application_2_id")
+        .id("poja_preprod_application_environment_id")
         .environmentType(PREPROD)
-        .state(HEALTHY);
+        .state(UNKNOWN);
   }
 
   public static ApplicationBase applicationToUpdate() {

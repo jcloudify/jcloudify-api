@@ -20,6 +20,8 @@ import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.service.StripeService;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -109,7 +111,7 @@ public class TestUtils {
   }
 
   public static void setUpExtendedBucketComponent(ExtendedBucketComponent extendedBucketComponent)
-      throws IOException {
+      throws IOException, URISyntaxException {
     ClassPathResource stackEventResource = new ClassPathResource("files/log.json");
     String stackEventFileBucketKey =
         String.format(
@@ -122,6 +124,8 @@ public class TestUtils {
     when(extendedBucketComponent.download(stackEventFileBucketKey))
         .thenReturn(stackEventResource.getFile());
     when(extendedBucketComponent.doesExist(stackEventFileBucketKey)).thenReturn(true);
+    when(extendedBucketComponent.presignGetObject(any(), any()))
+        .thenReturn(new URI("https://api.preprod.jcloudify.com/filename"));
   }
 
   public static List<Stack> ignoreStackIdsAndDatetime(List<Stack> stacks) {

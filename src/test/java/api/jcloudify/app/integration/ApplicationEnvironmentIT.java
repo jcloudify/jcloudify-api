@@ -196,7 +196,10 @@ class ApplicationEnvironmentIT extends MockedThirdParties {
   }
 
   private static Environment toCreateEnv() {
-    return new Environment().id(randomUUID().toString()).environmentType(PREPROD).state(UNKNOWN);
+    return new Environment()
+        .id("poja_preprod_application_environment_id")
+        .environmentType(PREPROD)
+        .state(UNKNOWN);
   }
 
   private static CrupdateEnvironment toCrupdateEnvironment(Environment environment) {

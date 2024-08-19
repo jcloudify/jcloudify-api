@@ -49,6 +49,7 @@ import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -135,7 +136,7 @@ public class StackIT extends MockedThirdParties {
   }
 
   @BeforeEach
-  void setup() throws IOException {
+  void setup() throws IOException, URISyntaxException {
     setUpGithub(githubComponent);
     setUpCloudformationComponent(cloudformationComponent);
     setUpBucketComponent(bucketComponent);
