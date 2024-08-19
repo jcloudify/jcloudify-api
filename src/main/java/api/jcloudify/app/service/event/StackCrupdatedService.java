@@ -32,7 +32,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
   private final ExtendedBucketComponent bucketComponent;
   private final StackMapper mapper;
   private final ObjectMapper om;
-  private final EventProducer eventProducer;
+  private final EventProducer<StackCrupdated> eventProducer;
 
   @Override
   public void accept(StackCrupdated stackCrupdated) {
