@@ -1,0 +1,1 @@
+alter table "stack" add constraint stack_type_unique_per_env unique (type, id_environment);

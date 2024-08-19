@@ -43,8 +43,7 @@ public class StackDao {
         .getResultList();
   }
 
-  public Optional<Stack> findByIdAndCriteria(
-      String id, String applicationId, String environmentId, StackType type) {
+  public Optional<Stack> findByCriteria(String applicationId, String environmentId, StackType type) {
     assert applicationId != null;
     assert environmentId != null;
     assert type != null;
@@ -52,7 +51,6 @@ public class StackDao {
     CriteriaQuery<Stack> query = builder.createQuery(Stack.class);
     Root<Stack> root = query.from(Stack.class);
     List<Predicate> predicates = new ArrayList<>();
-    predicates.add(builder.equal(root.get("id"), id));
     predicates.add(builder.equal(root.get("applicationId"), applicationId));
     predicates.add(builder.equal(root.get("environmentId"), environmentId));
     predicates.add(builder.equal(root.get("type"), type));

@@ -129,8 +129,7 @@ public class StackService {
     Map<String, String> parameters = getParametersFrom(environmentType, applicationName);
 
     Optional<Stack> stack =
-        dao.findByIdAndCriteria(
-            toDeploy.getId(), applicationId, environmentId, toDeploy.getStackType());
+        dao.findByCriteria(applicationId, environmentId, toDeploy.getStackType());
     if (stack.isPresent()) {
       Stack toUpdate = stack.get();
       Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
@@ -160,7 +159,6 @@ public class StackService {
       Stack saved =
           save(
               Stack.builder()
-                  .id(toDeploy.getId())
                   .name(stackName)
                   .cfStackId(cfStackId)
                   .applicationId(applicationId)
