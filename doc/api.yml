@@ -547,7 +547,7 @@ paths:
         - bearerAuth: [ ]
       tags:
         - Stack
-      summary: Update stack if stack_id provided, created new stack otherwise
+      summary: Update if stack already exists, create new one otherwise
       operationId: initiateStackDeployment
       requestBody:
         required: true
@@ -1545,8 +1545,6 @@ components:
     InitiateDeployment:
       type: object
       properties:
-        id:
-          type: string
         stack_type:
           $ref: '#/components/schemas/StackType'
     Stack:
@@ -1554,6 +1552,8 @@ components:
         - $ref: '#/components/schemas/InitiateDeployment'
       type: object
       properties:
+        id:
+          type: string
         name:
           type: string
         cf_stack_id:
