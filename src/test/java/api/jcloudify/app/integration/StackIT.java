@@ -127,11 +127,11 @@ public class StackIT extends MockedThirdParties {
   }
 
   private static InitiateDeployment createStack(String id, StackType stackType) {
-    return new InitiateDeployment().id(id).stackType(stackType);
+    return new InitiateDeployment().stackType(stackType);
   }
 
   private static InitiateDeployment updateStack(String stackId, StackType stackType) {
-    return new InitiateDeployment().id(stackId).stackType(stackType);
+    return new InitiateDeployment().stackType(stackType);
   }
 
   @BeforeEach
