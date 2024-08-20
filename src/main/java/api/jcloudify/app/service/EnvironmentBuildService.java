@@ -1,5 +1,6 @@
 package api.jcloudify.app.service;
 
+import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.NOT_READY;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getTempBucketKey;
 import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
@@ -124,6 +125,7 @@ public class EnvironmentBuildService {
                 .builtZipFormattedFilekey(builtPackageBucketKey)
                 .envId(environment.getId())
                 .appId(appId)
+                .independentStacksStates(NOT_READY)
                 .build()));
   }
 

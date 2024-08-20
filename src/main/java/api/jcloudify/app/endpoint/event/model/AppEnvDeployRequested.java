@@ -2,6 +2,7 @@ package api.jcloudify.app.endpoint.event.model;
 
 import static api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo.JSON_PROPERTY_FORMATTED_BUCKET_KEY;
 
+import api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +16,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
-@Builder
+@Builder(toBuilder = true)
 public class AppEnvDeployRequested extends PojaEvent {
   @JsonProperty("env_id")
   private final String envId;
@@ -42,6 +43,10 @@ public class AppEnvDeployRequested extends PojaEvent {
 
   @JsonProperty("deployment_conf_id")
   private final String deploymentConfId;
+
+  // Used to check if able to correctly deploy compute stack or not
+  @JsonProperty("independent_stack_states")
+  private final IndependentStacksStateEnum independentStacksStates;
 
   @Override
   public Duration maxConsumerDuration() {
