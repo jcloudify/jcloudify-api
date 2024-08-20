@@ -230,9 +230,25 @@ public class TestMocks {
                 .customJavaDeps(List.of())
                 .customJavaEnvVars(Map.of())
                 .customJavaRepositories(List.of()))
-        .database(new DatabaseConf1().withDatabase(NONE))
+        .database(
+            new DatabaseConf1()
+                .withDatabase(NONE)
+                .databaseNonRootPassword(null)
+                .databaseNonRootUsername(null)
+                .prodDbClusterTimeout(null)
+                .auroraAutoPause(null)
+                .auroraMaxCapacity(null)
+                .auroraMinCapacity(null)
+                .auroraSleep(null)
+                .auroraScalePoint(null))
         .emailing(new MailingConf1().sesSource("mail@mail.com"))
-        .genApiClient(new GenApiClient1())
+        .genApiClient(
+            new GenApiClient1()
+                .awsAccountId(null)
+                .tsClientDefaultOpenapiServerUrl(null)
+                .tsClientApiUrlEnvVarName(null)
+                .codeartifactRepositoryName(null)
+                .codeartifactDomainName(null))
         .integration(
             new Integration1()
                 .withSentry(false)
@@ -248,7 +264,10 @@ public class TestMocks {
                 .workerBatch(BigDecimal.valueOf(5))
                 .workerFunction1Timeout(BigDecimal.valueOf(600))
                 .workerFunction2Timeout(BigDecimal.valueOf(600)))
-        .concurrency(new ConcurrencyConf1())
+        .concurrency(
+            new ConcurrencyConf1()
+                .frontalReservedConcurrentExecutionsNb(null)
+                .workerReservedConcurrentExecutionsNb(null))
         .testing(
             new TestingConf1().jacocoMinCoverage(BigDecimal.valueOf(0.2)).javaFacadeIt("FacadeIT"));
   }
