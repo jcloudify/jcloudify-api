@@ -101,7 +101,8 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
             .data()
             .stream()
             .toList();
-    List<Boolean> areStacksReady = environmentStacks.stream()
+    List<Boolean> areStacksReady =
+        environmentStacks.stream()
             .map(stack -> this.isLatestStackEventComplete(userId, appId, envId, stack))
             .toList();
     return areStacksReady.stream().allMatch(state -> state == Boolean.TRUE);
@@ -120,11 +121,11 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
       return false;
     }
     StackEvent latestEvent = stackEvents.getFirst();
-    return Objects.equals(latestEvent.getLogicalResourceId(), stack.getName()) &&
-            Objects.requireNonNull(latestEvent.getResourceStatus())
-                    .toString()
-                    .contains("UPDATE_COMPLETE")
-            || Objects.requireNonNull(latestEvent.getResourceStatus())
+    return Objects.equals(latestEvent.getLogicalResourceId(), stack.getName())
+            && Objects.requireNonNull(latestEvent.getResourceStatus())
+                .toString()
+                .contains("UPDATE_COMPLETE")
+        || Objects.requireNonNull(latestEvent.getResourceStatus())
             .toString()
             .contains("CREATE_COMPLETE");
   }
