@@ -1,3 +1,13 @@
+# [3.15.0](https://github.com/jcloudify/jcloudify-api/compare/v3.14.0...v3.15.0) (2024-08-20)
+
+
+### Features
+
+* deploy needed stacks before compute stack ([a723796](https://github.com/jcloudify/jcloudify-api/commit/a723796d7d6c7cf469fe11eff19d1d45a3f0f31f))
+* **no-implementation:** make some poja conf nullable ([cb0fbf0](https://github.com/jcloudify/jcloudify-api/commit/cb0fbf0e87ec4f34f080528d3d23640c28beceb8))
+
+
+
 # [3.14.0](https://github.com/jcloudify/jcloudify-api/compare/v3.13.0...v3.14.0) (2024-08-14)
 
 
@@ -107,23 +117,6 @@
 * change custom_java_deps and custom_java_repositories from string map to string list ([3512a62](https://github.com/jcloudify/jcloudify-api/commit/3512a625ae501630ca508848a2bea4e43369f991))
 * get application by id ([11363d8](https://github.com/jcloudify/jcloudify-api/commit/11363d8c2ac0a3c0edb5a257a6957c9c5a383305))
 * get stack events ([b50655a](https://github.com/jcloudify/jcloudify-api/commit/b50655a18b519d084a568988d58906b50cddf803))
-
-
-
-# [3.6.0](https://github.com/jcloudify/jcloudify-api/compare/v3.5.2...v3.6.0) (2024-07-26)
-
-
-### Bug Fixes
-
-* create log file in temp directory ([0cc9893](https://github.com/jcloudify/jcloudify-api/commit/0cc9893e24c3d3e53117cc6827e77607d596f2e8))
-* crupdate stack events ([c855ba3](https://github.com/jcloudify/jcloudify-api/commit/c855ba3c87d8957d782f9b97fa42ae586dfe134f))
-* security conf ([99629bf](https://github.com/jcloudify/jcloudify-api/commit/99629bf703cf36318918b3a35581430c2fd5699d))
-
-
-### Features
-
-* crupdate repo on application crupdate ([c9276f7](https://github.com/jcloudify/jcloudify-api/commit/c9276f7b28fc57cb7c67e1168f63bd1ee69daca3))
-* poja version is hidden as internal, shown version is jcloudifys and will be mapped internally ([c8739ff](https://github.com/jcloudify/jcloudify-api/commit/c8739ff196468ee50f07f60f2e0ca63e0c85dacc))
 
 
 
