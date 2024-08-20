@@ -14,7 +14,6 @@ import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
-import api.jcloudify.app.endpoint.rest.model.StackResourceStatusType;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
@@ -24,6 +23,7 @@ import api.jcloudify.app.service.StackService;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,29 +101,31 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
             .data()
             .stream()
             .toList();
-    List<StackResourceStatusType> stackResourceStatuses =
-        environmentStacks.stream()
-            .map(stack -> this.checkStackEventState(userId, appId, envId, stack.getId()))
+    List<Boolean> areStacksReady = environmentStacks.stream()
+            .map(stack -> this.isLatestStackEventComplete(userId, appId, envId, stack))
             .toList();
-    return stackResourceStatuses.stream()
-        .allMatch(
-            status ->
-                status.toString().contains("CREATE_COMPLETE")
-                    || status.toString().contains("UPDATE_COMPLETE"));
+    return areStacksReady.stream().allMatch(state -> state == Boolean.TRUE);
   }
 
-  private StackResourceStatusType checkStackEventState(
-      String userId, String appId, String envId, String stackId) {
+  private boolean isLatestStackEventComplete(
+      String userId, String appId, String envId, Stack stack) {
     List<StackEvent> stackEvents =
         stackService
             .getStackEvents(
-                userId, appId, envId, stackId, new PageFromOne(1), new BoundedPageSize(5))
+                userId, appId, envId, stack.getId(), new PageFromOne(1), new BoundedPageSize(5))
             .data()
             .stream()
             .toList();
     if (stackEvents.isEmpty()) {
-      return null;
+      return false;
     }
-    return stackEvents.getFirst().getResourceStatus();
+    StackEvent latestEvent = stackEvents.getFirst();
+    return Objects.equals(latestEvent.getLogicalResourceId(), stack.getName()) &&
+            Objects.requireNonNull(latestEvent.getResourceStatus())
+                    .toString()
+                    .contains("UPDATE_COMPLETE")
+            || Objects.requireNonNull(latestEvent.getResourceStatus())
+            .toString()
+            .contains("CREATE_COMPLETE");
   }
 }
