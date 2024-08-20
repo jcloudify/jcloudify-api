@@ -208,8 +208,7 @@ public class StackService {
     throw new NotFoundException("No events found for stack id=" + stackId); // Unreachable statement
   }
 
-  private static Map<String, String> getParametersFrom(
-      String environmentType) {
+  private static Map<String, String> getParametersFrom(String environmentType) {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("Env", environmentType);
     return parameters;
