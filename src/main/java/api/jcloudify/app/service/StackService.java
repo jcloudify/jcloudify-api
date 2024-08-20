@@ -129,13 +129,12 @@ public class StackService {
     String environmentType = environment.getFormattedEnvironmentType();
     String applicationName = application.getFormattedName();
     EnvDeploymentConf envDeploymentConf = envDeploymentConfService.getLatestByEnvId(environmentId);
-    Map<String, String> parameters = getParametersFrom(environmentType, applicationName);
-
+    Map<String, String> parameters = getParametersFrom(environmentType);
+    Map<String, String> tags = setUpTags(applicationName, environmentType);
     Optional<Stack> stack =
         dao.findByCriteria(applicationId, environmentId, toDeploy.getStackType());
     if (stack.isPresent()) {
       Stack toUpdate = stack.get();
-      Map<String, String> tags = setUpTags(toUpdate.getName(), environmentType);
       String cfStackId =
           updateStack(
               userId,
@@ -166,7 +165,6 @@ public class StackService {
               environmentType,
               String.valueOf(toDeploy.getStackType()).toLowerCase().replace("_", "-"),
               applicationName);
-      Map<String, String> tags = setUpTags(stackName, environmentType);
       String cfStackId =
           createStack(
               userId,
@@ -211,10 +209,9 @@ public class StackService {
   }
 
   private static Map<String, String> getParametersFrom(
-      String environmentType, String applicationName) {
+      String environmentType) {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("Env", environmentType);
-    parameters.put("AppName", applicationName);
     return parameters;
   }
 
