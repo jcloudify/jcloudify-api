@@ -65,9 +65,10 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
       }
       om.writeValue(stackEventJsonFile, stackEvents);
       bucketComponent.upload(stackEventJsonFile, bucketKey);
-      return Objects.requireNonNull(stackEvents.getFirst().getResourceStatus())
+      StackEvent latestEvent = stackEvents.getFirst();
+      return Objects.requireNonNull(latestEvent.getResourceStatus())
           .toString()
-          .contains("COMPLETE");
+          .contains("COMPLETE") && Objects.equals(latestEvent.getLogicalResourceId(), stackName);
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
     }
