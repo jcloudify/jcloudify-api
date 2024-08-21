@@ -145,19 +145,22 @@ public class StackService {
               envDeploymentConf,
               toUpdate.getName(),
               tags);
-      Stack saved =
-          save(
-              Stack.builder()
-                  .id(toUpdate.getId())
-                  .name(toUpdate.getName())
-                  .cfStackId(cfStackId)
-                  .applicationId(applicationId)
-                  .environmentId(environmentId)
-                  .type(toUpdate.getType())
-                  .creationDatetime(toUpdate.getCreationDatetime())
-                  .build());
-      eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(saved).build()));
-      return mapper.toRest(saved, application, environment);
+      if (cfStackId != null) {
+        Stack saved =
+            save(
+                Stack.builder()
+                    .id(toUpdate.getId())
+                    .name(toUpdate.getName())
+                    .cfStackId(cfStackId)
+                    .applicationId(applicationId)
+                    .environmentId(environmentId)
+                    .type(toUpdate.getType())
+                    .creationDatetime(toUpdate.getCreationDatetime())
+                    .build());
+        eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(saved).build()));
+        return mapper.toRest(saved, application, environment);
+      }
+      return mapper.toRest(toUpdate, application, environment);
     } else {
       String stackName =
           String.format(

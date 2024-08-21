@@ -3,6 +3,7 @@ package api.jcloudify.app.aws.cloudformation;
 import static software.amazon.awssdk.services.cloudformation.model.Capability.CAPABILITY_NAMED_IAM;
 
 import api.jcloudify.app.model.exception.BadRequestException;
+import api.jcloudify.app.model.exception.InternalServerErrorException;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -83,7 +84,10 @@ public class CloudformationComponent {
     try {
       return cloudFormationClient.updateStack(request).stackId();
     } catch (CloudFormationException e) {
-      throw new BadRequestException(
+      if (e.getMessage().contains("No updates are to be performed")) {
+        return null;
+      }
+      throw new InternalServerErrorException(
           String.format(
               "An error occurred during stack(%s) update: %s", stackName, e.getMessage()));
     }
@@ -95,7 +99,7 @@ public class CloudformationComponent {
     try {
       return cloudFormationClient.describeStackEvents(request).stackEvents();
     } catch (CloudFormationException e) {
-      throw new BadRequestException(
+      throw new InternalServerErrorException(
           String.format(
               "An error occurred when retrieving stack(%s) events: %s", stackName, e.getMessage()));
     }
