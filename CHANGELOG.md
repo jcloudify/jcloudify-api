@@ -1,3 +1,13 @@
+## [3.15.1](https://github.com/jcloudify/jcloudify-api/compare/v3.15.0...v3.15.1) (2024-08-21)
+
+
+### Bug Fixes
+
+* stack appname is not anymore given as parameter ([ae80005](https://github.com/jcloudify/jcloudify-api/commit/ae8000598c81468962fddb44a608d87284aca31c))
+* **tests:** correctly map nullable values for poja conf ([f37f583](https://github.com/jcloudify/jcloudify-api/commit/f37f583f2127efd03a692da70a8c69b1c5c0e539))
+
+
+
 # [3.15.0](https://github.com/jcloudify/jcloudify-api/compare/v3.14.0...v3.15.0) (2024-08-20)
 
 
@@ -106,17 +116,6 @@
 * app installations ([79dafa8](https://github.com/jcloudify/jcloudify-api/commit/79dafa8e553f8db6c12862779749316f4600e9d5))
 * get envionment by id ([e0d69ba](https://github.com/jcloudify/jcloudify-api/commit/e0d69bad398ebe788b8541434e24afd0f206ae81))
 * poja cli integration with git repo push ([c22b8ba](https://github.com/jcloudify/jcloudify-api/commit/c22b8ba58d1534698d88e9e8ebbc274341e8a729))
-
-
-
-# [3.7.0](https://github.com/jcloudify/jcloudify-api/compare/v3.6.0...v3.7.0) (2024-07-26)
-
-
-### Features
-
-* change custom_java_deps and custom_java_repositories from string map to string list ([3512a62](https://github.com/jcloudify/jcloudify-api/commit/3512a625ae501630ca508848a2bea4e43369f991))
-* get application by id ([11363d8](https://github.com/jcloudify/jcloudify-api/commit/11363d8c2ac0a3c0edb5a257a6957c9c5a383305))
-* get stack events ([b50655a](https://github.com/jcloudify/jcloudify-api/commit/b50655a18b519d084a568988d58906b50cddf803))
 
 
 
