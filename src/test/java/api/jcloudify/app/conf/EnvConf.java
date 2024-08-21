@@ -17,5 +17,6 @@ public class EnvConf {
     registry.add("github.api.baseuri", () -> "https://api.github.com");
     registry.add("poja.sam.api.key", () -> "dummy");
     registry.add("stripe.api.key", () -> "dummy");
+    registry.add("env", () -> "test");
   }
 }

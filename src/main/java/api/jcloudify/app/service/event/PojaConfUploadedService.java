@@ -4,6 +4,7 @@ import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.FileType.DEPLOYMENT_FILE;
 import static api.jcloudify.app.file.FileType.POJA_CONF;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.util.Locale.ROOT;
 import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM;
 import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.TRACK;
@@ -16,6 +17,7 @@ import api.jcloudify.app.file.FileUnzipper;
 import api.jcloudify.app.mail.Email;
 import api.jcloudify.app.mail.Mailer;
 import api.jcloudify.app.model.PojaVersion;
+import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.repository.model.Environment;
@@ -32,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -69,6 +72,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static final String CF_STACKS_EVENT_STACK_YML_PATH = "cf-stacks/event-stack.yml";
   private static final String CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH =
       "cf-stacks/storage-bucket-stack.yml";
+  private static final String CD_COMPUTE_BUCKET_KEY = "poja-templates/cd-compute.yml";
   private final ExtendedBucketComponent bucketComponent;
   private final PojaSamApi pojaSamApi;
   private final GithubService githubService;
@@ -234,6 +238,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       createAndCheckoutBranchIfNotExists(git, branchName);
       unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
+      getAndConfigureCdCompute(cloneDirPath);
       gitAddAllChanges(git);
       unsignedCommitAsBot(
           git,
@@ -368,6 +373,23 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     var appInstallation = appInstallService.getById(app.getInstallationId());
     return githubService.getInstallationToken(
         appInstallation.getGhId(), pojaConfUploaded.maxConsumerDuration());
+  }
+
+  private void getAndConfigureCdCompute(Path clonedDirPath) {
+    File rawCdComputeFile = bucketComponent.download(CD_COMPUTE_BUCKET_KEY);
+    String placeHolder = "<?env>";
+    Path ghWorkflowDir = Path.of(clonedDirPath + ".github/workflows/");
+    String env = System.getenv("env");
+    try {
+      Path rawFilePath = Paths.get(rawCdComputeFile.toURI());
+      String fileContent = new String(Files.readAllBytes(rawFilePath));
+      fileContent = fileContent.replace(placeHolder, env);
+      Files.write(rawFilePath, fileContent.getBytes(), TRUNCATE_EXISTING);
+      Files.copy(rawFilePath, ghWorkflowDir, REPLACE_EXISTING);
+    } catch (IOException e) {
+      log.error("Error occurred during configuration of cd-compute-file.");
+      throw new InternalServerErrorException(e);
+    }
   }
 
   @SneakyThrows
