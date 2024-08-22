@@ -92,6 +92,9 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       log.info("Success at PojaConfUploaded");
     } catch (Exception e) {
       log.info("Failure at PojaConfUploaded");
+      log.error("Error Message: {}", e.getMessage());
+      log.error("Stacktrace: {}", (Object) e.getStackTrace());
+      log.error("Error Cause: {}", e.getCause().toString());
       handleEventFailure(pojaConfUploaded);
       throw new RuntimeException(e);
     }
@@ -378,7 +381,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private void getAndConfigureCdCompute(Path clonedDirPath) {
     File rawCdComputeFile = bucketComponent.download(CD_COMPUTE_BUCKET_KEY);
     String placeHolder = "<?env>";
-    Path ghWorkflowDir = Path.of(clonedDirPath + ".github/workflows/");
+    Path ghWorkflowDir = Path.of(clonedDirPath + "/.github/workflows/");
     String env = System.getenv("env");
     try {
       Path rawFilePath = Paths.get(rawCdComputeFile.toURI());
