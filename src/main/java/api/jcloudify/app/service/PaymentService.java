@@ -5,7 +5,6 @@ import static java.lang.Boolean.TRUE;
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.model.PaymentCustomer;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
-import api.jcloudify.app.repository.model.User;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
 import java.util.List;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class PaymentService {
   private final StripeService stripeService;
-  private final UserService userService;
 
   public String createCustomer(CreateUser createUser) {
     String name = createUser.getFirstName() + " " + createUser.getLastName();
@@ -24,16 +22,14 @@ public class PaymentService {
     return customer.getId();
   }
 
-  public PaymentMethod managePaymentMethod(String userId, PaymentMethodsAction pmAction) {
-    User user = userService.getUserById(userId);
-    String stripeId = user.getStripeId();
+  public PaymentMethod managePaymentMethod(String customerId, PaymentMethodsAction pmAction) {
     String pmId = pmAction.getPaymentMethodId();
     PaymentMethodsAction.ActionEnum action = pmAction.getAction();
     return switch (action) {
       case ATTACH:
-        PaymentMethod paymentMethod = stripeService.attachPaymentMethod(stripeId, pmId);
+        PaymentMethod paymentMethod = stripeService.attachPaymentMethod(customerId, pmId);
         if (TRUE.equals(pmAction.getSetDefault())) {
-          stripeService.setDefaultPaymentMethod(stripeId, pmId);
+          stripeService.setDefaultPaymentMethod(customerId, pmId);
         }
         yield paymentMethod;
       case DETACH:
@@ -41,14 +37,12 @@ public class PaymentService {
     };
   }
 
-  public List<PaymentMethod> getPaymentMethods(String userId) {
-    User user = userService.getUserById(userId);
-    return stripeService.getPaymentMethods(user.getStripeId());
+  public List<PaymentMethod> getPaymentMethods(String customerId) {
+    return stripeService.getPaymentMethods(customerId);
   }
 
-  public Customer getCustomer(String userId) {
-    User user = userService.getUserById(userId);
-    return stripeService.retrieveCustomer(user.getStripeId());
+  public Customer getCustomer(String customerId) {
+    return stripeService.retrieveCustomer(customerId);
   }
 
   public Customer updateCustomer(PaymentCustomer customer) {

@@ -92,10 +92,10 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/applications/*/environments/*/config"),
                     antMatcher(GET, "/users/*/payment-methods"),
                     antMatcher(GET, "/gh-repos/*/*/upload-build-uri"),
-                    antMatcher(GET, "/users/*/payment-details"),
                     antMatcher(PUT, "/users/*/payment-details"),
-                    antMatcher(GET, "/users/*/payment-details/payment-methods"),
-                    antMatcher(PUT, "/users/*/payment-details/payment-methods"),
+                    antMatcher(GET, "/users/*/payment-details/*"),
+                    antMatcher(GET, "/users/*/payment-details/*/payment-methods"),
+                    antMatcher(PUT, "/users/*/payment-details/*/payment-methods"),
                     antMatcher(PUT, "/gh-repos/*/*/env-deploys"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
@@ -127,13 +127,13 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(GET, "/poja-versions")
                     .authenticated()
-                    .requestMatchers(GET, "/users/*/payment-details")
-                    .authenticated()
                     .requestMatchers(PUT, "/users/*/payment-details")
                     .authenticated()
-                    .requestMatchers(GET, "/users/*/payment-details/payment-methods")
+                    .requestMatchers(GET, "/users/*/payment-details/*")
                     .authenticated()
-                    .requestMatchers(PUT, "/users/*/payment-details/payment-methods")
+                    .requestMatchers(GET, "/users/*/payment-details/*/payment-methods")
+                    .authenticated()
+                    .requestMatchers(PUT, "/users/*/payment-details/*/payment-methods")
                     .authenticated()
                     .requestMatchers(selfUserMatcher(PUT, "/users/*/installations"))
                     .authenticated()

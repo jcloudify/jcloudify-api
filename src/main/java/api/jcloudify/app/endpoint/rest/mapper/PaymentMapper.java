@@ -11,6 +11,8 @@ public class PaymentMapper {
         .id(domain.getId())
         .type(domain.getType())
         .brand(card.getBrand())
+        .expMonth(Math.toIntExact(card.getExpMonth()))
+        .expYear(Math.toIntExact(card.getExpYear()))
         .last4(card.getLast4());
   }
 }
