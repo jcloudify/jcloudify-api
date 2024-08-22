@@ -335,7 +335,6 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       git.rm().addFilepattern("poja-custom-java-deps.txt").call();
       git.rm().addFilepattern(BUILD_TEMPLATE_FILENAME_YML).call();
       git.rm().addFilepattern("poja.yml").call();
-      git.rm().addFilepattern(".github/workflows/cd-compute.yml").call();
       git.rm().addFilepattern(".github/workflows/cd-compute-permission.yml").call();
       git.rm().addFilepattern(".github/workflows/cd-event.yml").call();
       git.rm().addFilepattern(".github/workflows/cd-storage-bucket.yml").call();
