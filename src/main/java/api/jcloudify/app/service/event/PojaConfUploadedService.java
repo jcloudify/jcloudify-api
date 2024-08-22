@@ -72,6 +72,8 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static final String CF_STACKS_EVENT_STACK_YML_PATH = "cf-stacks/event-stack.yml";
   private static final String CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH =
       "cf-stacks/storage-bucket-stack.yml";
+  private static final String CF_STACKS_STORAGE_SQLITE_STACK_YML_PATH =
+      "cf-stacks/storage-efs-stack.yml";
   private static final String CD_COMPUTE_BUCKET_KEY = "poja-templates/cd-compute.yml";
   private final ExtendedBucketComponent bucketComponent;
   private final PojaSamApi pojaSamApi;
@@ -174,16 +176,20 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     var computePermissionStackFile = unzippedCode.resolve(CF_STACKS_CD_COMPUTE_PERMISSION_YML_PATH);
     var eventStackFile = unzippedCode.resolve(CF_STACKS_EVENT_STACK_YML_PATH);
     var storageBucketStackFile = unzippedCode.resolve(CF_STACKS_STORAGE_BUCKET_STACK_YML_PATH);
+    var storageSqliteStackFile = unzippedCode.resolve(CF_STACKS_STORAGE_SQLITE_STACK_YML_PATH);
     UUID random = UUID.randomUUID();
     String buildTemplateFilename = "template" + random + ".yml";
     copyFile(templateBuildFile, tempDirPath, buildTemplateFilename);
     String computePermissionStackFilename = "compute-permission" + random + ".yml";
     copyFile(computePermissionStackFile, tempDirPath, computePermissionStackFilename);
     String eventStackFilename = "event-stack" + random + ".yml";
-    copyFile(eventStackFile, tempDirPath, eventStackFilename);
+    var eventStackFileCopyResult = copyFile(eventStackFile, tempDirPath, eventStackFilename);
     String storageBucketStackFilename = "storage-bucket-stack" + random + ".yml";
     var storageBucketStackFileCopyResult =
         copyFile(storageBucketStackFile, tempDirPath, storageBucketStackFilename);
+    String storageSqliteStackFilename = "storage-efs-stack" + random + ".yml";
+    var storageSqliteStackFileCopyResult =
+        copyFile(storageSqliteStackFile, tempDirPath, storageSqliteStackFilename);
     bucketComponent.upload(
         tempDirPath.toFile(), getBucketKey(userId, appId, environmentId, DEPLOYMENT_FILE));
     envDeploymentConfService.save(
@@ -192,7 +198,9 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
             .computePermissionStackFileKey(computePermissionStackFilename)
             .storageBucketStackFileKey(
                 storageBucketStackFileCopyResult ? storageBucketStackFilename : null)
-            .eventStackFileKey(eventStackFilename)
+            .eventStackFileKey(eventStackFileCopyResult ? eventStackFilename : null)
+            .storageDatabaseSqliteStackFileKey(
+                storageSqliteStackFileCopyResult ? storageSqliteStackFilename : null)
             .buildTemplateFile(buildTemplateFilename)
             .creationDatetime(Instant.now())
             .build());
