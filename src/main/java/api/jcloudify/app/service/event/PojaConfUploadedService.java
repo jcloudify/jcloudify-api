@@ -381,7 +381,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private void getAndConfigureCdCompute(Path clonedDirPath) {
     File rawCdComputeFile = bucketComponent.download(CD_COMPUTE_BUCKET_KEY);
     String placeHolder = "<?env>";
-    Path ghWorkflowDir = Path.of(clonedDirPath + "/.github/workflows/");
+    Path ghWorkflowDir = Path.of(clonedDirPath + "/.github/workflows/cd-compute.yml");
     String env = System.getenv("ENV");
     try {
       Path rawFilePath = Paths.get(rawCdComputeFile.toURI());
