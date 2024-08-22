@@ -19,7 +19,7 @@ database:
   prod_db_cluster_timeout: '300'
   with_database: non-poja-managed-postgres
 emailing:
-  ses_source: noreply@nowhere.com
+  ses_source: hei.onitsiky+jcloudify@gmail.com
 gen_api_client:
   aws_account_id: 057045785189
   codeartifact_domain_name: npm-jcloudify-app
