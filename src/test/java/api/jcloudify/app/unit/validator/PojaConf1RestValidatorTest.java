@@ -65,16 +65,16 @@ public class PojaConf1RestValidatorTest {
   @Test
   void validator_validate_PojaConf1_ko() {
     assertThrowsBadRequestException(
-        "app_name is mandatory. "
-            + "with_snapstart is mandatory. "
-            + "package_full_name must include three parts separated by dots. "
-            + "queues_nb is mandatory. "
+        "general.app_name is mandatory. "
+            + "general.with_snapstart is mandatory. "
+            + "general.package_full_name must include three parts separated by dots. "
+            + "general.queues_nb is mandatory. "
             + "integration is mandatory. "
-            + "ses_source must be a valid email address. "
+            + "emailing.ses_source must be a valid email address. "
             + "testing is mandatory. "
             + "compute is mandatory. "
             + "database is mandatory. "
-            + "concurrency is mandatory. ",
+            + "database.concurrency is mandatory. ",
         () ->
             validator.accept(
                 new PojaConf1()
