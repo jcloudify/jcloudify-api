@@ -36,6 +36,7 @@ public class ApplicationDao {
     }
 
     query
+        .orderBy(builder.asc(root.get("name")))
         .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder))
         .where(predicates.toArray(new Predicate[0]));
     return entityManager
