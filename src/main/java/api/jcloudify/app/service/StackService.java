@@ -84,7 +84,7 @@ public class StackService {
     try {
       List<T> stackData = fromStackDataFileToList(bucketComponent, om, stackId, bucketKey);
       int firstIndex = (pageFromOne.getValue() - 1) * boundedPageSize.getValue();
-      int lastIndex = min(firstIndex + boundedPageSize.getValue() - 1, stackData.size() - 1);
+      int lastIndex = min(firstIndex + boundedPageSize.getValue(), stackData.size() - 1);
       var data = stackData.subList(firstIndex, lastIndex);
       return new Page<>(pageFromOne, boundedPageSize, data);
     } catch (IOException e) {
