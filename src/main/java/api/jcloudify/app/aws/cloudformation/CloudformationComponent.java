@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.cloudformation.CloudFormationClient;
 import software.amazon.awssdk.services.cloudformation.model.CloudFormationException;
 import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsRequest;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStacksRequest;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStacksResponse;
 import software.amazon.awssdk.services.cloudformation.model.Parameter;
 import software.amazon.awssdk.services.cloudformation.model.StackEvent;
 import software.amazon.awssdk.services.cloudformation.model.Tag;
@@ -90,6 +94,20 @@ public class CloudformationComponent {
       throw new InternalServerErrorException(
           String.format(
               "An error occurred during stack(%s) update: %s", stackName, e.getMessage()));
+    }
+  }
+
+  public String getStackIdByName(String stackName) {
+    DescribeStacksRequest request = DescribeStacksRequest.builder().stackName(stackName).build();
+
+    try {
+      DescribeStacksResponse response = cloudFormationClient.describeStacks(request);
+      if (!response.hasStacks()) {
+        return null;
+      }
+      return response.stacks().getFirst().stackId();
+    } catch (AwsServiceException | SdkClientException e) {
+      throw new InternalServerErrorException(e);
     }
   }
 
