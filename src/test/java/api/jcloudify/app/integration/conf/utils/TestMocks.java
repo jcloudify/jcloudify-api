@@ -302,13 +302,15 @@ public class TestMocks {
   }
 
   public static List<StackOutput> eventStackOutputs() {
-    StackOutput eventBridgeBusName = new StackOutput()
+    StackOutput eventBridgeBusName =
+        new StackOutput()
             .description(null)
-            .value("/other-poja-test-app/prod/eventbridge/bus-name")
+            .key("/other-poja-test-app/prod/eventbridge/bus-name")
             .value("dummy");
-    StackOutput eventBridgeArnName = new StackOutput()
+    StackOutput eventBridgeArnName =
+        new StackOutput()
             .description(null)
-            .value("/other-poja-test-app/prod/eventbridge/bus-arn")
+            .key("/other-poja-test-app/prod/eventbridge/bus-arn")
             .value("dummy-arn");
     return List.of(eventBridgeBusName, eventBridgeArnName);
   }

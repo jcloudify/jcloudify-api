@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentResponse;
 import api.jcloudify.app.endpoint.rest.model.PagedStackEvents;
+import api.jcloudify.app.endpoint.rest.model.PagedStackOutputs;
 import api.jcloudify.app.endpoint.rest.model.PagedStacksResponse;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.model.BoundedPageSize;
@@ -63,6 +64,26 @@ public class StackController {
         service.getStackEvents(userId, applicationId, environmentId, stackId, page, pageSize);
     var responseData = data.data().stream().toList();
     return new PagedStackEvents()
+        .count(data.count())
+        .hasPrevious(data.hasPrevious())
+        .pageSize(data.queryPageSize().getValue())
+        .pageNumber(data.queryPage().getValue())
+        .data(responseData);
+  }
+
+  @GetMapping(
+      "/users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}/outputs")
+  public PagedStackOutputs getStackOutputs(
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @PathVariable String environmentId,
+      @PathVariable String stackId,
+      @RequestParam(required = false, defaultValue = "1") PageFromOne page,
+      @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
+    var data =
+        service.getStackOutputs(userId, applicationId, environmentId, stackId, page, pageSize);
+    var responseData = data.data().stream().toList();
+    return new PagedStackOutputs()
         .count(data.count())
         .hasPrevious(data.hasPrevious())
         .pageSize(data.queryPageSize().getValue())

@@ -319,13 +319,13 @@ public class StackIT extends MockedThirdParties {
     StackApi api = new StackApi(joeDoeClient);
 
     var actual =
-            api.getStackOutputs(
-                    JOE_DOE_ID,
-                    OTHER_POJA_APPLICATION_ID,
-                    OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
-                    COMPUTE_PERM_STACK_ID,
-                    null,
-                    null);
+        api.getStackOutputs(
+            JOE_DOE_ID,
+            OTHER_POJA_APPLICATION_ID,
+            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+            EVENT_STACK_ID,
+            null,
+            null);
     var actualData = requireNonNull(actual.getData());
 
     assertTrue(actualData.containsAll(eventStackOutputs()));
@@ -337,14 +337,14 @@ public class StackIT extends MockedThirdParties {
     StackApi api = new StackApi(janeDoeClient);
 
     assertThrowsForbiddenException(
-            () ->
-                    api.getStackOutputs(
-                            JOE_DOE_ID,
-                            OTHER_POJA_APPLICATION_ID,
-                            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
-                            COMPUTE_PERM_STACK_ID,
-                            null,
-                            null),
-            "Bad credentials");
+        () ->
+            api.getStackOutputs(
+                JOE_DOE_ID,
+                OTHER_POJA_APPLICATION_ID,
+                OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+                COMPUTE_PERM_STACK_ID,
+                null,
+                null),
+        "Bad credentials");
   }
 }

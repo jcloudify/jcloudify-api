@@ -49,9 +49,9 @@ public class StackMapper {
 
   public StackOutput toRest(Output domain) {
     return new StackOutput()
-            .key(domain.outputKey())
-            .value(domain.outputValue())
-            .description(domain.description());
+        .key(domain.outputKey())
+        .value(domain.outputValue())
+        .description(domain.description());
   }
 
   private StackResourceStatusType toRestStackEventStatusType(ResourceStatus domain) {

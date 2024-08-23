@@ -52,7 +52,9 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     if (!isLast) {
       eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
     } else {
-      String stackOutputsBucketKey = getStackOutputsBucketKey(userId,
+      String stackOutputsBucketKey =
+          getStackOutputsBucketKey(
+              userId,
               stack.getApplicationId(),
               stack.getEnvironmentId(),
               stack.getId(),
@@ -62,7 +64,8 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
   }
 
   private void crupdateOutputs(String stackName, String bucketKey) {
-    List<StackOutput> stackOutputs = cloudformationComponent.getStackOutputs(stackName).stream().map(mapper::toRest).toList();
+    List<StackOutput> stackOutputs =
+        cloudformationComponent.getStackOutputs(stackName).stream().map(mapper::toRest).toList();
     try {
       File stackOutputJsonFile;
       if (bucketComponent.doesExist(bucketKey)) {
@@ -118,7 +121,8 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
         .toList();
   }
 
-  private List<StackOutput> mergeStackOutputList(List<StackOutput> actual, List<StackOutput> newOutputs) {
+  private List<StackOutput> mergeStackOutputList(
+      List<StackOutput> actual, List<StackOutput> newOutputs) {
     Set<StackOutput> mergedSet = new HashSet<>(actual);
     mergedSet.addAll(newOutputs);
     return mergedSet.stream().toList();

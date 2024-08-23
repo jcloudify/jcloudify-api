@@ -46,7 +46,7 @@ public class InternalToRestExceptionHandler {
         AccessDeniedException.class,
         ForbiddenException.class,
         AuthenticationException.class,
-              UsernameNotFoundException.class
+        UsernameNotFoundException.class
       })
   ResponseEntity<ExceptionModel> handleForbidden(java.lang.Exception e) {
     /* rest.model.Exception.Type.FORBIDDEN designates both authentication and authorization errors.
