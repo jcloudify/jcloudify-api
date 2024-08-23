@@ -118,7 +118,7 @@ public class StackService {
     return mapper.toRest(domain, application, environment);
   }
 
-  private Stack save(Stack toSave) {
+  public Stack save(Stack toSave) {
     return repository.save(toSave);
   }
 
@@ -274,5 +274,9 @@ public class StackService {
     tags.put("env", applicationEnv);
     tags.put("user:poja", applicationName);
     return tags;
+  }
+
+  public String getCloudformationStackId(String stackName) {
+    return cloudformationComponent.getStackIdByName(stackName);
   }
 }

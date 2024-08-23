@@ -17,6 +17,15 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Builder
 public class AppEnvComputeDeployRequested extends PojaEvent {
+  @JsonProperty("user_id")
+  private String userId;
+
+  @JsonProperty("app_id")
+  private String appId;
+
+  @JsonProperty("env_id")
+  private String envId;
+
   @JsonProperty("formatted_bucket_key")
   private final String formattedBucketKey;
 

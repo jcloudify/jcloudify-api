@@ -69,6 +69,9 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
         appEnvComputeDeployRequestedEventProducer.accept(
             List.of(
                 AppEnvComputeDeployRequested.builder()
+                    .userId(userId)
+                    .appId(appId)
+                    .envId(envId)
                     .appName(app.getName())
                     .formattedBucketKey(appEnvDeployRequested.getBuiltZipFormattedFilekey())
                     .requestInstant(Instant.now())
