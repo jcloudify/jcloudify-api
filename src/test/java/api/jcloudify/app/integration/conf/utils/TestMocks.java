@@ -28,6 +28,7 @@ import api.jcloudify.app.endpoint.rest.model.PojaConf1;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
+import api.jcloudify.app.endpoint.rest.model.StackOutput;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.endpoint.rest.model.TestingConf1;
 import api.jcloudify.app.endpoint.rest.model.User;
@@ -298,6 +299,18 @@ public class TestMocks {
             .resourceStatus(UPDATE_IN_PROGRESS)
             .statusMessage("User Initiated");
     return List.of(createInProgress, createComplete, updateInProgress);
+  }
+
+  public static List<StackOutput> eventStackOutputs() {
+    StackOutput eventBridgeBusName = new StackOutput()
+            .description(null)
+            .value("/other-poja-test-app/prod/eventbridge/bus-name")
+            .value("dummy");
+    StackOutput eventBridgeArnName = new StackOutput()
+            .description(null)
+            .value("/other-poja-test-app/prod/eventbridge/bus-arn")
+            .value("dummy-arn");
+    return List.of(eventBridgeBusName, eventBridgeArnName);
   }
 
   public static SsmParameter ssmParameter(String id, String name, String value) {

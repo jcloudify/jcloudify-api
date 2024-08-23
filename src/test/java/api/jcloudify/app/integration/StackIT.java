@@ -21,6 +21,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPL
 import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.eventStackOutputs;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.permStackEvents;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.stackDeploymentInitiated;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsForbiddenException;
@@ -310,5 +311,40 @@ public class StackIT extends MockedThirdParties {
                 null,
                 null),
         "Bad credentials");
+  }
+
+  @Test
+  void get_stack_outputs_ok() throws ApiException {
+    ApiClient joeDoeClient = anApiClient(JOE_DOE_TOKEN);
+    StackApi api = new StackApi(joeDoeClient);
+
+    var actual =
+            api.getStackOutputs(
+                    JOE_DOE_ID,
+                    OTHER_POJA_APPLICATION_ID,
+                    OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+                    COMPUTE_PERM_STACK_ID,
+                    null,
+                    null);
+    var actualData = requireNonNull(actual.getData());
+
+    assertTrue(actualData.containsAll(eventStackOutputs()));
+  }
+
+  @Test
+  void get_other_stack_outputs_ko() {
+    ApiClient janeDoeClient = anApiClient(JANE_DOE_TOKEN);
+    StackApi api = new StackApi(janeDoeClient);
+
+    assertThrowsForbiddenException(
+            () ->
+                    api.getStackOutputs(
+                            JOE_DOE_ID,
+                            OTHER_POJA_APPLICATION_ID,
+                            OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
+                            COMPUTE_PERM_STACK_ID,
+                            null,
+                            null),
+            "Bad credentials");
   }
 }
