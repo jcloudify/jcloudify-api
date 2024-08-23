@@ -1,0 +1,1 @@
+alter type stack_type add value 'COMPUTE';
