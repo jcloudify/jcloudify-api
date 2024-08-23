@@ -1,3 +1,20 @@
+# [3.16.0](https://github.com/jcloudify/jcloudify-api/compare/v3.15.1...v3.16.0) (2024-08-23)
+
+
+### Bug Fixes
+
+* destination filename for cd-compute ([d7bd301](https://github.com/jcloudify/jcloudify-api/commit/d7bd301d211b670aabaad6de4caddf40c4fa5854))
+* do not remove reconfigured cd-compute from code to be pushed ([4bccc55](https://github.com/jcloudify/jcloudify-api/commit/4bccc558225bb4897fb38dd368860755d9c9ddee))
+* do not save event stack file if there's not and save sqlite stack file to s3 ([a16123c](https://github.com/jcloudify/jcloudify-api/commit/a16123c0594d34809b22105bfa063caf99fb50f8))
+* environment variable is case sensitive ([5ad9467](https://github.com/jcloudify/jcloudify-api/commit/5ad946700b86b875b17cc7cb9be3791c918b2015))
+
+
+### Features
+
+* save stack events for compute stack ([471546b](https://github.com/jcloudify/jcloudify-api/commit/471546b9a308e508ca2f19cf21baf3dbd1480d4f))
+
+
+
 ## [3.15.1](https://github.com/jcloudify/jcloudify-api/compare/v3.15.0...v3.15.1) (2024-08-21)
 
 
@@ -100,22 +117,6 @@
 * crupdate ssm parameters ([de4ff05](https://github.com/jcloudify/jcloudify-api/commit/de4ff0529dddac330b691488c64c23678c13e947))
 * get ssm parameters ([514a589](https://github.com/jcloudify/jcloudify-api/commit/514a589b2b9143356dd6e8d95277906c7fb7e024))
 * manage payment method ([3ddba4b](https://github.com/jcloudify/jcloudify-api/commit/3ddba4b617217d6966016c10116b8ee50d6ede64))
-
-
-
-# [3.8.0](https://github.com/jcloudify/jcloudify-api/compare/v3.7.0...v3.8.0) (2024-07-29)
-
-
-### Bug Fixes
-
-* only one prod and preprod env by application can be created ([925224e](https://github.com/jcloudify/jcloudify-api/commit/925224e49584c08842f55d6b62965e86df7aec5f))
-
-
-### Features
-
-* app installations ([79dafa8](https://github.com/jcloudify/jcloudify-api/commit/79dafa8e553f8db6c12862779749316f4600e9d5))
-* get envionment by id ([e0d69ba](https://github.com/jcloudify/jcloudify-api/commit/e0d69bad398ebe788b8541434e24afd0f206ae81))
-* poja cli integration with git repo push ([c22b8ba](https://github.com/jcloudify/jcloudify-api/commit/c22b8ba58d1534698d88e9e8ebbc274341e8a729))
 
 
 
