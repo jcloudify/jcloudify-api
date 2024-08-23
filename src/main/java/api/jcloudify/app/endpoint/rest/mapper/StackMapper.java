@@ -4,6 +4,7 @@ import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UNKN
 
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
+import api.jcloudify.app.endpoint.rest.model.StackOutput;
 import api.jcloudify.app.endpoint.rest.model.StackResourceStatusType;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.repository.model.Application;
@@ -11,6 +12,7 @@ import api.jcloudify.app.repository.model.Environment;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.services.cloudformation.model.Output;
 import software.amazon.awssdk.services.cloudformation.model.ResourceStatus;
 
 @Component
@@ -43,6 +45,13 @@ public class StackMapper {
         .resourceStatus(toRestStackEventStatusType(domain.resourceStatus()))
         .timestamp(domain.timestamp())
         .statusMessage(domain.resourceStatusReason());
+  }
+
+  public StackOutput toRest(Output domain) {
+    return new StackOutput()
+            .key(domain.outputKey())
+            .value(domain.outputValue())
+            .description(domain.description());
   }
 
   private StackResourceStatusType toRestStackEventStatusType(ResourceStatus domain) {

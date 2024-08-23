@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class StackService {
   public static final String STACK_EVENT_FILENAME = "log.json";
+  public static final String STACK_OUTPUT_FILENAME = "output.json";
   private final CloudformationTemplateConf cloudformationTemplateConf;
   private final CloudformationComponent cloudformationComponent;
   private final EnvironmentService environmentService;
@@ -196,6 +197,12 @@ public class StackService {
       String userId, String appId, String envId, String stackId, String filename) {
     return String.format(
         "users/%s/apps/%s/envs/%s/stacks/%s/events/%s", userId, appId, envId, stackId, filename);
+  }
+
+  public static String getStackOutputsBucketKey(
+          String userId, String appId, String envId, String stackId, String filename) {
+    return String.format(
+            "users/%s/apps/%s/envs/%s/stacks/%s/outputs/%s", userId, appId, envId, stackId, filename);
   }
 
   private static List<StackEvent> fromStackEventFileToList(

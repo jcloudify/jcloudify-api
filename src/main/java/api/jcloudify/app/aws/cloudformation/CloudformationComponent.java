@@ -2,10 +2,13 @@ package api.jcloudify.app.aws.cloudformation;
 
 import static software.amazon.awssdk.services.cloudformation.model.Capability.CAPABILITY_NAMED_IAM;
 
+import api.jcloudify.app.endpoint.rest.model.StackOutput;
 import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import java.util.List;
 import java.util.Map;
+
+import api.jcloudify.app.model.exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -16,7 +19,9 @@ import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStacksRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStacksResponse;
+import software.amazon.awssdk.services.cloudformation.model.Output;
 import software.amazon.awssdk.services.cloudformation.model.Parameter;
+import software.amazon.awssdk.services.cloudformation.model.Stack;
 import software.amazon.awssdk.services.cloudformation.model.StackEvent;
 import software.amazon.awssdk.services.cloudformation.model.Tag;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
@@ -97,18 +102,22 @@ public class CloudformationComponent {
     }
   }
 
-  public String getStackIdByName(String stackName) {
+  private Stack getStackByName(String stackName) {
     DescribeStacksRequest request = DescribeStacksRequest.builder().stackName(stackName).build();
 
     try {
       DescribeStacksResponse response = cloudFormationClient.describeStacks(request);
       if (!response.hasStacks()) {
-        return null;
+        throw new NotFoundException("Stack(" + stackName + ") not found");
       }
-      return response.stacks().getFirst().stackId();
+      return response.stacks().getFirst();
     } catch (AwsServiceException | SdkClientException e) {
       throw new InternalServerErrorException(e);
     }
+  }
+
+  public String getStackIdByName(String stackName) {
+    return this.getStackByName(stackName).stackId();
   }
 
   public List<StackEvent> getStackEvents(String stackName) {
@@ -121,5 +130,9 @@ public class CloudformationComponent {
           String.format(
               "An error occurred when retrieving stack(%s) events: %s", stackName, e.getMessage()));
     }
+  }
+
+  public List<Output> getStackOutputs(String stackName) {
+    return this.getStackByName(stackName).outputs();
   }
 }

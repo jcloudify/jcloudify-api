@@ -1,7 +1,9 @@
 package api.jcloudify.app.service.event;
 
 import static api.jcloudify.app.service.StackService.STACK_EVENT_FILENAME;
+import static api.jcloudify.app.service.StackService.STACK_OUTPUT_FILENAME;
 import static api.jcloudify.app.service.StackService.getStackEventsBucketKey;
+import static api.jcloudify.app.service.StackService.getStackOutputsBucketKey;
 import static java.io.File.createTempFile;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -9,6 +11,7 @@ import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
+import api.jcloudify.app.endpoint.rest.model.StackOutput;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.repository.model.Stack;
@@ -38,16 +41,41 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
   public void accept(StackCrupdated stackCrupdated) {
     Stack stack = stackCrupdated.getStack();
     String userId = stackCrupdated.getUserId();
-    String bucketKey =
+    String stackEventsBucketKey =
         getStackEventsBucketKey(
             userId,
             stack.getApplicationId(),
             stack.getEnvironmentId(),
             stack.getId(),
             STACK_EVENT_FILENAME);
-    boolean isLast = crupdateStackEvent(stack.getName(), bucketKey);
+    boolean isLast = crupdateStackEvent(stack.getName(), stackEventsBucketKey);
     if (!isLast) {
       eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
+    } else {
+      String stackOutputsBucketKey = getStackOutputsBucketKey(userId,
+              stack.getApplicationId(),
+              stack.getEnvironmentId(),
+              stack.getId(),
+              STACK_OUTPUT_FILENAME);
+      crupdateOutputs(stack.getName(), stackOutputsBucketKey);
+    }
+  }
+
+  private void crupdateOutputs(String stackName, String bucketKey) {
+    List<StackOutput> stackOutputs = cloudformationComponent.getStackOutputs(stackName).stream().map(mapper::toRest).toList();
+    try {
+      File stackOutputJsonFile;
+      if (bucketComponent.doesExist(bucketKey)) {
+        stackOutputJsonFile = bucketComponent.download(bucketKey);
+        List<StackOutput> actual = om.readValue(stackOutputJsonFile, new TypeReference<>() {});
+        stackOutputs = mergeStackOutputList(actual, stackOutputs);
+      } else {
+        stackOutputJsonFile = createTempFile("output", ".json");
+      }
+      om.writeValue(stackOutputJsonFile, stackOutputs);
+      bucketComponent.upload(stackOutputJsonFile, bucketKey);
+    } catch (IOException e) {
+      throw new InternalServerErrorException(e);
     }
   }
 
@@ -88,5 +116,11 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
               return i2.compareTo(i1);
             })
         .toList();
+  }
+
+  private List<StackOutput> mergeStackOutputList(List<StackOutput> actual, List<StackOutput> newOutputs) {
+    Set<StackOutput> mergedSet = new HashSet<>(actual);
+    mergedSet.addAll(newOutputs);
+    return mergedSet.stream().toList();
   }
 }
