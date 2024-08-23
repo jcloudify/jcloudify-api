@@ -672,6 +672,40 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}/outputs:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/stackId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      operationId: getStackOutputs
+      summary: Get outputs of a the identified stack
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of stack outputs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedStackOutputs'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/variables:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -1637,6 +1671,15 @@ components:
         - ROLLBACK_COMPLETE
         - ROLLBACK_FAILED
         - UNKNOWN_TO_SDK_VERSION
+    StackOutput:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        description:
+          type: string
 
     PojaVersion:
       type: object
@@ -1927,6 +1970,15 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/StackEvent'
+    PagedStackOutputs:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/StackOutput'
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
