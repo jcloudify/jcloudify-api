@@ -83,10 +83,13 @@ public class StackService {
       String stackId, String bucketKey, PageFromOne pageFromOne, BoundedPageSize boundedPageSize) {
     try {
       List<T> stackData = fromStackDataFileToList(bucketComponent, om, stackId, bucketKey);
-      int firstIndex = (pageFromOne.getValue() - 1) * boundedPageSize.getValue();
-      int lastIndex = min(firstIndex + boundedPageSize.getValue(), stackData.size() - 1);
-      var data = stackData.subList(firstIndex, lastIndex);
-      return new Page<>(pageFromOne, boundedPageSize, data);
+      if(!stackData.isEmpty()) {
+        int firstIndex = (pageFromOne.getValue() - 1) * boundedPageSize.getValue();
+        int lastIndex = min(firstIndex + boundedPageSize.getValue(), stackData.size() - 1);
+        var data = stackData.subList(firstIndex, lastIndex);
+        return new Page<>(pageFromOne, boundedPageSize, data);
+      }
+      return new Page<>(pageFromOne, boundedPageSize, stackData);
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
     }
@@ -230,7 +233,7 @@ public class StackService {
       File stackDataFile = bucketComponent.download(bucketKey);
       return om.readValue(stackDataFile, new TypeReference<>() {});
     }
-    throw new NotFoundException("No data found for stack id=" + stackId); // Unreachable statement
+    return List.of();
   }
 
   private static Map<String, String> getParametersFrom(String environmentType) {
