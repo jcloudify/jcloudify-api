@@ -2,13 +2,11 @@ package api.jcloudify.app.aws.cloudformation;
 
 import static software.amazon.awssdk.services.cloudformation.model.Capability.CAPABILITY_NAMED_IAM;
 
-import api.jcloudify.app.endpoint.rest.model.StackOutput;
 import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
+import api.jcloudify.app.model.exception.NotFoundException;
 import java.util.List;
 import java.util.Map;
-
-import api.jcloudify.app.model.exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;

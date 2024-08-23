@@ -1,0 +1,16 @@
+[
+  {
+    "key": "/other-poja-test-app/prod/eventbridge/bus-name",
+    "value": "dummy",
+    "description": null
+  },
+  {
+    "key": "/other-poja-test-app/prod/eventbridge/bus-arn",
+    "value": "dummy-arn",
+    "description": null
+  },{
+  "key": "/other-poja-test-app/prod/2/sqs/dead-letter-queue-url",
+  "value": "dummy",
+  "description": "dummy description"
+  }
+]

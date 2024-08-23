@@ -9,6 +9,7 @@ import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
+import api.jcloudify.app.endpoint.rest.model.StackOutput;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.BoundedPageSize;
@@ -62,12 +63,29 @@ public class StackService {
     String stackEventsBucketKey =
         getStackEventsBucketKey(
             userId, applicationId, environmentId, stackId, STACK_EVENT_FILENAME);
+    return getPagedStackData(stackId, stackEventsBucketKey, pageFromOne, boundedPageSize);
+  }
+
+  public Page<StackOutput> getStackOutputs(
+      String userId,
+      String applicationId,
+      String environmentId,
+      String stackId,
+      PageFromOne pageFromOne,
+      BoundedPageSize boundedPageSize) {
+    String stackOutputsBucketKey =
+        getStackOutputsBucketKey(
+            userId, applicationId, environmentId, stackId, STACK_OUTPUT_FILENAME);
+    return getPagedStackData(stackId, stackOutputsBucketKey, pageFromOne, boundedPageSize);
+  }
+
+  private <T> Page<T> getPagedStackData(
+      String stackId, String bucketKey, PageFromOne pageFromOne, BoundedPageSize boundedPageSize) {
     try {
-      List<StackEvent> stackEvents =
-          fromStackEventFileToList(bucketComponent, om, stackId, stackEventsBucketKey);
+      List<T> stackData = fromStackDataFileToList(bucketComponent, om, stackId, bucketKey);
       int firstIndex = (pageFromOne.getValue() - 1) * boundedPageSize.getValue();
-      int lastIndex = min(firstIndex + boundedPageSize.getValue() - 1, stackEvents.size() - 1);
-      var data = stackEvents.subList(firstIndex, lastIndex);
+      int lastIndex = min(firstIndex + boundedPageSize.getValue() - 1, stackData.size() - 1);
+      var data = stackData.subList(firstIndex, lastIndex);
       return new Page<>(pageFromOne, boundedPageSize, data);
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
@@ -200,22 +218,19 @@ public class StackService {
   }
 
   public static String getStackOutputsBucketKey(
-          String userId, String appId, String envId, String stackId, String filename) {
+      String userId, String appId, String envId, String stackId, String filename) {
     return String.format(
-            "users/%s/apps/%s/envs/%s/stacks/%s/outputs/%s", userId, appId, envId, stackId, filename);
+        "users/%s/apps/%s/envs/%s/stacks/%s/outputs/%s", userId, appId, envId, stackId, filename);
   }
 
-  private static List<StackEvent> fromStackEventFileToList(
-      ExtendedBucketComponent bucketComponent,
-      ObjectMapper om,
-      String stackId,
-      String stackEventsBucketKey)
+  private static <T> List<T> fromStackDataFileToList(
+      ExtendedBucketComponent bucketComponent, ObjectMapper om, String stackId, String bucketKey)
       throws IOException {
-    if (bucketComponent.doesExist(stackEventsBucketKey)) {
-      File stackEventsFile = bucketComponent.download(stackEventsBucketKey);
-      return om.readValue(stackEventsFile, new TypeReference<>() {});
+    if (bucketComponent.doesExist(bucketKey)) {
+      File stackDataFile = bucketComponent.download(bucketKey);
+      return om.readValue(stackDataFile, new TypeReference<>() {});
     }
-    throw new NotFoundException("No events found for stack id=" + stackId); // Unreachable statement
+    throw new NotFoundException("No data found for stack id=" + stackId); // Unreachable statement
   }
 
   private static Map<String, String> getParametersFrom(String environmentType) {
