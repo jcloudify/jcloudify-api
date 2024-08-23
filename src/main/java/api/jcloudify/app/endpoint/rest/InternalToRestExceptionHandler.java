@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -44,7 +45,8 @@ public class InternalToRestExceptionHandler {
       value = {
         AccessDeniedException.class,
         ForbiddenException.class,
-        AuthenticationException.class
+        AuthenticationException.class,
+              UsernameNotFoundException.class
       })
   ResponseEntity<ExceptionModel> handleForbidden(java.lang.Exception e) {
     /* rest.model.Exception.Type.FORBIDDEN designates both authentication and authorization errors.
