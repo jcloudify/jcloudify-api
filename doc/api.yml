@@ -548,6 +548,7 @@ paths:
       tags:
         - Stack
       summary: Update if stack already exists, create new one otherwise
+      description: Only COMPUTE_PERMISSION, EVENT, STORAGE_BUCKET, STORAGE_DATABASE_SQLITE stack type crupdate can be manually triggered
       operationId: initiateStackDeployment
       requestBody:
         required: true
@@ -1591,6 +1592,7 @@ components:
         - COMPUTE_PERMISSION
         - STORAGE_BUCKET
         - STORAGE_DATABASE_SQLITE
+        - COMPUTE
     StackEvent:
       type: object
       properties:
