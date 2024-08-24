@@ -2,6 +2,7 @@ package api.jcloudify.app.service.event;
 
 import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.PENDING;
 import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.READY;
+import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE;
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE_PERMISSION;
 import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT;
 import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_BUCKET;
@@ -56,9 +57,11 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
       case PENDING -> {
         boolean readyToDeployCompute = checkStacksDeploymentState(userId, appId, envId);
         if (readyToDeployCompute) {
+          log.info("Compute stack ready to be deployed");
           appEnvDeployRequestedEventProducer.accept(
               List.of(appEnvDeployRequested.toBuilder().independentStacksStates(READY).build()));
         } else {
+          log.info("Waiting for independent stacks to be deployed");
           appEnvDeployRequestedEventProducer.accept(
               List.of(appEnvDeployRequested.toBuilder().independentStacksStates(PENDING).build()));
         }
@@ -66,6 +69,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
       case READY -> {
         var app = appService.getById(appId);
         BuiltEnvInfo builtEnvInfo = appEnvDeployRequested.getBuiltEnvInfo();
+        log.info("Trigger compute stack deployment");
         appEnvComputeDeployRequestedEventProducer.accept(
             List.of(
                 AppEnvComputeDeployRequested.builder()
@@ -103,6 +107,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
             .findAllBy(userId, appId, envId, new PageFromOne(1), new BoundedPageSize(5))
             .data()
             .stream()
+            .filter(stack -> !Objects.equals(stack.getStackType(), COMPUTE))
             .toList();
     List<Boolean> areStacksReady =
         environmentStacks.stream()
