@@ -23,7 +23,6 @@ import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.repository.model.Stack;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +62,8 @@ public class StackService {
     String stackEventsBucketKey =
         getStackEventsBucketKey(
             userId, applicationId, environmentId, stackId, STACK_EVENT_FILENAME);
-    return getPagedStackData(stackId, stackEventsBucketKey, pageFromOne, boundedPageSize, StackEvent.class);
+    return getPagedStackData(
+        stackId, stackEventsBucketKey, pageFromOne, boundedPageSize, StackEvent.class);
   }
 
   public Page<StackOutput> getStackOutputs(
@@ -76,11 +76,16 @@ public class StackService {
     String stackOutputsBucketKey =
         getStackOutputsBucketKey(
             userId, applicationId, environmentId, stackId, STACK_OUTPUT_FILENAME);
-    return getPagedStackData(stackId, stackOutputsBucketKey, pageFromOne, boundedPageSize, StackOutput.class);
+    return getPagedStackData(
+        stackId, stackOutputsBucketKey, pageFromOne, boundedPageSize, StackOutput.class);
   }
 
   private <T> Page<T> getPagedStackData(
-      String stackId, String bucketKey, PageFromOne pageFromOne, BoundedPageSize boundedPageSize, Class<T> clazz) {
+      String stackId,
+      String bucketKey,
+      PageFromOne pageFromOne,
+      BoundedPageSize boundedPageSize,
+      Class<T> clazz) {
     try {
       List<T> stackData = fromStackDataFileToList(bucketComponent, om, stackId, bucketKey, clazz);
       if (!stackData.isEmpty()) {
@@ -227,11 +232,16 @@ public class StackService {
   }
 
   private static <T> List<T> fromStackDataFileToList(
-      ExtendedBucketComponent bucketComponent, ObjectMapper om, String stackId, String bucketKey, Class<T> clazz)
+      ExtendedBucketComponent bucketComponent,
+      ObjectMapper om,
+      String stackId,
+      String bucketKey,
+      Class<T> clazz)
       throws IOException {
     if (bucketComponent.doesExist(bucketKey)) {
       File stackDataFile = bucketComponent.download(bucketKey);
-      return om.readValue(stackDataFile, om.getTypeFactory().constructCollectionType(List.class, clazz));
+      return om.readValue(
+          stackDataFile, om.getTypeFactory().constructCollectionType(List.class, clazz));
     }
     return List.of();
   }
