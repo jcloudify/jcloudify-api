@@ -229,6 +229,48 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     return false;
   }
 
+  /**
+   * ensures repository branches already exist before the real clone and the real code changes.
+   * should be do-able in one go but it _SEEMS_ like git checkout doesn't handle it properly
+   */
+  private void prepareRepository(
+      UsernamePasswordCredentialsProvider ghCredentialsProvider, Application app, Environment env) {
+    var cloneDirPath = createTempDir("pre-clone");
+    String branchName = formatShortBranchName(env);
+    try (Git git =
+        Git.cloneRepository()
+            .setCredentialsProvider(ghCredentialsProvider)
+            .setDirectory(cloneDirPath.toFile())
+            .setURI(app.getGithubRepositoryUrl())
+            .setDepth(1)
+            .setNoCheckout(true)
+            .call()) {
+      createAndCheckoutBranchIfNotExists(git, branchName);
+      git.push().call();
+    } catch (InvalidRemoteException e) {
+      throw new RuntimeException(e);
+    } catch (TransportException e) {
+      throw new RuntimeException(e);
+    } catch (GitAPIException e) {
+      throw new RuntimeException(e);
+    }
+    deletePath(cloneDirPath);
+  }
+
+  private static String formatShortBranchName(Environment env) {
+    return env.getEnvironmentType().name().toLowerCase(ROOT);
+  }
+
+  @SneakyThrows
+  private static void deletePath(Path cloneDirPath) {
+    try {
+      Files.delete(cloneDirPath);
+      log.info("pre-clone deleted successfully");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   private void pushChangesFromCodeToAppRepository(
       UsernamePasswordCredentialsProvider ghCredentialsProvider,
       PojaVersion pojaVersion,
@@ -236,7 +278,8 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       Environment env,
       File toUnzip,
       Path cloneDirPath) {
-    String branchName = env.getEnvironmentType().name().toLowerCase(ROOT);
+    prepareRepository(ghCredentialsProvider, app, env);
+    String branchName = formatShortBranchName(env);
     try (Git git =
         Git.cloneRepository()
             .setCredentialsProvider(ghCredentialsProvider)
@@ -246,7 +289,6 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
             .setDepth(1)
             .call()) {
       log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
-      createAndCheckoutBranchIfNotExists(git, branchName);
       unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
       getAndConfigureCdCompute(cloneDirPath);
