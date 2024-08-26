@@ -236,16 +236,16 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       Environment env,
       File toUnzip,
       Path cloneDirPath) {
+    String branchName = env.getEnvironmentType().name().toLowerCase(ROOT);
     try (Git git =
         Git.cloneRepository()
             .setCredentialsProvider(ghCredentialsProvider)
             .setDirectory(cloneDirPath.toFile())
             .setURI(app.getGithubRepositoryUrl())
-            .setNoCheckout(true)
-            .setDepth(2)
+            .setBranch(branchName)
+            .setDepth(1)
             .call()) {
       log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
-      String branchName = env.getEnvironmentType().name().toLowerCase(ROOT);
       createAndCheckoutBranchIfNotExists(git, branchName);
       unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
