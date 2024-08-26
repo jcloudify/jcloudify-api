@@ -112,7 +112,7 @@ public class EnvironmentBuildService {
             .id(builtEnvInfo.getId())
             .appId(appId)
             .userId(userId)
-            .built_zip_file_key(builtPackageBucketKey)
+            .builtZipFileKey(builtPackageBucketKey)
             .creationTimestamp(now())
             .build());
     eventProducer.accept(

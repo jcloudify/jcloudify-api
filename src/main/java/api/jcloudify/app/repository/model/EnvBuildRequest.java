@@ -28,5 +28,5 @@ public class EnvBuildRequest {
   private String envId;
   private String userId;
   @CreationTimestamp private Instant creationTimestamp;
-  private String built_zip_file_key;
+  private String builtZipFileKey;
 }
