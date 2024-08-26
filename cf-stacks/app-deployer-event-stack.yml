@@ -101,7 +101,8 @@ Resources:
       EventBusName: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/eventbridge/bus-name}}'
       EventPattern:
         source:
-          - app.jcloudify.app.deployer.event
+          - app.jcloudify.app.deployer.event.deploy
+          - app.jcloudify.app.deployer.event.check
       Targets:
         - Arn: !GetAtt MailboxQueue.Arn
           Id: !Join ['', [!Ref Env, -jcloudify-app-deployer, -mailbox]]
