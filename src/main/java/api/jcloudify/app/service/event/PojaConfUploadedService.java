@@ -256,7 +256,6 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     } catch (GitAPIException e) {
       throw new RuntimeException(e);
     }
-    deletePath(cloneDirPath);
     log.info("END [branch-check] pre-cloning {}", githubRepositoryUrl);
   }
 
@@ -308,16 +307,6 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     return env.getEnvironmentType().name().toLowerCase(ROOT);
   }
 
-  @SneakyThrows
-  private static void deletePath(Path cloneDirPath) {
-    try {
-      Files.delete(cloneDirPath);
-      log.info("pre-clone deleted successfully");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   private void pushChangesFromCodeToAppRepository(
       UsernamePasswordCredentialsProvider ghCredentialsProvider,
       PojaVersion pojaVersion,
@@ -355,7 +344,6 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       log.info("Git Api Exception");
       throw new RuntimeException(e);
     }
-    deletePath(cloneDirPath);
   }
 
   @SneakyThrows
