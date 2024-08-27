@@ -278,7 +278,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     String formattedBranchName = getFormattedBranchName(branchName);
     try {
       return git.branchList().call().stream()
-          .noneMatch(a -> a.getName().equals(formattedBranchName));
+          .anyMatch(a -> a.getName().equals(formattedBranchName));
     } catch (GitAPIException e) {
       throw new RuntimeException(e);
     }
