@@ -7,7 +7,6 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.util.Locale.ROOT;
 import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM;
-import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.TRACK;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.OK;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.UP_TO_DATE;
 
@@ -236,17 +235,20 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private void prepareRepository(
       UsernamePasswordCredentialsProvider ghCredentialsProvider, Application app, Environment env) {
     var cloneDirPath = createTempDir("pre-clone");
+    String githubRepositoryUrl = app.getGithubRepositoryUrl();
+    log.info("BEGIN [branch-check] pre-cloning {}", githubRepositoryUrl);
     String branchName = formatShortBranchName(env);
     try (Git git =
         Git.cloneRepository()
             .setCredentialsProvider(ghCredentialsProvider)
             .setDirectory(cloneDirPath.toFile())
-            .setURI(app.getGithubRepositoryUrl())
+            .setURI(githubRepositoryUrl)
             .setDepth(1)
             .setNoCheckout(true)
             .call()) {
-      createAndCheckoutBranchIfNotExists(git, branchName);
-      git.push().call();
+      if (doesBranchExist(git, branchName)) return;
+      createBranch(git, branchName);
+      pushAndCheckResult(ghCredentialsProvider, branchName, git);
     } catch (InvalidRemoteException e) {
       throw new RuntimeException(e);
     } catch (TransportException e) {
@@ -255,6 +257,51 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       throw new RuntimeException(e);
     }
     deletePath(cloneDirPath);
+    log.info("END [branch-check] pre-cloning {}", githubRepositoryUrl);
+  }
+
+  private static void createBranch(Git git, String branchName) {
+    try {
+      git.checkout().setCreateBranch(true).setName(branchName).setUpstreamMode(SET_UPSTREAM).call();
+      log.info("successfully checked out branch {}", branchName);
+    } catch (RefNotFoundException | RefAlreadyExistsException | InvalidRefNameException ignored) {
+      // unreachable because we check for branch existence in remote first then create it with name
+      // "PREPROD" or "PROD" which are very valid.
+    } catch (CheckoutConflictException ignored) {
+      // unreachable because this function creates a branch from an existing branch via checkout
+      // command, hence no conflict is possible
+    } catch (GitAPIException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static boolean doesBranchExist(Git git, String branchName) {
+    String formattedBranchName = getFormattedBranchName(branchName);
+    try {
+      return git.branchList().call().stream()
+          .noneMatch(a -> a.getName().equals(formattedBranchName));
+    } catch (GitAPIException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void pushAndCheckResult(
+      UsernamePasswordCredentialsProvider ghCredentialsProvider, String branchName, Git git)
+      throws GitAPIException {
+    var results =
+        git.push()
+            .setRefSpecs(new RefSpec(getFormattedBranchName(branchName)))
+            .setCredentialsProvider(ghCredentialsProvider)
+            .call();
+    for (PushResult r : results) {
+      for (RemoteRefUpdate update : r.getRemoteUpdates()) {
+        log.info("Having results: " + update);
+        if (update.getStatus() != OK && update.getStatus() != UP_TO_DATE) {
+          String errorMessage = "Push failed: " + update.getStatus();
+          throw new RuntimeException(errorMessage);
+        }
+      }
+    }
   }
 
   private static String formatShortBranchName(Environment env) {
@@ -297,20 +344,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
           git,
           "jcloudify: generate code using v." + pojaVersion.toHumanReadableValue(),
           ghCredentialsProvider);
-      var results =
-          git.push()
-              .setRefSpecs(new RefSpec(getFormattedBranchName(branchName)))
-              .setCredentialsProvider(ghCredentialsProvider)
-              .call();
-      for (PushResult r : results) {
-        for (RemoteRefUpdate update : r.getRemoteUpdates()) {
-          log.info("Having results: " + update);
-          if (update.getStatus() != OK && update.getStatus() != UP_TO_DATE) {
-            String errorMessage = "Push failed: " + update.getStatus();
-            throw new RuntimeException(errorMessage);
-          }
-        }
-      }
+      pushAndCheckResult(ghCredentialsProvider, branchName, git);
     } catch (InvalidRemoteException e) {
       log.info("Invalid Remote");
       throw new RuntimeException(e);
@@ -321,6 +355,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       log.info("Git Api Exception");
       throw new RuntimeException(e);
     }
+    deletePath(cloneDirPath);
   }
 
   @SneakyThrows
@@ -332,31 +367,8 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     unzipper.apply(downloaded, destination);
   }
 
-  private static void createAndCheckoutBranchIfNotExists(Git git, String branchName) {
-    String formattedBranchName = getFormattedBranchName(branchName);
-    try {
-      if (git.branchList().call().stream()
-          .noneMatch(a -> a.getName().equals(formattedBranchName))) {
-        git.branchCreate().setName(branchName).call();
-        git.checkout().setName(branchName).setUpstreamMode(SET_UPSTREAM).call();
-      } else {
-        git.checkout().setUpstreamMode(TRACK).setName(branchName).call();
-        git.pull().call();
-      }
-      log.info("successfully checked out branch {}", branchName);
-    } catch (RefNotFoundException | RefAlreadyExistsException | InvalidRefNameException e) {
-      // unreachable
-      throw new RuntimeException(e);
-    } catch (CheckoutConflictException e) {
-      throw new RuntimeException(e);
-    } catch (GitAPIException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   private static String getFormattedBranchName(String branchName) {
-    String formattedBranchName = "refs/heads/" + branchName;
-    return formattedBranchName;
+    return "refs/heads/" + branchName;
   }
 
   /**
