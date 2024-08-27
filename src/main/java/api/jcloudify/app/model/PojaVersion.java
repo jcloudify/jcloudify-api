@@ -12,7 +12,7 @@ public enum PojaVersion implements Comparable<PojaVersion> {
   POJA_1(3, 6, 2, create("https://g7ztepcqfgwmiumrhbhzl674o40iqdip.lambda-url.eu-west-3.on.aws")) {
     @Override
     public String getCliVersion() {
-      return "17.0.0";
+      return "17.1.2";
     }
   };
   private final int major;
