@@ -67,6 +67,6 @@ public class AppEnvComputeDeployRequested extends PojaEvent {
    */
   @Override
   public String getEventSource() {
-    return "app.jcloudify.app.deployer.event";
+    return "app.jcloudify.app.deployer.event.deploy";
   }
 }
