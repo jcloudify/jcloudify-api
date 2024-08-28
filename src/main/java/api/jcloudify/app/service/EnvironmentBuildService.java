@@ -1,6 +1,5 @@
 package api.jcloudify.app.service;
 
-import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.NOT_READY;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getTempBucketKey;
 import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
@@ -12,7 +11,7 @@ import static java.time.Instant.now;
 import static java.util.UUID.randomUUID;
 
 import api.jcloudify.app.endpoint.event.EventProducer;
-import api.jcloudify.app.endpoint.event.model.AppEnvDeployRequested;
+import api.jcloudify.app.endpoint.event.model.CheckTemplateIntegrityTriggered;
 import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.rest.model.BuildUploadRequestResponse;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
@@ -42,13 +41,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @AllArgsConstructor
 public class EnvironmentBuildService {
-  public static final String TEMPLATE_YML_PATH_FROM_BUILD_FOLDER_ROOT = ".aws-build/template.yml";
   private static final String ZIP_FILE_EXTENSION = ".zip";
   private final ExtendedBucketComponent bucketComponent;
   private final AuthenticatedResourceProvider authenticatedResourceProvider;
   private final EnvironmentService environmentService;
-  private final FileWriter fileWriter;
-  private final FileHasher fileHasher;
   private final EventProducer<PojaEvent> eventProducer;
   private final EnvBuildRequestService envBuildRequestService;
   private final BuiltEnvInfoValidator builtEnvInfoValidator;
@@ -97,8 +93,6 @@ public class EnvironmentBuildService {
             environment.getId(),
             DEPLOYMENT_FILE,
             latestDeploymentConf.getBuildTemplateFile());
-    var originalTemplateFileHash = bucketComponent.getFileHash(formattedOriginalTemplateFilename);
-    // compareWithOriginalTemplate(builtEnvInfo, originalTemplateFileHash);
     String builtPackageBucketKey =
         getBucketKey(
             userId,
@@ -116,57 +110,20 @@ public class EnvironmentBuildService {
             .creationTimestamp(now())
             .build());
     eventProducer.accept(
-        List.of(
-            AppEnvDeployRequested.builder()
-                .userId(userId)
-                .builtEnvInfo(builtEnvInfo)
-                .deploymentConfId(latestDeploymentConf.getId())
-                .requestInstant(now())
-                .builtZipFormattedFilekey(builtPackageBucketKey)
-                .envId(environment.getId())
-                .appId(appId)
-                .independentStacksStates(NOT_READY)
-                .build()));
+            List.of(
+                    CheckTemplateIntegrityTriggered.builder()
+                            .userId(userId)
+                            .appId(appId)
+                            .envId(environment.getId())
+                            .builtEnvInfo(builtEnvInfo)
+                            .builtProjectBucketKey(builtPackageBucketKey)
+                            .templateFileBucketKey(formattedOriginalTemplateFilename)
+                            .deploymentConfId(latestDeploymentConf.getId())
+                            .build()));
   }
 
   private void copyFromTempToRealKey(String tempFilePath, String realFilePath) {
     bucketComponent.moveFile(tempFilePath, realFilePath);
     bucketComponent.deleteFile(tempFilePath);
-  }
-
-  private void compareWithOriginalTemplate(
-      BuiltEnvInfo builtEnvInfo, FileHash originalTemplateFileHash) {
-    String zippedBuildBucketKey = builtEnvInfo.getFormattedBucketKey();
-    var exists = bucketComponent.doesExist(zippedBuildBucketKey);
-    if (!exists) {
-      throw new NotFoundException("file " + zippedBuildBucketKey + " does not exist");
-    }
-    var extractedTemplateFile = extractTemplateYmlFileFromZipBuild(zippedBuildBucketKey);
-    var newFileSha256 = fileHasher.apply(extractedTemplateFile, SHA256);
-    if (!originalTemplateFileHash.equals(newFileSha256)) {
-      throw new BadRequestException("file " + extractedTemplateFile + " does not match file hash");
-    }
-  }
-
-  private File extractTemplateYmlFileFromZipBuild(String zippedBuildBucketKey) {
-    try (var zip = new ZipFile(bucketComponent.download(zippedBuildBucketKey)); ) {
-      var templateFileEntry = zip.getEntry(TEMPLATE_YML_PATH_FROM_BUILD_FOLDER_ROOT);
-      if (templateFileEntry == null) {
-        throw new BadRequestException(
-            "uploaded file has no " + TEMPLATE_YML_PATH_FROM_BUILD_FOLDER_ROOT);
-      }
-      return extractTemplateFile(zip, templateFileEntry);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private File extractTemplateFile(ZipFile zip, ZipEntry entry) {
-    try (var io = zip.getInputStream(entry); ) {
-      return fileWriter.write(
-          io, createTempDirectory("template_file").toFile(), "original_template.yml");
-    } catch (IOException e) {
-      throw new ApiException(SERVER_EXCEPTION, e);
-    }
   }
 }
