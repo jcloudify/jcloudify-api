@@ -2,11 +2,8 @@ package api.jcloudify.app.service;
 
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getTempBucketKey;
-import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
 import static api.jcloudify.app.file.FileType.BUILT_PACKAGE;
 import static api.jcloudify.app.file.FileType.DEPLOYMENT_FILE;
-import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
-import static java.nio.file.Files.createTempDirectory;
 import static java.time.Instant.now;
 import static java.util.UUID.randomUUID;
 
@@ -19,21 +16,12 @@ import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.security.AuthenticatedResourceProvider;
 import api.jcloudify.app.endpoint.validator.BuiltEnvInfoValidator;
 import api.jcloudify.app.file.ExtendedBucketComponent;
-import api.jcloudify.app.file.FileHash;
-import api.jcloudify.app.file.FileHasher;
-import api.jcloudify.app.file.FileWriter;
-import api.jcloudify.app.model.exception.ApiException;
 import api.jcloudify.app.model.exception.BadRequestException;
-import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvBuildRequest;
 import api.jcloudify.app.repository.model.Environment;
-import java.io.File;
-import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,16 +98,16 @@ public class EnvironmentBuildService {
             .creationTimestamp(now())
             .build());
     eventProducer.accept(
-            List.of(
-                    CheckTemplateIntegrityTriggered.builder()
-                            .userId(userId)
-                            .appId(appId)
-                            .envId(environment.getId())
-                            .builtEnvInfo(builtEnvInfo)
-                            .builtProjectBucketKey(builtPackageBucketKey)
-                            .templateFileBucketKey(formattedOriginalTemplateFilename)
-                            .deploymentConfId(latestDeploymentConf.getId())
-                            .build()));
+        List.of(
+            CheckTemplateIntegrityTriggered.builder()
+                .userId(userId)
+                .appId(appId)
+                .envId(environment.getId())
+                .builtEnvInfo(builtEnvInfo)
+                .builtProjectBucketKey(builtPackageBucketKey)
+                .templateFileBucketKey(formattedOriginalTemplateFilename)
+                .deploymentConfId(latestDeploymentConf.getId())
+                .build()));
   }
 
   private void copyFromTempToRealKey(String tempFilePath, String realFilePath) {
