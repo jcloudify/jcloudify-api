@@ -1,5 +1,7 @@
 package api.jcloudify.app.endpoint.event.model;
 
+import static api.jcloudify.app.endpoint.event.EventStack.EVENT_STACK_1;
+
 import api.jcloudify.app.endpoint.event.EventStack;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -53,7 +55,7 @@ public class CheckTemplateIntegrityTriggered extends PojaEvent {
    */
   @Override
   public EventStack getEventStack() {
-    throw new UnsupportedOperationException();
+    return EVENT_STACK_1;
   }
 
   /**
