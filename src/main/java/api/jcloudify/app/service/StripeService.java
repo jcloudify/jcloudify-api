@@ -123,6 +123,20 @@ public class StripeService {
     }
   }
 
+  public InvoiceItem createInvoiceItem(String invoiceId, Long amount, String appName) {
+    try {
+      InvoiceItemCreateParams params =
+          InvoiceItemCreateParams.builder()
+              .setInvoice(invoiceId)
+              .setAmount(amount)
+              .setDescription(appName)
+              .build();
+      return InvoiceItem.create(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
   public Invoice finalizeInvoice(String invoiceId) {
     try {
       Invoice resource = Invoice.retrieve(invoiceId);
@@ -145,11 +159,12 @@ public class StripeService {
 
   public InvoiceItem createIvoiceItem(Long amount, String description, String invoiceId) {
     try {
-      var params = InvoiceItemCreateParams.builder()
-          .setInvoice(invoiceId)
-          .setAmount(amount)
-          .setDescription(description)
-          .build();
+      var params =
+          InvoiceItemCreateParams.builder()
+              .setInvoice(invoiceId)
+              .setAmount(amount)
+              .setDescription(description)
+              .build();
       return InvoiceItem.create(params);
     } catch (StripeException e) {
       throw new ApiException(SERVER_EXCEPTION, e.getMessage());
