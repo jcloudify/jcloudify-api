@@ -43,9 +43,9 @@ import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.GithubRepository;
-import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
 import api.jcloudify.app.endpoint.rest.model.Stack;
+import api.jcloudify.app.endpoint.rest.model.StackDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackType;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
@@ -128,12 +128,12 @@ public class StackIT extends MockedThirdParties {
         .updateDatetime(Instant.parse("2023-07-18T10:15:30.00Z"));
   }
 
-  private static InitiateDeployment createStack(String id, StackType stackType) {
-    return new InitiateDeployment().stackType(stackType);
+  private static StackDeployment createStack(String id, StackType stackType) {
+    return new StackDeployment().stackType(stackType);
   }
 
-  private static InitiateDeployment updateStack(String stackId, StackType stackType) {
-    return new InitiateDeployment().stackType(stackType);
+  private static StackDeployment updateStack(String stackId, StackType stackType) {
+    return new StackDeployment().stackType(stackType);
   }
 
   @BeforeEach

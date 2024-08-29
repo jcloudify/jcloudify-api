@@ -12,8 +12,8 @@ import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.AppEnvComputeDeployRequested;
 import api.jcloudify.app.endpoint.event.model.AppEnvDeployRequested;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
-import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
 import api.jcloudify.app.endpoint.rest.model.Stack;
+import api.jcloudify.app.endpoint.rest.model.StackDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
@@ -48,7 +48,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
     String envId = appEnvDeployRequested.getEnvId();
     switch (appEnvDeployRequested.getIndependentStacksStates()) {
       case NOT_READY -> {
-        List<InitiateDeployment> toDeploy = retrieveStacksToDeploy(envId);
+        List<StackDeployment> toDeploy = retrieveStacksToDeploy(envId);
         log.info("Cloudformation stacks to deploy: {}", toDeploy);
         stackService.process(toDeploy, userId, appId, envId);
         appEnvDeployRequestedEventProducer.accept(
@@ -85,18 +85,18 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
     }
   }
 
-  private List<InitiateDeployment> retrieveStacksToDeploy(String envId) {
+  private List<StackDeployment> retrieveStacksToDeploy(String envId) {
     EnvDeploymentConf envDeploymentConf = envDeploymentConfService.getLatestByEnvId(envId);
-    List<InitiateDeployment> stacksToDeploy = new ArrayList<>();
-    stacksToDeploy.add(new InitiateDeployment().stackType(COMPUTE_PERMISSION));
+    List<StackDeployment> stacksToDeploy = new ArrayList<>();
+    stacksToDeploy.add(new StackDeployment().stackType(COMPUTE_PERMISSION));
     if (envDeploymentConf.getEventStackFileKey() != null) {
-      stacksToDeploy.add(new InitiateDeployment().stackType(EVENT));
+      stacksToDeploy.add(new StackDeployment().stackType(EVENT));
     }
     if (envDeploymentConf.getStorageBucketStackFileKey() != null) {
-      stacksToDeploy.add(new InitiateDeployment().stackType(STORAGE_BUCKET));
+      stacksToDeploy.add(new StackDeployment().stackType(STORAGE_BUCKET));
     }
     if (envDeploymentConf.getStorageDatabaseSqliteStackFileKey() != null) {
-      stacksToDeploy.add(new InitiateDeployment().stackType(STORAGE_DATABASE_SQLITE));
+      stacksToDeploy.add(new StackDeployment().stackType(STORAGE_DATABASE_SQLITE));
     }
     return stacksToDeploy;
   }
