@@ -7,7 +7,7 @@ import api.jcloudify.app.aws.cloudformation.CloudformationTemplateConf;
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
-import api.jcloudify.app.endpoint.rest.model.InitiateDeployment;
+import api.jcloudify.app.endpoint.rest.model.StackDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackOutput;
 import api.jcloudify.app.endpoint.rest.model.StackType;
@@ -101,7 +101,7 @@ public class StackService {
   }
 
   public List<api.jcloudify.app.endpoint.rest.model.Stack> process(
-      List<InitiateDeployment> deployments,
+      List<StackDeployment> deployments,
       String userId,
       String applicationId,
       String environmentId) {
@@ -150,7 +150,7 @@ public class StackService {
   }
 
   private api.jcloudify.app.endpoint.rest.model.Stack deployStack(
-      InitiateDeployment toDeploy, String userId, String applicationId, String environmentId) {
+      StackDeployment toDeploy, String userId, String applicationId, String environmentId) {
     Application application = applicationService.getById(applicationId);
     Environment environment = environmentService.getById(environmentId);
     String environmentType = environment.getFormattedEnvironmentType();
@@ -275,7 +275,7 @@ public class StackService {
       String userId,
       String appId,
       String envId,
-      InitiateDeployment toDeploy,
+      StackDeployment toDeploy,
       Map<String, String> parameters,
       EnvDeploymentConf envDeploymentConf,
       String stackName,
@@ -291,7 +291,7 @@ public class StackService {
       String userId,
       String appId,
       String envId,
-      InitiateDeployment toDeploy,
+      StackDeployment toDeploy,
       Map<String, String> parameters,
       EnvDeploymentConf envDeploymentConf,
       String stackName,
