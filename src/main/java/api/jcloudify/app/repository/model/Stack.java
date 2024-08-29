@@ -59,4 +59,6 @@ public class Stack implements Serializable {
   @UpdateTimestamp
   @Column(columnDefinition = "TIMESTAMP WITHOUT TIMEZONE")
   private Instant updateDatetime;
+
+  private boolean archived;
 }

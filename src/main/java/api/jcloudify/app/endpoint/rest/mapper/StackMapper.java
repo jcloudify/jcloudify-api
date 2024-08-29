@@ -34,7 +34,8 @@ public class StackMapper {
         .environment(environmentMapper.toRest(environment))
         .stackType(domain.getType())
         .creationDatetime(domain.getCreationDatetime())
-        .updateDatetime(domain.getUpdateDatetime());
+        .updateDatetime(domain.getUpdateDatetime())
+            .archived(domain.isArchived());
   }
 
   public StackEvent toRest(software.amazon.awssdk.services.cloudformation.model.StackEvent domain) {
