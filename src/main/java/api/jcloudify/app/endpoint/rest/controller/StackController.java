@@ -106,13 +106,16 @@ public class StackController {
     return new InitiateStackDeploymentResponse().data(data);
   }
 
-  @PostMapping("/users/{userId}/applications/{applicationId}/environments/{environmentId}/deletionInitiation")
+  @PostMapping(
+      "/users/{userId}/applications/{applicationId}/environments/{environmentId}/deletionInitiation")
   public InitiateStackDeletionResponse initiatedStackDeletion(
-          @PathVariable String userId,
-          @PathVariable String applicationId,
-          @PathVariable String environmentId,
-          @RequestBody InitiateStackDeploymentRequestBody archivingToInitiate) {
-    var data = service.processArchiving(requireNonNull(archivingToInitiate.getData()), userId, applicationId, environmentId);
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @PathVariable String environmentId,
+      @RequestBody InitiateStackDeploymentRequestBody archivingToInitiate) {
+    var data =
+        service.processArchiving(
+            requireNonNull(archivingToInitiate.getData()), userId, applicationId, environmentId);
     return new InitiateStackDeletionResponse().data(data);
   }
 }

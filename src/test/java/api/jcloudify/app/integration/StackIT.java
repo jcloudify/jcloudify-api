@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.event.EventProducer;
-import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.rest.api.StackApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
@@ -213,16 +212,17 @@ public class StackIT extends MockedThirdParties {
     ApiClient joeDoeClient = anApiClient(JOE_DOE_TOKEN);
     StackApi api = new StackApi(joeDoeClient);
 
-    var response = api.initiateStackDeletion(JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID,
+    var response =
+        api.initiateStackDeletion(
+            JOE_DOE_ID,
+            POJA_APPLICATION_ID,
+            POJA_APPLICATION_ENVIRONMENT_ID,
             new InitiateStackDeletionRequestBody()
-                    .data(List.of(
-                            crupdateStack(EVENT),
-                            crupdateStack(COMPUTE_PERMISSION))));
+                .data(List.of(crupdateStack(EVENT), crupdateStack(COMPUTE_PERMISSION))));
     var archivedStack = response.getData();
 
     assertNotNull(archivedStack);
-    assertTrue(archivedStack.stream()
-          .allMatch(stack -> Objects.equals(stack.getArchived(), true)));
+    assertTrue(archivedStack.stream().allMatch(stack -> Objects.equals(stack.getArchived(), true)));
   }
 
   @Test

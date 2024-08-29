@@ -144,7 +144,8 @@ public class SecurityConf {
                     .requestMatchers(
                         selfApplicationMatcher(
                             PUT, "/users/*/applications/*/environments/*/deploymentInitiation"))
-                    .authenticated().requestMatchers(
+                    .authenticated()
+                    .requestMatchers(
                         selfApplicationMatcher(
                             POST, "/users/*/applications/*/environments/*/deletionInitiation"))
                     .authenticated()

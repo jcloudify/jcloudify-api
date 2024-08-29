@@ -32,6 +32,7 @@ public class StackDao {
     List<Predicate> predicates = new ArrayList<>();
     predicates.add(builder.equal(root.get("applicationId"), applicationId));
     predicates.add(builder.equal(root.get("environmentId"), environmentId));
+    predicates.add(builder.equal(root.get("archived"), false));
 
     query
         .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder))
