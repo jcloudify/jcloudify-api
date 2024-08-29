@@ -26,6 +26,7 @@ import api.jcloudify.app.repository.model.Stack;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +101,7 @@ public class StackService {
     }
   }
 
-  public List<api.jcloudify.app.endpoint.rest.model.Stack> process(
+  public List<api.jcloudify.app.endpoint.rest.model.Stack> processDeployment(
       List<StackDeployment> deployments,
       String userId,
       String applicationId,
@@ -313,5 +314,29 @@ public class StackService {
 
   public String getCloudformationStackId(String stackName) {
     return cloudformationComponent.getStackIdByName(stackName);
+  }
+
+  private Stack archiveStack(String applicationId, String environmentId, StackDeployment toArchive) {
+    Optional<Stack> actual = dao.findByCriteria(applicationId, environmentId, toArchive.getStackType());
+    if (actual.isPresent()) {
+      Stack toUpdate = actual.get();
+      cloudformationComponent.deleteStack(toUpdate.getName());
+      toUpdate.setArchived(true);
+       return save(toUpdate);
+    }
+    throw new NotFoundException("Stack not found");
+  }
+
+  public List<api.jcloudify.app.endpoint.rest.model.Stack> processArchiving(List<StackDeployment> stacksToArchive,
+                                                                            String userId, String applicationId,
+                                                                            String environmentId) {
+    List<Stack> archivedStacks = stacksToArchive.stream()
+            .map(toArchive -> archiveStack(applicationId, environmentId, toArchive))
+            .toList();
+    Application application = applicationService.getById(applicationId);
+    Environment environment = environmentService.getById(environmentId);
+    return archivedStacks.stream().map(
+            stack -> mapper.toRest(stack, application, environment))
+            .toList();
   }
 }

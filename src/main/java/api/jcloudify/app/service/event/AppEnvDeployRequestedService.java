@@ -50,7 +50,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
       case NOT_READY -> {
         List<StackDeployment> toDeploy = retrieveStacksToDeploy(envId);
         log.info("Cloudformation stacks to deploy: {}", toDeploy);
-        stackService.process(toDeploy, userId, appId, envId);
+        stackService.processDeployment(toDeploy, userId, appId, envId);
         appEnvDeployRequestedEventProducer.accept(
             List.of(appEnvDeployRequested.toBuilder().independentStacksStates(PENDING).build()));
       }
