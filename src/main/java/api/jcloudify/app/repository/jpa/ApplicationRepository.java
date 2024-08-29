@@ -14,6 +14,8 @@ public interface ApplicationRepository extends JpaRepository<Application, String
 
   Optional<Application> findByGithubRepositoryId(String repositoryId);
 
+  List<Application> findAllByUserId(String userId);
+
   @Modifying
   @Query(
       """
