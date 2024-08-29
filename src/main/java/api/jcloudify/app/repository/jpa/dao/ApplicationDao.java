@@ -25,6 +25,7 @@ public class ApplicationDao {
     Root<Application> root = query.from(Application.class);
     List<Predicate> predicates = new ArrayList<>();
     predicates.add(builder.and(builder.equal(root.get("userId"), userId)));
+    predicates.add(builder.and(builder.equal(root.get("archived"), false)));
 
     if (name != null) {
       String concatenatedContainNamePattern = "%" + name + "%";
