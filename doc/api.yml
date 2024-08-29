@@ -537,6 +537,41 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/OneOfPojaConf"
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/deletionInitiation:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      summary: Delete existing stacks
+      operationId: initiateStackDeletion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitiateStackDeletionRequestBody'
+      responses:
+        '200':
+          description: Deployment successfully initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InitiateStackDeletionResponse"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -1593,14 +1628,14 @@ components:
             - DEPLOYMENT_LOG
             - APPLICATION_LOG
 
-    InitiateDeployment:
+    StackDeployment:
       type: object
       properties:
         stack_type:
           $ref: '#/components/schemas/StackType'
     Stack:
       allOf:
-        - $ref: '#/components/schemas/InitiateDeployment'
+        - $ref: '#/components/schemas/StackDeployment'
       type: object
       properties:
         id:
@@ -1619,6 +1654,9 @@ components:
           $ref: '#/components/schemas/ApplicationBase'
         environment:
           $ref: '#/components/schemas/Environment'
+        archived:
+          type: boolean
+          default: false
     StackType:
       type: string
       enum:
@@ -1825,8 +1863,22 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/InitiateDeployment"
+            $ref: "#/components/schemas/StackDeployment"
     InitiateStackDeploymentResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Stack"
+    InitiateStackDeletionRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/StackDeployment"
+    InitiateStackDeletionResponse:
       type: object
       properties:
         data:
