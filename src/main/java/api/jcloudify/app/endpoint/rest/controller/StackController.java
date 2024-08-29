@@ -2,6 +2,7 @@ package api.jcloudify.app.endpoint.rest.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import api.jcloudify.app.endpoint.rest.model.InitiateStackDeletionResponse;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentResponse;
 import api.jcloudify.app.endpoint.rest.model.PagedStackEvents;
@@ -14,6 +15,7 @@ import api.jcloudify.app.service.StackService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -99,8 +101,18 @@ public class StackController {
       @PathVariable String environmentId,
       @RequestBody InitiateStackDeploymentRequestBody deploymentsToInitiate) {
     var data =
-        service.process(
+        service.processDeployment(
             requireNonNull(deploymentsToInitiate.getData()), userId, applicationId, environmentId);
     return new InitiateStackDeploymentResponse().data(data);
+  }
+
+  @PostMapping("/users/{userId}/applications/{applicationId}/environments/{environmentId}/deletionInitiation")
+  public InitiateStackDeletionResponse initiatedStackDeletion(
+          @PathVariable String userId,
+          @PathVariable String applicationId,
+          @PathVariable String environmentId,
+          @RequestBody InitiateStackDeploymentRequestBody archivingToInitiate) {
+    var data = service.processArchiving(requireNonNull(archivingToInitiate.getData()), userId, applicationId, environmentId);
+    return new InitiateStackDeletionResponse().data(data);
   }
 }

@@ -75,6 +75,7 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/installations"),
                     antMatcher(PUT, "/users/*/installations"),
                     antMatcher(PUT, "/users/*/applications/*/environments/*/deploymentInitiation"),
+                    antMatcher(POST, "/users/*/applications/*/environments/*/deletionInitiation"),
                     antMatcher(PUT, "/users/*/applications"),
                     antMatcher(GET, "/users/*/applications"),
                     antMatcher(GET, "/users/*/applications/*"),
@@ -143,6 +144,9 @@ public class SecurityConf {
                     .requestMatchers(
                         selfApplicationMatcher(
                             PUT, "/users/*/applications/*/environments/*/deploymentInitiation"))
+                    .authenticated().requestMatchers(
+                        selfApplicationMatcher(
+                            POST, "/users/*/applications/*/environments/*/deletionInitiation"))
                     .authenticated()
                     .requestMatchers(selfUserMatcher(PUT, "/users/*/applications"))
                     .authenticated()
