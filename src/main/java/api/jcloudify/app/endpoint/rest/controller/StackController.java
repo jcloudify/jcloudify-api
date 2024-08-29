@@ -115,7 +115,7 @@ public class StackController {
       @RequestBody InitiateStackDeploymentRequestBody archivingToInitiate) {
     var data =
         service.processArchiving(
-            requireNonNull(archivingToInitiate.getData()), userId, applicationId, environmentId);
+            requireNonNull(archivingToInitiate.getData()), applicationId, environmentId);
     return new InitiateStackDeletionResponse().data(data);
   }
 }
