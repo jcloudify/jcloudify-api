@@ -14,6 +14,8 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.cloudformation.CloudFormationClient;
 import software.amazon.awssdk.services.cloudformation.model.CloudFormationException;
 import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
+import software.amazon.awssdk.services.cloudformation.model.DeleteStackRequest;
+import software.amazon.awssdk.services.cloudformation.model.DeleteStackResponse;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStacksRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStacksResponse;
@@ -110,6 +112,9 @@ public class CloudformationComponent {
       }
       return response.stacks().getFirst();
     } catch (AwsServiceException | SdkClientException e) {
+      if(e.getMessage().contains("Stack with id "+ stackName +" does not exist")){
+        throw new NotFoundException("Stack(" + stackName + ") does not exist");
+      }
       throw new InternalServerErrorException(e);
     }
   }
@@ -132,5 +137,18 @@ public class CloudformationComponent {
 
   public List<Output> getStackOutputs(String stackName) {
     return this.getStackByName(stackName).outputs();
+  }
+
+  public void deleteStack(String stackName) {
+    this.getStackByName(stackName);
+    DeleteStackRequest request = DeleteStackRequest.builder().stackName(stackName).build();
+    try {
+      cloudFormationClient.deleteStack(request);
+    } catch (AwsServiceException | SdkClientException e) {
+      if(e.getMessage().contains("Stack with id "+ stackName +" does not exist")){
+        throw new NotFoundException("Stack(" + stackName + ") does not exist");
+      }
+        throw new InternalServerErrorException(e);
+    }
   }
 }
