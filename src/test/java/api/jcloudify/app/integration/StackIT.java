@@ -37,12 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.rest.api.StackApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.GithubRepository;
+import api.jcloudify.app.endpoint.rest.model.InitiateStackDeletionRequestBody;
 import api.jcloudify.app.endpoint.rest.model.InitiateStackDeploymentRequestBody;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackDeployment;
@@ -128,11 +130,7 @@ public class StackIT extends MockedThirdParties {
         .updateDatetime(Instant.parse("2023-07-18T10:15:30.00Z"));
   }
 
-  private static StackDeployment createStack(String id, StackType stackType) {
-    return new StackDeployment().stackType(stackType);
-  }
-
-  private static StackDeployment updateStack(String stackId, StackType stackType) {
+  private static StackDeployment crupdateStack(StackType stackType) {
     return new StackDeployment().stackType(stackType);
   }
 
@@ -157,10 +155,10 @@ public class StackIT extends MockedThirdParties {
             new InitiateStackDeploymentRequestBody()
                 .data(
                     List.of(
-                        createStack("poja_app_event_stack_id", EVENT),
-                        createStack("poja_app_perm_stack_id", COMPUTE_PERMISSION),
-                        createStack("poja_app_bucket_stack_id", STORAGE_BUCKET),
-                        createStack("poja_app_sqlite_stack_id", STORAGE_DATABASE_SQLITE))));
+                        crupdateStack(EVENT),
+                        crupdateStack(COMPUTE_PERMISSION),
+                        crupdateStack(STORAGE_BUCKET),
+                        crupdateStack(STORAGE_DATABASE_SQLITE))));
     var actualCreatedStacksData = requireNonNull(actualCreatedStacks.getData());
 
     assertNotNull(actualCreatedStacksData.getFirst().getCreationDatetime());
@@ -191,9 +189,9 @@ public class StackIT extends MockedThirdParties {
             new InitiateStackDeploymentRequestBody()
                 .data(
                     List.of(
-                        updateStack(EVENT_STACK_ID, EVENT),
-                        updateStack(COMPUTE_PERM_STACK_ID, COMPUTE_PERMISSION),
-                        updateStack("bucket_stack_1_id", STORAGE_BUCKET))));
+                        crupdateStack(EVENT),
+                        crupdateStack(COMPUTE_PERMISSION),
+                        crupdateStack(STORAGE_BUCKET))));
     var actualCreatedStacksData = requireNonNull(actualCreatedStacks.getData());
     var firstData = actualCreatedStacksData.getFirst();
     var allStacks =
@@ -208,6 +206,23 @@ public class StackIT extends MockedThirdParties {
     assertNotNull(firstData.getCreationDatetime());
     assertTrue(firstData.getUpdateDatetime().isAfter(firstData.getCreationDatetime()));
     assertEquals(requireNonNull(allStacks.getData()).size(), 3);
+  }
+
+  @Test
+  void archive_stack_ok() throws ApiException {
+    ApiClient joeDoeClient = anApiClient(JOE_DOE_TOKEN);
+    StackApi api = new StackApi(joeDoeClient);
+
+    var response = api.initiateStackDeletion(JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID,
+            new InitiateStackDeletionRequestBody()
+                    .data(List.of(
+                            crupdateStack(EVENT),
+                            crupdateStack(COMPUTE_PERMISSION))));
+    var archivedStack = response.getData();
+
+    assertNotNull(archivedStack);
+    assertTrue(archivedStack.stream()
+          .allMatch(stack -> Objects.equals(stack.getArchived(), true)));
   }
 
   @Test
