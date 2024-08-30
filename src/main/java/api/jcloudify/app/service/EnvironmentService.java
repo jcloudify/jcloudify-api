@@ -54,7 +54,7 @@ public class EnvironmentService {
       String applicationId, List<Environment> environments) {
     environments.forEach(
         environment ->
-            checkIfEnvironmentExists(
+            checkIfActiveEnvironmentExists(
                 environment.getId(), applicationId, environment.getEnvironmentType()));
     List<Environment> toArchive = environments.stream().filter(Environment::isArchived).toList();
     if (!toArchive.isEmpty()) {
@@ -84,11 +84,11 @@ public class EnvironmentService {
     return configurerService.readConfig(userId, appId, environmentId, configurationFileKey);
   }
 
-  public void checkIfEnvironmentExists(String id, String appId, EnvironmentType type) {
+  public void checkIfActiveEnvironmentExists(String id, String appId, EnvironmentType type) {
     Optional<Environment> actualById = repository.findById(id);
     if (actualById.isEmpty()) {
       Optional<Environment> actualByAppIdAndType =
-          repository.findFirstByApplicationIdAndEnvironmentType(appId, type);
+          repository.findFirstByApplicationIdAndEnvironmentTypeAndArchived(appId, type, false);
       if (actualByAppIdAndType.isPresent()) {
         throw new BadRequestException("Only one " + type + " environment can be created.");
       }

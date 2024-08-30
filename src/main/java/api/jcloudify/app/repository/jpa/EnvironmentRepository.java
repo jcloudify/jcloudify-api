@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 public interface EnvironmentRepository extends JpaRepository<Environment, String> {
   List<Environment> findAllByApplicationIdAndArchived(String applicationId, boolean isArchived);
 
-  Optional<Environment> findFirstByApplicationIdAndEnvironmentType(
-      String applicationId, EnvironmentType environmentType);
+  Optional<Environment> findFirstByApplicationIdAndEnvironmentTypeAndArchived(
+      String applicationId, EnvironmentType environmentType, boolean isArchived);
 
   @Query(
       "SELECT e FROM Environment e INNER JOIN Application a ON a.id = e.applicationId WHERE e.id ="
