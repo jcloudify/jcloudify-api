@@ -1,3 +1,19 @@
+# [3.18.0](https://github.com/jcloudify/jcloudify-api/compare/v3.17.0...v3.18.0) (2024-08-30)
+
+
+### Bug Fixes
+
+* can create new environment after archiving one ([e2459cf](https://github.com/jcloudify/jcloudify-api/commit/e2459cfd51128cea570249b0775fb52c6d152d4b))
+
+
+### Features
+
+* archive stacks ([c8205cc](https://github.com/jcloudify/jcloudify-api/commit/c8205ccc7af8ae823a6e044ff7d5abb72557365e))
+* delete cloudformation stack by name ([4a8a87d](https://github.com/jcloudify/jcloudify-api/commit/4a8a87d7069cc7c6052637044422664da47f9f0b))
+* handle archiving applications ([3f4cf72](https://github.com/jcloudify/jcloudify-api/commit/3f4cf7201403aa1ebe678a28f60ea28fb5c64d67))
+
+
+
 # [3.17.0](https://github.com/jcloudify/jcloudify-api/compare/v3.16.0...v3.17.0) (2024-08-29)
 
 
@@ -121,15 +137,6 @@
 * pojaConf snapstart is boolean ([1d55fed](https://github.com/jcloudify/jcloudify-api/commit/1d55fedcb937637f0e70b9f775769c8c7b94c419))
 * return an empty list when there's no ssm param yet ([e181a41](https://github.com/jcloudify/jcloudify-api/commit/e181a413c0550787458a39754015a6dc67aefda3))
 * separate endpoint to create and update ssm parameters ([2798bb0](https://github.com/jcloudify/jcloudify-api/commit/2798bb0641ff89d389d426ecd45a311df2b68aae))
-
-
-
-# [3.10.0](https://github.com/jcloudify/jcloudify-api/compare/v3.9.0...v3.10.0) (2024-07-30)
-
-
-### Features
-
-* add avatar url and type to app installation, also rename app installation to a more precise GithubAppInstallation ([c1d4ab3](https://github.com/jcloudify/jcloudify-api/commit/c1d4ab34ca2fdd83209e1cde196ed2494bd8bbbc))
 
 
 
