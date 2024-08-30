@@ -32,7 +32,7 @@ public class EnvironmentService {
   }
 
   public List<Environment> findAllByApplicationId(String applicationId) {
-    return repository.findAllByApplicationId(applicationId);
+    return repository.findAllByApplicationIdAndAndArchived(applicationId, false);
   }
 
   public Environment getById(String id) {

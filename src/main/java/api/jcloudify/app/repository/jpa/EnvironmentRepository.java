@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EnvironmentRepository extends JpaRepository<Environment, String> {
-  List<Environment> findAllByApplicationId(String applicationId);
+  List<Environment> findAllByApplicationIdAndAndArchived(String applicationId, boolean isArchived);
 
   Optional<Environment> findFirstByApplicationIdAndEnvironmentType(
       String applicationId, EnvironmentType environmentType);
