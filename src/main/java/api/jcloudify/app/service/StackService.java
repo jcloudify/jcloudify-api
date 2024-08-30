@@ -129,6 +129,10 @@ public class StackService {
     return new Page<>(pageFromOne, boundedPageSize, data);
   }
 
+  public List<Stack> findAllByEnvId(String envId) {
+    return repository.findAllByEnvironmentId(envId);
+  }
+
   public api.jcloudify.app.endpoint.rest.model.Stack getById(
       String userId, String applicationId, String environmentId, String stackId) {
     assert userId != null;
@@ -315,24 +319,25 @@ public class StackService {
     return cloudformationComponent.getStackIdByName(stackName);
   }
 
+  public Stack deleteAndArchiveStack(Stack stack) {
+    cloudformationComponent.deleteStack(stack.getName());
+    stack.setArchived(true);
+    return save(stack);
+  }
+
   private Stack archiveStack(
       String applicationId, String environmentId, StackDeployment toArchive) {
     Optional<Stack> actual =
         dao.findByCriteria(applicationId, environmentId, toArchive.getStackType());
     if (actual.isPresent()) {
       Stack toUpdate = actual.get();
-      cloudformationComponent.deleteStack(toUpdate.getName());
-      toUpdate.setArchived(true);
-      return save(toUpdate);
+      return deleteAndArchiveStack(toUpdate);
     }
     throw new NotFoundException("Stack not found");
   }
 
   public List<api.jcloudify.app.endpoint.rest.model.Stack> processArchiving(
-      List<StackDeployment> stacksToArchive,
-      String userId,
-      String applicationId,
-      String environmentId) {
+      List<StackDeployment> stacksToArchive, String applicationId, String environmentId) {
     List<Stack> archivedStacks =
         stacksToArchive.stream()
             .map(toArchive -> archiveStack(applicationId, environmentId, toArchive))

@@ -9,17 +9,27 @@ import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.EnvironmentRepository;
 import api.jcloudify.app.repository.model.Environment;
+import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.appEnvConfigurer.AppEnvConfigurerService;
 import java.util.List;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@AllArgsConstructor
 @Service
 public class EnvironmentService {
   private final EnvironmentRepository repository;
   private final AppEnvConfigurerService configurerService;
+  private final StackService stackService;
+
+  public EnvironmentService(
+      EnvironmentRepository repository,
+      AppEnvConfigurerService configurerService,
+      @Lazy StackService stackService) {
+    this.repository = repository;
+    this.configurerService = configurerService;
+    this.stackService = stackService;
+  }
 
   public List<Environment> findAllByApplicationId(String applicationId) {
     return repository.findAllByApplicationId(applicationId);
@@ -32,12 +42,24 @@ public class EnvironmentService {
             () -> new NotFoundException("Environment identified by id " + id + " not found"));
   }
 
+  private void archiveEnvironment(Environment environment) {
+    List<Stack> stacksToArchive =
+        stackService.findAllByEnvId(environment.getId()).stream()
+            .filter(stack -> !stack.isArchived())
+            .toList();
+    stacksToArchive.forEach(stackService::deleteAndArchiveStack);
+  }
+
   public List<Environment> crupdateEnvironments(
       String applicationId, List<Environment> environments) {
     environments.forEach(
         environment ->
             checkIfEnvironmentExists(
                 environment.getId(), applicationId, environment.getEnvironmentType()));
+    List<Environment> toArchive = environments.stream().filter(Environment::isArchived).toList();
+    if (!toArchive.isEmpty()) {
+      toArchive.forEach(this::archiveEnvironment);
+    }
     return repository.saveAll(environments);
   }
 
