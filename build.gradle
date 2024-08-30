@@ -10,7 +10,7 @@ plugins {
 
     id 'jacoco'
 
-    
+
 }
 
 jacoco {
@@ -221,6 +221,6 @@ implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
 implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
 implementation 'software.amazon.awssdk:ssm:2.26.25'
 implementation 'com.stripe:stripe-java:26.3.0'
-
-
+implementation 'software.amazon.awssdk:cloudwatch:2.26.25'
+implementation 'software.amazon.awssdk:lambda:2.26.25'
 }
