@@ -51,16 +51,17 @@ public class CloudwatchComponent {
         }
     }
 
-    public List<OutputLogEvent> getLogStreamsEvents(String logStreamName, String logGroupName) {
+    public List<OutputLogEvent> getLogStreamEvents(String logGroupName, String logStreamName) {
         GetLogEventsRequest request = GetLogEventsRequest.builder()
                 .logGroupName(logGroupName)
                 .logStreamName(logStreamName)
+                .startFromHead(true)
                 .build();
         try {
             GetLogEventsResponse response = cloudWatchLogsClient.getLogEvents(request);
             return response.events();
         } catch (AwsServiceException | SdkClientException e) {
-            log.error("Error occurred when retrieving log events of log stream name={}", logStreamName);
+            log.error("Error occurred when retrieving log events of log group name={} of log stream name={}", logGroupName, logStreamName);
             throw new InternalServerErrorException(e);
         }
     }
