@@ -30,7 +30,6 @@ public class LambdaFunctionLogService {
   private final ExtendedBucketComponent bucketComponent;
   private final LambdaFunctionLogMapper mapper;
   private final ObjectMapper om;
-  private final String LOG_GROUP_FILENAME = "log-group.json";
 
   public void crupdateLogGroups(String functionName, String bucketKey) {
     List<LogGroup> logGroups =

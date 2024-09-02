@@ -773,7 +773,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /users/{userId}/applications/{applicationId}/environments/{environmentId}/function/{functionName}/logGroups:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups:
     parameters:
       - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
