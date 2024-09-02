@@ -168,9 +168,11 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     switch (stack.getType()) {
       case COMPUTE -> {
         eventProducer.accept(
-            List.of(ComputeStackCrupdateCompleted.builder()
-                            .userId(userId)
-                    .crupdatedComputeStack(stack).build()));
+            List.of(
+                ComputeStackCrupdateCompleted.builder()
+                    .userId(userId)
+                    .crupdatedComputeStack(stack)
+                    .build()));
       }
       case COMPUTE_PERMISSION, STORAGE_BUCKET, EVENT, STORAGE_DATABASE_SQLITE -> {
         throw new NotImplementedException("Not implemented");

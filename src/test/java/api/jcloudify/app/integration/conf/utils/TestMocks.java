@@ -23,6 +23,7 @@ import api.jcloudify.app.endpoint.rest.model.GenApiClient1;
 import api.jcloudify.app.endpoint.rest.model.GeneralPojaConf1;
 import api.jcloudify.app.endpoint.rest.model.GithubRepository;
 import api.jcloudify.app.endpoint.rest.model.Integration1;
+import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.MailingConf1;
 import api.jcloudify.app.endpoint.rest.model.PojaConf1;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
@@ -82,6 +83,9 @@ public class TestMocks {
   public static final String OTHER_POJA_APPLICATION_ID = "other_poja_application_id";
   public static final String OTHER_POJA_APPLICATION_ENVIRONMENT_ID =
       "other_poja_application_environment_id";
+  public static final String PROD_COMPUTE_FRONTAL_FUNCTION = "prod-compute-frontal-function";
+  public static final String PROD_COMPUTE_WORKER_1_FUNCTION = "prod-compute-worker-1-function";
+  public static final String PROD_COMPUTE_WORKER_2_FUNCTION = "prod-compute-worker-2-function";
 
   public static Customer stripeCustomer() {
     Customer customer = new Customer();
@@ -341,5 +345,11 @@ public class TestMocks {
 
   public static Parameter ssmParameter(String name, String value) {
     return Parameter.builder().name(name).value(value).build();
+  }
+
+  public static LogGroup prodComputeFrontalFunctionLogGroup() {
+    return new LogGroup()
+        .name("/aws/lambda/prod-compute-frontal-function")
+        .creationDatetime(Instant.parse("2024-09-02T16:16:21.593Z"));
   }
 }

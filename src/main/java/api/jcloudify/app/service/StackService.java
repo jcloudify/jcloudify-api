@@ -75,14 +75,12 @@ public class StackService {
     String stackOutputsBucketKey =
         getStackOutputsBucketKey(
             userId, applicationId, environmentId, stackId, STACK_OUTPUT_FILENAME);
-    return getPagedStackData(stackOutputsBucketKey, pageFromOne, boundedPageSize, StackOutput.class);
+    return getPagedStackData(
+        stackOutputsBucketKey, pageFromOne, boundedPageSize, StackOutput.class);
   }
 
   private <T> Page<T> getPagedStackData(
-      String bucketKey,
-      PageFromOne pageFromOne,
-      BoundedPageSize boundedPageSize,
-      Class<T> clazz) {
+      String bucketKey, PageFromOne pageFromOne, BoundedPageSize boundedPageSize, Class<T> clazz) {
     try {
       List<T> stackData = fromStackDataFileToList(bucketComponent, om, bucketKey, clazz);
       return paginate(pageFromOne, boundedPageSize, stackData);
@@ -91,7 +89,8 @@ public class StackService {
     }
   }
 
-  public static <T> Page<T> paginate(PageFromOne pageFromOne, BoundedPageSize boundedPageSize, List<T> stackData) {
+  public static <T> Page<T> paginate(
+      PageFromOne pageFromOne, BoundedPageSize boundedPageSize, List<T> stackData) {
     if (!stackData.isEmpty()) {
       int firstIndex = (pageFromOne.getValue() - 1) * boundedPageSize.getValue();
       int lastIndex = min(firstIndex + boundedPageSize.getValue(), stackData.size());
@@ -237,10 +236,7 @@ public class StackService {
   }
 
   public static <T> List<T> fromStackDataFileToList(
-      ExtendedBucketComponent bucketComponent,
-      ObjectMapper om,
-      String bucketKey,
-      Class<T> clazz)
+      ExtendedBucketComponent bucketComponent, ObjectMapper om, String bucketKey, Class<T> clazz)
       throws IOException {
     if (bucketComponent.doesExist(bucketKey)) {
       File stackDataFile = bucketComponent.download(bucketKey);

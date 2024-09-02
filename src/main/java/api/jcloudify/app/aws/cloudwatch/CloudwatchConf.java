@@ -8,14 +8,14 @@ import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 
 @Configuration
 public class CloudwatchConf {
-    private final Region region;
+  private final Region region;
 
-    public CloudwatchConf(@Value("${aws.region}") Region region) {
-        this.region = region;
-    }
+  public CloudwatchConf(@Value("${aws.region}") Region region) {
+    this.region = region;
+  }
 
-    @Bean
-    public CloudWatchLogsClient getCloudwatchLogsClient() {
-        return CloudWatchLogsClient.builder().region(region).build();
-    }
+  @Bean
+  public CloudWatchLogsClient getCloudwatchLogsClient() {
+    return CloudWatchLogsClient.builder().region(region).build();
+  }
 }
