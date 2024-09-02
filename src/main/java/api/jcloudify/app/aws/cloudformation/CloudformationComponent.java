@@ -155,15 +155,17 @@ public class CloudformationComponent {
   }
 
   public List<StackResource> getStackResources(String stackName) {
-    DescribeStackResourcesRequest request = DescribeStackResourcesRequest.builder().stackName(stackName).build();
+    DescribeStackResourcesRequest request =
+        DescribeStackResourcesRequest.builder().stackName(stackName).build();
     try {
-      DescribeStackResourcesResponse response = cloudFormationClient.describeStackResources(request);
+      DescribeStackResourcesResponse response =
+          cloudFormationClient.describeStackResources(request);
       if (!response.hasStackResources()) {
         throw new NotFoundException("Stack(" + stackName + ") does not exist");
       }
       return response.stackResources();
     } catch (AwsServiceException | SdkClientException e) {
-        throw new RuntimeException(e);
+      throw new RuntimeException(e);
     }
   }
 }

@@ -8,12 +8,15 @@ import static java.io.File.createTempFile;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateCompleted;
+import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackOutput;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
+import api.jcloudify.app.model.exception.NotImplementedException;
 import api.jcloudify.app.repository.model.Stack;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +38,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
   private final ExtendedBucketComponent bucketComponent;
   private final StackMapper mapper;
   private final ObjectMapper om;
-  private final EventProducer<StackCrupdated> eventProducer;
+  private final EventProducer<PojaEvent> eventProducer;
 
   @Override
   public void accept(StackCrupdated stackCrupdated) {
@@ -60,6 +63,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
               stack.getId(),
               STACK_OUTPUT_FILENAME);
       crupdateOutputs(stack.getName(), stackOutputsBucketKey);
+      triggerStackResourcesRetrieving(stack);
     }
   }
 
@@ -126,5 +130,17 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     Set<StackOutput> mergedSet = new HashSet<>(actual);
     mergedSet.addAll(newOutputs);
     return mergedSet.stream().toList();
+  }
+
+  private void triggerStackResourcesRetrieving(Stack stack) {
+    switch (stack.getType()) {
+      case COMPUTE -> {
+        eventProducer.accept(
+            List.of(ComputeStackCrupdateCompleted.builder().crupdatedComputeStack(stack).build()));
+      }
+      case COMPUTE_PERMISSION, STORAGE_BUCKET, EVENT, STORAGE_DATABASE_SQLITE -> {
+        throw new NotImplementedException("Not implemented");
+      }
+    }
   }
 }
