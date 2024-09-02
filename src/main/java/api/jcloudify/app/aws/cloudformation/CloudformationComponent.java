@@ -16,12 +16,15 @@ import software.amazon.awssdk.services.cloudformation.model.CloudFormationExcept
 import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.DeleteStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsRequest;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStackResourcesRequest;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStackResourcesResponse;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStacksRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStacksResponse;
 import software.amazon.awssdk.services.cloudformation.model.Output;
 import software.amazon.awssdk.services.cloudformation.model.Parameter;
 import software.amazon.awssdk.services.cloudformation.model.Stack;
 import software.amazon.awssdk.services.cloudformation.model.StackEvent;
+import software.amazon.awssdk.services.cloudformation.model.StackResource;
 import software.amazon.awssdk.services.cloudformation.model.Tag;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
 
@@ -148,6 +151,19 @@ public class CloudformationComponent {
         throw new NotFoundException("Stack(" + stackName + ") does not exist");
       }
       throw new InternalServerErrorException(e);
+    }
+  }
+
+  public List<StackResource> getStackResources(String stackName) {
+    DescribeStackResourcesRequest request = DescribeStackResourcesRequest.builder().stackName(stackName).build();
+    try {
+      DescribeStackResourcesResponse response = cloudFormationClient.describeStackResources(request);
+      if (!response.hasStackResources()) {
+        throw new NotFoundException("Stack(" + stackName + ") does not exist");
+      }
+      return response.stackResources();
+    } catch (AwsServiceException | SdkClientException e) {
+        throw new RuntimeException(e);
     }
   }
 }
