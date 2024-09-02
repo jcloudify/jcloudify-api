@@ -130,7 +130,7 @@ public class ApplicationEnvironmentController {
   }
 
   @GetMapping(
-      "/users/{userId}/applications/{applicationId}/environments/{environmentId}/function/{functionName}/logGroups")
+      "/users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups")
   private PagedLogGroups getFunctionLogGroups(
       @PathVariable String userId,
       @PathVariable String applicationId,

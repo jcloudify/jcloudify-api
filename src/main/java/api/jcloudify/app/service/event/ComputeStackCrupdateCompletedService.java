@@ -8,7 +8,6 @@ import api.jcloudify.app.repository.model.ComputeStackResource;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.ComputeStackResourceService;
 import api.jcloudify.app.service.LambdaFunctionLogService;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
@@ -78,7 +77,7 @@ public class ComputeStackCrupdateCompletedService
     String appId = crupdatedStack.getApplicationId();
     String envId = crupdatedStack.getEnvironmentId();
     List<String> functionNames =
-        Arrays.asList(
+        List.of(
             computeStackResource.getFrontalFunctionName(),
             computeStackResource.getWorker1FunctionName(),
             computeStackResource.getWorker2FunctionName());

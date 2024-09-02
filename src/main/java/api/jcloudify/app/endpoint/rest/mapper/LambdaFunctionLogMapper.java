@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class LambdaFunctionLogMapper {
   public LogGroup toRest(
-      software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup AwsLogGroup) {
+      software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup awsLogGroup) {
     return new LogGroup()
-        .name(AwsLogGroup.logGroupName())
-        .creationDatetime(Instant.ofEpochMilli(AwsLogGroup.creationTime()));
+        .name(awsLogGroup.logGroupName())
+        .creationDatetime(Instant.ofEpochMilli(awsLogGroup.creationTime()));
   }
 
   public List<LogGroup> toRest(
