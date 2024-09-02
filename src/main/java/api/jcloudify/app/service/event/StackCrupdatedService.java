@@ -1,5 +1,10 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_FAILED;
+import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_IN_PROGRESS;
+import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_SUCCESS;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_COMPLETE;
 import static api.jcloudify.app.service.StackService.STACK_EVENT_FILENAME;
 import static api.jcloudify.app.service.StackService.STACK_OUTPUT_FILENAME;
 import static api.jcloudify.app.service.StackService.getStackEventsBucketKey;
@@ -11,15 +16,23 @@ import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateCompleted;
 import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
+import api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
 import api.jcloudify.app.endpoint.rest.model.StackOutput;
+import api.jcloudify.app.endpoint.rest.model.StackResourceStatusType;
 import api.jcloudify.app.file.ExtendedBucketComponent;
+import api.jcloudify.app.mail.Email;
+import api.jcloudify.app.mail.Mailer;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.model.exception.NotImplementedException;
 import api.jcloudify.app.repository.model.Stack;
+import api.jcloudify.app.repository.model.User;
+import api.jcloudify.app.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
@@ -39,6 +52,8 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
   private final StackMapper mapper;
   private final ObjectMapper om;
   private final EventProducer<PojaEvent> eventProducer;
+  private final UserService userService;
+  private final Mailer mailer;
 
   @Override
   public void accept(StackCrupdated stackCrupdated) {
@@ -51,19 +66,29 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
             stack.getEnvironmentId(),
             stack.getId(),
             STACK_EVENT_FILENAME);
-    boolean isLast = crupdateStackEvent(stack.getName(), stackEventsBucketKey);
-    if (!isLast) {
-      eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
-    } else {
-      String stackOutputsBucketKey =
-          getStackOutputsBucketKey(
-              userId,
-              stack.getApplicationId(),
-              stack.getEnvironmentId(),
-              stack.getId(),
-              STACK_OUTPUT_FILENAME);
-      crupdateOutputs(stack.getName(), stackOutputsBucketKey);
-      triggerStackResourcesRetrieving(stack);
+    StackCrupdateStatus stackCrupdateStatus =
+        crupdateStackEvent(stack.getName(), stackEventsBucketKey);
+    switch (stackCrupdateStatus) {
+      case CRUPDATE_IN_PROGRESS -> eventProducer.accept(
+          List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
+      case CRUPDATE_SUCCESS -> {
+        String stackOutputsBucketKey =
+            getStackOutputsBucketKey(
+                userId,
+                stack.getApplicationId(),
+                stack.getEnvironmentId(),
+                stack.getId(),
+                STACK_OUTPUT_FILENAME);
+        crupdateOutputs(stack.getName(), stackOutputsBucketKey);
+        triggerStackResourcesRetrieving(stack);
+      }
+      case CRUPDATE_FAILED -> {
+        try {
+          sendStackCrupdateFailedMail(userId, stack);
+        } catch (AddressException e) {
+          throw new InternalServerErrorException(e);
+        }
+      }
     }
   }
 
@@ -86,7 +111,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     }
   }
 
-  private boolean crupdateStackEvent(String stackName, String bucketKey) {
+  private StackCrupdateStatus crupdateStackEvent(String stackName, String bucketKey) {
     List<StackEvent> stackEvents =
         cloudformationComponent.getStackEvents(stackName).stream().map(mapper::toRest).toList();
     try {
@@ -101,8 +126,15 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
       om.writeValue(stackEventJsonFile, stackEvents);
       bucketComponent.upload(stackEventJsonFile, bucketKey);
       StackEvent latestEvent = stackEvents.getFirst();
-      return Objects.requireNonNull(latestEvent.getResourceStatus()).toString().contains("COMPLETE")
-          && Objects.equals(latestEvent.getLogicalResourceId(), stackName);
+      StackResourceStatusType status = latestEvent.getResourceStatus();
+      if (status != null
+          && status.toString().contains("COMPLETE")
+          && Objects.equals(latestEvent.getLogicalResourceId(), stackName)) {
+        return (status.equals(CREATE_COMPLETE) || status.equals(UPDATE_COMPLETE))
+            ? CRUPDATE_SUCCESS
+            : CRUPDATE_FAILED;
+      }
+      return CRUPDATE_IN_PROGRESS;
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
     }
@@ -142,5 +174,20 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
         throw new NotImplementedException("Not implemented");
       }
     }
+  }
+
+  private void sendStackCrupdateFailedMail(String userId, Stack stack) throws AddressException {
+    User owner = userService.getUserById(userId);
+    String subject = "[JCloudify] Stack creation or update failed";
+    String htmlBody =
+        String.format("<p>Creation/Update on stack name=%s has failed.</p>", stack.getName());
+    mailer.accept(
+        new Email(
+            new InternetAddress(owner.getEmail()),
+            List.of(),
+            List.of(),
+            subject,
+            htmlBody,
+            List.of()));
   }
 }
