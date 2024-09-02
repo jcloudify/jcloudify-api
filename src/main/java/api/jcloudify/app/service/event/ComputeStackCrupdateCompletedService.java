@@ -1,22 +1,20 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.service.LambdaFunctionLogService.getLogGroupsBucketKey;
+
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateCompleted;
 import api.jcloudify.app.repository.model.ComputeStackResource;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.ComputeStackResourceService;
-
+import api.jcloudify.app.service.LambdaFunctionLogService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-
-import api.jcloudify.app.service.LambdaFunctionLogService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cloudformation.model.StackResource;
-
-import static api.jcloudify.app.service.LambdaFunctionLogService.getLogGroupsBucketKey;
 
 @Service
 @AllArgsConstructor
@@ -79,13 +77,15 @@ public class ComputeStackCrupdateCompletedService
     String userId = computeStackCrupdateCompleted.getUserId();
     String appId = crupdatedStack.getApplicationId();
     String envId = crupdatedStack.getEnvironmentId();
-    List<String> functionNames = Arrays.asList(
+    List<String> functionNames =
+        Arrays.asList(
             computeStackResource.getFrontalFunctionName(),
             computeStackResource.getWorker1FunctionName(),
             computeStackResource.getWorker2FunctionName());
-    functionNames.forEach(functionName -> {
-      String bucketKey = getLogGroupsBucketKey(userId, appId, envId, functionName);
-      lambdaFunctionLogService.crupdateLogGroups(functionName, bucketKey);
-    });
+    functionNames.forEach(
+        functionName -> {
+          String bucketKey = getLogGroupsBucketKey(userId, appId, envId, functionName);
+          lambdaFunctionLogService.crupdateLogGroups(functionName, bucketKey);
+        });
   }
 }
