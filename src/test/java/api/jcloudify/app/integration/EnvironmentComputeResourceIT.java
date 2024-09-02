@@ -4,7 +4,7 @@ import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.api.StackApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
-import api.jcloudify.app.endpoint.rest.model.ComputeStackResources;
+import api.jcloudify.app.endpoint.rest.model.ComputeStackResource;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,6 @@ import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudforma
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 @AutoConfigureMockMvc
@@ -32,9 +31,9 @@ public class EnvironmentComputeResourceIT extends MockedThirdParties {
         return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
     }
 
-    private static ComputeStackResources computeStackResources() {
-        return new ComputeStackResources()
-                .id("poja_application_compute_resources_id")
+    private static ComputeStackResource computeStackResources() {
+        return new ComputeStackResource()
+                .id("poja_application_compute_1_resources_id")
                 .environmentId(POJA_APPLICATION_ENVIRONMENT_ID)
                 .frontalFunctionName("prod-compute-frontal-function")
                 .worker1FunctionName("prod-compute-worker-1-function")
@@ -54,10 +53,10 @@ public class EnvironmentComputeResourceIT extends MockedThirdParties {
         StackApi api = new StackApi(joeDoeClient);
 
         var computeStackResourcesPagedResponse = api.getComputeStackResources(JOE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID, null, null);
-        List<ComputeStackResources> computeStackResourcesResponseData = computeStackResourcesPagedResponse.getData();
+        List<ComputeStackResource> computeStackResourcesResponseData = computeStackResourcesPagedResponse.getData();
 
         assertNotNull(computeStackResourcesResponseData);
-        assertEquals(1, computeStackResourcesResponseData.size());
+        assertEquals(2, computeStackResourcesResponseData.size());
         assertEquals(computeStackResources(), computeStackResourcesResponseData.getFirst());
     }
 }
