@@ -762,7 +762,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagedComputeStackResources'
+                $ref: '#/components/schemas/PagedComputeStackResource'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1610,7 +1610,7 @@ components:
           type: boolean
           default: false
 
-    ComputeStackResources:
+    ComputeStackResource:
       type: object
       properties:
         id:
@@ -1963,7 +1963,7 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/EnvironmentVariable"
-    PagedComputeStackResources:
+    PagedComputeStackResource:
       type: object
       allOf:
         - $ref: "#/components/schemas/PagedResponse"
@@ -1971,7 +1971,7 @@ components:
             data:
               type: array
               items:
-                $ref: "#/components/schemas/ComputeStackResources"
+                $ref: "#/components/schemas/ComputeStackResource"
     CrupdateEnvironmentVariablesRequestBody:
       type: object
       properties:
