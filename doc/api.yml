@@ -741,6 +741,39 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/computeStackResources:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      operationId: getComputeStackResources
+      summary: Get function names of an environment compute stack
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of an environment compute stack
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedComputeStackResources'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/variables:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -1577,6 +1610,20 @@ components:
           type: boolean
           default: false
 
+    ComputeStackResources:
+      type: object
+      properties:
+        id:
+          type: string
+        environment_id:
+          type: string
+        frontal_function_name:
+          type: string
+        worker_1_function_name:
+          type: string
+        worker_2_function_name:
+          type: string
+
     EnvironmentVariable:
       type: object
       properties:
@@ -1916,6 +1963,15 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/EnvironmentVariable"
+    PagedComputeStackResources:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ComputeStackResources"
     CrupdateEnvironmentVariablesRequestBody:
       type: object
       properties:
