@@ -773,40 +773,6 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups:
-    parameters:
-      - $ref: '#/components/parameters/userId'
-      - $ref: '#/components/parameters/applicationId'
-      - $ref: '#/components/parameters/environmentId'
-      - $ref: '#/components/parameters/functionName'
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Environment
-      operationId: getFunctionLogGroups
-      summary: Get an environment's function log groups
-      parameters:
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/page_size"
-      responses:
-        '200':
-          description: paged list of environment's function log groups
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PagedLogGroups'
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '429':
-          $ref: '#/components/responses/429'
-        '500':
-          $ref: '#/components/responses/500'
-
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/variables:
     parameters:
@@ -1002,45 +968,29 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /users/{userId}/applications/{applicationId}/environments/{environmentId}/logs:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups:
     parameters:
       - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/functionName'
     get:
       security:
         - bearerAuth: [ ]
-      parameters:
-        - name: log_type
-          in: query
-          description: Filter logs by log type, case insensitive
-          schema:
-            type: string
-        - name: start_date_time
-          in: query
-          description: Filter logs within a date and time range, must be used together with `end_date`
-          schema:
-            type: string
-            format: date-time
-        - name: end_date_time
-          in: query
-          description: Filter logs within a date and time range, must be used together with `start_date`
-          schema:
-            type: string
-            format: date-time
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/page_size"
       tags:
         - Environment
-      operationId: getEnvironmentLogs
-      summary: Get the logs of an environment
+      operationId: getFunctionLogGroups
+      summary: Get an environment's function log groups
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
       responses:
         '200':
-          description: paged list of logs
+          description: paged list of environment's function log groups
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagedLogs'
+                $ref: '#/components/schemas/PagedLogGroups'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1052,26 +1002,30 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /users/{userId}/applications/{applicationId}/environments/{environmentId}/logs/{logId}:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups/{logGroupName}/logStreams:
     parameters:
       - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
-      - $ref: '#/components/parameters/logId'
+      - $ref: '#/components/parameters/functionName'
+      - $ref: '#/components/parameters/logGroupName'
     get:
       security:
         - bearerAuth: [ ]
       tags:
         - Environment
-      operationId: getEnvironmentLogById
-      summary: Get a logs by identifier
+      operationId: getLogStreams
+      summary: Get log streams of a given log group
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
       responses:
         '200':
-          description: The specified log
+          description: paged list of log streams of a given log group
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Log'
+                $ref: '#/components/schemas/PagedLogStreams'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1082,6 +1036,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+
   /users/{userId}/payment-details/payment-methods:
     parameters:
       - $ref: "#/components/parameters/userId"
@@ -1228,10 +1183,18 @@ components:
     functionName:
       name: functionName
       in: path
-      description: The physical resource id of the lambda function
+      description: The physical resource name of the lambda function
       schema:
         type: string
         example: prod-compute-jcloudify-poja-app-FrontalFunction-rPbLaYfitwSO
+      required: true
+    logGroupName:
+      name: logGroupName
+      in: path
+      description: The physical resource name of the log group
+      schema:
+        type: string
+        example: /aws/lambda/prod-compute-jcloudify-poja-app-FrontalFunction-rPbLaYfitwSO
       required: true
     logId:
       name: logId
@@ -1675,6 +1638,21 @@ components:
           type: string
           format: date-time
 
+    LogStream:
+      type: object
+      properties:
+        name:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+        first_event_datetime:
+          type: string
+          format: date-time
+        last_event_datetime:
+          type: string
+          format: date-time
+
     EnvironmentVariable:
       type: object
       properties:
@@ -2032,6 +2010,15 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/LogGroup"
+    PagedLogStreams:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/LogStream"
     CrupdateEnvironmentVariablesRequestBody:
       type: object
       properties:
