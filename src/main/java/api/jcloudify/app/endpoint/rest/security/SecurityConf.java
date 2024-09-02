@@ -201,10 +201,10 @@ public class SecurityConf {
                         selfApplicationMatcher(
                             GET, "/users/*/applications/*/environments/*/config"))
                     .authenticated()
-                        .requestMatchers(
-                                selfApplicationMatcher(
-                                        GET, "/users/*/applications/*/environments/*/computeStackResources"))
-                        .authenticated()
+                    .requestMatchers(
+                        selfApplicationMatcher(
+                            GET, "/users/*/applications/*/environments/*/computeStackResources"))
+                    .authenticated()
                     .requestMatchers(GET, "/gh-repos/*/*/upload-build-uri")
                     .hasRole(GITHUB_APPLICATION.getRole())
                     .requestMatchers(PUT, "/gh-repos/*/*/env-deploys")
