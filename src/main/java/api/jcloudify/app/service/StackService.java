@@ -62,8 +62,7 @@ public class StackService {
     String stackEventsBucketKey =
         getStackEventsBucketKey(
             userId, applicationId, environmentId, stackId, STACK_EVENT_FILENAME);
-    return getPagedStackData(
-        stackId, stackEventsBucketKey, pageFromOne, boundedPageSize, StackEvent.class);
+    return getPagedStackData(stackEventsBucketKey, pageFromOne, boundedPageSize, StackEvent.class);
   }
 
   public Page<StackOutput> getStackOutputs(
@@ -76,28 +75,30 @@ public class StackService {
     String stackOutputsBucketKey =
         getStackOutputsBucketKey(
             userId, applicationId, environmentId, stackId, STACK_OUTPUT_FILENAME);
-    return getPagedStackData(
-        stackId, stackOutputsBucketKey, pageFromOne, boundedPageSize, StackOutput.class);
+    return getPagedStackData(stackOutputsBucketKey, pageFromOne, boundedPageSize, StackOutput.class);
   }
 
   private <T> Page<T> getPagedStackData(
-      String stackId,
       String bucketKey,
       PageFromOne pageFromOne,
       BoundedPageSize boundedPageSize,
       Class<T> clazz) {
     try {
-      List<T> stackData = fromStackDataFileToList(bucketComponent, om, stackId, bucketKey, clazz);
-      if (!stackData.isEmpty()) {
-        int firstIndex = (pageFromOne.getValue() - 1) * boundedPageSize.getValue();
-        int lastIndex = min(firstIndex + boundedPageSize.getValue(), stackData.size());
-        var data = stackData.subList(firstIndex, lastIndex);
-        return new Page<>(pageFromOne, boundedPageSize, data);
-      }
-      return new Page<>(pageFromOne, boundedPageSize, stackData);
+      List<T> stackData = fromStackDataFileToList(bucketComponent, om, bucketKey, clazz);
+      return paginate(pageFromOne, boundedPageSize, stackData);
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
     }
+  }
+
+  public static <T> Page<T> paginate(PageFromOne pageFromOne, BoundedPageSize boundedPageSize, List<T> stackData) {
+    if (!stackData.isEmpty()) {
+      int firstIndex = (pageFromOne.getValue() - 1) * boundedPageSize.getValue();
+      int lastIndex = min(firstIndex + boundedPageSize.getValue(), stackData.size());
+      var data = stackData.subList(firstIndex, lastIndex);
+      return new Page<>(pageFromOne, boundedPageSize, data);
+    }
+    return new Page<>(pageFromOne, boundedPageSize, stackData);
   }
 
   public List<api.jcloudify.app.endpoint.rest.model.Stack> processDeployment(
@@ -235,10 +236,9 @@ public class StackService {
         "users/%s/apps/%s/envs/%s/stacks/%s/outputs/%s", userId, appId, envId, stackId, filename);
   }
 
-  private static <T> List<T> fromStackDataFileToList(
+  public static <T> List<T> fromStackDataFileToList(
       ExtendedBucketComponent bucketComponent,
       ObjectMapper om,
-      String stackId,
       String bucketKey,
       Class<T> clazz)
       throws IOException {

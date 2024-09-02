@@ -9,14 +9,18 @@ import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsResponse;
 import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentsResponse;
+import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PagedEnvironmentSsmParameters;
+import api.jcloudify.app.endpoint.rest.model.PagedLogGroups;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.endpoint.rest.model.UpdateEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.validator.CreateEnvironmentSsmParametersValidator;
 import api.jcloudify.app.model.BoundedPageSize;
+import api.jcloudify.app.model.Page;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.service.EnvironmentService;
+import api.jcloudify.app.service.LambdaFunctionLogService;
 import api.jcloudify.app.service.SsmParameterService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -35,6 +39,7 @@ public class ApplicationEnvironmentController {
   private final EnvironmentMapper mapper;
   private final SsmParameterService ssmParameterService;
   private final CreateEnvironmentSsmParametersValidator createEnvironmentSsmParametersValidator;
+  private final LambdaFunctionLogService lambdaFunctionLogService;
 
   @GetMapping("/users/{userId}/applications/{applicationId}/environments")
   public EnvironmentsResponse getApplicationEnvironments(
@@ -124,5 +129,24 @@ public class ApplicationEnvironmentController {
         .pageSize(data.queryPageSize().getValue())
         .pageNumber(data.queryPage().getValue())
         .data(responseData);
+  }
+
+  @GetMapping("/users/{userId}/applications/{applicationId}/environments/{environmentId}/function/{functionName}/logGroups")
+  private PagedLogGroups getFunctionLogGroups(
+          @PathVariable String userId,
+          @PathVariable String applicationId,
+          @PathVariable String environmentId,
+          @PathVariable String functionName,
+          @RequestParam(required = false, defaultValue = "1") PageFromOne page,
+          @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
+    var data = lambdaFunctionLogService.getLogGroups(userId, applicationId, environmentId, functionName,
+            page, pageSize);
+    var responseData = data.data().stream().toList();
+    return new PagedLogGroups()
+            .data(responseData)
+            .count(data.count())
+            .pageSize(data.queryPageSize().getValue())
+            .pageNumber(data.queryPage().getValue())
+            .hasPrevious(data.hasPrevious());
   }
 }

@@ -5,12 +5,18 @@ import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateCompleted;
 import api.jcloudify.app.repository.model.ComputeStackResource;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.ComputeStackResourceService;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+
+import api.jcloudify.app.service.LambdaFunctionLogService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cloudformation.model.StackResource;
+
+import static api.jcloudify.app.service.LambdaFunctionLogService.getLogGroupsBucketKey;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +25,7 @@ public class ComputeStackCrupdateCompletedService
     implements Consumer<ComputeStackCrupdateCompleted> {
   private final CloudformationComponent cloudformationComponent;
   private final ComputeStackResourceService computeStackResourceService;
+  private final LambdaFunctionLogService lambdaFunctionLogService;
 
   private ComputeStackResource getStackLambdaFunctions(String stackName) {
     List<StackResource> stackResources = cloudformationComponent.getStackResources(stackName);
@@ -69,5 +76,16 @@ public class ComputeStackCrupdateCompletedService
       log.info("Saving stack name={} compute resources name", stackName);
       computeStackResourceService.save(computeStackResource);
     }
+    String userId = computeStackCrupdateCompleted.getUserId();
+    String appId = crupdatedStack.getApplicationId();
+    String envId = crupdatedStack.getEnvironmentId();
+    List<String> functionNames = Arrays.asList(
+            computeStackResource.getFrontalFunctionName(),
+            computeStackResource.getWorker1FunctionName(),
+            computeStackResource.getWorker2FunctionName());
+    functionNames.forEach(functionName -> {
+      String bucketKey = getLogGroupsBucketKey(userId, appId, envId, functionName);
+      lambdaFunctionLogService.crupdateLogGroups(functionName, bucketKey);
+    });
   }
 }

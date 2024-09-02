@@ -80,7 +80,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
                 stack.getId(),
                 STACK_OUTPUT_FILENAME);
         crupdateOutputs(stack.getName(), stackOutputsBucketKey);
-        triggerStackResourcesRetrieving(stack);
+        triggerStackResourcesRetrieving(userId, stack);
       }
       case CRUPDATE_FAILED -> {
         try {
@@ -164,11 +164,13 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     return mergedSet.stream().toList();
   }
 
-  private void triggerStackResourcesRetrieving(Stack stack) {
+  private void triggerStackResourcesRetrieving(String userId, Stack stack) {
     switch (stack.getType()) {
       case COMPUTE -> {
         eventProducer.accept(
-            List.of(ComputeStackCrupdateCompleted.builder().crupdatedComputeStack(stack).build()));
+            List.of(ComputeStackCrupdateCompleted.builder()
+                            .userId(userId)
+                    .crupdatedComputeStack(stack).build()));
       }
       case COMPUTE_PERMISSION, STORAGE_BUCKET, EVENT, STORAGE_DATABASE_SQLITE -> {
         throw new NotImplementedException("Not implemented");
