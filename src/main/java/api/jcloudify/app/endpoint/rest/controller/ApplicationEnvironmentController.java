@@ -12,6 +12,7 @@ import api.jcloudify.app.endpoint.rest.model.EnvironmentsResponse;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PagedEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.rest.model.PagedLogGroups;
+import api.jcloudify.app.endpoint.rest.model.PagedLogStreams;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.endpoint.rest.model.UpdateEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.validator.CreateEnvironmentSsmParametersValidator;
@@ -148,5 +149,27 @@ public class ApplicationEnvironmentController {
         .pageSize(data.queryPageSize().getValue())
         .pageNumber(data.queryPage().getValue())
         .hasPrevious(data.hasPrevious());
+  }
+
+  @GetMapping(
+          "/users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups/{logGroupName}/logStreams")
+  private PagedLogStreams getLogStreams(
+          @PathVariable String userId,
+          @PathVariable String applicationId,
+          @PathVariable String environmentId,
+          @PathVariable String functionName,
+          @PathVariable String logGroupName,
+          @RequestParam(required = false, defaultValue = "1") PageFromOne page,
+          @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
+    var data =
+            lambdaFunctionLogService.getLogStreams(
+                    userId, applicationId, environmentId, functionName, logGroupName, page, pageSize);
+    var responseData = data.data().stream().toList();
+    return new PagedLogStreams()
+            .data(responseData)
+            .count(data.count())
+            .pageSize(data.queryPageSize().getValue())
+            .pageNumber(data.queryPage().getValue())
+            .hasPrevious(data.hasPrevious());
   }
 }

@@ -94,6 +94,7 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/applications/*/environments/*/config"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/computeStackResources"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/functions/*/logGroups"),
+                    antMatcher(GET, "/users/*/applications/*/environments/*/functions/*/logGroups/*/logStreams"),
                     antMatcher(GET, "/users/*/payment-methods"),
                     antMatcher(GET, "/gh-repos/*/*/upload-build-uri"),
                     antMatcher(GET, "/users/*/payment-details"),
@@ -209,6 +210,10 @@ public class SecurityConf {
                     .requestMatchers(
                         selfApplicationMatcher(
                             GET, "/users/*/applications/*/environments/*/functions/*/logGroups"))
+                    .authenticated()
+                        .requestMatchers(
+                        selfApplicationMatcher(
+                            GET, "/users/*/applications/*/environments/*/functions/*/logGroups/*/logStreams"))
                     .authenticated()
                     .requestMatchers(GET, "/gh-repos/*/*/upload-build-uri")
                     .hasRole(GITHUB_APPLICATION.getRole())
