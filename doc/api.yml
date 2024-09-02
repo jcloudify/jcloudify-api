@@ -773,6 +773,40 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/function/{functionId}/logGroups:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/functionId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getFunctionLogGroups
+      summary: Get an environment's function log groups
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of environment's function log groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedLogGroups'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/variables:
     parameters:
@@ -1190,6 +1224,14 @@ components:
       description: The identifier of the environment
       schema:
         type: string
+      required: true
+    functionId:
+      name: functionId
+      in: path
+      description: The physical resource id of the lambda function
+      schema:
+        type: string
+        example: prod-compute-jcloudify-poja-app-FrontalFunction-rPbLaYfitwSO
       required: true
     logId:
       name: logId
@@ -1624,6 +1666,15 @@ components:
         worker_2_function_name:
           type: string
 
+    LogGroup:
+      type: object
+      properties:
+        name:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+
     EnvironmentVariable:
       type: object
       properties:
@@ -1972,6 +2023,15 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/ComputeStackResource"
+    PagedLogGroups:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/LogGroup"
     CrupdateEnvironmentVariablesRequestBody:
       type: object
       properties:
