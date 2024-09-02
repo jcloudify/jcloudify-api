@@ -773,12 +773,12 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /users/{userId}/applications/{applicationId}/environments/{environmentId}/function/{functionId}/logGroups:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/function/{functionName}/logGroups:
     parameters:
       - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
-      - $ref: '#/components/parameters/functionId'
+      - $ref: '#/components/parameters/functionName'
     get:
       security:
         - bearerAuth: [ ]
@@ -1225,8 +1225,8 @@ components:
       schema:
         type: string
       required: true
-    functionId:
-      name: functionId
+    functionName:
+      name: functionName
       in: path
       description: The physical resource id of the lambda function
       schema:

@@ -16,6 +16,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Builder(toBuilder = true)
 public class ComputeStackCrupdateCompleted extends PojaEvent {
+  private String userId;
   private Stack crupdatedComputeStack;
 
   @Override
