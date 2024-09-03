@@ -81,8 +81,10 @@ public class ComputeStackCrupdateCompletedService
             computeStackResource.getFrontalFunctionName(),
             computeStackResource.getWorker1FunctionName(),
             computeStackResource.getWorker2FunctionName());
+    log.info("Functions to retrieve log groups: {}", functionNames);
     functionNames.forEach(
         functionName -> {
+          log.info("Crupdating function name={} log groups", functionName);
           String bucketKey = getLogGroupsBucketKey(userId, appId, envId, functionName);
           lambdaFunctionLogService.crupdateLogGroups(functionName, bucketKey);
         });
