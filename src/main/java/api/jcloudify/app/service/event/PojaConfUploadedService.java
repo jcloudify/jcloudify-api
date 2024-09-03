@@ -55,6 +55,7 @@ import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.FetchResult;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.RemoteRefUpdate;
@@ -74,6 +75,9 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static final String CF_STACKS_STORAGE_SQLITE_STACK_YML_PATH =
       "cf-stacks/storage-efs-stack.yml";
   private static final String CD_COMPUTE_BUCKET_KEY = "poja-templates/cd-compute.yml";
+  private static final String REMOTE_ORIGIN = "origin";
+  private static final RefSpec FETCH_ALL_AND_UPDATE_REFSPEC =
+      new RefSpec("+refs/heads/*:refs/heads/*");
   private final ExtendedBucketComponent bucketComponent;
   private final PojaSamApi pojaSamApi;
   private final GithubService githubService;
@@ -245,8 +249,13 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
             .setURI(githubRepositoryUrl)
             .setDepth(1)
             .setNoCheckout(true)
+            .setBare(true)
             .call()) {
-      if (doesBranchExist(git, branchName)) return;
+      if (doesBranchExistInRemote(git, branchName)) {
+        log.info("branch already exists");
+        return;
+      }
+      log.info("branch does not exist");
       createBranch(git, branchName);
       pushAndCheckResult(ghCredentialsProvider, branchName, git);
     } catch (InvalidRemoteException e) {
@@ -262,7 +271,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static void createBranch(Git git, String branchName) {
     try {
       git.checkout().setCreateBranch(true).setName(branchName).setUpstreamMode(SET_UPSTREAM).call();
-      log.info("successfully checked out branch {}", branchName);
+      log.info("successfully created and checked out branch {}", branchName);
     } catch (RefNotFoundException | RefAlreadyExistsException | InvalidRefNameException ignored) {
       // unreachable because we check for branch existence in remote first then create it with name
       // "PREPROD" or "PROD" which are very valid.
@@ -274,11 +283,14 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     }
   }
 
-  private static boolean doesBranchExist(Git git, String branchName) {
+  private static boolean doesBranchExistInRemote(Git git, String branchName) {
     String formattedBranchName = getFormattedBranchName(branchName);
     try {
-      return git.branchList().call().stream()
-          .anyMatch(a -> a.getName().equals(formattedBranchName));
+      FetchResult fetchResult =
+          git.fetch().setRemote(REMOTE_ORIGIN).setRefSpecs(FETCH_ALL_AND_UPDATE_REFSPEC).call();
+      // Check if the branch exists in the remote repository
+      return fetchResult.getAdvertisedRefs().stream()
+          .anyMatch(ref -> ref.getName().equals(formattedBranchName));
     } catch (GitAPIException e) {
       throw new RuntimeException(e);
     }
