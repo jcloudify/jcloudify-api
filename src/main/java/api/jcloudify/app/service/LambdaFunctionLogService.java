@@ -56,7 +56,8 @@ public class LambdaFunctionLogService {
   }
 
   public void crupdateLogStreams(String logGroupName, String bucketKey) {
-    List<LogStream> logStreams = mapper.toRestLogStreams(cloudwatchComponent.getLogStreams(logGroupName));
+    List<LogStream> logStreams =
+        mapper.toRestLogStreams(cloudwatchComponent.getLogStreams(logGroupName));
     try {
       File logStreamsFile;
       if (bucketComponent.doesExist(bucketKey)) {
@@ -71,7 +72,6 @@ public class LambdaFunctionLogService {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
   }
 
   private static List<LogGroup> mergeAndSortLogGroupList(
@@ -90,26 +90,26 @@ public class LambdaFunctionLogService {
         .toList();
   }
 
-  private static <T>Set<T> mergeLists(List<T> list1, List<T> list2) {
+  private static <T> Set<T> mergeLists(List<T> list1, List<T> list2) {
     Set<T> mergedSet = new HashSet<>(list1);
     mergedSet.addAll(list2);
     return mergedSet;
   }
 
   private static List<LogStream> mergeAndSortLogStreamList(
-          List<LogStream> actual, List<LogStream> newLogGStreams) {
+      List<LogStream> actual, List<LogStream> newLogGStreams) {
     Set<LogStream> mergedList = mergeLists(actual, newLogGStreams);
     return mergedList.stream()
-            .sorted(
-                    (e1, e2) -> {
-                      Instant i1 = e1.getCreationDatetime();
-                      Instant i2 = e2.getCreationDatetime();
-                      if (i1 == null && i2 == null) return 0;
-                      if (i1 == null) return 1;
-                      if (i2 == null) return -1;
-                      return i2.compareTo(i1);
-                    })
-            .toList();
+        .sorted(
+            (e1, e2) -> {
+              Instant i1 = e1.getCreationDatetime();
+              Instant i2 = e2.getCreationDatetime();
+              if (i1 == null && i2 == null) return 0;
+              if (i1 == null) return 1;
+              if (i2 == null) return -1;
+              return i2.compareTo(i1);
+            })
+        .toList();
   }
 
   public Page<LogGroup> getLogGroups(
@@ -140,11 +140,12 @@ public class LambdaFunctionLogService {
       BoundedPageSize pageSize) {
     String logStreamsBucketKey =
         getLogStreamsBucketKey(userId, applicationId, environmentId, functionName, logGroupName);
-    eventProducer.accept(List.of(
+    eventProducer.accept(
+        List.of(
             CrupdateLogStreamTriggered.builder()
-                    .bucketKey(logStreamsBucketKey)
-                    .logGroupName(logGroupName)
-                    .build()));
+                .bucketKey(logStreamsBucketKey)
+                .logGroupName(logGroupName)
+                .build()));
     try {
       List<LogStream> logStreams =
           fromStackDataFileToList(bucketComponent, om, logStreamsBucketKey, LogStream.class);

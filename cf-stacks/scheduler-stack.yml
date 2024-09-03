@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Jcloudify - Schedulers
+
+Parameters:
+  Env:
+    Type: String
+
+Resources:
+  ScheduledEventExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join [ '', [ jcloudify-api-, !Ref Env, -ScheduledEventExecutionRole ] ]
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+
+  RefreshUsersLogStreams:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Description: Scheduler that trigger the refresh of user log streams
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      Name: !Join [ '', [ !Ref Env, -RefreshUsersLogStreams ] ]
+      ScheduleExpression: "rate(30 minutes)"
+      Target:
+        Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/eventbridge/bus-arn}}'
+        RoleArn: !GetAtt ScheduledEventExecutionRole.Arn
+        DeadLetterConfig:
+          Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/sqs/dead-letter-queue-arn}}'
+        EventBridgeParameters:
+          DetailType: 'api.jcloudify.app.endpoint.event.model.RefreshUserLogStreamsTriggered'
+          Source: 'api.jcloudify.app.event2'
