@@ -87,7 +87,8 @@ public class TestMocks {
   public static final String PROD_COMPUTE_FRONTAL_FUNCTION = "prod-compute-frontal-function";
   public static final String PROD_COMPUTE_WORKER_1_FUNCTION = "prod-compute-worker-1-function";
   public static final String PROD_COMPUTE_WORKER_2_FUNCTION = "prod-compute-worker-2-function";
-  public static final String PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP = "/aws/lambda/prod-compute-frontal-function";
+  public static final String PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP =
+      "/aws/lambda/prod-compute-frontal-function";
   public static final String FIRST_LOG_STREAM_NAME = "2024/01/01/[$LATEST]12345";
   public static final String SECOND_LOG_STREAM_NAME = "2024/01/01/[$LATEST]67891";
   public static final String THIRD_LOG_STREAM_NAME = "2024/01/01/[$LATEST]011121";
@@ -359,17 +360,20 @@ public class TestMocks {
   }
 
   public static List<LogStream> prodLogGroupLogStreams() {
-    LogStream firstLogStream = new LogStream()
+    LogStream firstLogStream =
+        new LogStream()
             .name(FIRST_LOG_STREAM_NAME)
             .creationDatetime(Instant.parse("2024-01-01T00:00:01.000Z"))
             .firstEventDatetime(Instant.parse("2024-01-01T00:00:01.100Z"))
             .lastEventDatetime(Instant.parse("2024-01-01T00:13:01.000Z"));
-    LogStream secondLogStream = new LogStream()
+    LogStream secondLogStream =
+        new LogStream()
             .name(SECOND_LOG_STREAM_NAME)
             .creationDatetime(Instant.parse("2024-01-01T02:00:01.000Z"))
             .firstEventDatetime(Instant.parse("2024-01-01T02:00:01.100Z"))
             .lastEventDatetime(Instant.parse("2024-01-01T02:13:01.000Z"));
-    LogStream thirdLogStream = new LogStream()
+    LogStream thirdLogStream =
+        new LogStream()
             .name(THIRD_LOG_STREAM_NAME)
             .creationDatetime(Instant.parse("2024-01-01T01:00:01.000Z"))
             .firstEventDatetime(Instant.parse("2024-01-01T01:00:01.100Z"))

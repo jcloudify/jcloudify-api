@@ -87,20 +87,22 @@ public class LambdaFunctionLogService {
   }
 
   public Page<LogStream> getLogStreams(
-          String userId,
-          String applicationId,
-          String environmentId,
-          String functionName,
-          String logGroupName,
-          PageFromOne page,
-          BoundedPageSize pageSize) {
-      String logStreamsBucketKey = getLogStreamsBucketKey(userId, applicationId, environmentId, functionName, logGroupName);
-      try {
-          List<LogStream> logStreams = fromStackDataFileToList(bucketComponent, om, logStreamsBucketKey, LogStream.class);
-          return paginate(page, pageSize, logStreams);
-      }catch (IOException e) {
-          throw new InternalServerErrorException(e);
-      }
+      String userId,
+      String applicationId,
+      String environmentId,
+      String functionName,
+      String logGroupName,
+      PageFromOne page,
+      BoundedPageSize pageSize) {
+    String logStreamsBucketKey =
+        getLogStreamsBucketKey(userId, applicationId, environmentId, functionName, logGroupName);
+    try {
+      List<LogStream> logStreams =
+          fromStackDataFileToList(bucketComponent, om, logStreamsBucketKey, LogStream.class);
+      return paginate(page, pageSize, logStreams);
+    } catch (IOException e) {
+      throw new InternalServerErrorException(e);
+    }
   }
 
   public static String getLogGroupsBucketKey(
@@ -111,9 +113,13 @@ public class LambdaFunctionLogService {
   }
 
   public static String getLogStreamsBucketKey(
-          String userId, String applicationId, String environmentId, String functionName, String logGroupName) {
-      return String.format(
-              "users/%s/apps/%s/envs/%s/function/%s/logGroups/%s/logStreams/%s",
-              userId, applicationId, environmentId, functionName, logGroupName, "log-stream.json");
+      String userId,
+      String applicationId,
+      String environmentId,
+      String functionName,
+      String logGroupName) {
+    return String.format(
+        "users/%s/apps/%s/envs/%s/function/%s/logGroups/%s/logStreams/%s",
+        userId, applicationId, environmentId, functionName, logGroupName, "log-stream.json");
   }
 }
