@@ -5,6 +5,9 @@ import static api.jcloudify.app.service.StackService.paginate;
 import static java.io.File.createTempFile;
 
 import api.jcloudify.app.aws.cloudwatch.CloudwatchComponent;
+import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.CrupdateLogStreamTriggered;
+import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.rest.mapper.LambdaFunctionLogMapper;
 import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.LogStream;
@@ -31,10 +34,11 @@ public class LambdaFunctionLogService {
   private final ExtendedBucketComponent bucketComponent;
   private final LambdaFunctionLogMapper mapper;
   private final ObjectMapper om;
+  private final EventProducer<PojaEvent> eventProducer;
 
   public void crupdateLogGroups(String functionName, String bucketKey) {
     List<LogGroup> logGroups =
-        mapper.toRest(cloudwatchComponent.getLambdaFunctionLogGroupsByName(functionName));
+        mapper.toRestLogGroup(cloudwatchComponent.getLambdaFunctionLogGroupsByName(functionName));
     try {
       File logGroupsFile;
       if (bucketComponent.doesExist(bucketKey)) {
@@ -51,11 +55,29 @@ public class LambdaFunctionLogService {
     }
   }
 
+  public void crupdateLogStreams(String logGroupName, String bucketKey) {
+    List<LogStream> logStreams = mapper.toRestLogStreams(cloudwatchComponent.getLogStreams(logGroupName));
+    try {
+      File logStreamsFile;
+      if (bucketComponent.doesExist(bucketKey)) {
+        logStreamsFile = bucketComponent.download(bucketKey);
+        List<LogStream> actual = om.readValue(logStreamsFile, new TypeReference<>() {});
+        logStreams = mergeAndSortLogStreamList(actual, logStreams);
+      } else {
+        logStreamsFile = createTempFile("log-groups", ".json");
+      }
+      om.writeValue(logStreamsFile, logStreams);
+      bucketComponent.upload(logStreamsFile, bucketKey);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+  }
+
   private static List<LogGroup> mergeAndSortLogGroupList(
       List<LogGroup> actual, List<LogGroup> newLogGroups) {
-    Set<LogGroup> mergedSet = new HashSet<>(actual);
-    mergedSet.addAll(newLogGroups);
-    return mergedSet.stream()
+    Set<LogGroup> mergedList = mergeLists(actual, newLogGroups);
+    return mergedList.stream()
         .sorted(
             (e1, e2) -> {
               Instant i1 = e1.getCreationDatetime();
@@ -66,6 +88,28 @@ public class LambdaFunctionLogService {
               return i2.compareTo(i1);
             })
         .toList();
+  }
+
+  private static <T>Set<T> mergeLists(List<T> list1, List<T> list2) {
+    Set<T> mergedSet = new HashSet<>(list1);
+    mergedSet.addAll(list2);
+    return mergedSet;
+  }
+
+  private static List<LogStream> mergeAndSortLogStreamList(
+          List<LogStream> actual, List<LogStream> newLogGStreams) {
+    Set<LogStream> mergedList = mergeLists(actual, newLogGStreams);
+    return mergedList.stream()
+            .sorted(
+                    (e1, e2) -> {
+                      Instant i1 = e1.getCreationDatetime();
+                      Instant i2 = e2.getCreationDatetime();
+                      if (i1 == null && i2 == null) return 0;
+                      if (i1 == null) return 1;
+                      if (i2 == null) return -1;
+                      return i2.compareTo(i1);
+                    })
+            .toList();
   }
 
   public Page<LogGroup> getLogGroups(
@@ -96,6 +140,11 @@ public class LambdaFunctionLogService {
       BoundedPageSize pageSize) {
     String logStreamsBucketKey =
         getLogStreamsBucketKey(userId, applicationId, environmentId, functionName, logGroupName);
+    eventProducer.accept(List.of(
+            CrupdateLogStreamTriggered.builder()
+                    .bucketKey(logStreamsBucketKey)
+                    .logGroupName(logGroupName)
+                    .build()));
     try {
       List<LogStream> logStreams =
           fromStackDataFileToList(bucketComponent, om, logStreamsBucketKey, LogStream.class);
