@@ -249,7 +249,6 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
             .setURI(githubRepositoryUrl)
             .setDepth(1)
             .setNoCheckout(true)
-            .setBare(true)
             .call()) {
       if (doesBranchExistInRemote(git, branchName)) {
         log.info("branch already exists");
