@@ -152,13 +152,13 @@ public class ApplicationEnvironmentController {
   }
 
   @GetMapping(
-          "/users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups/{logGroupName}/logStreams")
+          "/users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreams")
   private PagedLogStreams getLogStreams(
           @PathVariable String userId,
           @PathVariable String applicationId,
           @PathVariable String environmentId,
           @PathVariable String functionName,
-          @PathVariable String logGroupName,
+          @RequestParam String logGroupName,
           @RequestParam(required = false, defaultValue = "1") PageFromOne page,
           @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
     var data =
