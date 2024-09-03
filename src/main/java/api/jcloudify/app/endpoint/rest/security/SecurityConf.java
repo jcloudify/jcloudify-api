@@ -94,7 +94,8 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/applications/*/environments/*/config"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/computeStackResources"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/functions/*/logGroups"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/functions/*/logStreams"),
+                    antMatcher(
+                        GET, "/users/*/applications/*/environments/*/functions/*/logStreams"),
                     antMatcher(GET, "/users/*/payment-methods"),
                     antMatcher(GET, "/gh-repos/*/*/upload-build-uri"),
                     antMatcher(GET, "/users/*/payment-details"),
@@ -211,7 +212,7 @@ public class SecurityConf {
                         selfApplicationMatcher(
                             GET, "/users/*/applications/*/environments/*/functions/*/logGroups"))
                     .authenticated()
-                        .requestMatchers(
+                    .requestMatchers(
                         selfApplicationMatcher(
                             GET, "/users/*/applications/*/environments/*/functions/*/logStreams"))
                     .authenticated()

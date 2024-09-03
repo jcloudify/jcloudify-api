@@ -1013,7 +1013,7 @@ paths:
         - bearerAuth: [ ]
       tags:
         - Environment
-      operationId: getLogStreams
+      operationId: getFunctionLogStreams
       summary: Get log streams of a given log group
       parameters:
         - $ref: '#/components/parameters/logGroupName'
