@@ -1002,13 +1002,12 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups/{logGroupName}/logStreams:
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreams:
     parameters:
       - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
       - $ref: '#/components/parameters/environmentId'
       - $ref: '#/components/parameters/functionName'
-      - $ref: '#/components/parameters/logGroupName'
     get:
       security:
         - bearerAuth: [ ]
@@ -1017,6 +1016,7 @@ paths:
       operationId: getLogStreams
       summary: Get log streams of a given log group
       parameters:
+        - $ref: '#/components/parameters/logGroupName'
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/page_size"
       responses:
@@ -1190,7 +1190,7 @@ components:
       required: true
     logGroupName:
       name: logGroupName
-      in: path
+      in: query
       description: The physical resource name of the log group
       schema:
         type: string
