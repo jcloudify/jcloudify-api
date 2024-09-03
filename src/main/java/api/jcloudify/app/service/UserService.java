@@ -34,6 +34,10 @@ public class UserService {
             () -> new NotFoundException("The user identified by id " + userId + " is not found"));
   }
 
+  public List<User> findAll() {
+    return repository.findAll();
+  }
+
   public Optional<User> findById(String userId) {
     return repository.findById(userId);
   }

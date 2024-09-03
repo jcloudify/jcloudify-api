@@ -89,7 +89,7 @@ public class ComputeStackCrupdateCompletedService
         });
   }
 
-  private static List<String> getFunctionNames(ComputeStackResource computeStackResource) {
+  public static List<String> getFunctionNames(ComputeStackResource computeStackResource) {
     return Stream.of(
             computeStackResource.getFrontalFunctionName(),
             computeStackResource.getWorker1FunctionName(),

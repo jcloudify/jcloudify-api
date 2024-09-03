@@ -115,4 +115,8 @@ public class ApplicationService {
         .orElseThrow(
             () -> new NotFoundException("Application identified by id=" + id + " not found"));
   }
+
+  public List<Application> findAllByUserId(String userId) {
+    return repository.findAllByUserId(userId);
+  }
 }

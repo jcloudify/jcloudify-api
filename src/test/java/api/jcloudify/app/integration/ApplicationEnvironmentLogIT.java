@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import api.jcloudify.app.conf.MockedThirdParties;
+import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.rest.api.EnvironmentApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
@@ -34,6 +35,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureMockMvc
 public class ApplicationEnvironmentLogIT extends MockedThirdParties {
   @MockBean ExtendedBucketComponent extendedBucketComponent;
+  @MockBean EventProducer eventProducer;
 
   private ApiClient anApiClient() {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
