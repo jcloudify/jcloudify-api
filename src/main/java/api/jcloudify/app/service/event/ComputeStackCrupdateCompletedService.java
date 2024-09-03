@@ -9,7 +9,10 @@ import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.ComputeStackResourceService;
 import api.jcloudify.app.service.LambdaFunctionLogService;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -76,11 +79,7 @@ public class ComputeStackCrupdateCompletedService
     String userId = computeStackCrupdateCompleted.getUserId();
     String appId = crupdatedStack.getApplicationId();
     String envId = crupdatedStack.getEnvironmentId();
-    List<String> functionNames =
-        List.of(
-            computeStackResource.getFrontalFunctionName(),
-            computeStackResource.getWorker1FunctionName(),
-            computeStackResource.getWorker2FunctionName());
+    List<String> functionNames = getFunctionNames(computeStackResource);
     log.info("Functions to retrieve log groups: {}", functionNames);
     functionNames.forEach(
         functionName -> {
@@ -88,5 +87,14 @@ public class ComputeStackCrupdateCompletedService
           String bucketKey = getLogGroupsBucketKey(userId, appId, envId, functionName);
           lambdaFunctionLogService.crupdateLogGroups(functionName, bucketKey);
         });
+  }
+
+  private static List<String> getFunctionNames(ComputeStackResource computeStackResource) {
+    return Stream.of(
+            computeStackResource.getFrontalFunctionName(),
+            computeStackResource.getWorker1FunctionName(),
+            computeStackResource.getWorker2FunctionName())
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
   }
 }
