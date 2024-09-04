@@ -14,6 +14,7 @@ import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComp
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpExtendedBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
