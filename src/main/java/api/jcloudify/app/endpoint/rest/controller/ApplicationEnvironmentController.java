@@ -2,7 +2,9 @@ package api.jcloudify.app.endpoint.rest.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import api.jcloudify.app.endpoint.rest.mapper.BillingInfoMapper;
 import api.jcloudify.app.endpoint.rest.mapper.EnvironmentMapper;
+import api.jcloudify.app.endpoint.rest.model.BillingInfo;
 import api.jcloudify.app.endpoint.rest.model.CreateEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentSsmParametersResponse;
 import api.jcloudify.app.endpoint.rest.model.CrupdateEnvironmentsRequestBody;
@@ -19,9 +21,11 @@ import api.jcloudify.app.endpoint.rest.model.UpdateEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.validator.CreateEnvironmentSsmParametersValidator;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
+import api.jcloudify.app.service.BillingInfoService;
 import api.jcloudify.app.service.EnvironmentService;
 import api.jcloudify.app.service.LambdaFunctionLogService;
 import api.jcloudify.app.service.SsmParameterService;
+import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +44,8 @@ public class ApplicationEnvironmentController {
   private final SsmParameterService ssmParameterService;
   private final CreateEnvironmentSsmParametersValidator createEnvironmentSsmParametersValidator;
   private final LambdaFunctionLogService lambdaFunctionLogService;
+  private final BillingInfoService billingInfoService;
+  private final BillingInfoMapper billingInfoMapper;
 
   @GetMapping("/users/{userId}/applications/{applicationId}/environments")
   public EnvironmentsResponse getApplicationEnvironments(
@@ -202,5 +208,19 @@ public class ApplicationEnvironmentController {
         .pageSize(pagedResponseData.queryPageSize().getValue())
         .pageNumber(pagedResponseData.queryPage().getValue())
         .hasPrevious(pagedResponseData.hasPrevious());
+  }
+
+  @GetMapping("/users/{userId}/applications/{applicationId}/environments/{environmentId}/billing")
+  public BillingInfo getUserAppEnvironmentBillingInfo(
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @PathVariable String environmentId,
+      @RequestParam Instant startTime,
+      @RequestParam Instant endTime) {
+    return billingInfoMapper.toRest(
+        billingInfoService.getUserBillingInfoByEnvironment(
+            userId, applicationId, environmentId, startTime, endTime),
+        startTime,
+        endTime);
   }
 }

@@ -1,10 +1,12 @@
 package api.jcloudify.app.integration.conf.utils;
 
 import static api.jcloudify.app.endpoint.rest.model.DatabaseConf1.WithDatabaseEnum.NONE;
+import static api.jcloudify.app.endpoint.rest.model.DurationUnit.MINUTES;
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTHY;
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.UNKNOWN;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
+import static api.jcloudify.app.endpoint.rest.model.MemoryUnit.MEGA_OCTET;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_IN_PROGRESS;
@@ -14,10 +16,12 @@ import static api.jcloudify.app.model.PojaVersion.POJA_1;
 
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
+import api.jcloudify.app.endpoint.rest.model.BillingInfo;
 import api.jcloudify.app.endpoint.rest.model.ComputeConf1;
 import api.jcloudify.app.endpoint.rest.model.ConcurrencyConf1;
 import api.jcloudify.app.endpoint.rest.model.CreateSsmParameter;
 import api.jcloudify.app.endpoint.rest.model.DatabaseConf1;
+import api.jcloudify.app.endpoint.rest.model.Duration;
 import api.jcloudify.app.endpoint.rest.model.Environment;
 import api.jcloudify.app.endpoint.rest.model.GenApiClient1;
 import api.jcloudify.app.endpoint.rest.model.GeneralPojaConf1;
@@ -27,6 +31,7 @@ import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.LogStream;
 import api.jcloudify.app.endpoint.rest.model.LogStreamEvent;
 import api.jcloudify.app.endpoint.rest.model.MailingConf1;
+import api.jcloudify.app.endpoint.rest.model.Memory;
 import api.jcloudify.app.endpoint.rest.model.PojaConf1;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.endpoint.rest.model.Stack;
@@ -95,6 +100,10 @@ public class TestMocks {
   public static final String FIRST_LOG_STREAM_NAME = "2024/01/01/[$LATEST]12345";
   public static final String SECOND_LOG_STREAM_NAME = "2024/01/01/[$LATEST]67891";
   public static final String THIRD_LOG_STREAM_NAME = "2024/01/01/[$LATEST]011121";
+  public static final Instant BILLING_INFO_START_TIME_QUERY =
+      Instant.parse("2024-01-01T00:00:00.00Z");
+  public static final Instant BILLING_INFO_END_TIME_QUERY =
+      Instant.parse("2025-01-01T00:00:00.00Z");
   public static final String POJA_APPLICATION_2_ID = "poja_application_2_id";
 
   public static Customer stripeCustomer() {
@@ -397,5 +406,18 @@ public class TestMocks {
             .message("START RequestId: 628c434b-f53f-4c67-9202-79078bbcd894 Version: 34")
             .timestamp(Instant.parse("2024-01-10T15:30:52.254Z"));
     return List.of(initEvent, startEvent);
+  }
+
+  public static BillingInfo joeDoeBillingInfo1() {
+    var duration = new Duration().amount(60).unit(MINUTES);
+    var memory = new Memory().amount(512).unit(MEGA_OCTET);
+    return new BillingInfo()
+        .startTime(BILLING_INFO_START_TIME_QUERY)
+        .endTime(BILLING_INFO_END_TIME_QUERY)
+        .computedPrice(BigDecimal.valueOf(100))
+        .pricingMethod("dummy")
+        .computeTime(Instant.parse("2024-09-05T12:00:00.00Z"))
+        .resourceInvocationTotalDuration(duration)
+        .resourceInvocationTotalMemoryUsed(memory);
   }
 }

@@ -107,7 +107,9 @@ public class SecurityConf {
                     antMatcher(PUT, "/users/*/payment-details"),
                     antMatcher(GET, "/users/*/payment-details/payment-methods"),
                     antMatcher(PUT, "/users/*/payment-details/payment-methods"),
-                    antMatcher(PUT, "/gh-repos/*/*/env-deploys"))),
+                    antMatcher(PUT, "/gh-repos/*/*/env-deploys"),
+                    antMatcher(GET, "/users/*/applications/*/billing"),
+                    antMatcher(GET, "/users/*/applications/*/environments/*/billing"))),
             AnonymousAuthenticationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
@@ -239,6 +241,12 @@ public class SecurityConf {
                     .hasRole(GITHUB_APPLICATION.getRole())
                     .requestMatchers(PUT, "/gh-repos/*/*/env-deploys")
                     .hasRole(GITHUB_APPLICATION.getRole())
+                    .requestMatchers(selfApplicationMatcher(GET, "/users/*/applications/*/billing"))
+                    .authenticated()
+                    .requestMatchers(
+                        selfApplicationMatcher(
+                            GET, "/users/*/applications/*/environments/*/billing"))
+                    .authenticated()
                     .requestMatchers("/**")
                     .denyAll())
         // disable superfluous protections
