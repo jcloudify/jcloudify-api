@@ -22,7 +22,7 @@ Resources:
   RefreshUsersLogStreams:
     Type: AWS::Scheduler::Schedule
     Properties:
-      Description: Scheduler that trigger the refresh of user log streams
+      Description: Scheduler that triggers the refresh of user log streams
       FlexibleTimeWindow:
         Mode: "OFF"
       Name: !Join [ '', [ !Ref Env, -RefreshUsersLogStreams ] ]
@@ -39,7 +39,7 @@ Resources:
   RefreshUsersLogStreamEvents:
     Type: AWS::Scheduler::Schedule
     Properties:
-      Description: Scheduler that trigger the refresh of user log stream events
+      Description: Scheduler that triggers the refresh of user log stream events
       FlexibleTimeWindow:
         Mode: "OFF"
       Name: !Join [ '', [ !Ref Env, -RefreshUsersLogStreamEvents ] ]

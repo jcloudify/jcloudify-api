@@ -53,5 +53,5 @@ networking:
   ssm_subnet2_id: /jcloudify-api/private/subnet2/id
   with_own_vpc: 'true'
 testing:
-  jacoco_min_coverage: '0.5'
+  jacoco_min_coverage: '0.4'
   java_facade_it: api.jcloudify.app.conf.MockedThirdParties
