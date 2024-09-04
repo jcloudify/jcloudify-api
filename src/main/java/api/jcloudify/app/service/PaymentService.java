@@ -1,15 +1,17 @@
 package api.jcloudify.app.service;
 
 import static java.lang.Boolean.TRUE;
+import static java.util.UUID.randomUUID;
 
+import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.UserMonthlyPaymentRequested;
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.model.PaymentCustomer;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
-import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.User;
 import com.stripe.model.Customer;
-import com.stripe.model.Invoice;
 import com.stripe.model.PaymentMethod;
+import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class PaymentService {
+  private final EventProducer<UserMonthlyPaymentRequested> eventProducer;
   private final StripeService stripeService;
   private final UserService userService;
   private final ApplicationService applicationService;
@@ -59,24 +62,20 @@ public class PaymentService {
         customer.getId(), customer.getName(), customer.getEmail(), customer.getPhone());
   }
 
-  public void makeAPayment() {
+  public void paymentAttempts() {
+    String parentId = randomUUID().toString();
     List<User> users = userService.getAllUsers();
-    users.forEach(
-        user -> {
-          invoiceCreationProcess(user.getId(), user.getStripeId());
-        });
-  }
-
-  private void invoiceCreationProcess(String userId, String customerId) {
-    List<Application> app = applicationService.findAllByUserId(userId);
-    Invoice invoice = stripeService.createInvoice(customerId);
-    app.forEach(
-        item -> {
-          if (item.getPrice() != 0) {
-            stripeService.createInvoiceItem(invoice.getId(), item.getPrice(), item.getName());
-          }
-        });
-    stripeService.finalizeInvoice(invoice.getId());
-    stripeService.payInvoice(invoice.getId());
+    var events =
+        users.stream()
+            .map(
+                a ->
+                    UserMonthlyPaymentRequested.builder()
+                        .parentId(parentId)
+                        .userId(a.getId())
+                        .customerId(a.getStripeId())
+                        .requestInstant(Instant.now())
+                        .build())
+            .toList();
+    eventProducer.accept(events);
   }
 }

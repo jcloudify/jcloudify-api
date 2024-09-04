@@ -157,20 +157,6 @@ public class StripeService {
     }
   }
 
-  public InvoiceItem createIvoiceItem(Long amount, String description, String invoiceId) {
-    try {
-      var params =
-          InvoiceItemCreateParams.builder()
-              .setInvoice(invoiceId)
-              .setAmount(amount)
-              .setDescription(description)
-              .build();
-      return InvoiceItem.create(params);
-    } catch (StripeException e) {
-      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
-    }
-  }
-
   private RequestOptions getRequestOption() {
     return RequestOptions.builder().setApiKey(stripeConf.getApiKey()).build();
   }
