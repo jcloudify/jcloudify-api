@@ -383,10 +383,14 @@ public class TestMocks {
   }
 
   public static List<LogStreamEvent> prodFirstLogStreamEvents() {
-    LogStreamEvent initEvent = new LogStreamEvent()
-            .message("INIT_START Runtime Version: java:21.v20 Runtime Version ARN: arn:aws:lambda:eu-west-3::runtime:1234")
+    LogStreamEvent initEvent =
+        new LogStreamEvent()
+            .message(
+                "INIT_START Runtime Version: java:21.v20 Runtime Version ARN:"
+                    + " arn:aws:lambda:eu-west-3::runtime:1234")
             .timestamp(Instant.parse("2024-09-04T13:23:12.486Z"));
-    LogStreamEvent startEvent = new LogStreamEvent()
+    LogStreamEvent startEvent =
+        new LogStreamEvent()
             .message("START RequestId: 628c434b-f53f-4c67-9202-79078bbcd894 Version: 34")
             .timestamp(Instant.parse("2024-01-10T15:30:52.254Z"));
     return List.of(initEvent, startEvent);

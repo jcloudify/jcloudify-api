@@ -175,25 +175,32 @@ public class ApplicationEnvironmentController {
   }
 
   @GetMapping(
-          "/users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreamEvents")
+      "/users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreamEvents")
   public PagedLogStreamEvents getFunctionLogStreams(
-          @PathVariable String userId,
-          @PathVariable String applicationId,
-          @PathVariable String environmentId,
-          @PathVariable String functionName,
-          @RequestParam String logGroupName,
-          @RequestParam String logStreamName,
-          @RequestParam(required = false, defaultValue = "1") PageFromOne page,
-          @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @PathVariable String environmentId,
+      @PathVariable String functionName,
+      @RequestParam String logGroupName,
+      @RequestParam String logStreamName,
+      @RequestParam(required = false, defaultValue = "1") PageFromOne page,
+      @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
     var pagedResponseData =
-            lambdaFunctionLogService.getLogStreamEvents(
-                    userId, applicationId, environmentId, functionName, logGroupName, logStreamName, page, pageSize);
+        lambdaFunctionLogService.getLogStreamEvents(
+            userId,
+            applicationId,
+            environmentId,
+            functionName,
+            logGroupName,
+            logStreamName,
+            page,
+            pageSize);
     var responseData = pagedResponseData.data().stream().toList();
     return new PagedLogStreamEvents()
-            .data(responseData)
-            .count(pagedResponseData.count())
-            .pageSize(pagedResponseData.queryPageSize().getValue())
-            .pageNumber(pagedResponseData.queryPage().getValue())
-            .hasPrevious(pagedResponseData.hasPrevious());
+        .data(responseData)
+        .count(pagedResponseData.count())
+        .pageSize(pagedResponseData.queryPageSize().getValue())
+        .pageNumber(pagedResponseData.queryPage().getValue())
+        .hasPrevious(pagedResponseData.hasPrevious());
   }
 }

@@ -1,7 +1,10 @@
 package api.jcloudify.app.endpoint.event.model;
 
+import static api.jcloudify.app.endpoint.event.EventStack.EVENT_STACK_2;
+
+import api.jcloudify.app.endpoint.event.EventStack;
 import java.time.Duration;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -9,19 +12,20 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
-@Builder
-public class CrupdateLogStreamEventTriggered extends PojaEvent {
-  private String logGroupName;
-  private String logStreamName;
-  private String bucketKey;
-
+@AllArgsConstructor
+public class RefreshUsersLogStreamEventsTriggered extends PojaEvent {
   @Override
   public Duration maxConsumerDuration() {
-    return Duration.ofMinutes(2);
+    return Duration.ofMinutes(1);
   }
 
   @Override
   public Duration maxConsumerBackoffBetweenRetries() {
     return Duration.ofSeconds(30);
+  }
+
+  @Override
+  public EventStack getEventStack() {
+    return EVENT_STACK_2;
   }
 }

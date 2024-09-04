@@ -119,7 +119,7 @@ public class TestUtils {
     ClassPathResource prodFrontalFunctionLogStreamResource =
         new ClassPathResource("files/prod-frontal-function-log-streams.json");
     ClassPathResource prodFrontalFunctionLogStreamEventsResource =
-            new ClassPathResource("files/prod-frontal-function-log-stream-events.json");
+        new ClassPathResource("files/prod-frontal-function-log-stream-events.json");
     String stackEventFileBucketKey =
         String.format(
             "users/%s/apps/%s/envs/%s/stacks/%s/events/%s",
@@ -154,15 +154,15 @@ public class TestUtils {
             PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP,
             "log-stream.json");
     String prodFrontalFunctionLogStreamEventsBucketKey =
-            String.format(
-                    "users/%s/apps/%s/envs/%s/function/%s/logGroups/%s/logStreams/%s/logEvents/%s",
-                    JOE_DOE_ID,
-                    POJA_APPLICATION_ID,
-                    POJA_APPLICATION_ENVIRONMENT_ID,
-                    PROD_COMPUTE_FRONTAL_FUNCTION,
-                    PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP,
-                    FIRST_LOG_STREAM_NAME,
-                    "log-events.json");
+        String.format(
+            "users/%s/apps/%s/envs/%s/function/%s/logGroups/%s/logStreams/%s/logEvents/%s",
+            JOE_DOE_ID,
+            POJA_APPLICATION_ID,
+            POJA_APPLICATION_ENVIRONMENT_ID,
+            PROD_COMPUTE_FRONTAL_FUNCTION,
+            PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP,
+            FIRST_LOG_STREAM_NAME,
+            "log-events.json");
     when(extendedBucketComponent.download(stackEventFileBucketKey))
         .thenReturn(stackEventResource.getFile());
     when(extendedBucketComponent.download(stackOutputFileBucketKey))
@@ -172,14 +172,14 @@ public class TestUtils {
     when(extendedBucketComponent.download(prodFrontalFunctionLogStreamsBucketKey))
         .thenReturn(prodFrontalFunctionLogStreamResource.getFile());
     when(extendedBucketComponent.download(prodFrontalFunctionLogStreamEventsBucketKey))
-            .thenReturn(prodFrontalFunctionLogStreamEventsResource.getFile());
+        .thenReturn(prodFrontalFunctionLogStreamEventsResource.getFile());
     when(extendedBucketComponent.doesExist(stackEventFileBucketKey)).thenReturn(true);
     when(extendedBucketComponent.doesExist(stackOutputFileBucketKey)).thenReturn(true);
     when(extendedBucketComponent.doesExist(prodFrontalFunctionLogGroupsBucketKey)).thenReturn(true);
     when(extendedBucketComponent.doesExist(prodFrontalFunctionLogStreamsBucketKey))
         .thenReturn(true);
     when(extendedBucketComponent.doesExist(prodFrontalFunctionLogStreamEventsBucketKey))
-            .thenReturn(true);
+        .thenReturn(true);
     when(extendedBucketComponent.presignGetObject(any(), any()))
         .thenReturn(new URI("https://api.preprod.jcloudify.com/filename"));
   }
