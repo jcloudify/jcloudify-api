@@ -1,3 +1,23 @@
+# [3.19.0](https://github.com/jcloudify/jcloudify-api/compare/v3.18.0...v3.19.0) (2024-09-04)
+
+
+### Bug Fixes
+
+* exception thrown on access denied is from spring security ([0f959d6](https://github.com/jcloudify/jcloudify-api/commit/0f959d65a1d30e52252ca78c31c3410ccafe21e3))
+* handle null values on function names ([b6b0b08](https://github.com/jcloudify/jcloudify-api/commit/b6b0b08f4d3e494d3e4ba584d47e2cb877ee24c4))
+* reference log group name as query parameter instead of path variable ([bb93323](https://github.com/jcloudify/jcloudify-api/commit/bb9332380f8ecc6c5355cb24ab3914c6e60c8752))
+
+
+### Features
+
+* crupdate all log streams ([11d4203](https://github.com/jcloudify/jcloudify-api/commit/11d42038781948f98651d869abdf91051ada2872))
+* crupdate log streams ([15c1949](https://github.com/jcloudify/jcloudify-api/commit/15c194961d3953ff8f80e57ad6ce7c3bdfc9d547))
+* get cloudwatch log groups ([0a06c1c](https://github.com/jcloudify/jcloudify-api/commit/0a06c1ca00f0da5699e948b160db865571829b31))
+* get log streams ([53b9eb5](https://github.com/jcloudify/jcloudify-api/commit/53b9eb576c18dbfd4fbff3be12680f28901d8547))
+* get stack resources ([9a2da1f](https://github.com/jcloudify/jcloudify-api/commit/9a2da1fea2957fde0065bea9c0a6dfe1f35dad6c))
+
+
+
 # [3.18.0](https://github.com/jcloudify/jcloudify-api/compare/v3.17.0...v3.18.0) (2024-08-30)
 
 
@@ -126,17 +146,6 @@
 ### Features
 
 * return refresh token with access token ([3caf931](https://github.com/jcloudify/jcloudify-api/commit/3caf931588e57eeafd6b736cb4bc0227b15a8302))
-
-
-
-## [3.10.1](https://github.com/jcloudify/jcloudify-api/compare/v3.10.0...v3.10.1) (2024-07-31)
-
-
-### Bug Fixes
-
-* pojaConf snapstart is boolean ([1d55fed](https://github.com/jcloudify/jcloudify-api/commit/1d55fedcb937637f0e70b9f775769c8c7b94c419))
-* return an empty list when there's no ssm param yet ([e181a41](https://github.com/jcloudify/jcloudify-api/commit/e181a413c0550787458a39754015a6dc67aefda3))
-* separate endpoint to create and update ssm parameters ([2798bb0](https://github.com/jcloudify/jcloudify-api/commit/2798bb0641ff89d389d426ecd45a311df2b68aae))
 
 
 
