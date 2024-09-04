@@ -6,6 +6,7 @@ import static java.io.File.createTempFile;
 
 import api.jcloudify.app.aws.cloudwatch.CloudwatchComponent;
 import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.CrupdateLogStreamEventTriggered;
 import api.jcloudify.app.endpoint.event.model.CrupdateLogStreamTriggered;
 import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.rest.mapper.LambdaFunctionLogMapper;
@@ -64,12 +65,31 @@ public class LambdaFunctionLogService {
       if (bucketComponent.doesExist(bucketKey)) {
         logStreamsFile = bucketComponent.download(bucketKey);
         List<LogStream> actual = om.readValue(logStreamsFile, new TypeReference<>() {});
-        logStreams = mergeAndSortLogStreamList(actual, logStreams);
+        logStreams = mergeAndSortLogStreamListToSet(actual, logStreams);
       } else {
-        logStreamsFile = createTempFile("log-groups", ".json");
+        logStreamsFile = createTempFile("log-streams", ".json");
       }
       om.writeValue(logStreamsFile, logStreams);
       bucketComponent.upload(logStreamsFile, bucketKey);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public void crupdateLogStreamEvents(String logGroupName, String logStreamName, String bucketKey) {
+    List<LogStreamEvent> logStreamEvents =
+            mapper.toRestLogStreamEvents(cloudwatchComponent.getLogStreamEvents(logGroupName, logStreamName));
+    try {
+      File logStreamEventsFile;
+      if (bucketComponent.doesExist(bucketKey)) {
+        logStreamEventsFile = bucketComponent.download(bucketKey);
+        List<LogStreamEvent> actual = om.readValue(logStreamEventsFile, new TypeReference<>() {});
+        logStreamEvents = mergeAndSortLogStreamEventListToSet(actual, logStreamEvents);
+      } else {
+        logStreamEventsFile = createTempFile("log-stream-events", ".json");
+      }
+      om.writeValue(logStreamEventsFile, logStreamEvents);
+      bucketComponent.upload(logStreamEventsFile, bucketKey);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -97,7 +117,7 @@ public class LambdaFunctionLogService {
     return mergedSet;
   }
 
-  private static List<LogStream> mergeAndSortLogStreamList(
+  private static List<LogStream> mergeAndSortLogStreamListToSet(
       List<LogStream> actual, List<LogStream> newLogGStreams) {
     Set<LogStream> mergedList = mergeListToSet(actual, newLogGStreams);
     return mergedList.stream()
@@ -111,6 +131,22 @@ public class LambdaFunctionLogService {
               return i2.compareTo(i1);
             })
         .toList();
+  }
+
+  private static List<LogStreamEvent> mergeAndSortLogStreamEventListToSet(
+          List<LogStreamEvent> actual, List<LogStreamEvent> newLogGStreams) {
+    Set<LogStreamEvent> mergedList = mergeListToSet(actual, newLogGStreams);
+    return mergedList.stream()
+            .sorted(
+                    (e1, e2) -> {
+                      Instant i1 = e1.getTimestamp();
+                      Instant i2 = e2.getTimestamp();
+                      if (i1 == null && i2 == null) return 0;
+                      if (i1 == null) return 1;
+                      if (i2 == null) return -1;
+                      return i2.compareTo(i1);
+                    })
+            .toList();
   }
 
   public Page<LogGroup> getLogGroups(
@@ -166,6 +202,13 @@ public class LambdaFunctionLogService {
           PageFromOne page,
           BoundedPageSize pageSize) {
     String logStreamEventsBucketKey = getLogStreamEventsBucketKey(userId, applicationId, environmentId, functionName, logGroupName, logStreamName);
+    eventProducer.accept(
+            List.of(
+                    CrupdateLogStreamEventTriggered.builder()
+                            .bucketKey(logStreamEventsBucketKey)
+                            .logGroupName(logGroupName)
+                            .logStreamName(logStreamName)
+                            .build()));
     try {
       List<LogStreamEvent> logStreams =
               fromStackDataFileToList(bucketComponent, om, logStreamEventsBucketKey, LogStreamEvent.class);

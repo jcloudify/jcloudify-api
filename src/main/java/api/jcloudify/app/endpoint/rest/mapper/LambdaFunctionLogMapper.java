@@ -4,7 +4,10 @@ import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.LogStream;
 import java.time.Instant;
 import java.util.List;
+
+import api.jcloudify.app.endpoint.rest.model.LogStreamEvent;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.services.cloudwatchlogs.model.OutputLogEvent;
 
 @Component
 public class LambdaFunctionLogMapper {
@@ -32,5 +35,15 @@ public class LambdaFunctionLogMapper {
   public List<LogStream> toRestLogStreams(
       List<software.amazon.awssdk.services.cloudwatchlogs.model.LogStream> awsLogStreams) {
     return awsLogStreams.stream().map(this::toRestLogStream).toList();
+  }
+
+  public LogStreamEvent toRestLogStreamEvent(OutputLogEvent awsLogEvent) {
+    return new LogStreamEvent()
+            .message(awsLogEvent.message())
+            .timestamp(Instant.ofEpochMilli(awsLogEvent.timestamp()));
+  }
+
+  public List<LogStreamEvent> toRestLogStreamEvents(List<OutputLogEvent> awsLogEvents) {
+    return awsLogEvents.stream().map(this::toRestLogStreamEvent).toList();
   }
 }
