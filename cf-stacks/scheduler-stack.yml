@@ -33,5 +33,5 @@ Resources:
         DeadLetterConfig:
           Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/sqs/dead-letter-queue-arn}}'
         EventBridgeParameters:
-          DetailType: 'api.jcloudify.app.endpoint.event.model.RefreshUserLogStreamsTriggered'
+          DetailType: 'api.jcloudify.app.endpoint.event.model.RefreshUsersLogStreamsTriggered'
           Source: 'api.jcloudify.app.event2'

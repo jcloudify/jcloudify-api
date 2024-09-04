@@ -153,7 +153,7 @@ public class ApplicationEnvironmentController {
 
   @GetMapping(
       "/users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreams")
-  private PagedLogStreams getLogStreams(
+  public PagedLogStreams getFunctionLogStreams(
       @PathVariable String userId,
       @PathVariable String applicationId,
       @PathVariable String environmentId,
