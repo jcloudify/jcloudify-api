@@ -1,3 +1,12 @@
+# [3.20.0](https://github.com/jcloudify/jcloudify-api/compare/v3.19.0...v3.20.0) (2024-09-04)
+
+
+### Features
+
+* get log events of a log stream (not implemented) ([c32d387](https://github.com/jcloudify/jcloudify-api/commit/c32d387f5ba5d8806fd20e0cd474711a651a0d3a))
+
+
+
 # [3.19.0](https://github.com/jcloudify/jcloudify-api/compare/v3.18.0...v3.19.0) (2024-09-04)
 
 
@@ -137,15 +146,6 @@
 * authenticate either with github user token or app token ([e25dc17](https://github.com/jcloudify/jcloudify-api/commit/e25dc17c170a490e08c87da662491409ae39b413))
 * refresh github access token ([13b0337](https://github.com/jcloudify/jcloudify-api/commit/13b033751fb952170f00cab906673f6647418469))
 * upload project package file ([75e661f](https://github.com/jcloudify/jcloudify-api/commit/75e661f83fd2934bf4dc608d1fe32fb2e805749d))
-
-
-
-# [3.11.0](https://github.com/jcloudify/jcloudify-api/compare/v3.10.1...v3.11.0) (2024-08-01)
-
-
-### Features
-
-* return refresh token with access token ([3caf931](https://github.com/jcloudify/jcloudify-api/commit/3caf931588e57eeafd6b736cb4bc0227b15a8302))
 
 
 
