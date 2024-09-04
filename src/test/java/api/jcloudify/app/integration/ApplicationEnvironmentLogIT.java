@@ -8,13 +8,12 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATIO
 import static api.jcloudify.app.integration.conf.utils.TestMocks.PROD_COMPUTE_FRONTAL_FUNCTION;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.prodComputeFrontalFunctionLogGroup;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.prodLogGroupLogStreams;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.prodFirstLogStreamEvents;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.prodLogGroupLogStreams;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpExtendedBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -96,15 +95,15 @@ public class ApplicationEnvironmentLogIT extends MockedThirdParties {
     EnvironmentApi environmentApi = new EnvironmentApi(joeDoeApiClient);
 
     var pagedResponseData =
-            environmentApi.getFunctionLogStreamEvents(
-                    JOE_DOE_ID,
-                    POJA_APPLICATION_ID,
-                    POJA_APPLICATION_ENVIRONMENT_ID,
-                    PROD_COMPUTE_FRONTAL_FUNCTION,
-                    PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP,
-                    FIRST_LOG_STREAM_NAME,
-                    null,
-                    null);
+        environmentApi.getFunctionLogStreamEvents(
+            JOE_DOE_ID,
+            POJA_APPLICATION_ID,
+            POJA_APPLICATION_ENVIRONMENT_ID,
+            PROD_COMPUTE_FRONTAL_FUNCTION,
+            PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP,
+            FIRST_LOG_STREAM_NAME,
+            null,
+            null);
     var logsStreamEventsData = pagedResponseData.getData();
     assertNotNull(logsStreamEventsData);
     assertTrue(logsStreamEventsData.containsAll(prodFirstLogStreamEvents()));

@@ -78,7 +78,8 @@ public class LambdaFunctionLogService {
 
   public void crupdateLogStreamEvents(String logGroupName, String logStreamName, String bucketKey) {
     List<LogStreamEvent> logStreamEvents =
-            mapper.toRestLogStreamEvents(cloudwatchComponent.getLogStreamEvents(logGroupName, logStreamName));
+        mapper.toRestLogStreamEvents(
+            cloudwatchComponent.getLogStreamEvents(logGroupName, logStreamName));
     try {
       File logStreamEventsFile;
       if (bucketComponent.doesExist(bucketKey)) {
@@ -134,19 +135,19 @@ public class LambdaFunctionLogService {
   }
 
   private static List<LogStreamEvent> mergeAndSortLogStreamEventListToSet(
-          List<LogStreamEvent> actual, List<LogStreamEvent> newLogGStreams) {
+      List<LogStreamEvent> actual, List<LogStreamEvent> newLogGStreams) {
     Set<LogStreamEvent> mergedList = mergeListToSet(actual, newLogGStreams);
     return mergedList.stream()
-            .sorted(
-                    (e1, e2) -> {
-                      Instant i1 = e1.getTimestamp();
-                      Instant i2 = e2.getTimestamp();
-                      if (i1 == null && i2 == null) return 0;
-                      if (i1 == null) return 1;
-                      if (i2 == null) return -1;
-                      return i2.compareTo(i1);
-                    })
-            .toList();
+        .sorted(
+            (e1, e2) -> {
+              Instant i1 = e1.getTimestamp();
+              Instant i2 = e2.getTimestamp();
+              if (i1 == null && i2 == null) return 0;
+              if (i1 == null) return 1;
+              if (i2 == null) return -1;
+              return i2.compareTo(i1);
+            })
+        .toList();
   }
 
   public Page<LogGroup> getLogGroups(
@@ -193,25 +194,28 @@ public class LambdaFunctionLogService {
   }
 
   public Page<LogStreamEvent> getLogStreamEvents(
-          String userId,
-          String applicationId,
-          String environmentId,
-          String functionName,
-          String logGroupName,
-          String logStreamName,
-          PageFromOne page,
-          BoundedPageSize pageSize) {
-    String logStreamEventsBucketKey = getLogStreamEventsBucketKey(userId, applicationId, environmentId, functionName, logGroupName, logStreamName);
+      String userId,
+      String applicationId,
+      String environmentId,
+      String functionName,
+      String logGroupName,
+      String logStreamName,
+      PageFromOne page,
+      BoundedPageSize pageSize) {
+    String logStreamEventsBucketKey =
+        getLogStreamEventsBucketKey(
+            userId, applicationId, environmentId, functionName, logGroupName, logStreamName);
     eventProducer.accept(
-            List.of(
-                    CrupdateLogStreamEventTriggered.builder()
-                            .bucketKey(logStreamEventsBucketKey)
-                            .logGroupName(logGroupName)
-                            .logStreamName(logStreamName)
-                            .build()));
+        List.of(
+            CrupdateLogStreamEventTriggered.builder()
+                .bucketKey(logStreamEventsBucketKey)
+                .logGroupName(logGroupName)
+                .logStreamName(logStreamName)
+                .build()));
     try {
       List<LogStreamEvent> logStreams =
-              fromStackDataFileToList(bucketComponent, om, logStreamEventsBucketKey, LogStreamEvent.class);
+          fromStackDataFileToList(
+              bucketComponent, om, logStreamEventsBucketKey, LogStreamEvent.class);
       return paginate(page, pageSize, logStreams);
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
@@ -237,14 +241,20 @@ public class LambdaFunctionLogService {
   }
 
   public static String getLogStreamEventsBucketKey(
-          String userId,
-          String applicationId,
-          String environmentId,
-          String functionName,
-          String logGroupName,
-          String logStreamName) {
+      String userId,
+      String applicationId,
+      String environmentId,
+      String functionName,
+      String logGroupName,
+      String logStreamName) {
     return String.format(
-            "users/%s/apps/%s/envs/%s/function/%s/logGroups/%s/logStreams/%s/logEvents/%s",
-            userId, applicationId, environmentId, functionName, logGroupName, logStreamName, "log-events.json");
+        "users/%s/apps/%s/envs/%s/function/%s/logGroups/%s/logStreams/%s/logEvents/%s",
+        userId,
+        applicationId,
+        environmentId,
+        functionName,
+        logGroupName,
+        logStreamName,
+        "log-events.json");
   }
 }
