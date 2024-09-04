@@ -12,6 +12,7 @@ import api.jcloudify.app.endpoint.rest.model.EnvironmentsResponse;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PagedEnvironmentSsmParameters;
 import api.jcloudify.app.endpoint.rest.model.PagedLogGroups;
+import api.jcloudify.app.endpoint.rest.model.PagedLogStreamEvents;
 import api.jcloudify.app.endpoint.rest.model.PagedLogStreams;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.endpoint.rest.model.UpdateEnvironmentSsmParameters;
@@ -161,15 +162,38 @@ public class ApplicationEnvironmentController {
       @RequestParam String logGroupName,
       @RequestParam(required = false, defaultValue = "1") PageFromOne page,
       @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
-    var data =
+    var pagedResponseData =
         lambdaFunctionLogService.getLogStreams(
             userId, applicationId, environmentId, functionName, logGroupName, page, pageSize);
-    var responseData = data.data().stream().toList();
+    var responseData = pagedResponseData.data().stream().toList();
     return new PagedLogStreams()
         .data(responseData)
-        .count(data.count())
-        .pageSize(data.queryPageSize().getValue())
-        .pageNumber(data.queryPage().getValue())
-        .hasPrevious(data.hasPrevious());
+        .count(pagedResponseData.count())
+        .pageSize(pagedResponseData.queryPageSize().getValue())
+        .pageNumber(pagedResponseData.queryPage().getValue())
+        .hasPrevious(pagedResponseData.hasPrevious());
+  }
+
+  @GetMapping(
+          "/users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreamEvents")
+  public PagedLogStreamEvents getFunctionLogStreams(
+          @PathVariable String userId,
+          @PathVariable String applicationId,
+          @PathVariable String environmentId,
+          @PathVariable String functionName,
+          @RequestParam String logGroupName,
+          @RequestParam String logStreamName,
+          @RequestParam(required = false, defaultValue = "1") PageFromOne page,
+          @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
+    var pagedResponseData =
+            lambdaFunctionLogService.getLogStreamEvents(
+                    userId, applicationId, environmentId, functionName, logGroupName, logStreamName, page, pageSize);
+    var responseData = pagedResponseData.data().stream().toList();
+    return new PagedLogStreamEvents()
+            .data(responseData)
+            .count(pagedResponseData.count())
+            .pageSize(pagedResponseData.queryPageSize().getValue())
+            .pageNumber(pagedResponseData.queryPage().getValue())
+            .hasPrevious(pagedResponseData.hasPrevious());
   }
 }
