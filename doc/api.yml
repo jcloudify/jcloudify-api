@@ -1037,6 +1037,42 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreamEvents:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/functionName'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getFunctionLogStreamEvents
+      summary: Get log event of a given log stream
+      parameters:
+        - $ref: '#/components/parameters/logGroupName'
+        - $ref: '#/components/parameters/logStreamName'
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of log events of a given log stream
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedLogStreamEvents'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /users/{userId}/payment-details/payment-methods:
     parameters:
       - $ref: "#/components/parameters/userId"
@@ -1195,6 +1231,14 @@ components:
       schema:
         type: string
         example: /aws/lambda/prod-compute-jcloudify-poja-app-FrontalFunction-rPbLaYfitwSO
+      required: true
+    logStreamName:
+      name: logStreamName
+      in: query
+      description: The physical resource name of the log stream
+      schema:
+        type: string
+        example: 2024/01/01/[$LATEST]12345
       required: true
     logId:
       name: logId
@@ -1652,7 +1696,14 @@ components:
         last_event_datetime:
           type: string
           format: date-time
-
+    LogStreamEvent:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        message:
+          type: string
     EnvironmentVariable:
       type: object
       properties:
@@ -2019,6 +2070,15 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/LogStream"
+    PagedLogStreamEvents:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/LogStreamEvent"
     CrupdateEnvironmentVariablesRequestBody:
       type: object
       properties:
