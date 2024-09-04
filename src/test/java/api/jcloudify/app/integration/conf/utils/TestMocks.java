@@ -25,6 +25,7 @@ import api.jcloudify.app.endpoint.rest.model.GithubRepository;
 import api.jcloudify.app.endpoint.rest.model.Integration1;
 import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.LogStream;
+import api.jcloudify.app.endpoint.rest.model.LogStreamEvent;
 import api.jcloudify.app.endpoint.rest.model.MailingConf1;
 import api.jcloudify.app.endpoint.rest.model.PojaConf1;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
@@ -379,5 +380,15 @@ public class TestMocks {
             .firstEventDatetime(Instant.parse("2024-01-01T01:00:01.100Z"))
             .lastEventDatetime(Instant.parse("2024-01-01T01:13:01.000Z"));
     return List.of(firstLogStream, secondLogStream, thirdLogStream);
+  }
+
+  public static List<LogStreamEvent> prodFirstLogStreamEvents() {
+    LogStreamEvent initEvent = new LogStreamEvent()
+            .message("INIT_START Runtime Version: java:21.v20 Runtime Version ARN: arn:aws:lambda:eu-west-3::runtime:1234")
+            .timestamp(Instant.parse("2024-09-04T13:23:12.486Z"));
+    LogStreamEvent startEvent = new LogStreamEvent()
+            .message("START RequestId: 628c434b-f53f-4c67-9202-79078bbcd894 Version: 34")
+            .timestamp(Instant.parse("2024-01-10T15:30:52.254Z"));
+    return List.of(initEvent, startEvent);
   }
 }
