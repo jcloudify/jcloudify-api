@@ -11,6 +11,7 @@ import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.rest.mapper.LambdaFunctionLogMapper;
 import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.LogStream;
+import api.jcloudify.app.endpoint.rest.model.LogStreamEvent;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.Page;
@@ -155,6 +156,25 @@ public class LambdaFunctionLogService {
     }
   }
 
+  public Page<LogStreamEvent> getLogStreamEvents(
+          String userId,
+          String applicationId,
+          String environmentId,
+          String functionName,
+          String logGroupName,
+          String logStreamName,
+          PageFromOne page,
+          BoundedPageSize pageSize) {
+    String logStreamEventsBucketKey = getLogStreamEventsBucketKey(userId, applicationId, environmentId, functionName, logGroupName, logStreamName);
+    try {
+      List<LogStreamEvent> logStreams =
+              fromStackDataFileToList(bucketComponent, om, logStreamEventsBucketKey, LogStreamEvent.class);
+      return paginate(page, pageSize, logStreams);
+    } catch (IOException e) {
+      throw new InternalServerErrorException(e);
+    }
+  }
+
   public static String getLogGroupsBucketKey(
       String userId, String applicationId, String environmentId, String functionName) {
     return String.format(
@@ -171,5 +191,17 @@ public class LambdaFunctionLogService {
     return String.format(
         "users/%s/apps/%s/envs/%s/function/%s/logGroups/%s/logStreams/%s",
         userId, applicationId, environmentId, functionName, logGroupName, "log-stream.json");
+  }
+
+  public static String getLogStreamEventsBucketKey(
+          String userId,
+          String applicationId,
+          String environmentId,
+          String functionName,
+          String logGroupName,
+          String logStreamName) {
+    return String.format(
+            "users/%s/apps/%s/envs/%s/function/%s/logGroups/%s/logStreams/%s/logEvents/%s",
+            userId, applicationId, environmentId, functionName, logGroupName, logStreamName, "log-events.json");
   }
 }
