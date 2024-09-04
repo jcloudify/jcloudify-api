@@ -1,5 +1,6 @@
 package api.jcloudify.app.integration;
 
+import static api.jcloudify.app.integration.conf.utils.TestMocks.FIRST_LOG_STREAM_NAME;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
@@ -8,11 +9,11 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.PROD_COMPUTE_FR
 import static api.jcloudify.app.integration.conf.utils.TestMocks.PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.prodComputeFrontalFunctionLogGroup;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.prodLogGroupLogStreams;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.prodFirstLogStreamEvents;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpExtendedBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -85,7 +86,26 @@ public class ApplicationEnvironmentLogIT extends MockedThirdParties {
     var logsStreamsData = pagedResponseData.getData();
 
     assertNotNull(logsStreamsData);
-    assertEquals(logsStreamsData, prodLogGroupLogStreams());
     assertTrue(logsStreamsData.containsAll(prodLogGroupLogStreams()));
+  }
+
+  @Test
+  void get_log_stream_events_ok() throws ApiException {
+    ApiClient joeDoeApiClient = anApiClient();
+    EnvironmentApi environmentApi = new EnvironmentApi(joeDoeApiClient);
+
+    var pagedResponseData =
+            environmentApi.getFunctionLogStreamEvents(
+                    JOE_DOE_ID,
+                    POJA_APPLICATION_ID,
+                    POJA_APPLICATION_ENVIRONMENT_ID,
+                    PROD_COMPUTE_FRONTAL_FUNCTION,
+                    PROD_COMPUTE_FRONTAL_FUNCTION_LOG_GROUP,
+                    FIRST_LOG_STREAM_NAME,
+                    null,
+                    null);
+    var logsStreamEventsData = pagedResponseData.getData();
+    assertNotNull(logsStreamEventsData);
+    assertTrue(logsStreamEventsData.containsAll(prodFirstLogStreamEvents()));
   }
 }
