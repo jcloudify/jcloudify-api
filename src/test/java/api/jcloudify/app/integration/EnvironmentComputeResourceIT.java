@@ -20,6 +20,7 @@ import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.ComputeStackResource;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,8 @@ public class EnvironmentComputeResourceIT extends MockedThirdParties {
         .environmentId(POJA_APPLICATION_ENVIRONMENT_ID)
         .frontalFunctionName(PROD_COMPUTE_FRONTAL_FUNCTION)
         .worker1FunctionName(PROD_COMPUTE_WORKER_1_FUNCTION)
-        .worker2FunctionName(PROD_COMPUTE_WORKER_2_FUNCTION);
+        .worker2FunctionName(PROD_COMPUTE_WORKER_2_FUNCTION)
+        .creationDatetime(Instant.parse("2024-07-18T10:15:30.00Z"));
   }
 
   @BeforeEach

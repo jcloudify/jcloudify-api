@@ -12,6 +12,7 @@ public class ComputeStackResourceMapper {
         .environmentId(domain.getEnvironmentId())
         .frontalFunctionName(domain.getFrontalFunctionName())
         .worker1FunctionName(domain.getWorker1FunctionName())
-        .worker2FunctionName(domain.getWorker2FunctionName());
+        .worker2FunctionName(domain.getWorker2FunctionName())
+        .creationDatetime(domain.getCreationDatetime());
   }
 }
