@@ -31,7 +31,7 @@ Resources:
         Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/eventbridge/bus-arn}}'
         RoleArn: !GetAtt ScheduledEventExecutionRole.Arn
         DeadLetterConfig:
-          Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/sqs/dead-letter-queue-arn}}'
+          Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/2/sqs/dead-letter-queue-arn}}'
         EventBridgeParameters:
           DetailType: 'api.jcloudify.app.endpoint.event.model.RefreshUsersLogStreamsTriggered'
           Source: 'api.jcloudify.app.event2'

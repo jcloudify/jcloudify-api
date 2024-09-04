@@ -4,7 +4,8 @@ import static api.jcloudify.app.endpoint.event.EventStack.EVENT_STACK_2;
 
 import api.jcloudify.app.endpoint.event.EventStack;
 import java.time.Duration;
-import lombok.Builder;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -12,7 +13,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
-@Builder
+@AllArgsConstructor
 public class RefreshUsersLogStreamsTriggered extends PojaEvent {
   @Override
   public Duration maxConsumerDuration() {
