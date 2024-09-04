@@ -4,7 +4,6 @@ import static api.jcloudify.app.endpoint.event.EventStack.EVENT_STACK_2;
 
 import api.jcloudify.app.endpoint.event.EventStack;
 import java.time.Duration;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
