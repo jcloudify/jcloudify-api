@@ -5,7 +5,7 @@ import static api.jcloudify.app.service.LambdaFunctionLogService.getLogStreamsBu
 import static api.jcloudify.app.service.StackService.fromStackDataFileToList;
 import static api.jcloudify.app.service.event.ComputeStackCrupdateCompletedService.getFunctionNames;
 
-import api.jcloudify.app.endpoint.event.model.RefreshUserLogStreamsTriggered;
+import api.jcloudify.app.endpoint.event.model.RefreshUsersLogStreamsTriggered;
 import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.repository.model.Application;
@@ -28,10 +28,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class RefreshUserLogStreamsTriggeredService
-    implements Consumer<RefreshUserLogStreamsTriggered> {
+public class RefreshUsersLogStreamsTriggeredService
+    implements Consumer<RefreshUsersLogStreamsTriggered> {
   private static final Logger log =
-      LoggerFactory.getLogger(RefreshUserLogStreamsTriggeredService.class);
+      LoggerFactory.getLogger(RefreshUsersLogStreamsTriggeredService.class);
   private final UserService userService;
   private final ApplicationService applicationService;
   private final EnvironmentService environmentService;
@@ -41,7 +41,7 @@ public class RefreshUserLogStreamsTriggeredService
   private final LambdaFunctionLogService logService;
 
   @Override
-  public void accept(RefreshUserLogStreamsTriggered refreshUserLogStreamsTriggered) {
+  public void accept(RefreshUsersLogStreamsTriggered refreshUsersLogStreamsTriggered) {
     this.crupdateUsersLogStreams();
   }
 

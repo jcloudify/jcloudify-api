@@ -51,7 +51,7 @@ public class LambdaFunctionLogService {
       om.writeValue(logGroupsFile, logGroups);
       bucketComponent.upload(logGroupsFile, bucketKey);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new InternalServerErrorException(e);
     }
   }
 
@@ -76,7 +76,7 @@ public class LambdaFunctionLogService {
 
   private static List<LogGroup> mergeAndSortLogGroupList(
       List<LogGroup> actual, List<LogGroup> newLogGroups) {
-    Set<LogGroup> mergedList = mergeLists(actual, newLogGroups);
+    Set<LogGroup> mergedList = mergeListToSet(actual, newLogGroups);
     return mergedList.stream()
         .sorted(
             (e1, e2) -> {
@@ -90,7 +90,7 @@ public class LambdaFunctionLogService {
         .toList();
   }
 
-  private static <T> Set<T> mergeLists(List<T> list1, List<T> list2) {
+  private static <T> Set<T> mergeListToSet(List<T> list1, List<T> list2) {
     Set<T> mergedSet = new HashSet<>(list1);
     mergedSet.addAll(list2);
     return mergedSet;
@@ -98,7 +98,7 @@ public class LambdaFunctionLogService {
 
   private static List<LogStream> mergeAndSortLogStreamList(
       List<LogStream> actual, List<LogStream> newLogGStreams) {
-    Set<LogStream> mergedList = mergeLists(actual, newLogGStreams);
+    Set<LogStream> mergedList = mergeListToSet(actual, newLogGStreams);
     return mergedList.stream()
         .sorted(
             (e1, e2) -> {

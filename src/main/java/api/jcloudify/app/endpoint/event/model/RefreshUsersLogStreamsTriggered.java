@@ -13,7 +13,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
 @Builder
-public class RefreshUserLogStreamsTriggered extends PojaEvent {
+public class RefreshUsersLogStreamsTriggered extends PojaEvent {
   @Override
   public Duration maxConsumerDuration() {
     return Duration.ofMinutes(1);
