@@ -1,7 +1,11 @@
 package api.jcloudify.app.aws.cloudwatch;
 
+import static java.util.Optional.empty;
+
 import api.jcloudify.app.model.exception.InternalServerErrorException;
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,6 +21,7 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.GetLogEventsResponse
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
 import software.amazon.awssdk.services.cloudwatchlogs.model.OutputLogEvent;
+import software.amazon.awssdk.services.cloudwatchlogs.model.ResultField;
 
 @Component
 @AllArgsConstructor
@@ -65,5 +70,29 @@ public class CloudwatchComponent {
           logStreamName);
       throw new InternalServerErrorException(e);
     }
+  }
+
+  public String initiateLogInsightsQuery(
+      String queryString, Instant startTime, Instant endTime, List<String> logGroupNames) {
+    if (logGroupNames.size() > 50) {
+      throw new InternalServerErrorException(
+          "cannot start insights query with more than 50 log group names");
+    }
+    var query =
+        cloudWatchLogsClient.startQuery(
+            sqr ->
+                sqr.queryString(queryString)
+                    .startTime(startTime.getEpochSecond())
+                    .endTime(endTime.getEpochSecond())
+                    .logGroupNames(logGroupNames));
+    return query.queryId();
+  }
+
+  public Optional<List<List<ResultField>>> getQueryResult(String queryId) {
+    var gqrResponse = cloudWatchLogsClient.getQueryResults(gqr -> gqr.queryId(queryId));
+    if (!gqrResponse.hasResults()) {
+      return empty();
+    }
+    return Optional.of(gqrResponse.results());
   }
 }
