@@ -93,6 +93,7 @@ public class TestMocks {
   public static final String FIRST_LOG_STREAM_NAME = "2024/01/01/[$LATEST]12345";
   public static final String SECOND_LOG_STREAM_NAME = "2024/01/01/[$LATEST]67891";
   public static final String THIRD_LOG_STREAM_NAME = "2024/01/01/[$LATEST]011121";
+  public static final String POJA_APPLICATION_2_ID = "poja_application_2_id";
 
   public static Customer stripeCustomer() {
     Customer customer = new Customer();
@@ -192,7 +193,7 @@ public class TestMocks {
 
   public static Application joePojaApplication2() {
     return new Application()
-        .id("poja_application_2_id")
+        .id(POJA_APPLICATION_2_ID)
         .name("poja-test-app-2")
         .userId(JOE_DOE_ID)
         .creationDatetime(Instant.parse("2023-06-18T10:16:30.00Z"))
