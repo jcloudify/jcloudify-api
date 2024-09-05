@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -26,7 +27,6 @@ import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 
 @Entity
-@Builder(toBuilder = true)
 @NoArgsConstructor
 @Getter
 @Setter
@@ -53,11 +53,13 @@ public class Environment implements Serializable {
 
   private String configurationFileKey;
   private String codeFileKey;
+  private Instant creationDatetime;
 
   /**
    * @param configurationFileKey non formatted s3 file key, will need to be formatted using
    *     ExtendedBucketComponent .getBucketKey to get the real filename
    */
+  @Builder(toBuilder = true)
   public Environment(
       String id,
       EnvironmentType environmentType,
@@ -66,7 +68,8 @@ public class Environment implements Serializable {
       StateEnum state,
       String configurationFileKey,
       String codeFileKey,
-      List<EnvDeploymentConf> envDeploymentConfs) {
+      List<EnvDeploymentConf> envDeploymentConfs,
+      Instant creationDatetime) {
     this.id = id;
     this.environmentType = environmentType;
     this.archived = archived;
@@ -75,6 +78,7 @@ public class Environment implements Serializable {
     this.configurationFileKey = configurationFileKey;
     this.codeFileKey = codeFileKey;
     this.envDeploymentConfs = envDeploymentConfs;
+    this.creationDatetime = creationDatetime;
   }
 
   @OneToMany(cascade = ALL)
