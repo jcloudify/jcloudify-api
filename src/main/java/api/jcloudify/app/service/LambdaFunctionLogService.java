@@ -157,12 +157,16 @@ public class LambdaFunctionLogService {
       String functionName,
       PageFromOne page,
       BoundedPageSize pageSize) {
+    var logGroups = getLogGroups(userId, applicationId, environmentId, functionName);
+    return paginate(page, pageSize, logGroups);
+  }
+
+  public List<LogGroup> getLogGroups(
+      String userId, String applicationId, String environmentId, String functionName) {
     String logGroupBucketKey =
         getLogGroupsBucketKey(userId, applicationId, environmentId, functionName);
     try {
-      List<LogGroup> logGroups =
-          fromStackDataFileToList(bucketComponent, om, logGroupBucketKey, LogGroup.class);
-      return paginate(page, pageSize, logGroups);
+      return fromStackDataFileToList(bucketComponent, om, logGroupBucketKey, LogGroup.class);
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
     }

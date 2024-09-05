@@ -15,12 +15,15 @@ import lombok.ToString;
 public class RefreshAppBillingInfoRequested extends PojaEvent {
   private final String userId;
   private final String appId;
-  private final Instant requestTime;
   private final RefreshUserBillingInfoRequested refreshUserBillingInfoRequested;
   private final PricingMethod pricingMethod;
 
-  public final Instant getPricingCalculationRequestTime() {
-    return refreshUserBillingInfoRequested.getPricingCalculationRequestTime();
+  public final Instant getPricingCalculationRequestStartTime() {
+    return refreshUserBillingInfoRequested.getPricingCalculationRequestStartTime();
+  }
+
+  public final Instant getPricingCalculationRequestEndTime() {
+    return refreshUserBillingInfoRequested.getPricingCalculationRequestEndTime();
   }
 
   @Override

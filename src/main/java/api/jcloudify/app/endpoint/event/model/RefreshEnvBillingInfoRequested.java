@@ -16,14 +16,18 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @AllArgsConstructor
 public class RefreshEnvBillingInfoRequested extends PojaEvent {
+  private final String envId;
   private final String userId;
   private final String appId;
-  private final Instant requestTime;
   private final RefreshAppBillingInfoRequested refreshAppBillingInfoRequested;
   private final PricingMethod pricingMethod;
 
-  public final Instant getPricingCalculationRequestTime() {
-    return refreshAppBillingInfoRequested.getPricingCalculationRequestTime();
+  public final Instant getPricingCalculationRequestStartTime() {
+    return refreshAppBillingInfoRequested.getPricingCalculationRequestStartTime();
+  }
+
+  public final Instant getPricingCalculationRequestEndTime() {
+    return refreshAppBillingInfoRequested.getPricingCalculationRequestEndTime();
   }
 
   @Override

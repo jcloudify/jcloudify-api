@@ -2,6 +2,7 @@ package api.jcloudify.app.repository.jpa;
 
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.repository.model.Environment;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EnvironmentRepository extends JpaRepository<Environment, String> {
   List<Environment> findAllByApplicationIdAndArchived(String applicationId, boolean isArchived);
+
+  @Query(
+      "SELECT e FROM Environment e where e.applicationId = ?1 and e.creationDatetime between ?2 and ?3")
+  List<Environment> findAllByApplicationIdCreatedWithin(
+      String applicationId, Instant startTime, Instant endTime);
 
   Optional<Environment> findFirstByApplicationIdAndEnvironmentTypeAndArchived(
       String applicationId, EnvironmentType environmentType, boolean isArchived);

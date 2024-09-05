@@ -26,16 +26,12 @@ public class RefreshUsersBillingInfoTriggeredService
     final var requestId = randomUUID();
     eventProducer.accept(
         userService.findAll().stream()
-            .map(
-                u ->
-                    toRefreshUserBillingInfoRequested(
-                        u, requestTime, refreshUsersBillingInfoTriggered))
+            .map(u -> toRefreshUserBillingInfoRequested(u, refreshUsersBillingInfoTriggered))
             .toList());
   }
 
-  private RefreshUserBillingInfoRequested toRefreshUserBillingInfoRequested(
-      User user, Instant requestTime, RefreshUsersBillingInfoTriggered parent) {
-    return new RefreshUserBillingInfoRequested(
-        user.getId(), requestTime, parent, user.getPricingMethod());
+  private static RefreshUserBillingInfoRequested toRefreshUserBillingInfoRequested(
+      User user, RefreshUsersBillingInfoTriggered parent) {
+    return new RefreshUserBillingInfoRequested(user.getId(), parent, user.getPricingMethod());
   }
 }

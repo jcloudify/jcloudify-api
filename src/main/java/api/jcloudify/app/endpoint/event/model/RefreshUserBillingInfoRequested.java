@@ -18,12 +18,15 @@ import lombok.ToString;
 public class RefreshUserBillingInfoRequested extends PojaEvent {
   private final UUID id = randomUUID();
   private final String userId;
-  private final Instant requestTime;
   private final RefreshUsersBillingInfoTriggered refreshUsersBillingInfoTriggered;
   private final PricingMethod pricingMethod;
 
-  public final Instant getPricingCalculationRequestTime() {
-    return requestTime;
+  public final Instant getPricingCalculationRequestStartTime() {
+    return refreshUsersBillingInfoTriggered.getUtcStartOfDay();
+  }
+
+  public final Instant getPricingCalculationRequestEndTime() {
+    return refreshUsersBillingInfoTriggered.getNow();
   }
 
   @Override
