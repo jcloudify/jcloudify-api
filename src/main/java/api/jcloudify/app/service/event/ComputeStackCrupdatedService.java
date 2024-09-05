@@ -13,14 +13,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ComputeStackCrupdatedService implements Consumer<ComputeStackCrupdated> {
-  private static final Logger log = LoggerFactory.getLogger(ComputeStackCrupdatedService.class);
   private final StackService stackService;
   private final StackDao stackDao;
   private final EventProducer<StackCrupdated> eventProducer;
