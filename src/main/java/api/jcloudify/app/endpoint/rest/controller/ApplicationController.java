@@ -1,13 +1,18 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
 import api.jcloudify.app.endpoint.rest.mapper.ApplicationMapper;
+import api.jcloudify.app.endpoint.rest.mapper.BillingInfoMapper;
 import api.jcloudify.app.endpoint.rest.model.Application;
+import api.jcloudify.app.endpoint.rest.model.BillingInfo;
 import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsRequestBody;
 import api.jcloudify.app.endpoint.rest.model.CrupdateApplicationsResponse;
 import api.jcloudify.app.endpoint.rest.model.PagedApplicationsResponse;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.service.ApplicationService;
+import api.jcloudify.app.service.BillingInfoService;
+import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +26,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApplicationController {
   private final ApplicationService applicationService;
   private final ApplicationMapper mapper;
+  private final BillingInfoService billingInfoService;
+  private final BillingInfoMapper billingInfoMapper;
 
   public ApplicationController(
       ApplicationService applicationService,
-      @Qualifier("RestApplicationMapper") ApplicationMapper mapper) {
+      @Qualifier("RestApplicationMapper") ApplicationMapper mapper,
+      BillingInfoService billingInfoService,
+      BillingInfoMapper billingInfoMapper) {
     this.applicationService = applicationService;
     this.mapper = mapper;
+    this.billingInfoService = billingInfoService;
+    this.billingInfoMapper = billingInfoMapper;
   }
 
   @PutMapping("/users/{userId}/applications")
@@ -58,5 +69,18 @@ public class ApplicationController {
   public Application getApplicationById(
       @PathVariable String userId, @PathVariable String applicationId) {
     return mapper.toRest(applicationService.getById(applicationId, userId));
+  }
+
+  @GetMapping("/users/{userId}/applications/{applicationId}/billing")
+  public List<BillingInfo> getUserApplicationBillingInfo(
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @RequestParam Instant startTime,
+      @RequestParam Instant endTime) {
+    return billingInfoService
+        .getUserBillingInfoByApplication(userId, applicationId, startTime, endTime)
+        .stream()
+        .map(billingInfo -> billingInfoMapper.toRest(billingInfo, startTime, endTime))
+        .toList();
   }
 }

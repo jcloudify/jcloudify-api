@@ -420,4 +420,17 @@ public class TestMocks {
         .resourceInvocationTotalDuration(duration)
         .resourceInvocationTotalMemoryUsed(memory);
   }
+
+  public static BillingInfo joeDoeBillingInfo2() {
+    var duration = new Duration().amount(120).unit(MINUTES);
+    var memory = new Memory().amount(1024).unit(MEGA_OCTET);
+    return new BillingInfo()
+        .startTime(BILLING_INFO_START_TIME_QUERY)
+        .endTime(BILLING_INFO_END_TIME_QUERY)
+        .computedPrice(BigDecimal.valueOf(250))
+        .pricingMethod("dummy")
+        .computeTime(Instant.parse("2024-06-05T12:00:00.00Z"))
+        .resourceInvocationTotalDuration(duration)
+        .resourceInvocationTotalMemoryUsed(memory);
+  }
 }
