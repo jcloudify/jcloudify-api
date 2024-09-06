@@ -108,6 +108,7 @@ public class SecurityConf {
                     antMatcher(GET, "/users/*/payment-details/payment-methods"),
                     antMatcher(PUT, "/users/*/payment-details/payment-methods"),
                     antMatcher(PUT, "/gh-repos/*/*/env-deploys"),
+                    antMatcher(GET, "/users/*/billing"),
                     antMatcher(GET, "/users/*/applications/*/billing"),
                     antMatcher(GET, "/users/*/applications/*/environments/*/billing"))),
             AnonymousAuthenticationFilter.class)
@@ -246,6 +247,8 @@ public class SecurityConf {
                     .requestMatchers(
                         selfApplicationMatcher(
                             GET, "/users/*/applications/*/environments/*/billing"))
+                    .authenticated()
+                    .requestMatchers(selfUserMatcher(GET, "/users/*/billing"))
                     .authenticated()
                     .requestMatchers("/**")
                     .denyAll())

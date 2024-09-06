@@ -8,8 +8,10 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPL
 import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeBillingInfo1;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeBillingInfo2;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeTotalBillingInfo;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsNotFoundException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
+import static java.math.BigDecimal.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -85,5 +87,31 @@ public class BillingInfoIT extends MockedThirdParties {
             BILLING_INFO_END_TIME_QUERY);
 
     assertTrue(actual.containsAll(List.of(joeDoeBillingInfo1(), joeDoeBillingInfo2())));
+  }
+
+  @Test
+  void get_user_total_billing_info() throws ApiException {
+    ApiClient joeDoeClient = anApiClient();
+    BillingApi api = new BillingApi(joeDoeClient);
+
+    var actual =
+        api.getUserBillingInfo(
+            JOE_DOE_ID, BILLING_INFO_START_TIME_QUERY, BILLING_INFO_END_TIME_QUERY);
+
+    assertEquals(joeDoeTotalBillingInfo(), actual);
+  }
+
+  @Test
+  void get_user_empty_billing_info() throws ApiException {
+    ApiClient joeDoeClient = anApiClient();
+    BillingApi api = new BillingApi(joeDoeClient);
+
+    var actual =
+        api.getUserBillingInfo(
+            JOE_DOE_ID,
+            Instant.parse("2024-01-01T00:00:00.00Z"),
+            Instant.parse("2024-01-02T00:00:00.00Z"));
+
+    assertEquals(ZERO, actual.getComputedPrice());
   }
 }
