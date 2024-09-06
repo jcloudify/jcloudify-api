@@ -1,6 +1,5 @@
 package api.jcloudify.app.endpoint.event.model;
 
-
 import java.time.Duration;
 import lombok.AllArgsConstructor;
 import lombok.Data;
