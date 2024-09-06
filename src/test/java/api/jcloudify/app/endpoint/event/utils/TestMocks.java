@@ -1,9 +1,7 @@
 package api.jcloudify.app.endpoint.event.utils;
 
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.GH_APP_INSTALL_1_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_2_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.POJA_APPLICATION_ID;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,30 +18,32 @@ import java.net.URISyntaxException;
 import java.time.Instant;
 
 public class TestMocks {
+  public static final String MOCK_POJA_APPLICATION_ID = "mock_poja_application_id";
+  public static final String GH_APP_INSTALL_4_ID = "gh_app_install_4_id";
   public static final String MOCK_BUCKET_KEY = "mock/s3/bucket/key";
   public static final Instant MOCK_INSTANT = Instant.parse("2020-01-01T00:00:00Z");
 
   public static ApplicationCrupdated applicationUpdated() {
     return ApplicationCrupdated.builder()
-        .applicationId(POJA_APPLICATION_2_ID)
-        .applicationRepoName("repo_name")
+        .applicationId(MOCK_POJA_APPLICATION_ID)
+        .applicationRepoName("mock_poja_application")
         .previousApplicationRepoName(null)
         .description(null)
         .isRepoPrivate(true)
-        .installationId(GH_APP_INSTALL_1_ID)
+        .installationId(GH_APP_INSTALL_4_ID)
         .isArchived(false)
-        .repoUrl("http://repo.url")
+        .repoUrl("http://github.com/user/repo")
         .build();
   }
 
   public static ApplicationCrupdated applicationCreated() {
     return ApplicationCrupdated.builder()
-        .applicationId(POJA_APPLICATION_2_ID)
-        .applicationRepoName("repo_name")
+        .applicationId(MOCK_POJA_APPLICATION_ID)
+        .applicationRepoName("mock_poja_application")
         .previousApplicationRepoName(null)
         .description(null)
         .isRepoPrivate(true)
-        .installationId(GH_APP_INSTALL_1_ID)
+        .installationId(GH_APP_INSTALL_4_ID)
         .isArchived(false)
         .repoUrl(null)
         .build();
