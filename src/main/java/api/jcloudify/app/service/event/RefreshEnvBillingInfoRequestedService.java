@@ -25,7 +25,7 @@ public class RefreshEnvBillingInfoRequestedService
     fields @timestamp, @maxMemoryUsed, @duration
     | filter @message like /REPORT RequestId:/
     | stats\s
-        sum(@duration)/ 60000 as totalDurationMinutes,
+        sum(@billedDuration) as totalDurationInMs,
         sum(@maxMemoryUsed)/ 1048576 as totalMemoryMB
     """;
   private static final String LOG_GROUP_NAME_PATTERN_FOR_FRONTAL_FUNCTION =
