@@ -34,7 +34,7 @@ Resources:
           Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/2/sqs/dead-letter-queue-arn}}'
         EventBridgeParameters:
           DetailType: 'api.jcloudify.app.endpoint.event.model.RefreshUsersLogStreamsTriggered'
-          Source: 'api.jcloudify.app.event2'
+          Source: 'api.jcloudify.app.event1'
 
   RefreshUsersLogStreamEvents:
     Type: AWS::Scheduler::Schedule
@@ -51,4 +51,4 @@ Resources:
           Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/2/sqs/dead-letter-queue-arn}}'
         EventBridgeParameters:
           DetailType: 'api.jcloudify.app.endpoint.event.model.RefreshUsersLogStreamEventsTriggered'
-          Source: 'api.jcloudify.app.event2'
+          Source: 'api.jcloudify.app.event1'

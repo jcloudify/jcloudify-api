@@ -1,8 +1,5 @@
 package api.jcloudify.app.endpoint.event.model;
 
-import static api.jcloudify.app.endpoint.event.EventStack.EVENT_STACK_2;
-
-import api.jcloudify.app.endpoint.event.EventStack;
 import api.jcloudify.app.repository.model.Stack;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
@@ -30,10 +27,5 @@ public class StackCrupdated extends PojaEvent {
   @Override
   public Duration maxConsumerBackoffBetweenRetries() {
     return Duration.ofSeconds(5);
-  }
-
-  @Override
-  public EventStack getEventStack() {
-    return EVENT_STACK_2;
   }
 }
