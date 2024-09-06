@@ -1,14 +1,20 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.service.pricing.PricingMethod.TEN_MICRO;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus.COMPLETE;
 import static software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus.FAILED;
 import static software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus.RUNNING;
 
 import api.jcloudify.app.aws.cloudwatch.CloudwatchComponent;
 import api.jcloudify.app.endpoint.event.model.GetBillingInfoQueryResultRequested;
+import api.jcloudify.app.service.pricing.calculator.PricingCalculator;
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.cloudwatchlogs.model.GetQueryResultsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus;
@@ -16,15 +22,19 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.ResultField;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class GetBillingInfoQueryResultRequestedService
     implements Consumer<GetBillingInfoQueryResultRequested> {
   private final CloudwatchComponent cloudwatchComponent;
+  private final PricingCalculator pricingCalculator;
 
   @Override
   public void accept(GetBillingInfoQueryResultRequested event) {
     GetQueryResultsResponse getQueryResultsResponse =
         cloudwatchComponent.getQueryResult(event.getQueryId());
     QueryStatus status = getQueryResultsResponse.status();
+    // TODO: get billing info with queryId = event.getQueryId and take its pricingMethod
+    var pricingMethod = TEN_MICRO;
 
     if (RUNNING.equals(status)) {
       // fail on purpose so event backs off
@@ -34,13 +44,20 @@ public class GetBillingInfoQueryResultRequestedService
       List<List<ResultField>> results = getQueryResultsResponse.results();
       List<ResultField> first = results.getFirst();
       assert first.size() == 2;
-      var totalDurationMinutes = first.getFirst();
-      assert "totalDurationMinutes".equals(totalDurationMinutes.field());
-      var totalMemoryMb = first.getLast();
-      assert "totalMemoryMB".equals(totalMemoryMb.field());
+      var totalDurationInMs = first.getFirst();
+      assert "totalDurationInMs".equals(totalDurationInMs.field());
+      var totalMemoryMB = first.getLast();
+      assert "totalMemoryMB".equals(totalMemoryMB.field());
 
-      // compute price and update billing info with queryId = something
+      int totalMemoryMBValue = Integer.parseInt(totalMemoryMB.value());
+      var computedPrice =
+          pricingCalculator.computePrice(
+              pricingMethod,
+              Duration.of(new BigDecimal(totalDurationInMs.value()).longValue(), MILLIS),
+              new BigDecimal(totalMemoryMBValue));
+      // TODO: update billing info with queryId = event.getQueryId
     } else if (FAILED.equals(status)) {
+      log.info("query with ID {} failed, please inspect cloudwatch", event.getQueryId());
       // what do we do on query fail?
     }
   }
