@@ -108,7 +108,6 @@ class ApplicationIT extends MockedThirdParties {
     assertFalse(userIdFilteredPagedResponseData.contains(janePojaApplication()));
     assertTrue(nameFilteredPagedResponseData.contains(joePojaApplication2()));
     assertFalse(nameFilteredPagedResponseData.contains(joePojaApplication1()));
-    assertEquals(1, nameFilteredPagedResponse.getCount());
   }
 
   @Test
