@@ -11,4 +11,7 @@ values ('poja_application_id', 'poja-test-app', false, 'poja_application', false
         'gh_app_install_2_id', 'gh_repository_3_id'),
        ('other_poja_application_id', 'other-poja-test-app', false, 'other_poja_application', false,
         '2023-06-18T10:15:30.00Z', 'joe_doe_id', 'a regular poja app', 'http://github.com/user/repo',
-        'gh_app_install_1_id', 'gh_repository_4_id');
+        'gh_app_install_1_id', 'gh_repository_4_id'),
+       ('mock_poja_application_id', 'mock-poja-test-app', false, 'mock_poja_application', false,
+        '2023-06-18T10:15:30.00Z', 'denis_ritchie_id', 'a mock poja app', 'http://github.com/user/repo',
+        'gh_app_install_4_id', 'gh_repository_5_id');
