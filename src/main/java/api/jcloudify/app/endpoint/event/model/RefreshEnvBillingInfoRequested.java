@@ -32,7 +32,7 @@ public class RefreshEnvBillingInfoRequested extends PojaEvent {
 
   @Override
   public Duration maxConsumerDuration() {
-    return Duration.ofMinutes(5);
+    return Duration.ofMinutes(2);
   }
 
   @Override
