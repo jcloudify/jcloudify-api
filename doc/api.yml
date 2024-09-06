@@ -298,6 +298,43 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+
+  /users/{userId}/billing:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/startTime"
+      - $ref: "#/components/parameters/endTime"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - User
+        - Billing
+      operationId: getUserBillingInfo
+      summary: get user latest computed billing info
+      description: >
+        get user latest computed billing info .
+        current day's data might not be accurate as resource usage
+        might still occur at the moment and computation takes much time
+        hence, the most accurate data will be of the past days.
+      responses:
+        '200':
+          description: latest billing info summary before the date-time interval, range is inclusive
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/BillingInfo"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /users/{userId}/applications:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -1473,14 +1510,14 @@ components:
       schema:
         type: string
         format: date-time
-      required: false
+      required: true
     endTime:
       name: endTime
       in: query
       schema:
         type: string
         format: date-time
-      required: false
+      required: true
 
   responses:
     '400':

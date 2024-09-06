@@ -9,7 +9,8 @@ $$;
 
 create table if not exists "billing_info"
 (
-    id                           varchar primary key         default uuid_generate_v4(),
+    id                           varchar
+        constraint pk_billing_info primary key               default uuid_generate_v4(),
     creation_datetime            timestamp without time zone,
     compute_datetime             timestamp without time zone,
     user_id                      varchar not null,
@@ -17,9 +18,9 @@ create table if not exists "billing_info"
     env_id                       varchar not null,
     query_id                     varchar not null,
     pricing_method               varchar not null,
-    computed_price_in_usd        numeric not null,
-    computed_duration_in_minutes numeric not null,
-    computed_memory_used_in_mo   numeric not null,
+    computed_price_in_usd        numeric,
+    computed_duration_in_minutes numeric,
+    computed_memory_used_in_mo   numeric,
     status                       billing_info_compute_status default 'PENDING',
     constraint fk_user_billing foreign key (user_id) references "user" (id),
     constraint fk_app_billing foreign key (app_id) references "application" (id),

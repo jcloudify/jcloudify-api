@@ -12,7 +12,7 @@ public interface BillingInfoRepository extends JpaRepository<BillingInfo, String
   @Query(
       "SELECT b FROM BillingInfo b WHERE b.userId = ?1 AND b.appId = ?2 AND b.envId = ?3 AND"
           + " b.status = ?4 AND b.creationDatetime BETWEEN ?5 AND ?6 ORDER BY b.creationDatetime"
-          + " DESC")
+          + " DESC LIMIT 1")
   Optional<BillingInfo> findLatestByCriteria(
       String userId,
       String appId,
