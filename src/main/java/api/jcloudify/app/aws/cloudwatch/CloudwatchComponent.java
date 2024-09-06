@@ -1,11 +1,8 @@
 package api.jcloudify.app.aws.cloudwatch;
 
-import static java.util.Optional.empty;
-
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,10 +15,10 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.GetLogEventsRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.GetLogEventsResponse;
+import software.amazon.awssdk.services.cloudwatchlogs.model.GetQueryResultsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
 import software.amazon.awssdk.services.cloudwatchlogs.model.OutputLogEvent;
-import software.amazon.awssdk.services.cloudwatchlogs.model.ResultField;
 
 @Component
 @AllArgsConstructor
@@ -29,14 +26,14 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.ResultField;
 public class CloudwatchComponent {
   private final CloudWatchLogsClient cloudWatchLogsClient;
 
-  public List<LogGroup> getLambdaFunctionLogGroupsByName(String functionName) {
+  public List<LogGroup> getLambdaFunctionLogGroupsByNamePattern(String namePattern) {
     DescribeLogGroupsRequest request =
-        DescribeLogGroupsRequest.builder().logGroupNamePattern(functionName).build();
+        DescribeLogGroupsRequest.builder().logGroupNamePattern(namePattern).build();
     try {
       DescribeLogGroupsResponse response = cloudWatchLogsClient.describeLogGroups(request);
       return response.logGroups();
     } catch (AwsServiceException | SdkClientException e) {
-      log.error("Error occurred when retrieving log groups of function name={}", functionName);
+      log.error("Error occurred when retrieving log groups of name pattern={}", namePattern);
       throw new InternalServerErrorException(e);
     }
   }
@@ -88,11 +85,7 @@ public class CloudwatchComponent {
     return query.queryId();
   }
 
-  public Optional<List<List<ResultField>>> getQueryResult(String queryId) {
-    var gqrResponse = cloudWatchLogsClient.getQueryResults(gqr -> gqr.queryId(queryId));
-    if (!gqrResponse.hasResults()) {
-      return empty();
-    }
-    return Optional.of(gqrResponse.results());
+  public GetQueryResultsResponse getQueryResult(String queryId) {
+    return cloudWatchLogsClient.getQueryResults(gqr -> gqr.queryId(queryId));
   }
 }

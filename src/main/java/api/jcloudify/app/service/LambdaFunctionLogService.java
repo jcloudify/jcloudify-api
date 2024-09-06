@@ -40,7 +40,7 @@ public class LambdaFunctionLogService {
 
   public void crupdateLogGroups(String functionName, String bucketKey) {
     List<LogGroup> logGroups =
-        mapper.toRestLogGroup(cloudwatchComponent.getLambdaFunctionLogGroupsByName(functionName));
+        mapper.toRestLogGroup(cloudwatchComponent.getLambdaFunctionLogGroupsByNamePattern(functionName));
     try {
       File logGroupsFile;
       if (bucketComponent.doesExist(bucketKey)) {
