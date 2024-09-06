@@ -78,7 +78,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: api.jcloudify.app.MailboxEventHandler::handleRequest
-      MemorySize: 512
+      MemorySize: 1024
       Timeout: 600 #note(sqs-visibility)
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
       
@@ -93,7 +93,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: api.jcloudify.app.MailboxEventHandler::handleRequest
-      MemorySize: 512
+      MemorySize: 1024
       Timeout: 600 #note(sqs-visibility)
       Role: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/execution/role-arn}}'
       

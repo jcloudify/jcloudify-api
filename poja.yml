@@ -4,7 +4,7 @@ compute:
   worker_batch: 5
   worker_function_1_timeout: 600
   worker_function_2_timeout: 600
-  worker_memory: 512
+  worker_memory: 1024
 concurrency:
   frontal_reserved_concurrent_executions_nb: null
   worker_reserved_concurrent_executions_nb: null
