@@ -2,6 +2,7 @@ package api.jcloudify.app.aws.cloudwatch;
 
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.GetQueryResultsRespo
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
 import software.amazon.awssdk.services.cloudwatchlogs.model.OutputLogEvent;
+import software.amazon.awssdk.services.cloudwatchlogs.paginators.DescribeLogGroupsIterable;
 
 @Component
 @AllArgsConstructor
@@ -32,6 +34,19 @@ public class CloudwatchComponent {
     try {
       DescribeLogGroupsResponse response = cloudWatchLogsClient.describeLogGroups(request);
       return response.logGroups();
+    } catch (AwsServiceException | SdkClientException e) {
+      log.error("Error occurred when retrieving log groups of name pattern={}", namePattern);
+      throw new InternalServerErrorException(e);
+    }
+  }
+
+  public Iterator<DescribeLogGroupsResponse> getLambdaFunctionLogGroupsByNamePatternIterator(
+      String namePattern) {
+    try {
+      DescribeLogGroupsIterable response =
+          cloudWatchLogsClient.describeLogGroupsPaginator(
+              req -> req.logGroupNamePattern(namePattern));
+      return response.iterator();
     } catch (AwsServiceException | SdkClientException e) {
       log.error("Error occurred when retrieving log groups of name pattern={}", namePattern);
       throw new InternalServerErrorException(e);

@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 
 @Component
@@ -66,14 +67,23 @@ public class RefreshEnvBillingInfoRequestedService
 
   private List<String> getLogGroupNamesBetweenDatesRangeInclusive(
       Application app, Environment env, Instant startTime, Instant endTime) {
-    List<LogGroup> rawFrontalLogGroups =
-        cloudwatchComponent.getLambdaFunctionLogGroupsByNamePattern(
-            formatFrontalFunctionLogGroupNamePattern(app, env));
-    List<LogGroup> rawWorkerLogGroups =
-        cloudwatchComponent.getLambdaFunctionLogGroupsByNamePattern(
-            formatWorkerFunctionLogGroupNamePattern(app, env));
+    String frontalFunctionLogGroupNamePattern = formatFrontalFunctionLogGroupNamePattern(app, env);
+    List<LogGroup> rawFrontalLogGroups = getAllLogGroups(frontalFunctionLogGroupNamePattern);
+    String workerFunctionLogGroupNamePattern = formatWorkerFunctionLogGroupNamePattern(app, env);
+    List<LogGroup> rawWorkerLogGroups = getAllLogGroups(workerFunctionLogGroupNamePattern);
     return getLogGroupNamesFilteredByCreationTimeBetween(
         rawFrontalLogGroups, rawWorkerLogGroups, startTime, endTime);
+  }
+
+  private List<LogGroup> getAllLogGroups(String namePattern) {
+    var logGroupsIterator =
+        cloudwatchComponent.getLambdaFunctionLogGroupsByNamePatternIterator(namePattern);
+    var logGroups = new ArrayList<LogGroup>();
+    while (logGroupsIterator.hasNext()) {
+      DescribeLogGroupsResponse current = logGroupsIterator.next();
+      logGroups.addAll(current.logGroups());
+    }
+    return logGroups;
   }
 
   private List<String> getLogGroupNamesFilteredByCreationTimeBetween(
