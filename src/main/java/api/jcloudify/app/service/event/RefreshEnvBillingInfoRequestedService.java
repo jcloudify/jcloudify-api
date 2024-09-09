@@ -1,6 +1,8 @@
 package api.jcloudify.app.service.event;
 
 import api.jcloudify.app.aws.cloudwatch.CloudwatchComponent;
+import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.GetBillingInfoQueryResultRequested;
 import api.jcloudify.app.endpoint.event.model.RefreshEnvBillingInfoRequested;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.Environment;
@@ -36,6 +38,7 @@ public class RefreshEnvBillingInfoRequestedService
   private final CloudwatchComponent cloudwatchComponent;
   private final ApplicationService applicationService;
   private final EnvironmentService environmentService;
+  private final EventProducer<GetBillingInfoQueryResultRequested> eventProducer;
 
   @Override
   public void accept(RefreshEnvBillingInfoRequested rebirEvent) {
@@ -48,7 +51,8 @@ public class RefreshEnvBillingInfoRequestedService
         cloudwatchComponent.initiateLogInsightsQuery(
             LOG_INSIGHTS_QUERY_SUM_DURATION_AND_MEMORY, startTime, endTime, logGroups);
     log.info("query {} initiated", queryId);
-    // save queryId and send getResult event
+    // save queryId
+    eventProducer.accept(List.of(new GetBillingInfoQueryResultRequested(queryId)));
   }
 
   private static String formatEnvTypeToLogGroupPattern(Environment env) {
