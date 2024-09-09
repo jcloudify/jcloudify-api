@@ -2,6 +2,7 @@ package api.jcloudify.app.aws.cloudwatch;
 
 import java.time.Instant;
 import java.util.List;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
@@ -9,6 +10,7 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.GetQueryResultsRespo
 import software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus;
 import software.amazon.awssdk.services.cloudwatchlogs.model.ResultField;
 
+@Disabled("run in local only")
 class CloudwatchComponentTest {
   CloudwatchComponent cloudwatchComponent =
       new CloudwatchComponent(
