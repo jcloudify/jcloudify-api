@@ -102,8 +102,8 @@ Resources:
           Type: SQS
           Properties:
             Queue: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/2/sqs/mailbox-queue-arn}}'
-            BatchSize: 5
-      ReservedConcurrentExecutions: 20
+            BatchSize: 1
+      ReservedConcurrentExecutions: 15
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
