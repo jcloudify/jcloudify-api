@@ -1,18 +1,18 @@
 package api.jcloudify.app.service.event;
 
-import static java.util.UUID.randomUUID;
-
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.RefreshUserBillingInfoRequested;
 import api.jcloudify.app.endpoint.event.model.RefreshUsersBillingInfoTriggered;
 import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.service.UserService;
-import java.time.Instant;
+import java.util.List;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 @AllArgsConstructor
 public class RefreshUsersBillingInfoTriggeredService
     implements Consumer<RefreshUsersBillingInfoTriggered> {
@@ -21,11 +21,10 @@ public class RefreshUsersBillingInfoTriggeredService
 
   @Override
   public void accept(RefreshUsersBillingInfoTriggered refreshUsersBillingInfoTriggered) {
-    final var requestTime = Instant.now();
-    // not persisted ID, will only be used for logging purposes
-    final var requestId = randomUUID();
+    List<User> allUsers = userService.findAll();
+    log.info("initiating billings refresh for {} users", allUsers.size());
     eventProducer.accept(
-        userService.findAll().stream()
+        allUsers.stream()
             .map(u -> toRefreshUserBillingInfoRequested(u, refreshUsersBillingInfoTriggered))
             .toList());
   }
