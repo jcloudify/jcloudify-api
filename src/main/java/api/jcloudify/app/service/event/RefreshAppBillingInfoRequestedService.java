@@ -31,10 +31,6 @@ public class RefreshAppBillingInfoRequestedService
   private static RefreshEnvBillingInfoRequested toRefreshEnvBillingInfoRequested(
       Environment environment, RefreshAppBillingInfoRequested parent) {
     return new RefreshEnvBillingInfoRequested(
-        environment.getId(),
-        parent.getUserId(),
-        parent.getAppId(),
-        parent,
-        parent.getPricingMethod());
+        environment.getId(), parent.getUserId(), parent.getAppId(), parent);
   }
 }
