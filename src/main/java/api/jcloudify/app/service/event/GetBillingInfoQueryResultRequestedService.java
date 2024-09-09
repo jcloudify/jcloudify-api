@@ -41,6 +41,7 @@ public class GetBillingInfoQueryResultRequestedService
       throw new RuntimeException("query is still running");
     }
     if (COMPLETE.equals(status)) {
+      log.info("query with ID {} completed successfully", event.getQueryId());
       List<List<ResultField>> results = getQueryResultsResponse.results();
       List<ResultField> first = results.getFirst();
       assert first.size() == 2;
