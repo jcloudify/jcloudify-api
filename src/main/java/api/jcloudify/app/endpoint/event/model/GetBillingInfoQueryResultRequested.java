@@ -20,6 +20,6 @@ public class GetBillingInfoQueryResultRequested extends PojaEvent {
 
   @Override
   public Duration maxConsumerBackoffBetweenRetries() {
-    return Duration.ofMinutes(15);
+    return Duration.ofSeconds(30);
   }
 }

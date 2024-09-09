@@ -16,7 +16,10 @@ public class RefreshAppBillingInfoRequested extends PojaEvent {
   private final String userId;
   private final String appId;
   private final RefreshUserBillingInfoRequested refreshUserBillingInfoRequested;
-  private final PricingMethod pricingMethod;
+
+  public final PricingMethod getPricingMethod() {
+    return refreshUserBillingInfoRequested.getPricingMethod();
+  }
 
   public final Instant getPricingCalculationRequestStartTime() {
     return refreshUserBillingInfoRequested.getPricingCalculationRequestStartTime();

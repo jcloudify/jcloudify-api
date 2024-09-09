@@ -27,7 +27,6 @@ public class RefreshUserBillingInfoRequestedService
 
   private static RefreshAppBillingInfoRequested toRefreshAppBillingInfoRequested(
       Application application, RefreshUserBillingInfoRequested parent) {
-    return new RefreshAppBillingInfoRequested(
-        application.getUserId(), application.getId(), parent, parent.getPricingMethod());
+    return new RefreshAppBillingInfoRequested(application.getUserId(), application.getId(), parent);
   }
 }

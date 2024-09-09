@@ -20,7 +20,10 @@ public class RefreshEnvBillingInfoRequested extends PojaEvent {
   private final String userId;
   private final String appId;
   private final RefreshAppBillingInfoRequested refreshAppBillingInfoRequested;
-  private final PricingMethod pricingMethod;
+
+  public final PricingMethod getPricingMethod() {
+    return refreshAppBillingInfoRequested.getPricingMethod();
+  }
 
   public final Instant getPricingCalculationRequestStartTime() {
     return refreshAppBillingInfoRequested.getPricingCalculationRequestStartTime();
@@ -32,7 +35,7 @@ public class RefreshEnvBillingInfoRequested extends PojaEvent {
 
   @Override
   public Duration maxConsumerDuration() {
-    return Duration.ofMinutes(2);
+    return Duration.ofMinutes(10);
   }
 
   @Override
