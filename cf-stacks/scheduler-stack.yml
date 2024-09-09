@@ -60,12 +60,12 @@ Resources:
       FlexibleTimeWindow:
         Mode: "OFF"
       Name: !Join [ '', [ !Ref Env, -RefreshUsersBillingInfo ] ]
-      ScheduleExpression: "cron(0 0/6 * * * ?)" # This will run every 6 hours (00, 06, 12, 18)
+      ScheduleExpression: "cron(0 0,6,12,18 * * ? *)" # This will run every 6 hours (00, 06, 12, 18)
       Target:
         Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/eventbridge/bus-arn}}'
         RoleArn: !GetAtt ScheduledEventExecutionRole.Arn
         DeadLetterConfig:
           Arn: !Sub '{{resolve:ssm:/jcloudify-api/${Env}/2/sqs/dead-letter-queue-arn}}'
         EventBridgeParameters:
-          DetailType: 'api.jcloudify.app.endpoint.event.model.RefreshUsersLogStreamEventsTriggered'
+          DetailType: 'api.jcloudify.app.endpoint.event.model.RefreshUsersBillingInfoTriggered'
           Source: 'api.jcloudify.app.event1'
