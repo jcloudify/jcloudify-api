@@ -31,6 +31,7 @@ public class CloudwatchComponent {
   public List<LogGroup> getLambdaFunctionLogGroupsByNamePattern(String namePattern) {
     DescribeLogGroupsRequest request =
         DescribeLogGroupsRequest.builder().logGroupNamePattern(namePattern).build();
+
     try {
       DescribeLogGroupsResponse response = cloudWatchLogsClient.describeLogGroups(request);
       return response.logGroups();
@@ -43,6 +44,7 @@ public class CloudwatchComponent {
   public Iterator<DescribeLogGroupsResponse> getLambdaFunctionLogGroupsByNamePatternIterator(
       String namePattern) {
     try {
+      log.info("fetching logs for {}", namePattern);
       DescribeLogGroupsIterable response =
           cloudWatchLogsClient.describeLogGroupsPaginator(
               req -> req.logGroupNamePattern(namePattern));
