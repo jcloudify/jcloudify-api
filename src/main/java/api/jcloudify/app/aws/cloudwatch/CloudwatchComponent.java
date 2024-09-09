@@ -90,6 +90,7 @@ public class CloudwatchComponent {
       throw new InternalServerErrorException(
           "cannot start insights query with more than 50 log group names");
     }
+    log.info("querying with {} {}", logGroupNames.size(), logGroupNames);
     var query =
         cloudWatchLogsClient.startQuery(
             sqr ->
