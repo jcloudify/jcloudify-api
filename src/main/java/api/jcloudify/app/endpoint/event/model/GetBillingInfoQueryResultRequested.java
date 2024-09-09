@@ -1,7 +1,8 @@
 package api.jcloudify.app.endpoint.event.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Duration;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -9,8 +10,13 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
-@AllArgsConstructor
 public class GetBillingInfoQueryResultRequested extends PojaEvent {
+  @JsonCreator
+  public GetBillingInfoQueryResultRequested(String queryId) {
+    this.queryId = queryId;
+  }
+
+  @JsonProperty("query_id")
   private final String queryId;
 
   @Override

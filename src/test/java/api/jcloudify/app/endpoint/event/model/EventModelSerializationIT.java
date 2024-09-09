@@ -16,6 +16,7 @@ import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,7 @@ public class EventModelSerializationIT extends MockedThirdParties {
     assertEquals(Duration.ofSeconds(30), event.maxConsumerBackoffBetweenRetries());
   }
 
+  @SneakyThrows
   @Test
   void refresh_env_billing_info_requested_serialization() {
     var event =
@@ -133,6 +135,9 @@ public class EventModelSerializationIT extends MockedThirdParties {
             POJA_APPLICATION_ENVIRONMENT_ID,
             refreshAppBillingInfoRequested());
 
+    String s = om.writeValueAsString(event);
+    var dese = om.readValue(s, RefreshEnvBillingInfoRequested.class);
+
     assertNotNull(event.getPricingCalculationRequestStartTime());
     assertNotNull(event.getPricingCalculationRequestEndTime());
     assertNotNull(event.getPricingMethod());
@@ -141,10 +146,16 @@ public class EventModelSerializationIT extends MockedThirdParties {
     assertEquals(Duration.ofSeconds(30), event.maxConsumerBackoffBetweenRetries());
   }
 
+  @SneakyThrows
   @Test
   void get_billing_info_query_result_requested_serialization() {
     var event = new GetBillingInfoQueryResultRequested("queryId");
 
+    String s = om.writeValueAsString(event);
+    GetBillingInfoQueryResultRequested dese =
+        om.readValue(s, GetBillingInfoQueryResultRequested.class);
+
+    assertNotNull(dese);
     assertEquals(Duration.ofSeconds(30), event.maxConsumerDuration());
     assertEquals(Duration.ofSeconds(30), event.maxConsumerBackoffBetweenRetries());
   }
