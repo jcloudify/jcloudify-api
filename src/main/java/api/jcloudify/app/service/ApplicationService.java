@@ -107,10 +107,6 @@ public class ApplicationService {
     return new Page<>(pageFromOne, boundedPageSize, data);
   }
 
-  public List<Application> findAllByUserId(String userId) {
-    return repository.findAllByUserId(userId);
-  }
-
   public Application findByRepositoryId(String repositoryId) {
     return repository
         .findByGithubRepositoryId(repositoryId)

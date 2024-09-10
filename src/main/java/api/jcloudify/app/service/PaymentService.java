@@ -8,6 +8,7 @@ import api.jcloudify.app.endpoint.event.model.UserMonthlyPaymentRequested;
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.model.PaymentCustomer;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
+import api.jcloudify.app.repository.model.PaymentRequest;
 import api.jcloudify.app.repository.model.User;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
@@ -22,7 +23,7 @@ public class PaymentService {
   private final EventProducer<UserMonthlyPaymentRequested> eventProducer;
   private final StripeService stripeService;
   private final UserService userService;
-  private final ApplicationService applicationService;
+  private final PaymentRequestService paymentRequestService;
 
   public String createCustomer(CreateUser createUser) {
     String name = createUser.getFirstName() + " " + createUser.getLastName();
@@ -64,6 +65,8 @@ public class PaymentService {
 
   public void paymentAttempts() {
     String parentId = randomUUID().toString();
+    paymentRequestService.save(
+        PaymentRequest.builder().requestInstant(Instant.now()).id(parentId).build());
     List<User> users = userService.getAllUsers();
     var events =
         users.stream()
@@ -73,7 +76,6 @@ public class PaymentService {
                         .parentId(parentId)
                         .userId(a.getId())
                         .customerId(a.getStripeId())
-                        .requestInstant(Instant.now())
                         .build())
             .toList();
     eventProducer.accept(events);

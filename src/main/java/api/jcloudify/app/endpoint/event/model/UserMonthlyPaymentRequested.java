@@ -1,7 +1,6 @@
 package api.jcloudify.app.endpoint.event.model;
 
 import java.time.Duration;
-import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +12,6 @@ import lombok.ToString;
 @Builder
 public class UserMonthlyPaymentRequested extends PojaEvent {
   private String userId;
-  private Instant requestInstant;
   private String parentId;
   private String customerId;
 

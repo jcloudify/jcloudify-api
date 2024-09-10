@@ -39,7 +39,7 @@ public class Application implements Serializable {
   private boolean isGithubRepositoryPrivate;
   private String installationId;
 
-  public Long getPrice() {
+  public long getPrice() {
     return 100L;
   }
 
