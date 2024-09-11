@@ -35,8 +35,7 @@ public class EnvironmentService {
     return repository.findAllByApplicationIdAndArchived(applicationId, false);
   }
 
-  public List<Environment> getAllByApplicationId(
-      String applicationId) {
+  public List<Environment> getAllByApplicationId(String applicationId) {
     return repository.findAllByApplicationId(applicationId);
   }
 

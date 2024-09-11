@@ -2,7 +2,6 @@ package api.jcloudify.app.repository.jpa;
 
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.repository.model.Environment;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EnvironmentRepository extends JpaRepository<Environment, String> {
   List<Environment> findAllByApplicationIdAndArchived(String applicationId, boolean isArchived);
+
   List<Environment> findAllByApplicationId(String applicationId);
 
   Optional<Environment> findFirstByApplicationIdAndEnvironmentTypeAndArchived(
