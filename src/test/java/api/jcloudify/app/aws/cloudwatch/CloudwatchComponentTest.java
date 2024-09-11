@@ -56,7 +56,7 @@ class CloudwatchComponentTest {
         List<ResultField> first = results.getFirst();
         assert first.size() == 2;
         var totalMemoryDuration = first.getFirst();
-        assert "totalMemoryDuration".equals(totalMemoryDuration.field());
+        assert "billedMemoryDuration".equals(totalMemoryDuration.field());
         // TODO: update billing info with queryId = event.getQueryId
         System.out.println("Query completed in " + duration + " milliseconds.");
       } else if (status == QueryStatus.FAILED) {

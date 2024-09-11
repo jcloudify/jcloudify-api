@@ -43,11 +43,11 @@ public class GetBillingInfoQueryResultRequestedService
       List<List<ResultField>> results = getQueryResultsResponse.results();
       List<ResultField> first = results.getFirst();
       assert first.size() == 2;
-      var totalMemoryDuration = first.getFirst();
-      assert "totalMemoryDuration".equals(totalMemoryDuration.field());
+      var billedMemoryDuration = first.getFirst();
+      assert "billedMemoryDuration".equals(billedMemoryDuration.field());
       var computedPrice =
           pricingCalculator.computePrice(
-              pricingMethod, new BigDecimal(totalMemoryDuration.value()));
+              pricingMethod, new BigDecimal(billedMemoryDuration.value()));
       // TODO: update billing info with queryId = event.getQueryId
     } else if (FAILED.equals(status)) {
       log.info("query with ID {} failed, please inspect cloudwatch", event.getQueryId());
