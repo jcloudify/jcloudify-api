@@ -74,8 +74,7 @@ public class RefreshEnvBillingInfoRequestedService
     List<LogGroup> rawFrontalLogGroups = getAllLogGroups(frontalFunctionLogGroupNamePattern);
     String workerFunctionLogGroupNamePattern = formatWorkerFunctionLogGroupNamePattern(app, env);
     List<LogGroup> rawWorkerLogGroups = getAllLogGroups(workerFunctionLogGroupNamePattern);
-    return getLogGroupNamesFilteredByCreationTimeBetween(
-        rawFrontalLogGroups, rawWorkerLogGroups, startTime, endTime);
+    return mergeListsAndExtractLogGroupNames(rawFrontalLogGroups, rawWorkerLogGroups);
   }
 
   private List<LogGroup> getAllLogGroups(String namePattern) {
@@ -89,20 +88,10 @@ public class RefreshEnvBillingInfoRequestedService
     return logGroups;
   }
 
-  private List<String> getLogGroupNamesFilteredByCreationTimeBetween(
-      List<LogGroup> frontalLogGroups,
-      List<LogGroup> workerLogGroups,
-      Instant startTime,
-      Instant endTime) {
+  private List<String> mergeListsAndExtractLogGroupNames(
+      List<LogGroup> frontalLogGroups, List<LogGroup> workerLogGroups) {
     var logGroups = new ArrayList<>(frontalLogGroups);
     logGroups.addAll(workerLogGroups);
-    return logGroups.stream()
-        .filter(
-            lg -> {
-              var ct = Instant.ofEpochMilli(lg.creationTime());
-              return ct.compareTo(startTime) >= 0 && ct.compareTo(endTime) <= 0;
-            })
-        .map(LogGroup::logGroupName)
-        .toList();
+    return logGroups.stream().map(LogGroup::logGroupName).toList();
   }
 }
