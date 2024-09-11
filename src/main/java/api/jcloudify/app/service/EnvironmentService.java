@@ -11,7 +11,6 @@ import api.jcloudify.app.repository.jpa.EnvironmentRepository;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.appEnvConfigurer.AppEnvConfigurerService;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.context.annotation.Lazy;
@@ -36,9 +35,9 @@ public class EnvironmentService {
     return repository.findAllByApplicationIdAndArchived(applicationId, false);
   }
 
-  public List<Environment> findAllByApplicationIdCreatedWithin(
-      String applicationId, Instant startTime, Instant endTime) {
-    return repository.findAllByApplicationIdCreatedWithin(applicationId, startTime, endTime);
+  public List<Environment> getAllByApplicationId(
+      String applicationId) {
+    return repository.findAllByApplicationId(applicationId);
   }
 
   public Environment getById(String id) {

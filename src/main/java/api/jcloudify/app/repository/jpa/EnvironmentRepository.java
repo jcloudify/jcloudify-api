@@ -13,12 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EnvironmentRepository extends JpaRepository<Environment, String> {
   List<Environment> findAllByApplicationIdAndArchived(String applicationId, boolean isArchived);
-
-  @Query(
-      "SELECT e FROM Environment e where e.applicationId = ?1 and e.creationDatetime between ?2 and"
-          + " ?3")
-  List<Environment> findAllByApplicationIdCreatedWithin(
-      String applicationId, Instant startTime, Instant endTime);
+  List<Environment> findAllByApplicationId(String applicationId);
 
   Optional<Environment> findFirstByApplicationIdAndEnvironmentTypeAndArchived(
       String applicationId, EnvironmentType environmentType, boolean isArchived);

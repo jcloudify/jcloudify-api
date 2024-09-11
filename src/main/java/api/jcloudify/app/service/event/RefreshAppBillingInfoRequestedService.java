@@ -5,7 +5,6 @@ import api.jcloudify.app.endpoint.event.model.RefreshAppBillingInfoRequested;
 import api.jcloudify.app.endpoint.event.model.RefreshEnvBillingInfoRequested;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.service.EnvironmentService;
-import java.time.Instant;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,11 +18,7 @@ public class RefreshAppBillingInfoRequestedService
 
   @Override
   public void accept(RefreshAppBillingInfoRequested rabifEvent) {
-    Instant startTime = rabifEvent.getPricingCalculationRequestStartTime();
-    Instant endTime = rabifEvent.getPricingCalculationRequestEndTime();
-    var envs =
-        environmentService.findAllByApplicationIdCreatedWithin(
-            rabifEvent.getAppId(), startTime, endTime);
+    var envs = environmentService.findAllByApplicationId(rabifEvent.getAppId());
     var events = envs.stream().map(e -> toRefreshEnvBillingInfoRequested(e, rabifEvent)).toList();
     eventProducer.accept(events);
   }
