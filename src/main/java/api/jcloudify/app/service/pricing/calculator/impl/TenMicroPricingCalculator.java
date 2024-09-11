@@ -14,7 +14,7 @@ class TenMicroPricingCalculator extends AbstractPricingCalculator {
   }
 
   @Override
-  public BigDecimal computePrice(BigDecimal totalMemoryDuration) {
-    return ONE_MICRO_USD.multiply(totalMemoryDuration);
+  public BigDecimal computePrice(BigDecimal totalMemoryDurationMinutes) {
+    return ONE_MICRO_USD.multiply(totalMemoryDurationMinutes);
   }
 }

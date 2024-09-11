@@ -16,7 +16,7 @@ class PricingCalculatorTest extends MockedThirdParties {
   @Test
   void computePrice() {
     var computedPrice =
-        subject.computePrice(TEN_MICRO, Duration.ofSeconds(10_000), BigDecimal.valueOf(2048));
+        subject.computePrice(TEN_MICRO, BigDecimal.valueOf(339968));
 
     assertEquals(new BigDecimal("3.39968"), computedPrice);
   }

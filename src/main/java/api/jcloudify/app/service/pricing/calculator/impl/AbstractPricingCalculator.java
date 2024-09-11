@@ -30,10 +30,10 @@ abstract class AbstractPricingCalculator implements PricingCalculator {
   }
 
   @Override
-  public final BigDecimal computePrice(PricingMethod method, BigDecimal totalMemoryDuration) {
+  public final BigDecimal computePrice(PricingMethod method, BigDecimal totalMemoryDurationMinutes) {
     checkPricingMethod(method);
-    return computePrice(totalMemoryDuration);
+    return computePrice(totalMemoryDurationMinutes);
   }
 
-  public abstract BigDecimal computePrice(BigDecimal totalMemoryDuration);
+  public abstract BigDecimal computePrice(BigDecimal totalMemoryDurationMinutes);
 }

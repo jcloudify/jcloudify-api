@@ -26,9 +26,9 @@ class CloudwatchComponentTest {
     String queryId =
         cloudwatchComponent.initiateLogInsightsQuery(
             """
-						fields @timestamp, @duration/1000 as durationInS, @memorySize/(1000000) as memorySizeInMo
+						fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000000) as memorySizeInMo
 						 | filter @message like /REPORT RequestId:/
-						 | stats sum(durationInS * memorySizeInMo) as billedMemoryDurationGrouped by memorySizeInMo
+						 | stats sum(durationInMinutes * memorySizeInMo) as billedMemoryDurationGrouped by memorySizeInMo
 						 | stats sum(billedMemoryDurationGrouped) as billedMemoryDuration
 						""",
             startTime,

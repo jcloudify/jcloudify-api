@@ -34,7 +34,7 @@ class PricingCalculatorFacade implements PricingCalculator {
   }
 
   @Override
-  public BigDecimal computePrice(PricingMethod method, BigDecimal totalMemoryDuration) {
-    return getPricingCalculator(method).computePrice(totalMemoryDuration);
+  public BigDecimal computePrice(PricingMethod method, BigDecimal totalMemoryDurationMinutes) {
+    return getPricingCalculator(method).computePrice(totalMemoryDurationMinutes);
   }
 }
