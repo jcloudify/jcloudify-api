@@ -5,7 +5,6 @@ import static lombok.AccessLevel.PROTECTED;
 import api.jcloudify.app.service.pricing.PricingMethod;
 import api.jcloudify.app.service.pricing.calculator.PricingCalculator;
 import java.math.BigDecimal;
-import java.time.Duration;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,11 +30,10 @@ abstract class AbstractPricingCalculator implements PricingCalculator {
   }
 
   @Override
-  public final BigDecimal computePrice(
-      PricingMethod method, Duration duration, BigDecimal memoryUsedInMo) {
+  public final BigDecimal computePrice(PricingMethod method, BigDecimal totalMemoryDuration) {
     checkPricingMethod(method);
-    return computePrice(duration, memoryUsedInMo);
+    return computePrice(totalMemoryDuration);
   }
 
-  public abstract BigDecimal computePrice(Duration duration, BigDecimal memoryUsedInMo);
+  public abstract BigDecimal computePrice(BigDecimal totalMemoryDuration);
 }

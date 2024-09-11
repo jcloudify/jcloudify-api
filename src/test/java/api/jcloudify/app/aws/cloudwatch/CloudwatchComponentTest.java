@@ -26,12 +26,11 @@ class CloudwatchComponentTest {
     String queryId =
         cloudwatchComponent.initiateLogInsightsQuery(
             """
-fields @timestamp, @maxMemoryUsed, @duration
-| filter @message like /REPORT RequestId:/
-| stats\s
-	sum(@duration)/ 60000 as totalDurationMinutes,
-	sum(@maxMemoryUsed)/ 1048576 as totalMemoryMB
-""",
+						fields @timestamp, @duration/1000 as durationInS, @memorySize/(1000000) as memorySizeInMo
+						 | filter @message like /REPORT RequestId:/
+						 | stats sum(durationInS * memorySizeInMo) as billedMemoryDurationGrouped by memorySizeInMo
+						 | stats sum(billedMemoryDurationGrouped) as billedMemoryDuration
+						""",
             startTime,
             endTime,
             List.of("/aws/lambda/prod-compute-jcloudify-dovecot-FrontalFunction-64fjAtgl1WXU"));
@@ -56,10 +55,9 @@ fields @timestamp, @maxMemoryUsed, @duration
         List<List<ResultField>> results = getQueryResultsResponse.results();
         List<ResultField> first = results.getFirst();
         assert first.size() == 2;
-        var totalDurationMinutes = first.getFirst();
-        assert "totalDurationMinutes".equals(totalDurationMinutes.field());
-        var totalMemoryMb = first.getLast();
-        assert "totalMemoryMB".equals(totalMemoryMb.field());
+        var totalMemoryDuration = first.getFirst();
+        assert "totalMemoryDuration".equals(totalMemoryDuration.field());
+        // TODO: update billing info with queryId = event.getQueryId
         System.out.println("Query completed in " + duration + " milliseconds.");
       } else if (status == QueryStatus.FAILED) {
         System.out.println("Query failed.");

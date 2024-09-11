@@ -1,7 +1,6 @@
 package api.jcloudify.app.service.event;
 
 import static api.jcloudify.app.service.pricing.PricingMethod.TEN_MICRO;
-import static java.time.temporal.ChronoUnit.MILLIS;
 import static software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus.COMPLETE;
 import static software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus.FAILED;
 import static software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus.RUNNING;
@@ -10,7 +9,6 @@ import api.jcloudify.app.aws.cloudwatch.CloudwatchComponent;
 import api.jcloudify.app.endpoint.event.model.GetBillingInfoQueryResultRequested;
 import api.jcloudify.app.service.pricing.calculator.PricingCalculator;
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
@@ -45,17 +43,11 @@ public class GetBillingInfoQueryResultRequestedService
       List<List<ResultField>> results = getQueryResultsResponse.results();
       List<ResultField> first = results.getFirst();
       assert first.size() == 2;
-      var totalDurationInMs = first.getFirst();
-      assert "totalDurationInMs".equals(totalDurationInMs.field());
-      var totalMemoryMB = first.getLast();
-      assert "totalMemoryMB".equals(totalMemoryMB.field());
-
-      int totalMemoryMBValue = Integer.parseInt(totalMemoryMB.value());
+      var totalMemoryDuration = first.getFirst();
+      assert "totalMemoryDuration".equals(totalMemoryDuration.field());
       var computedPrice =
           pricingCalculator.computePrice(
-              pricingMethod,
-              Duration.of(new BigDecimal(totalDurationInMs.value()).longValue(), MILLIS),
-              new BigDecimal(totalMemoryMBValue));
+              pricingMethod, new BigDecimal(totalMemoryDuration.value()));
       // TODO: update billing info with queryId = event.getQueryId
     } else if (FAILED.equals(status)) {
       log.info("query with ID {} failed, please inspect cloudwatch", event.getQueryId());

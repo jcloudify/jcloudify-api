@@ -3,7 +3,6 @@ package api.jcloudify.app.service.pricing.calculator.impl;
 import api.jcloudify.app.service.pricing.PricingMethod;
 import api.jcloudify.app.service.pricing.calculator.PricingCalculator;
 import java.math.BigDecimal;
-import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -35,8 +34,7 @@ class PricingCalculatorFacade implements PricingCalculator {
   }
 
   @Override
-  public BigDecimal computePrice(
-      PricingMethod method, Duration duration, BigDecimal memoryUsedInMo) {
-    return getPricingCalculator(method).computePrice(duration, memoryUsedInMo);
+  public BigDecimal computePrice(PricingMethod method, BigDecimal totalMemoryDuration) {
+    return getPricingCalculator(method).computePrice(totalMemoryDuration);
   }
 }

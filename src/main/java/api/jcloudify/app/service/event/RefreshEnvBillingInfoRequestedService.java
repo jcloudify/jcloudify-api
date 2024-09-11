@@ -23,13 +23,12 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 @Slf4j
 public class RefreshEnvBillingInfoRequestedService
     implements Consumer<RefreshEnvBillingInfoRequested> {
-  private static final String LOG_INSIGHTS_QUERY_SUM_DURATION_AND_MEMORY =
+  private static final String LOG_INSIGHTS_QUERY_TOTAL_MEMORY_DURATION =
       """
-    fields @timestamp, @maxMemoryUsed, @duration
-    | filter @message like /REPORT RequestId:/
-    | stats\s
-        sum(@billedDuration) as totalDurationInMs,
-        sum(@maxMemoryUsed)/ 1048576 as totalMemoryMB
+    fields @timestamp, @duration/1000 as durationInS, @memorySize/(1000000) as memorySizeInMo
+     | filter @message like /REPORT RequestId:/
+     | stats sum(durationInS * memorySizeInMo) as billedMemoryDurationGrouped by memorySizeInMo
+     | stats sum(billedMemoryDurationGrouped) as billedMemoryDuration
     """;
   private static final String LOG_GROUP_NAME_PATTERN_FOR_FRONTAL_FUNCTION =
       "%s-compute-%s-FrontalFunction";
@@ -49,7 +48,7 @@ public class RefreshEnvBillingInfoRequestedService
     var logGroups = getLogGroupNamesBetweenDatesRangeInclusive(app, env, startTime, endTime);
     var queryId =
         cloudwatchComponent.initiateLogInsightsQuery(
-            LOG_INSIGHTS_QUERY_SUM_DURATION_AND_MEMORY, startTime, endTime, logGroups);
+            LOG_INSIGHTS_QUERY_TOTAL_MEMORY_DURATION, startTime, endTime, logGroups);
     log.info("query {} initiated", queryId);
     // save queryId
     eventProducer.accept(List.of(new GetBillingInfoQueryResultRequested(queryId)));

@@ -3,7 +3,6 @@ package api.jcloudify.app.service.pricing.calculator.impl;
 import static api.jcloudify.app.service.pricing.PricingMethod.TEN_MICRO;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import org.springframework.stereotype.Component;
 
 @Component("tenMicroPricingCalculator")
@@ -15,9 +14,7 @@ class TenMicroPricingCalculator extends AbstractPricingCalculator {
   }
 
   @Override
-  public BigDecimal computePrice(Duration duration, BigDecimal memoryUsedInMo) {
-    return ONE_MICRO_USD
-        .multiply(BigDecimal.valueOf(duration.toMinutes()))
-        .multiply(memoryUsedInMo);
+  public BigDecimal computePrice(BigDecimal totalMemoryDuration) {
+    return ONE_MICRO_USD.multiply(totalMemoryDuration);
   }
 }
