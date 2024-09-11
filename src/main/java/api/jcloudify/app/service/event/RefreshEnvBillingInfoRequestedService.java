@@ -50,7 +50,7 @@ public class RefreshEnvBillingInfoRequestedService
         cloudwatchComponent.initiateLogInsightsQuery(
             LOG_INSIGHTS_QUERY_TOTAL_MEMORY_DURATION, startTime, endTime, logGroups);
     log.info("query {} initiated", queryId);
-    // save queryId
+    // TODO: save queryId and userId, envId, appId
     eventProducer.accept(List.of(new GetBillingInfoQueryResultRequested(queryId)));
   }
 
