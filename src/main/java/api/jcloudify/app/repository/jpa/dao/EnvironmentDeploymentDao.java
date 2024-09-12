@@ -23,38 +23,35 @@ public class EnvironmentDeploymentDao {
   private final EntityManager entityManager;
 
   public List<AppEnvironmentDeployment> findAllByCriteria(
-      String userId,
       String appId,
       EnvironmentType envType,
       Instant startDatetime,
       Instant endDatetime,
       Pageable pageable) {
-    assert userId != null;
     assert appId != null;
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<AppEnvironmentDeployment> query =
         builder.createQuery(AppEnvironmentDeployment.class);
     Root<AppEnvironmentDeployment> root = query.from(AppEnvironmentDeployment.class);
-    Join<AppEnvironmentDeployment, Environment> envDeplEnvJoin = root.join("envId");
+    Join<AppEnvironmentDeployment, Environment> envDeplEnvJoin = root.join("env");
 
     List<Predicate> predicates = new ArrayList<>();
-    predicates.add(builder.and(builder.equal(root.get("userId"), userId)));
     predicates.add(builder.and(builder.equal(root.get("appId"), appId)));
     if (startDatetime != null) {
       predicates.add(
-          builder.and(builder.greaterThanOrEqualTo(root.get("creation_datetime"), startDatetime)));
+          builder.and(builder.greaterThanOrEqualTo(root.get("creationDatetime"), startDatetime)));
     }
     if (endDatetime != null) {
       predicates.add(
-          builder.and(builder.lessThanOrEqualTo(root.get("creation_datetime"), endDatetime)));
+          builder.and(builder.lessThanOrEqualTo(root.get("creationDatetime"), endDatetime)));
     }
-    predicates.add(builder.and(builder.equal(envDeplEnvJoin.get("is_archived"), false)));
+    predicates.add(builder.and(builder.equal(envDeplEnvJoin.get("archived"), false)));
     if (envType != null) {
-      predicates.add(builder.and(builder.equal(envDeplEnvJoin.get("environment_type"), envType)));
+      predicates.add(builder.and(builder.equal(envDeplEnvJoin.get("environmentType"), envType)));
     }
 
     query
-        .orderBy(builder.asc(root.get("creation_datetime")))
+        .orderBy(builder.asc(root.get("creationDatetime")))
         .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder))
         .where(predicates.toArray(new Predicate[0]));
     return entityManager

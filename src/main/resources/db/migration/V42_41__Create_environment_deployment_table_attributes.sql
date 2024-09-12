@@ -21,7 +21,7 @@ create table app_environment_deployment
     creator_username      varchar,
     creator_gh_id         varchar,
     creator_avatar_url    varchar,
-    constraint fk_env_depl_app foreign key (app_id) references "app" (id),
-    constraint fk_env_depl_env foreign key (env_id) references "env" (id),
-    constraint fk_env_depl_app foreign key (app_id) references "env_deployment_conf" (id)
+    constraint fk_env_depl_app foreign key (app_id) references "application" (id),
+    constraint fk_env_depl_env foreign key (env_id) references "environment" (id),
+    constraint fk_env_depl_env_depl_conf foreign key (env_depl_conf_id) references "env_deployment_conf" (id)
 );

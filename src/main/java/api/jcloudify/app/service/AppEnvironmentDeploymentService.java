@@ -10,6 +10,7 @@ import api.jcloudify.app.repository.jpa.EnvironmentDeploymentRepository;
 import api.jcloudify.app.repository.jpa.dao.EnvironmentDeploymentDao;
 import api.jcloudify.app.repository.model.AppEnvironmentDeployment;
 import api.jcloudify.app.service.appEnvConfigurer.AppEnvConfigurerService;
+import jakarta.transaction.Transactional;
 import java.time.Instant;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -44,7 +45,6 @@ public class AppEnvironmentDeploymentService {
       BoundedPageSize pageSize) {
     var data =
         dao.findAllByCriteria(
-            userId,
             appId,
             envType,
             startDatetime,
@@ -53,10 +53,12 @@ public class AppEnvironmentDeploymentService {
     return new Page<>(page, pageSize, data);
   }
 
+  @Transactional
   public OneOfPojaConf getConfig(String userId, String appId, String deploymentId) {
     var persisted = getById(deploymentId);
     var deploymentConf = envDeploymentConfService.getById(persisted.getEnvDeplConfId());
     String pojaConfFileKey = deploymentConf.getPojaConfFileKey();
-    return appEnvConfigurerService.readConfig(userId, appId, persisted.getEnvId(), pojaConfFileKey);
+    return appEnvConfigurerService.readConfig(
+        userId, appId, persisted.getEnv().getId(), pojaConfFileKey);
   }
 }
