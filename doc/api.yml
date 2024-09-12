@@ -756,6 +756,41 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+
+  /users/{userId}/applications/{applicationId}/deployments/{deploymentId}/progression:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/deploymentId'
+      - $ref: "#/components/parameters/page"
+      - $ref: "#/components/parameters/page_size"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationDeploymentProgression
+      summary: Get the progression list
+      responses:
+        '200':
+          description: The list of progression events for the queried deployment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedDeploymentProgressionEvents"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
+
+
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/deletionInitiation:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -1722,6 +1757,27 @@ components:
         creation_datetime:
           type: string
           format: date-time
+    DeploymentProgressionEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        state:
+          $ref: '#/components/schemas/DeploymentProgressionEventStateEnum'
+    DeploymentProgressionEventStateEnum:
+      type: string
+      enum:
+        - TEMPLATE_FILE_CHECK_INITIATED
+        - TEMPLATE_FILE_CHECK_FAILED
+        - INDEPENDENT_STACK_DEPLOYMENT_INITIATED
+        - INDEPENDENT_STACK_DEPLOYMENT_IN_PROGRESS
+        - INDEPENDENT_STACK_DEPLOYMENT_FAILED
+        - COMPUTE_STACK_DEPLOYMENT_INITIATED
+        - COMPUTE_STACK_DEPLOYMENT_FAILED
+        - COMPUTE_STACK_DEPLOYED
 
     ##############################################################
     ###############  Poja Configurations #########################
@@ -2554,6 +2610,14 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AppEnvDeployment"
+    PagedDeploymentProgressionEvents:
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeploymentProgressionEvent"
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
