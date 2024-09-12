@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-public class AppEnvironmentDeployController {
+public class GhAppEnvironmentDeployController {
   private final EnvironmentBuildService environmentBuildService;
 
   @GetMapping("/gh-repos/{repo_owner}/{repo_name}/upload-build-uri")
