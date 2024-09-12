@@ -2,12 +2,10 @@ package api.jcloudify.app.repository.model;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -32,6 +30,8 @@ public class PaymentRequest {
   private String id;
 
   private Instant requestInstant;
+
+  private int period;
 
   @OneToMany(mappedBy = "paymentRequestId")
   private List<UserPaymentRequest> userPaymentRequest;

@@ -13,6 +13,7 @@ import api.jcloudify.app.repository.model.User;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
 import java.time.Instant;
+import java.time.YearMonth;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -65,14 +66,12 @@ public class PaymentService {
 
   public void initiatePaymentAttempts() {
     String parentId = randomUUID().toString();
+    int period = YearMonth.now().minusMonths(1).getMonthValue();
     paymentRequestService.save(
-        PaymentRequest.builder().requestInstant(Instant.now()).id(parentId).build());
+        PaymentRequest.builder().requestInstant(Instant.now()).id(parentId).period(period).build());
     List<User> users = userService.getAllUsers();
     var events =
-        users.stream()
-            .map(
-                user -> toUserMonthlyPayementRequested(user, parentId))
-            .toList();
+        users.stream().map(user -> toUserMonthlyPayementRequested(user, parentId)).toList();
     eventProducer.accept(events);
   }
 
