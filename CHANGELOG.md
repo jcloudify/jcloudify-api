@@ -1,3 +1,20 @@
+# [3.22.0](https://github.com/jcloudify/jcloudify-api/compare/v3.21.0...v3.22.0) (2024-09-12)
+
+
+### Bug Fixes
+
+* **test:** configure mocks ([535fa61](https://github.com/jcloudify/jcloudify-api/commit/535fa61dc1c6197e9a082ac954f1313e62af9c6c))
+
+
+### Features
+
+* get app env deployment config ([01002f8](https://github.com/jcloudify/jcloudify-api/commit/01002f81587880157f5c6efe8f682d58fb34e580))
+* get deployments and get deployment ([71d9354](https://github.com/jcloudify/jcloudify-api/commit/71d93542f3ebab6145ccf812ed3d4bb9e7c8abe4))
+* get log stream events ([1a5a076](https://github.com/jcloudify/jcloudify-api/commit/1a5a076c9b0599be812247406c2dcc19f63b11a2))
+* periodically crupdate log stream events ([efbe28f](https://github.com/jcloudify/jcloudify-api/commit/efbe28fec364c3bb630e97c4d3e9fdf430ec89af))
+
+
+
 # [3.21.0](https://github.com/jcloudify/jcloudify-api/compare/v3.20.0...v3.21.0) (2024-09-04)
 
 
@@ -125,20 +142,6 @@
 ### Features
 
 * handle s3 putobject presigned url ([197623d](https://github.com/jcloudify/jcloudify-api/commit/197623dd36e45b3bdbcd5b01f6758a44794f44cd))
-
-
-
-# [3.13.0](https://github.com/jcloudify/jcloudify-api/compare/v3.12.0...v3.13.0) (2024-08-08)
-
-
-### Bug Fixes
-
-* detach payment method ([ce763b9](https://github.com/jcloudify/jcloudify-api/commit/ce763b9e75e25179f0f0ecff1b4447245fca7d52))
-
-
-### Features
-
-* payment customer ([9e782ac](https://github.com/jcloudify/jcloudify-api/commit/9e782acaaf27018fbfc89fa73e20cd0a54e56dd5))
 
 
 
