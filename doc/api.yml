@@ -2103,6 +2103,8 @@ components:
           type: string
         environment_type:
           $ref: "#/components/schemas/EnvironmentType"
+        commit_sha:
+          type: string
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
