@@ -165,13 +165,16 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
           env,
           generatedCode,
           cloneDirPath);
-      uploadAndSaveDeploymentFiles(generatedCode, userId, appId, environmentId);
+      uploadAndSaveDeploymentFiles(generatedCode, pojaConfUploaded);
       return null;
     };
   }
 
-  private void uploadAndSaveDeploymentFiles(
-      File toUnzip, String userId, String appId, String environmentId) {
+  private void uploadAndSaveDeploymentFiles(File toUnzip, PojaConfUploaded pojaConfUploaded) {
+    var userId = pojaConfUploaded.getUserId();
+    var appId = pojaConfUploaded.getAppId();
+    var environmentId = pojaConfUploaded.getEnvironmentId();
+
     var unzippedCode = createTempDir("unzipped");
     unzip(asZipFile(toUnzip), unzippedCode);
     var tempDirPath = createTempDir("deployment_files");
@@ -206,6 +209,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
                 storageSqliteStackFileCopyResult ? storageSqliteStackFilename : null)
             .buildTemplateFile(buildTemplateFilename)
             .creationDatetime(Instant.now())
+            .pojaConfFileKey(pojaConfUploaded.getFilename())
             .build());
   }
 

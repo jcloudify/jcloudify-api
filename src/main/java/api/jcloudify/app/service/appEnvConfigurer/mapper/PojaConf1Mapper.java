@@ -1,6 +1,7 @@
 package api.jcloudify.app.service.appEnvConfigurer.mapper;
 
 import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
+import static java.util.UUID.randomUUID;
 
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PojaConf;
@@ -32,7 +33,8 @@ final class PojaConf1Mapper extends AbstractAppEnvConfigMapper {
     var casted = (api.jcloudify.app.endpoint.rest.model.PojaConf1) pojaConf;
     validator.accept(casted);
     var domainPojaConf = toDomain(casted);
-    File namedTempFile = createNamedTempFile("poja_1.yml");
+    File namedTempFile =
+        createNamedTempFile("conf-v-" + domainPojaConf.version() + "-" + randomUUID() + ".yml");
     this.yamlObjectMapper.writeValue(namedTempFile, domainPojaConf);
     return namedTempFile;
   }
