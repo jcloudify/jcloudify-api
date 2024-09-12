@@ -3,6 +3,7 @@ package api.jcloudify.app.endpoint.rest.controller;
 import api.jcloudify.app.endpoint.rest.mapper.AppDeploymentsRestMapper;
 import api.jcloudify.app.endpoint.rest.model.AppEnvDeployment;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
+import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.endpoint.rest.model.PagedDeploymentsResponse;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
@@ -44,5 +45,13 @@ public class ApplicationDeploymentsController {
   @GetMapping("/users/{userId}/applications/{applicationId}/deployments/{deploymentId}")
   public AppEnvDeployment getApplicationDeployment(@PathVariable String deploymentId) {
     return mapper.toRest(service.getById(deploymentId));
+  }
+
+  @GetMapping("/users/{userId}/applications/{applicationId}/deployments/{deploymentId}/config")
+  public OneOfPojaConf getApplicationDeploymentConfig(
+      @PathVariable String userId,
+      @PathVariable String applicationId,
+      @PathVariable String deploymentId) {
+    return service.getConfig(userId, applicationId, deploymentId);
   }
 }
