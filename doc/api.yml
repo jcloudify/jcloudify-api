@@ -617,13 +617,12 @@ paths:
     parameters:
       - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
-      - $ref: '#/components/parameters/environmentId'
       - $ref: '#/components/parameters/deploymentId'
     get:
       security:
         - bearerAuth: [ ]
       tags:
-        - Environment
+        - Application
       operationId: getApplicationDeploymentConfig
       summary: Get a specific application deployment config
       responses:
@@ -1537,7 +1536,7 @@ components:
       enum:
         - PROD
         - PREPROD
-    DeploymentCreator:
+    GithubUserMeta:
       type: object
       properties:
         email:
@@ -1548,6 +1547,7 @@ components:
           type: string
         avatar_url:
           type: string
+          format: uri
     GithubMeta:
       type: object
       properties:
@@ -1580,7 +1580,7 @@ components:
         github_meta:
           $ref: "#/components/schemas/GithubMeta"
         creator:
-          $ref: "#/components/schemas/DeploymentCreator"
+          $ref: "#/components/schemas/GithubUserMeta"
         application_id:
           type: string
         environment_id:
