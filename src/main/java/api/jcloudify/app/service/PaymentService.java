@@ -71,13 +71,16 @@ public class PaymentService {
     var events =
         users.stream()
             .map(
-                a ->
-                    UserMonthlyPaymentRequested.builder()
-                        .parentId(parentId)
-                        .userId(a.getId())
-                        .customerId(a.getStripeId())
-                        .build())
+                user -> toUserMonthlyPayementRequested(user, parentId))
             .toList();
     eventProducer.accept(events);
+  }
+
+  private UserMonthlyPaymentRequested toUserMonthlyPayementRequested(User user, String parentId) {
+    return UserMonthlyPaymentRequested.builder()
+        .parentId(parentId)
+        .userId(user.getId())
+        .customerId(user.getStripeId())
+        .build();
   }
 }
