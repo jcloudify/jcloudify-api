@@ -5,6 +5,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static org.hibernate.type.SqlTypes.NAMED_ENUM;
 
 import api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus;
+import api.jcloudify.app.service.pricing.PricingMethod;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -44,7 +45,11 @@ public class BillingInfo {
   private String appId;
   private String envId;
   private String queryId;
-  private String pricingMethod;
+
+  @JdbcTypeCode(NAMED_ENUM)
+  @Enumerated(STRING)
+  private PricingMethod pricingMethod;
+
   private BigDecimal computedPriceInUsd;
   private Integer computedDurationInMinutes;
   private Integer computedMemoryUsedInMo;
