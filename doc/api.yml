@@ -537,6 +537,112 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/OneOfPojaConf"
+  /users/{userId}/applications/{applicationId}/deployments:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - name: environmentType
+        in: query
+        required: false
+        schema:
+          $ref: "#/components/schemas/EnvironmentType"
+      - name: startDatetime
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: endDatetime
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - $ref: "#/components/parameters/page"
+      - $ref: "#/components/parameters/page_size"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationDeployments
+      summary: Get application deployments, ordered by creationDatetime
+      responses:
+        '200':
+          description: Application deployments ordered by creation datetime
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedDeploymentsResponse"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{userId}/applications/{applicationId}/deployments/{deploymentId}:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/deploymentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationDeployment
+      summary: Get a specific application deployment
+      responses:
+        '200':
+          description: the queried deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppEnvDeployment'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{userId}/applications/{applicationId}/deployments/{deploymentId}/config:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/applicationId'
+      - $ref: '#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/deploymentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getApplicationDeploymentConfig
+      summary: Get a specific application deployment config
+      responses:
+        '200':
+          description: the config for the queried deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfPojaConf'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/deletionInitiation:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -1278,7 +1384,13 @@ components:
         minimum: 1
         maximum: 500
         default: 30
-
+    deploymentId:
+      name: deploymentId
+      in: path
+      description: deploymentId
+      required: true
+      schema:
+        type: string
   responses:
     '400':
       description: Bad request
@@ -1425,6 +1537,61 @@ components:
       enum:
         - PROD
         - PREPROD
+    DeploymentCreator:
+      type: object
+      properties:
+        email:
+          type: string
+        username:
+          type: string
+        github_id:
+          type: string
+        avatar_url:
+          type: string
+    GithubMeta:
+      type: object
+      properties:
+        commit_branch:
+          type: string
+        commit_author_name:
+          type: string
+        commit_message:
+          type: string
+        commit_sha:
+          type: string
+        org:
+          type: string
+        repo_name:
+          type: string
+        repo_owner_type:
+          type: string
+        repo_id:
+          type: string
+        is_repo_private:
+          type: boolean
+        repo_url:
+          type: string
+          format: uri
+    AppEnvDeployment:
+      type: object
+      properties:
+        id:
+          type: string
+        github_meta:
+          $ref: "#/components/schemas/GithubMeta"
+        creator:
+          $ref: "#/components/schemas/DeploymentCreator"
+        application_id:
+          type: string
+        environment_id:
+          type: string
+        deployed_url:
+          type: string
+          format: uri
+        creation_datetime:
+          type: string
+          format: date-time
+
     ##############################################################
     ###############  Poja Configurations #########################
     ##############################################################
@@ -2197,6 +2364,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/StackOutput'
+    PagedDeploymentsResponse:
+      allOf:
+        - $ref: "#/components/schemas/PagedResponse"
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppEnvDeployment"
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
