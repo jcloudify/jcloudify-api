@@ -22,12 +22,12 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
   @Override
   public void accept(UserMonthlyPaymentRequested userMonthlyPaymentRequested) {
     Invoice invoice =
-        processInvoice(
+        createAndPayInvoice(
             userMonthlyPaymentRequested.getUserId(), userMonthlyPaymentRequested.getCustomerId());
     var paymentRequest =
         userPaymentRequestService.save(
             UserPaymentRequest.builder()
-                .parentId(userMonthlyPaymentRequested.getParentId())
+                .paymentRequestId(userMonthlyPaymentRequested.getParentId())
                 .invoiceId(invoice.getId())
                 .invoiceUrl(invoice.getInvoicePdf())
                 .status(invoice.getStatus())
@@ -35,7 +35,7 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
                 .build());
   }
 
-  private Invoice processInvoice(String userId, String customerId) {
+  private Invoice createAndPayInvoice(String userId, String customerId) {
     List<Application> app = applicationService.findAllByUserId(userId);
     Invoice invoice = stripeService.createInvoice(customerId);
     app.forEach(

@@ -22,7 +22,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class UserPaymentRequest implements Serializable {
+public class UserPaymentRequest {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private String id;
@@ -31,6 +31,6 @@ public class UserPaymentRequest implements Serializable {
   private String invoiceUrl;
 
   private String invoiceId;
-  private String parentId;
+  private String paymentRequestId;
   private String userId;
 }

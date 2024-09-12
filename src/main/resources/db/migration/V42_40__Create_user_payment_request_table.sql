@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS "user_payment_request" (
     invoice_id varchar,
     status varchar default 'PENDING',
     invoice_url varchar,
-    parent_id varchar,
+    payment_request_id varchar,
     user_id varchar,
-    constraint fk_payment_request (parent_id) references "payment_request" (id),
+    constraint fk_payment_request (payment_request_id) references "payment_request" (id),
     constraint fk_user foreign_key (user_id) references "user" (id)
 );

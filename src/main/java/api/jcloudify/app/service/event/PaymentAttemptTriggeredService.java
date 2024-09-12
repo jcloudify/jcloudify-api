@@ -13,6 +13,6 @@ public class PaymentAttemptTriggeredService implements Consumer<PaymentAttemptTr
 
   @Override
   public void accept(PaymentAttemptTriggered paymentAttemptTriggered) {
-    paymentService.paymentAttempts();
+    paymentService.initiatePaymentAttempts();
   }
 }

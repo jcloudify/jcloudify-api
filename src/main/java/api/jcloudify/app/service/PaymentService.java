@@ -63,7 +63,7 @@ public class PaymentService {
         customer.getId(), customer.getName(), customer.getEmail(), customer.getPhone());
   }
 
-  public void paymentAttempts() {
+  public void initiatePaymentAttempts() {
     String parentId = randomUUID().toString();
     paymentRequestService.save(
         PaymentRequest.builder().requestInstant(Instant.now()).id(parentId).build());

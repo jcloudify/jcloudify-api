@@ -26,13 +26,13 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class PaymentRequest implements Serializable {
+public class PaymentRequest {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private String id;
 
   private Instant requestInstant;
 
-  @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "paymentRequestId")
   private List<UserPaymentRequest> userPaymentRequest;
 }
