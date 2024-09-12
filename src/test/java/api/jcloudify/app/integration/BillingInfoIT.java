@@ -9,7 +9,6 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPL
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeBillingInfo1;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeBillingInfo2;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeTotalBillingInfo;
-import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsNotFoundException;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static java.math.BigDecimal.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,24 +53,6 @@ public class BillingInfoIT extends MockedThirdParties {
             BILLING_INFO_END_TIME_QUERY);
 
     assertEquals(joeDoeBillingInfo1(), actual);
-  }
-
-  @Test
-  void get_billing_info_by_env_ko() throws ApiException {
-    ApiClient joeDoeClient = anApiClient();
-    BillingApi api = new BillingApi(joeDoeClient);
-
-    assertThrowsNotFoundException(
-        () ->
-            api.getUserAppEnvironmentBillingInfo(
-                JOE_DOE_ID,
-                OTHER_POJA_APPLICATION_ID,
-                OTHER_POJA_APPLICATION_ENVIRONMENT_ID,
-                Instant.parse("2023-01-01T00:00:00.00Z"),
-                Instant.parse("2023-01-02T00:00:00.00Z")),
-        "No billing info found for the environment "
-            + OTHER_POJA_APPLICATION_ENVIRONMENT_ID
-            + " within the specified time range");
   }
 
   @Test

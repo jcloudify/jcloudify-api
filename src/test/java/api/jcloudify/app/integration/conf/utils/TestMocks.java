@@ -13,6 +13,7 @@ import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDA
 import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
 import static api.jcloudify.app.endpoint.rest.model.WithQueuesNbEnum.NUMBER_2;
 import static api.jcloudify.app.model.PojaVersion.POJA_1;
+import static api.jcloudify.app.service.pricing.PricingMethod.*;
 
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
@@ -415,7 +416,7 @@ public class TestMocks {
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)
         .computedPrice(BigDecimal.valueOf(100))
-        .pricingMethod("dummy")
+        .pricingMethod(TEN_MICRO.getName())
         .computeTime(Instant.parse("2024-09-05T12:00:00.00Z"))
         .resourceInvocationTotalDuration(duration)
         .resourceInvocationTotalMemoryUsed(memory);
@@ -428,7 +429,7 @@ public class TestMocks {
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)
         .computedPrice(BigDecimal.valueOf(250))
-        .pricingMethod("dummy")
+        .pricingMethod(TEN_MICRO.getName())
         .computeTime(Instant.parse("2024-06-05T12:00:00.00Z"))
         .resourceInvocationTotalDuration(duration)
         .resourceInvocationTotalMemoryUsed(memory);
@@ -441,7 +442,7 @@ public class TestMocks {
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)
         .computedPrice(BigDecimal.valueOf(350))
-        .pricingMethod("dummy")
+        .pricingMethod(TEN_MICRO.getName())
         .resourceInvocationTotalDuration(duration)
         .resourceInvocationTotalMemoryUsed(memory);
   }

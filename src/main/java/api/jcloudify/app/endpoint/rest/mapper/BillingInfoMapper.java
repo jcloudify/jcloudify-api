@@ -19,7 +19,7 @@ public class BillingInfoMapper {
         .startTime(startTime)
         .endTime(endTime)
         .computedPrice(domain.getComputedPriceInUsd())
-        .pricingMethod(domain.getPricingMethod())
+        .pricingMethod(domain.getPricingMethod().getName())
         .computeTime(domain.getComputeDatetime())
         .resourceInvocationTotalDuration(duration)
         .resourceInvocationTotalMemoryUsed(memory);

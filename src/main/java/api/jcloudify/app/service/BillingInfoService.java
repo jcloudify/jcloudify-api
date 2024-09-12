@@ -1,12 +1,13 @@
 package api.jcloudify.app.service;
 
 import static api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus.FINISHED;
+import static api.jcloudify.app.service.pricing.PricingMethod.*;
 import static java.math.BigDecimal.*;
 
-import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.BillingInfoRepository;
 import api.jcloudify.app.repository.model.BillingInfo;
 import api.jcloudify.app.repository.model.Environment;
+import api.jcloudify.app.repository.model.User;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -21,18 +22,23 @@ import org.springframework.stereotype.Service;
 public class BillingInfoService {
   private final BillingInfoRepository repository;
   private final ApplicationService applicationService;
-  private final EnvironmentService environmentService;
+  private final UserService userService;
 
   public BillingInfo getUserBillingInfoByEnvironment(
       String userId, String appId, String envId, Instant startTime, Instant endTime) {
+    User user = userService.getUserById(userId);
     return repository
         .findLatestByCriteria(userId, appId, envId, FINISHED, startTime, endTime)
-        .orElseThrow(
-            () ->
-                new NotFoundException(
-                    "No billing info found for the environment "
-                        + envId
-                        + " within the specified time range"));
+        .orElse(
+            BillingInfo.builder()
+                .userId(userId)
+                .appId(appId)
+                .envId(envId)
+                .pricingMethod(user.getPricingMethod())
+                .computedPriceInUsd(ZERO)
+                .computedMemoryUsedInMo(0)
+                .computedDurationInMinutes(0)
+                .build());
   }
 
   public List<BillingInfo> getUserBillingInfoByApplication(
@@ -42,30 +48,10 @@ public class BillingInfoService {
         applicationService.getById(appId, userId).getEnvironments();
     applicationEnvironments.forEach(
         environment -> {
-          try {
-            billingInfos.add(
-                getUserBillingInfoByEnvironment(
-                    userId, appId, environment.getId(), startTime, endTime));
-          } catch (NotFoundException e) {
-            log.info(e.getMessage());
-          }
+          billingInfos.add(
+              getUserBillingInfoByEnvironment(
+                  userId, appId, environment.getId(), startTime, endTime));
         });
-    if (billingInfos.isEmpty()) {
-      List<BillingInfo> emptyBillingInfos =
-          applicationEnvironments.stream()
-              .map(
-                  env ->
-                      BillingInfo.builder()
-                          .userId(userId)
-                          .appId(appId)
-                          .envId(env.getId())
-                          .computedPriceInUsd(ZERO)
-                          .computedDurationInMinutes(0)
-                          .computedMemoryUsedInMo(0)
-                          .build())
-              .toList();
-      billingInfos.addAll(emptyBillingInfos);
-    }
     return billingInfos;
   }
 
@@ -90,13 +76,12 @@ public class BillingInfoService {
         userBillingInfos.stream()
             .map(billingInfo -> billingInfo.getComputedPriceInUsd())
             .reduce(ZERO, (subtotal, price) -> subtotal.add(price));
-    String pricingMethod = userBillingInfos.getFirst().getPricingMethod();
 
     return BillingInfo.builder()
         .computedPriceInUsd(totalPrice)
         .computedMemoryUsedInMo(totalMemory)
         .computedDurationInMinutes(totalDuration)
-        .pricingMethod(pricingMethod)
+        .pricingMethod(userBillingInfos.getFirst().getPricingMethod())
         .build();
   }
 }
