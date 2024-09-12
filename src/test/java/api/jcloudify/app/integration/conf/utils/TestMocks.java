@@ -85,6 +85,8 @@ public class TestMocks {
   public static final String OTHER_POJA_APPLICATION_ID = "other_poja_application_id";
   public static final String OTHER_POJA_APPLICATION_ENVIRONMENT_ID =
       "other_poja_application_environment_id";
+  public static final String OTHER_POJA_APPLICATION_ENVIRONMENT_2_ID =
+      "other_poja_application_environment_2_id";
   public static final String PROD_COMPUTE_FRONTAL_FUNCTION = "prod-compute-frontal-function";
   public static final String PROD_COMPUTE_WORKER_1_FUNCTION = "prod-compute-worker-1-function";
   public static final String PROD_COMPUTE_WORKER_2_FUNCTION = "prod-compute-worker-2-function";

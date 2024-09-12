@@ -5,6 +5,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.net.URI;
 import java.time.Instant;
@@ -31,9 +33,13 @@ public class AppEnvironmentDeployment {
   private String id;
 
   private String appId;
-  private String envId;
+
+  @JoinColumn(name = "env_id")
+  @ManyToOne
+  private Environment env;
+
   private String envDeplConfId;
-  private URI deployedUrl;
+  private String deployedUrl;
   private Instant creationDatetime;
   private String ghCommitBranch;
   private String ghCommitAuthorName;
@@ -43,11 +49,11 @@ public class AppEnvironmentDeployment {
   private String ghIsPushed;
   private String ghRepoId;
   private boolean ghIsRepoPrivate;
-  private URI ghRepoUrl;
+  private String ghRepoUrl;
   private String ghRepoName;
   private String ghRepoOwnerType;
   private String creatorEmail;
   private String creatorUsername;
   private String creatorGhId;
-  private URI creatorAvatarUrl;
+  private String creatorAvatarUrl;
 }
