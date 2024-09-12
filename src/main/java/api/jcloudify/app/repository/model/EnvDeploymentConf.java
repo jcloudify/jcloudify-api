@@ -36,6 +36,7 @@ public class EnvDeploymentConf {
   private String storageDatabaseSqliteStackFileKey;
   private Instant creationDatetime;
   private String buildTemplateFile;
+  private String pojaConfFileKey;
 
   @Column(name = "env_id")
   private String envId;
