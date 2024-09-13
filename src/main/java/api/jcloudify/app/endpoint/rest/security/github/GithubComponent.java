@@ -12,6 +12,7 @@ import api.jcloudify.app.service.github.model.CreateRepoResponse;
 import api.jcloudify.app.service.github.model.GhAppInstallation;
 import api.jcloudify.app.service.github.model.GhAppInstallationRepositoriesResponse;
 import api.jcloudify.app.service.github.model.GhAppInstallationResponse;
+import api.jcloudify.app.service.github.model.GhGetCommitResponse;
 import api.jcloudify.app.service.github.model.UpdateRepoRequestBody;
 import api.jcloudify.app.service.github.model.UpdateRepoResponse;
 import api.jcloudify.app.service.jwt.JwtGenerator;
@@ -274,6 +275,24 @@ public class GithubComponent {
                 GhAppInstallationResponse.class)
             .getBody();
     return toDomain(response);
+  }
+
+  public GhGetCommitResponse getCommitInfo(
+      String owner, long installationId, String repoName, String sha) {
+    var jwtToken = getAppInstallationToken(installationId, Duration.ofMinutes(1));
+    HttpHeaders headers = getGithubHttpHeaders(jwtToken);
+    HttpEntity<GhGetCommitResponse> entity = new HttpEntity<>(headers);
+
+    ParameterizedTypeReference<GhGetCommitResponse> typeRef = new ParameterizedTypeReference<>() {};
+    return restTemplate
+        .exchange(getGetCommitInfoUri(owner, repoName, sha).toUriString(), GET, entity, typeRef)
+        .getBody();
+  }
+
+  private UriComponents getGetCommitInfoUri(String owner, String repoName, String sha) {
+    return UriComponentsBuilder.fromUri(githubApiBaseUri.toUri())
+        .path("/repos/{owner}/{repo}/commits/{ref}")
+        .buildAndExpand(owner, repoName, sha);
   }
 
   @SneakyThrows
