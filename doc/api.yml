@@ -590,7 +590,7 @@ paths:
           content:
             'application/json':
               schema:
-                 $ref: "#/components/schemas/BillingInfo"
+                $ref: "#/components/schemas/BillingInfo"
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1668,39 +1668,43 @@ components:
     GithubUserMeta:
       type: object
       properties:
+        login:
+          type: string
         email:
           type: string
-        username:
+        name:
           type: string
         github_id:
           type: string
         avatar_url:
           type: string
           format: uri
+        is_jc_bot:
+          type: boolean
     GithubMeta:
       type: object
       properties:
-        commit_branch:
-          type: string
-        commit_author_name:
-          type: string
-        commit_message:
-          type: string
-        commit_sha:
-          type: string
-        org:
-          type: string
-        repo_name:
-          type: string
-        repo_owner_type:
-          type: string
-        repo_id:
-          type: string
-        is_repo_private:
-          type: boolean
-        repo_url:
-          type: string
-          format: uri
+        commit:
+          type: object
+          properties:
+            branch:
+              type: string
+            committer:
+              $ref: "#/components/schemas/GithubUserMeta"
+            message:
+              type: string
+            sha:
+              type: string
+            url:
+              type: string
+              format: uri
+        repo:
+          type: object
+          properties:
+            name:
+              type: string
+            owner_name:
+              type: string
     AppEnvDeployment:
       type: object
       properties:
@@ -1708,8 +1712,6 @@ components:
           type: string
         github_meta:
           $ref: "#/components/schemas/GithubMeta"
-        creator:
-          $ref: "#/components/schemas/GithubUserMeta"
         application_id:
           type: string
         environment_id:
