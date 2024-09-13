@@ -1,0 +1,17 @@
+alter table if exists "app_environment_deployment" drop column "gh_commit_author_name";
+alter table if exists "app_environment_deployment" drop column "gh_org";
+alter table if exists "app_environment_deployment" drop column "gh_is_pushed";
+alter table if exists "app_environment_deployment" drop column "gh_is_repo_private";
+alter table if exists "app_environment_deployment" drop column "gh_is_repo_private";
+alter table if exists "app_environment_deployment" drop column "gh_repo_id";
+alter table if exists "app_environment_deployment" drop column "gh_repo_url";
+alter table if exists "app_environment_deployment" drop column "gh_repo_owner_type";
+alter table if exists "app_environment_deployment" drop column "gh_commit_branch";
+alter table if exists "app_environment_deployment" add column "gh_repo_owner_name" varchar;
+alter table if exists "app_environment_deployment" rename column "creator_email" to "gh_committer_email";
+alter table if exists "app_environment_deployment" rename column "creator_username" to "gh_committer_name";
+alter table if exists "app_environment_deployment" rename column "creator_gh_id" to "gh_committer_id";
+alter table if exists "app_environment_deployment" rename column "creator_avatar_url" to "gh_committer_avatar_url";
+alter table if exists "app_environment_deployment" add column "gh_commit_url" varchar;
+alter table if exists "app_environment_deployment" add column "gh_committer_login" varchar;
+alter table if exists "app_environment_deployment" add column "gh_committer_type" varchar;
