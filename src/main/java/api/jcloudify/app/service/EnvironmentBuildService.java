@@ -17,8 +17,10 @@ import api.jcloudify.app.endpoint.rest.security.AuthenticatedResourceProvider;
 import api.jcloudify.app.endpoint.validator.BuiltEnvInfoValidator;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.model.exception.BadRequestException;
+import api.jcloudify.app.repository.model.AppEnvironmentDeployment;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvBuildRequest;
+import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.repository.model.Environment;
 import java.time.Duration;
 import java.util.List;
@@ -36,6 +38,7 @@ public class EnvironmentBuildService {
   private final EventProducer<PojaEvent> eventProducer;
   private final EnvBuildRequestService envBuildRequestService;
   private final BuiltEnvInfoValidator builtEnvInfoValidator;
+  private final AppEnvironmentDeploymentService appEnvironmentDeploymentService;
 
   public BuildUploadRequestResponse getZippedBuildUploadRequestDetails(
       EnvironmentType environmentType) {
@@ -61,7 +64,8 @@ public class EnvironmentBuildService {
   }
 
   @Transactional
-  public void initiateDeployment(BuiltEnvInfo builtEnvInfo) {
+  public void initiateDeployment(
+      String owner, String repoName, String installationId, BuiltEnvInfo builtEnvInfo) {
     if (envBuildRequestService.existsById(builtEnvInfo.getId())) {
       throw new BadRequestException("EnvBuildRequest has already been sent");
     }
@@ -89,6 +93,14 @@ public class EnvironmentBuildService {
             BUILT_PACKAGE,
             "build" + randomUUID() + ZIP_FILE_EXTENSION);
     copyFromTempToRealKey(builtEnvInfo.getFormattedBucketKey(), builtPackageBucketKey);
+    var savedAppEnvironmentDepl =
+        saveAppEnvironmentDeployment(
+            owner,
+            repoName,
+            installationId,
+            environment,
+            latestDeploymentConf,
+            builtEnvInfo.getCommitSha());
     envBuildRequestService.save(
         EnvBuildRequest.builder()
             .id(builtEnvInfo.getId())
@@ -108,6 +120,17 @@ public class EnvironmentBuildService {
                 .templateFileBucketKey(formattedOriginalTemplateFilename)
                 .deploymentConfId(latestDeploymentConf.getId())
                 .build()));
+  }
+
+  private AppEnvironmentDeployment saveAppEnvironmentDeployment(
+      String repoName,
+      String repoOwnerName,
+      String installationId,
+      Environment environment,
+      EnvDeploymentConf deploymentConf,
+      String ghSha) {
+    return appEnvironmentDeploymentService.save(
+        repoOwnerName, repoName, ghSha, installationId, environment, deploymentConf);
   }
 
   private void copyFromTempToRealKey(String tempFilePath, String realFilePath) {

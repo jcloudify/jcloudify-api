@@ -97,4 +97,9 @@ public class Environment implements Serializable {
   public String getFormattedEnvironmentType() {
     return environmentType.toString().toLowerCase();
   }
+
+  @JsonIgnore
+  public String getGhBranchName() {
+    return environmentType.toString().toLowerCase();
+  }
 }

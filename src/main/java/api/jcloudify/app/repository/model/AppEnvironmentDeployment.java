@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Builder(toBuilder = true)
@@ -39,20 +40,21 @@ public class AppEnvironmentDeployment {
 
   private String envDeplConfId;
   private String deployedUrl;
-  private Instant creationDatetime;
-  private String ghCommitBranch;
-  private String ghCommitAuthorName;
+  @CreationTimestamp private Instant creationDatetime;
+
+  public String getGhCommitBranch() {
+    return env.getFormattedEnvironmentType();
+  }
+
   private String ghCommitMessage;
   private String ghCommitSha;
-  private String ghOrg;
-  private String ghIsPushed;
-  private String ghRepoId;
-  private boolean ghIsRepoPrivate;
-  private String ghRepoUrl;
+  private String ghCommitUrl;
   private String ghRepoName;
-  private String ghRepoOwnerType;
-  private String creatorEmail;
-  private String creatorUsername;
-  private String creatorGhId;
-  private String creatorAvatarUrl;
+  private String ghRepoOwnerName;
+  private String ghCommitterName;
+  private String ghCommitterEmail;
+  private String ghCommitterId;
+  private String ghCommitterAvatarUrl;
+  private String ghCommitterLogin;
+  private String ghCommitterType;
 }
