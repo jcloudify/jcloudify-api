@@ -3,8 +3,10 @@ package api.jcloudify.app.endpoint.rest.controller;
 import api.jcloudify.app.endpoint.rest.model.BuildUploadRequestResponse;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
+import api.jcloudify.app.endpoint.rest.security.model.ApplicationPrincipal;
 import api.jcloudify.app.service.EnvironmentBuildService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,8 +32,10 @@ public class GhAppEnvironmentDeployController {
       @PathVariable("repo_owner") String repoOwner,
       @PathVariable("repo_name") String repoName,
       @RequestParam(name = "environment_type") EnvironmentType environmentType,
+      @AuthenticationPrincipal ApplicationPrincipal principal,
       @RequestBody BuiltEnvInfo payload) {
-    environmentBuildService.initiateDeployment(payload);
+    environmentBuildService.initiateDeployment(
+        repoOwner, repoName, principal.getInstallationId(), payload);
     return payload;
   }
 }

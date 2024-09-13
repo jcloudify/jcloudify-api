@@ -32,6 +32,10 @@ public class ApplicationPrincipal implements UserDetails {
     return bearer;
   }
 
+  public String getInstallationId() {
+    return application.getInstallationId();
+  }
+
   @Override
   public boolean isAccountNonExpired() {
     return isEnabled();
