@@ -78,6 +78,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private static final String REMOTE_ORIGIN = "origin";
   private static final RefSpec FETCH_ALL_AND_UPDATE_REFSPEC =
       new RefSpec("+refs/heads/*:refs/heads/*");
+  public static final String JCLOUDIFY_BOT_USERNAME = "jcloudify[bot]";
   private final ExtendedBucketComponent bucketComponent;
   private final PojaSamApi pojaSamApi;
   private final GithubService githubService;
@@ -420,7 +421,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
 
   private static void unsignedCommitAsBot(
       Git git, String commitMessage, CredentialsProvider credentialsProvider) {
-    PersonIdent author = new PersonIdent("jcloudify[bot]", "jcloudifybot@noreply.com");
+    PersonIdent author = new PersonIdent(JCLOUDIFY_BOT_USERNAME, "jcloudifybot@noreply.com");
     try {
       git.commit()
           .setMessage(commitMessage)
