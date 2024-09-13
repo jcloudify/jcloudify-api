@@ -1,3 +1,21 @@
+# [3.23.0](https://github.com/jcloudify/jcloudify-api/compare/v3.22.0...v3.23.0) (2024-09-13)
+
+
+### Bug Fixes
+
+* new spec for read app env deployments and test data changes ([1e6d942](https://github.com/jcloudify/jcloudify-api/commit/1e6d942843be1d64eaa25cc56496e9d7ac78f822))
+* **temporary:** return a zero billing info when none is found within time range ([1d3b9f7](https://github.com/jcloudify/jcloudify-api/commit/1d3b9f79163f28db1d6f2050002b6d79beaf733f))
+
+
+### Features
+
+* get user billing info per application ([4b59650](https://github.com/jcloudify/jcloudify-api/commit/4b596509ec466f9fbc81b5d9a632c6b3dd18c28e))
+* get user billing info per environment ([829c7c0](https://github.com/jcloudify/jcloudify-api/commit/829c7c05b57988f9d82fc14b2871c0b0f83f1f96))
+* get user total billing info ([f636ac8](https://github.com/jcloudify/jcloudify-api/commit/f636ac809971f22b0e8dd8ccf2f03a78aff31cfc))
+* save app env deployment ([4af299d](https://github.com/jcloudify/jcloudify-api/commit/4af299d767c0aa57930835bb18a0b09265c42c6c))
+
+
+
 # [3.22.0](https://github.com/jcloudify/jcloudify-api/compare/v3.21.0...v3.22.0) (2024-09-12)
 
 
@@ -127,21 +145,6 @@
 
 * deploy needed stacks before compute stack ([a723796](https://github.com/jcloudify/jcloudify-api/commit/a723796d7d6c7cf469fe11eff19d1d45a3f0f31f))
 * **no-implementation:** make some poja conf nullable ([cb0fbf0](https://github.com/jcloudify/jcloudify-api/commit/cb0fbf0e87ec4f34f080528d3d23640c28beceb8))
-
-
-
-# [3.14.0](https://github.com/jcloudify/jcloudify-api/compare/v3.13.0...v3.14.0) (2024-08-14)
-
-
-### Bug Fixes
-
-* rename build_template_file_url to build_template_file_uri ([e9f44cc](https://github.com/jcloudify/jcloudify-api/commit/e9f44cc98b46c10774d72dfa36a27b34869ca25d))
-* retrieve payment details ([5682086](https://github.com/jcloudify/jcloudify-api/commit/5682086cc0e1ceef5938ae7558c525ce8cddf749))
-
-
-### Features
-
-* handle s3 putobject presigned url ([197623d](https://github.com/jcloudify/jcloudify-api/commit/197623dd36e45b3bdbcd5b01f6758a44794f44cd))
 
 
 
