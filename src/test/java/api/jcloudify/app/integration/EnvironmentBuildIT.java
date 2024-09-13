@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,7 @@ import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileHash;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import api.jcloudify.app.repository.jpa.EnvBuildRequestRepository;
+import api.jcloudify.app.service.github.model.GhGetCommitResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
@@ -58,6 +60,16 @@ public class EnvironmentBuildIT extends MockedThirdParties {
         .thenReturn(Optional.of(POJA_APPLICATION_REPO_ID));
     when(extendedBucketComponentMock.getPresignedPutObjectUri(any(), any()))
         .thenReturn(URI.create("https://localhost:8080"));
+    when(githubComponent.getCommitInfo(any(), anyLong(), any(), any()))
+        .thenReturn(
+            new GhGetCommitResponse(
+                "sha",
+                new GhGetCommitResponse.GhCommit(
+                    "message",
+                    new GhGetCommitResponse.GhCommit.GhCommitter("name", "email"),
+                    URI.create("http://localhost")),
+                new GhGetCommitResponse.GhUser(
+                    "login", "id", URI.create("http://localhost"), "USER")));
   }
 
   @Test

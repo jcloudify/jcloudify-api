@@ -4,8 +4,6 @@ import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ENVIRONMENT_2_ID;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ENVIRONMENT_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.getValidPojaConf1;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
@@ -24,6 +22,8 @@ import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.AppEnvDeployment;
 import api.jcloudify.app.endpoint.rest.model.GithubMeta;
+import api.jcloudify.app.endpoint.rest.model.GithubMetaCommit;
+import api.jcloudify.app.endpoint.rest.model.GithubMetaRepo;
 import api.jcloudify.app.endpoint.rest.model.GithubUserMeta;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
 import api.jcloudify.app.file.ExtendedBucketComponent;
@@ -123,98 +123,101 @@ class ApplicationEnvironmentDeploymentsIT extends MockedThirdParties {
 
   GithubUserMeta johnDoeMetaGhUser() {
     return new GithubUserMeta()
+        .login("johndoe")
         .email("john.doe@example.com")
-        .username("johndoe")
+        .name("John Doe")
         .githubId("12345678")
-        .avatarUrl(URI.create("https://avatars.githubusercontent.com/u/12345678"));
+        .avatarUrl(URI.create("https://avatars.githubusercontent.com/u/12345678"))
+        .isJcBot(false);
   }
 
   GithubMeta johnDoeMetaGh() {
-    return new GithubMeta()
-        .commitBranch("main")
-        .commitAuthorName("John Doe")
-        .commitMessage("Initial deployment")
-        .commitSha("abc123def456")
-        .org("poja-org")
-        .repoName("repo1")
-        .repoOwnerType("organization")
-        .repoId("repo1_id")
-        .isRepoPrivate(false)
-        .repoUrl(URI.create("https://github.com/poja-org/repo1"));
+    GithubMetaRepo repo = new GithubMetaRepo().ownerName("poja-org").name("repo1");
+
+    GithubMetaCommit commit =
+        new GithubMetaCommit()
+            .branch("prod")
+            .committer(johnDoeMetaGhUser())
+            .message("Initial deployment")
+            .sha("abc123def456")
+            .url(URI.create("https://github.com/poja-org/repo1/commit/abc123def456"));
+
+    return new GithubMeta().commit(commit).repo(repo);
   }
 
   AppEnvDeployment prodDepl() {
     return new AppEnvDeployment()
-        .id(DEPLOYMENT_1_ID)
+        .id("deployment_1_id")
         .githubMeta(johnDoeMetaGh())
-        .creator(johnDoeMetaGhUser())
-        .applicationId(OTHER_POJA_APPLICATION_ID)
-        .environmentId(OTHER_POJA_APPLICATION_ENVIRONMENT_ID)
+        .applicationId("other_poja_application_id")
+        .environmentId("other_poja_application_environment_id")
         .deployedUrl(URI.create("https://example.com/deploy1"))
         .creationDatetime(Instant.parse("2024-08-01T10:15:00Z"));
   }
 
   GithubUserMeta janeSmithMetaGhUser() {
     return new GithubUserMeta()
+        .login("janesmith")
         .email("jane.smith@example.com")
-        .username("janesmith")
+        .name("Jane Smith")
         .githubId("87654321")
-        .avatarUrl(URI.create("https://avatars.githubusercontent.com/u/87654321"));
+        .avatarUrl(URI.create("https://avatars.githubusercontent.com/u/87654321"))
+        .isJcBot(false);
   }
 
   GithubMeta janeSmithMetaGh() {
-    return new GithubMeta()
-        .commitBranch("develop")
-        .commitAuthorName("Jane Smith")
-        .commitMessage("Bug fixes")
-        .commitSha("789ghi012jkl")
-        .org("poja-org")
-        .repoName("repo2")
-        .repoOwnerType("user")
-        .repoId("repo2_id")
-        .isRepoPrivate(true)
-        .repoUrl(URI.create("https://github.com/poja-org/repo2"));
+    GithubMetaRepo repo = new GithubMetaRepo().ownerName("poja-org").name("repo2");
+
+    GithubMetaCommit commit =
+        new GithubMetaCommit()
+            .branch("preprod")
+            .committer(janeSmithMetaGhUser())
+            .message("Bug fixes")
+            .sha("789ghi012jkl")
+            .url(URI.create("https://github.com/poja-org/repo2/commit/789ghi012jkl"));
+
+    return new GithubMeta().commit(commit).repo(repo);
   }
 
   AppEnvDeployment preprodDepl() {
     return new AppEnvDeployment()
         .id("deployment_2_id")
         .githubMeta(janeSmithMetaGh())
-        .creator(janeSmithMetaGhUser())
-        .applicationId(OTHER_POJA_APPLICATION_ID)
-        .environmentId(OTHER_POJA_APPLICATION_ENVIRONMENT_2_ID)
+        .applicationId("other_poja_application_id")
+        .environmentId("other_poja_application_environment_2_id")
         .deployedUrl(URI.create("https://example.com/deploy2"))
         .creationDatetime(Instant.parse("2024-08-02T14:30:00Z"));
   }
 
   GithubUserMeta samBrownMetaGhUser() {
     return new GithubUserMeta()
+        .login("sambrown")
         .email("sam.brown@example.com")
-        .username("sambrown")
+        .name("Sam Brown")
         .githubId("98765432")
-        .avatarUrl(URI.create("https://avatars.githubusercontent.com/u/98765432"));
+        .avatarUrl(URI.create("https://avatars.githubusercontent.com/u/98765432"))
+        .isJcBot(false);
   }
 
   GithubMeta samBrownMetaGh() {
-    return new GithubMeta()
-        .commitBranch("release")
-        .commitAuthorName("Sam Brown")
-        .commitMessage("Final deployment")
-        .commitSha("mno345pqr678")
-        .org("poja-org")
-        .repoName("repo3")
-        .repoOwnerType("organization")
-        .repoId("repo3_id")
-        .isRepoPrivate(false)
-        .repoUrl(URI.create("https://github.com/poja-org/repo3"));
+    GithubMetaRepo repo = new GithubMetaRepo().ownerName("poja-org").name("repo3");
+
+    GithubMetaCommit commit =
+        new GithubMetaCommit()
+            .branch("prod")
+            .committer(samBrownMetaGhUser())
+            .message("Final deployment")
+            .sha("mno345pqr678")
+            .url(URI.create("https://github.com/poja-org/repo3/commit/mno345pqr678"));
+
+    return new GithubMeta().commit(commit).repo(repo);
   }
 
   AppEnvDeployment archivedDepl() {
     return new AppEnvDeployment()
         .id("deployment_3_id")
         .githubMeta(samBrownMetaGh())
-        .creator(samBrownMetaGhUser())
-        .applicationId(OTHER_POJA_APPLICATION_ID)
+        .applicationId("other_poja_application_id")
         .environmentId("archived_other_poja_app_env_id")
         .deployedUrl(URI.create("https://example.com/deploy3"))
         .creationDatetime(Instant.parse("2024-08-02T09:00:00Z"));

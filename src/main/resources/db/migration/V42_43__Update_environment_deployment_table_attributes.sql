@@ -2,7 +2,6 @@ alter table if exists "app_environment_deployment" drop column "gh_commit_author
 alter table if exists "app_environment_deployment" drop column "gh_org";
 alter table if exists "app_environment_deployment" drop column "gh_is_pushed";
 alter table if exists "app_environment_deployment" drop column "gh_is_repo_private";
-alter table if exists "app_environment_deployment" drop column "gh_is_repo_private";
 alter table if exists "app_environment_deployment" drop column "gh_repo_id";
 alter table if exists "app_environment_deployment" drop column "gh_repo_url";
 alter table if exists "app_environment_deployment" drop column "gh_repo_owner_type";

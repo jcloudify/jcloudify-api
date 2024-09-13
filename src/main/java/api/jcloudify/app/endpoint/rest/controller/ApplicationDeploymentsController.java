@@ -1,6 +1,6 @@
 package api.jcloudify.app.endpoint.rest.controller;
 
-import api.jcloudify.app.endpoint.rest.mapper.AppDeploymentsRestMapper;
+import api.jcloudify.app.endpoint.rest.mapper.AppEnvDeploymentsRestMapper;
 import api.jcloudify.app.endpoint.rest.model.AppEnvDeployment;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class ApplicationDeploymentsController {
   private final AppEnvironmentDeploymentService service;
-  private final AppDeploymentsRestMapper mapper;
+  private final AppEnvDeploymentsRestMapper mapper;
 
   @GetMapping("/users/{userId}/applications/{applicationId}/deployments")
   public PagedDeploymentsResponse getApplicationDeployments(
