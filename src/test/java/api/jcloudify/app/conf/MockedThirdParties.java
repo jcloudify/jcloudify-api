@@ -2,7 +2,7 @@ package api.jcloudify.app.conf;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
-import api.jcloudify.app.file.BucketComponent;
+import api.jcloudify.app.file.bucket.BucketComponent;
 import api.jcloudify.app.service.jwt.JwtGenerator;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;

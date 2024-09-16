@@ -1,4 +1,4 @@
-package api.jcloudify.app.file;
+package api.jcloudify.app.file.bucket;
 
 import api.jcloudify.app.PojaGenerated;
 import lombok.Getter;

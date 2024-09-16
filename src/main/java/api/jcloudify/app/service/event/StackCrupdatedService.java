@@ -69,8 +69,9 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     StackCrupdateStatus stackCrupdateStatus =
         crupdateStackEvent(stack.getName(), stackEventsBucketKey);
     switch (stackCrupdateStatus) {
-      case CRUPDATE_IN_PROGRESS -> eventProducer.accept(
-          List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
+      case CRUPDATE_IN_PROGRESS ->
+          eventProducer.accept(
+              List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
       case CRUPDATE_SUCCESS -> {
         String stackOutputsBucketKey =
             getStackOutputsBucketKey(

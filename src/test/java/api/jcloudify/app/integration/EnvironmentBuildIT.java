@@ -2,7 +2,7 @@ package api.jcloudify.app.integration;
 
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.file.ExtendedBucketComponent.TEMP_FILES_BUCKET_PREFIX;
-import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
+import static api.jcloudify.app.file.hash.FileHashAlgorithm.SHA256;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.A_GITHUB_APP_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsBadRequestException;
 import static java.util.Objects.requireNonNull;
@@ -24,7 +24,7 @@ import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.file.ExtendedBucketComponent;
-import api.jcloudify.app.file.FileHash;
+import api.jcloudify.app.file.hash.FileHash;
 import api.jcloudify.app.integration.conf.utils.TestUtils;
 import api.jcloudify.app.repository.jpa.EnvBuildRequestRepository;
 import api.jcloudify.app.service.github.model.GhGetCommitResponse;

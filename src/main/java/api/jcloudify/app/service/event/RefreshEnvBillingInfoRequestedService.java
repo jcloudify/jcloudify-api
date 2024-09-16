@@ -25,11 +25,11 @@ public class RefreshEnvBillingInfoRequestedService
     implements Consumer<RefreshEnvBillingInfoRequested> {
   private static final String LOG_INSIGHTS_QUERY_TOTAL_MEMORY_DURATION =
       """
-    fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000000) as memorySizeInMo
-     | filter @message like /REPORT RequestId:/
-     | stats sum(durationInMinutes * memorySizeInMo) as billedMemoryDurationGrouped by memorySizeInMo
-     | stats sum(billedMemoryDurationGrouped) as billedMemoryDuration
-    """;
+fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000000) as memorySizeInMo
+ | filter @message like /REPORT RequestId:/
+ | stats sum(durationInMinutes * memorySizeInMo) as billedMemoryDurationGrouped by memorySizeInMo
+ | stats sum(billedMemoryDurationGrouped) as billedMemoryDuration
+""";
   private static final String LOG_GROUP_NAME_PATTERN_FOR_FRONTAL_FUNCTION =
       "%s-compute-%s-FrontalFunction";
   private static final String LOG_GROUP_NAME_PATTERN_FOR_WORKER_FUNCTIONS =
