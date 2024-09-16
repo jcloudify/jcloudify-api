@@ -5,7 +5,7 @@ import static jakarta.mail.Message.RecipientType.CC;
 import static jakarta.mail.Message.RecipientType.TO;
 
 import api.jcloudify.app.PojaGenerated;
-import api.jcloudify.app.file.FileTyper;
+import api.jcloudify.app.file.zip.FileTyper;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.mail.MessagingException;

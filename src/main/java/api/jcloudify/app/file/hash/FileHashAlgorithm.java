@@ -1,4 +1,4 @@
-package api.jcloudify.app.file;
+package api.jcloudify.app.file.hash;
 
 import api.jcloudify.app.PojaGenerated;
 

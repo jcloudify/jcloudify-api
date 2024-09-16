@@ -26,11 +26,11 @@ class CloudwatchComponentTest {
     String queryId =
         cloudwatchComponent.initiateLogInsightsQuery(
             """
-						fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000000) as memorySizeInMo
-						 | filter @message like /REPORT RequestId:/
-						 | stats sum(durationInMinutes * memorySizeInMo) as billedMemoryDurationGrouped by memorySizeInMo
-						 | stats sum(billedMemoryDurationGrouped) as billedMemoryDuration
-						""",
+fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000000) as memorySizeInMo
+ | filter @message like /REPORT RequestId:/
+ | stats sum(durationInMinutes * memorySizeInMo) as billedMemoryDurationGrouped by memorySizeInMo
+ | stats sum(billedMemoryDurationGrouped) as billedMemoryDuration
+""",
             startTime,
             endTime,
             List.of("/aws/lambda/prod-compute-jcloudify-dovecot-FrontalFunction-64fjAtgl1WXU"));

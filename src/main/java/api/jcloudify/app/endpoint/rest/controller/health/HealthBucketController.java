@@ -1,13 +1,13 @@
 package api.jcloudify.app.endpoint.rest.controller.health;
 
-import static api.jcloudify.app.file.FileHashAlgorithm.NONE;
+import static api.jcloudify.app.file.hash.FileHashAlgorithm.NONE;
 import static java.io.File.createTempFile;
 import static java.nio.file.Files.createTempDirectory;
 import static java.util.UUID.randomUUID;
 
 import api.jcloudify.app.PojaGenerated;
-import api.jcloudify.app.file.BucketComponent;
-import api.jcloudify.app.file.FileHash;
+import api.jcloudify.app.file.bucket.BucketComponent;
+import api.jcloudify.app.file.hash.FileHash;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

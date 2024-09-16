@@ -1,4 +1,4 @@
-package api.jcloudify.app.file;
+package api.jcloudify.app.file.zip;
 
 import static org.springframework.http.MediaType.parseMediaType;
 

@@ -1,7 +1,9 @@
 package api.jcloudify.app.file;
 
-import static api.jcloudify.app.file.FileHashAlgorithm.SHA256;
+import static api.jcloudify.app.file.hash.FileHashAlgorithm.SHA256;
 
+import api.jcloudify.app.file.hash.FileHash;
+import api.jcloudify.app.file.hash.FileHashAlgorithm;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;

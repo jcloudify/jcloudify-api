@@ -1,8 +1,10 @@
-package api.jcloudify.app.file;
+package api.jcloudify.app.file.bucket;
 
 import static java.io.File.createTempFile;
 
 import api.jcloudify.app.PojaGenerated;
+import api.jcloudify.app.file.hash.FileHash;
+import api.jcloudify.app.file.hash.FileHashAlgorithm;
 import java.io.File;
 import java.net.URL;
 import java.time.Duration;

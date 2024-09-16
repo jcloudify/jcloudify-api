@@ -8,6 +8,7 @@ import static java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor;
 import api.jcloudify.app.PojaGenerated;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import lombok.SneakyThrows;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @PojaGenerated
 @Component
-public class Workers<T> {
+public class Workers {
   private final ExecutorService executorService;
 
   public Workers() {
@@ -23,19 +24,30 @@ public class Workers<T> {
   }
 
   @SneakyThrows
-  public List<Future<T>> invokeAll(List<Callable<T>> callables) {
+  public List<Void> invokeAll(List<Callable<Void>> callables) {
     var parentThread = currentThread();
     callables =
         callables.stream()
             .map(
                 c ->
-                    (Callable<T>)
+                    (Callable<Void>)
                         () -> {
                           renameThread(
                               currentThread(), getRandomSubThreadNamePrefixFrom(parentThread));
                           return c.call();
                         })
             .toList();
-    return executorService.invokeAll(callables);
+    // TODO: refactor properly
+    List<Future<Void>> futures = executorService.invokeAll(callables);
+    return futures.stream()
+        .map(
+            future -> {
+              try {
+                return future.get();
+              } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+              }
+            })
+        .toList();
   }
 }
