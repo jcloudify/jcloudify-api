@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class State<T extends Enum<T>> {
   private final T state;
-  @Getter private final Instant t;
+  @Getter private final Instant timestamp;
 
   private final ExecutionType executionType;
 

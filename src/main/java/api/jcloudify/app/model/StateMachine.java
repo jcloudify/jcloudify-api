@@ -13,7 +13,7 @@ public abstract class StateMachine<STATE_ENUM extends Enum<STATE_ENUM>> {
 
   public State<STATE_ENUM> getLatestState() {
     var list = new ArrayList<>(states);
-    list.sort(Comparator.comparing(State::getT));
+    list.sort(Comparator.comparing(State::getTimestamp));
     return list.getFirst();
   }
   ;
