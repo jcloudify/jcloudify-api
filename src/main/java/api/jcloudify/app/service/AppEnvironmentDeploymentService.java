@@ -34,8 +34,8 @@ public class AppEnvironmentDeploymentService {
   public AppEnvironmentDeployment save(
       String repoOwnerName,
       String repoName,
-      String ghSha,
       String installationId,
+      String ghSha,
       Environment environment,
       EnvDeploymentConf envDeploymentConf) {
     var installation = appInstallationService.getById(installationId);

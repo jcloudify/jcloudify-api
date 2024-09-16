@@ -65,7 +65,7 @@ public class EnvironmentBuildService {
 
   @Transactional
   public void initiateDeployment(
-      String owner, String repoName, String installationId, BuiltEnvInfo builtEnvInfo) {
+      String repoOwnerName, String repoName, String installationId, BuiltEnvInfo builtEnvInfo) {
     if (envBuildRequestService.existsById(builtEnvInfo.getId())) {
       throw new BadRequestException("EnvBuildRequest has already been sent");
     }
@@ -95,12 +95,12 @@ public class EnvironmentBuildService {
     copyFromTempToRealKey(builtEnvInfo.getFormattedBucketKey(), builtPackageBucketKey);
     var savedAppEnvironmentDepl =
         saveAppEnvironmentDeployment(
-            owner,
+            repoOwnerName,
             repoName,
             installationId,
+            builtEnvInfo.getCommitSha(),
             environment,
-            latestDeploymentConf,
-            builtEnvInfo.getCommitSha());
+            latestDeploymentConf);
     envBuildRequestService.save(
         EnvBuildRequest.builder()
             .id(builtEnvInfo.getId())
@@ -123,14 +123,14 @@ public class EnvironmentBuildService {
   }
 
   private AppEnvironmentDeployment saveAppEnvironmentDeployment(
-      String repoName,
       String repoOwnerName,
+      String repoName,
       String installationId,
+      String ghSha,
       Environment environment,
-      EnvDeploymentConf deploymentConf,
-      String ghSha) {
+      EnvDeploymentConf deploymentConf) {
     return appEnvironmentDeploymentService.save(
-        repoOwnerName, repoName, ghSha, installationId, environment, deploymentConf);
+        repoOwnerName, repoName, installationId, ghSha, environment, deploymentConf);
   }
 
   private void copyFromTempToRealKey(String tempFilePath, String realFilePath) {

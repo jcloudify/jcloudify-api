@@ -29,13 +29,13 @@ public class GhAppEnvironmentDeployController {
 
   @PutMapping("/gh-repos/{repo_owner}/{repo_name}/env-deploys")
   public BuiltEnvInfo deployEnv(
-      @PathVariable("repo_owner") String repoOwner,
+      @PathVariable("repo_owner") String repoOwnerName,
       @PathVariable("repo_name") String repoName,
       @RequestParam(name = "environment_type") EnvironmentType environmentType,
       @AuthenticationPrincipal ApplicationPrincipal principal,
       @RequestBody BuiltEnvInfo payload) {
     environmentBuildService.initiateDeployment(
-        repoOwner, repoName, principal.getInstallationId(), payload);
+        repoOwnerName, repoName, principal.getInstallationId(), payload);
     return payload;
   }
 }
