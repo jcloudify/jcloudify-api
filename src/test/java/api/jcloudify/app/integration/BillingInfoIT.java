@@ -10,7 +10,7 @@ import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeBillingIn
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeBillingInfo2;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeTotalBillingInfo;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
-import static java.math.BigDecimal.*;
+import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

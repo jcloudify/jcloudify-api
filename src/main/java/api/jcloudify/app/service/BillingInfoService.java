@@ -46,11 +46,10 @@ public class BillingInfoService {
     List<Environment> applicationEnvironments =
         applicationService.getById(appId, userId).getEnvironments();
     applicationEnvironments.forEach(
-        environment -> {
-          billingInfos.add(
-              getUserBillingInfoByEnvironment(
-                  userId, appId, environment.getId(), startTime, endTime));
-        });
+        environment ->
+            billingInfos.add(
+                getUserBillingInfoByEnvironment(
+                    userId, appId, environment.getId(), startTime, endTime)));
     return billingInfos;
   }
 
@@ -65,12 +64,12 @@ public class BillingInfoService {
             .toList();
     int totalDuration =
         userBillingInfos.stream()
-            .map(billingInfo -> billingInfo.getComputedDurationInMinutes())
-            .reduce(0, (subtotal, duration) -> subtotal + duration);
+            .map(BillingInfo::getComputedDurationInMinutes)
+            .reduce(0, Integer::sum);
     BigDecimal totalPrice =
         userBillingInfos.stream()
-            .map(billingInfo -> billingInfo.getComputedPriceInUsd())
-            .reduce(ZERO, (subtotal, price) -> subtotal.add(price));
+            .map(BillingInfo::getComputedPriceInUsd)
+            .reduce(ZERO, BigDecimal::add);
 
     return BillingInfo.builder()
         .computedPriceInUsd(totalPrice)
