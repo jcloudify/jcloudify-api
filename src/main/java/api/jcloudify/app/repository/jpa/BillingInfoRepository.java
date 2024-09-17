@@ -20,4 +20,6 @@ public interface BillingInfoRepository extends JpaRepository<BillingInfo, String
       BillingInfoComputeStatus status,
       Instant startTime,
       Instant endTime);
+
+  Optional<BillingInfo> findByQueryId(String queryId);
 }

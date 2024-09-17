@@ -4,6 +4,7 @@ import static api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus.
 import static api.jcloudify.app.service.pricing.PricingMethod.*;
 import static java.math.BigDecimal.*;
 
+import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.BillingInfoRepository;
 import api.jcloudify.app.repository.model.BillingInfo;
 import api.jcloudify.app.repository.model.Environment;
@@ -83,5 +84,15 @@ public class BillingInfoService {
         .computedDurationInMinutes(totalDuration)
         .pricingMethod(userBillingInfos.getFirst().getPricingMethod())
         .build();
+  }
+
+  public BillingInfo crupdateBillingInfo(BillingInfo toSave) {
+    return repository.save(toSave);
+  }
+
+  public BillingInfo getByQueryId(String queryId) {
+    return repository
+        .findByQueryId(queryId)
+        .orElseThrow(() -> new NotFoundException("Not billing info found for query id " + queryId));
   }
 }
