@@ -52,7 +52,6 @@ public class BillingInfo {
 
   private BigDecimal computedPriceInUsd;
   private Integer computedDurationInMinutes;
-  private Integer computedMemoryUsedInMo;
 
   @JdbcTypeCode(NAMED_ENUM)
   @Enumerated(STRING)
