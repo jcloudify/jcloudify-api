@@ -30,7 +30,7 @@ gen_api_client:
   with_publish_to_npm_registry: 'true'
 general:
   app_name: jcloudify-api
-  cli_version: 18.1.0
+  cli_version: 18.1.1
   custom_java_deps: poja-custom-java-deps.txt
   custom_java_env_vars: poja-custom-java-env-vars.txt
   custom_java_repositories: poja-custom-java-repositories.txt
