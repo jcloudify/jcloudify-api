@@ -1,6 +1,6 @@
 package api.jcloudify.app.repository.model;
 
-import api.jcloudify.app.endpoint.rest.model.DeploymentProgressionEventStateEnum;
+import api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum;
 import api.jcloudify.app.repository.model.workflows.State;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -17,6 +17,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @Getter
 @Setter
-public class DeploymentProgression extends State<DeploymentProgressionEventStateEnum> {
+public class DeploymentState extends State<DeploymentStateEnum> {
   private String appEnvDeploymentId;
 }
