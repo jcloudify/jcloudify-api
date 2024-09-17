@@ -1,8 +1,7 @@
 package api.jcloudify.app.service;
 
 import static api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus.FINISHED;
-import static api.jcloudify.app.service.pricing.PricingMethod.*;
-import static java.math.BigDecimal.*;
+import static java.math.BigDecimal.ZERO;
 
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.BillingInfoRepository;
@@ -37,7 +36,6 @@ public class BillingInfoService {
                 .envId(envId)
                 .pricingMethod(user.getPricingMethod())
                 .computedPriceInUsd(ZERO)
-                .computedMemoryUsedInMo(0)
                 .computedDurationInMinutes(0)
                 .build());
   }
@@ -65,10 +63,6 @@ public class BillingInfoService {
                         userId, application.getId(), startTime, endTime))
             .flatMap(List::stream)
             .toList();
-    int totalMemory =
-        userBillingInfos.stream()
-            .map(billingInfo -> billingInfo.getComputedMemoryUsedInMo())
-            .reduce(0, (subtotal, memoryUsed) -> subtotal + memoryUsed);
     int totalDuration =
         userBillingInfos.stream()
             .map(billingInfo -> billingInfo.getComputedDurationInMinutes())
@@ -80,7 +74,6 @@ public class BillingInfoService {
 
     return BillingInfo.builder()
         .computedPriceInUsd(totalPrice)
-        .computedMemoryUsedInMo(totalMemory)
         .computedDurationInMinutes(totalDuration)
         .pricingMethod(userBillingInfos.getFirst().getPricingMethod())
         .build();

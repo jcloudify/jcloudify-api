@@ -6,7 +6,6 @@ import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.HEALTH
 import static api.jcloudify.app.endpoint.rest.model.Environment.StateEnum.UNKNOWN;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
-import static api.jcloudify.app.endpoint.rest.model.MemoryUnit.MEGA_OCTET;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_IN_PROGRESS;
@@ -32,7 +31,6 @@ import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.LogStream;
 import api.jcloudify.app.endpoint.rest.model.LogStreamEvent;
 import api.jcloudify.app.endpoint.rest.model.MailingConf1;
-import api.jcloudify.app.endpoint.rest.model.Memory;
 import api.jcloudify.app.endpoint.rest.model.PojaConf1;
 import api.jcloudify.app.endpoint.rest.model.SsmParameter;
 import api.jcloudify.app.endpoint.rest.model.Stack;
@@ -411,39 +409,33 @@ public class TestMocks {
 
   public static BillingInfo joeDoeBillingInfo1() {
     var duration = new Duration().amount(60).unit(MINUTES);
-    var memory = new Memory().amount(512).unit(MEGA_OCTET);
     return new BillingInfo()
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)
         .computedPrice(BigDecimal.valueOf(100))
         .pricingMethod(TEN_MICRO.getName())
         .computeTime(Instant.parse("2024-09-05T12:00:00.00Z"))
-        .resourceInvocationTotalDuration(duration)
-        .resourceInvocationTotalMemoryUsed(memory);
+        .resourceInvocationTotalDuration(duration);
   }
 
   public static BillingInfo joeDoeBillingInfo2() {
     var duration = new Duration().amount(120).unit(MINUTES);
-    var memory = new Memory().amount(1024).unit(MEGA_OCTET);
     return new BillingInfo()
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)
         .computedPrice(BigDecimal.valueOf(250))
         .pricingMethod(TEN_MICRO.getName())
         .computeTime(Instant.parse("2024-06-05T12:00:00.00Z"))
-        .resourceInvocationTotalDuration(duration)
-        .resourceInvocationTotalMemoryUsed(memory);
+        .resourceInvocationTotalDuration(duration);
   }
 
   public static BillingInfo joeDoeTotalBillingInfo() {
     var duration = new Duration().amount(180).unit(MINUTES);
-    var memory = new Memory().amount(1536).unit(MEGA_OCTET);
     return new BillingInfo()
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)
         .computedPrice(BigDecimal.valueOf(350))
         .pricingMethod(TEN_MICRO.getName())
-        .resourceInvocationTotalDuration(duration)
-        .resourceInvocationTotalMemoryUsed(memory);
+        .resourceInvocationTotalDuration(duration);
   }
 }

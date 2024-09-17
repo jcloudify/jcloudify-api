@@ -1,0 +1,1 @@
+alter table "billing_info" drop column computed_memory_used_in_mo;
