@@ -756,7 +756,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /users/{userId}/applications/{applicationId}/deployments/{deploymentId}/progression:
+  /users/{userId}/applications/{applicationId}/deployments/{deploymentId}/states:
     parameters:
       - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/applicationId'
@@ -768,15 +768,15 @@ paths:
         - bearerAuth: [ ]
       tags:
         - Application
-      operationId: getApplicationDeploymentProgression
-      summary: Get the progression list
+      operationId: getApplicationDeploymentStates
+      summary: Get the state list of a deployment
       responses:
         '200':
-          description: The list of progression events for the queried deployment
+          description: The list of state for the queried deployment
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PagedDeploymentProgressionEvents"
+                $ref: "#/components/schemas/PagedDeploymentStates"
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -1753,7 +1753,7 @@ components:
         creation_datetime:
           type: string
           format: date-time
-    DeploymentProgressionEvent:
+    DeploymentState:
       type: object
       properties:
         id:
@@ -1762,10 +1762,10 @@ components:
           type: string
           format: date-time
         progressionStatus:
-          $ref: '#/components/schemas/DeploymentProgressionEventStateEnum'
+          $ref: '#/components/schemas/DeploymentStateEnum'
         ExecutionType:
           $ref: '#/components/schemas/ExecutionType'
-    DeploymentProgressionEventStateEnum:
+    DeploymentStateEnum:
       type: string
       enum:
         - TEMPLATE_FILE_CHECK_IN_PROGRESS
@@ -2612,14 +2612,14 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AppEnvDeployment"
-    PagedDeploymentProgressionEvents:
+    PagedDeploymentStates:
       allOf:
         - $ref: "#/components/schemas/PagedResponse"
       properties:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/DeploymentProgressionEvent"
+            $ref: "#/components/schemas/DeploymentState"
     #############################################
     ###############  OneOf and AnyOf Components ############
     #############################################
