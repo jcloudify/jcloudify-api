@@ -12,7 +12,7 @@ import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDA
 import static api.jcloudify.app.endpoint.rest.model.User.RoleEnum.USER;
 import static api.jcloudify.app.endpoint.rest.model.WithQueuesNbEnum.NUMBER_2;
 import static api.jcloudify.app.model.PojaVersion.POJA_1;
-import static api.jcloudify.app.service.pricing.PricingMethod.*;
+import static api.jcloudify.app.service.pricing.PricingMethod.TEN_MICRO;
 
 import api.jcloudify.app.endpoint.rest.model.Application;
 import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
