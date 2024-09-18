@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DeploymentStateMapper {
-  private api.jcloudify.app.endpoint.rest.model.DeploymentState toRest(DeploymentState deploymentProgression) {
+  private api.jcloudify.app.endpoint.rest.model.DeploymentState toRest(
+      DeploymentState deploymentProgression) {
     return new api.jcloudify.app.endpoint.rest.model.DeploymentState()
         .id(deploymentProgression.getId())
         .executionType(deploymentProgression.getExecutionType())

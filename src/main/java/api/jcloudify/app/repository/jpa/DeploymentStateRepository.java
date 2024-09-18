@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DeploymentStateRepository
-    extends JpaRepository<DeploymentState, String> {
+public interface DeploymentStateRepository extends JpaRepository<DeploymentState, String> {
   List<DeploymentState> findAllByAppEnvDeploymentId(String deploymentId, Pageable pageable);
 }
