@@ -19,9 +19,11 @@ public class AppEnvDeploymentsRestMapper {
             .ownerName(deployment.getGhRepoOwnerName())
             .name(deployment.getGhRepoName());
     String ghCommitterName = deployment.getGhCommitterName();
+    String ghCommitterAvatarUrl = deployment.getGhCommitterAvatarUrl();
+    URI avatarUrl = ghCommitterAvatarUrl == null ? null : URI.create(ghCommitterAvatarUrl);
     GithubUserMeta committer =
         new GithubUserMeta()
-            .avatarUrl(URI.create(deployment.getGhCommitterAvatarUrl()))
+            .avatarUrl(avatarUrl)
             .email(deployment.getGhCommitterEmail())
             .githubId(deployment.getGhCommitterId())
             .isJcBot(JCLOUDIFY_BOT_USERNAME.equals(ghCommitterName))
