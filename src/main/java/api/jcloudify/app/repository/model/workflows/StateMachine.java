@@ -4,6 +4,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface StateMachine<STATE_ENUM extends Enum<STATE_ENUM>> {
-  List<State<STATE_ENUM>> to(State<STATE_ENUM> newState);
+public interface StateMachine<T extends State<? extends Enum<?>>> {
+  List<T> getStates();
+
+  T getLatestState();
+
+  List<T> addState(T state);
 }
