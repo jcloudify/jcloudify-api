@@ -2,6 +2,8 @@ package api.jcloudify.app.endpoint.rest.controller;
 
 import api.jcloudify.app.endpoint.rest.mapper.PaymentCustomerMapper;
 import api.jcloudify.app.endpoint.rest.mapper.PaymentMapper;
+import api.jcloudify.app.endpoint.rest.model.PayInvoice;
+import api.jcloudify.app.endpoint.rest.model.Payment;
 import api.jcloudify.app.endpoint.rest.model.PaymentCustomer;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethod;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodResponse;
@@ -21,6 +23,11 @@ public class PaymentController {
   private final PaymentService paymentService;
   private final PaymentMapper mapper;
   private final PaymentCustomerMapper customerMapper;
+
+  @PutMapping("/users/{userId}/payments/{paymentId}")
+  public Payment payInvoiceManually(@PathVariable String paymentId, @PathVariable String userId, @RequestBody PayInvoice payInvoice) {
+    return mapper.paymentToRest(paymentService.payInvoiceManually(paymentId, payInvoice.getInvoiceId(), payInvoice.getPaymentMethod()));
+  }
 
   @GetMapping("/users/{userId}/payment-details/payment-methods")
   public PaymentMethodResponse getPaymentMethods(@PathVariable String userId) {

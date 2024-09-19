@@ -88,7 +88,7 @@ public class PaymentService {
         .build();
   }
 
-  private UserPaymentRequest payInvoiceManually(String paymentId, String invoiceId, String paymentMethodId) {
+  public UserPaymentRequest payInvoiceManually(String paymentId, String invoiceId, String paymentMethodId) {
     Invoice invoice = stripeService.payInvoice(invoiceId, paymentMethodId);
     String paymentStatus = stripeService.getPaymentStatus(invoice);
     var payment = userPaymentRequestService.getById(paymentId);

@@ -108,6 +108,7 @@ public class SecurityConf {
                     antMatcher(PUT, "/users/*/payment-details"),
                     antMatcher(GET, "/users/*/payment-details/payment-methods"),
                     antMatcher(PUT, "/users/*/payment-details/payment-methods"),
+                    antMatcher(PUT, "/users/*/payments/*"),
                     antMatcher(PUT, "/gh-repos/*/*/env-deploys"),
                     antMatcher(GET, "/users/*/billing"),
                     antMatcher(GET, "/users/*/applications/*/billing"),
@@ -149,6 +150,8 @@ public class SecurityConf {
                     .requestMatchers(GET, "/users/*/payment-details/payment-methods")
                     .authenticated()
                     .requestMatchers(PUT, "/users/*/payment-details/payment-methods")
+                    .authenticated()
+                    .requestMatchers(PUT, "/users/*/payments/*")
                     .authenticated()
                     .requestMatchers(selfUserMatcher(PUT, "/users/*/installations"))
                     .authenticated()
