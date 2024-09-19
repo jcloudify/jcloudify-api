@@ -3,14 +3,14 @@ package api.jcloudify.app.repository.model;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static java.util.Comparator.comparing;
 
 import api.jcloudify.app.repository.model.workflows.StateMachine;
 import jakarta.persistence.*;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -30,7 +30,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "\"app_environment_deployment\"")
 @EqualsAndHashCode
 @ToString
-public class AppEnvironmentDeployment implements StateMachine<DeploymentState>, Serializable {
+public class AppEnvironmentDeployment implements StateMachine<DeploymentState> {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private String id;
@@ -68,29 +68,30 @@ public class AppEnvironmentDeployment implements StateMachine<DeploymentState>, 
   @Override
   public List<DeploymentState> getStates() {
     List<DeploymentState> states = this.states;
-    states.sort(Comparator.comparing(DeploymentState::getTimestamp).reversed());
+    states.sort(comparing(DeploymentState::getTimestamp).reversed());
     return states;
   }
 
   @Override
-  public DeploymentState getLatestState() {
-    return this.states.isEmpty() ? null : getStates().getFirst();
+  public Optional<DeploymentState> getLatestState() {
+    return this.getStates().isEmpty() ? Optional.empty() : Optional.of(getStates().getFirst());
   }
 
   @Override
   public List<DeploymentState> addState(DeploymentState newState) {
     List<DeploymentState> actualStates = this.getStates();
-    if (actualStates.isEmpty()) {
-      actualStates.add(newState);
+    var optionalLatestState = this.getLatestState();
+    if (!actualStates.isEmpty() && optionalLatestState.isPresent()) {
+      var latestState = optionalLatestState.get();
+      var errorMessage =
+          String.format("Illegal transition status from=%s to=%s", latestState, newState);
+      if (newState.getTimestamp().isBefore(latestState.getTimestamp())) {
+        throw new IllegalArgumentException(errorMessage);
+      }
+      actualStates.add(this.to(latestState, newState, errorMessage));
       return actualStates;
     }
-    var latestState = this.getLatestState();
-    var errorMessage =
-        String.format("Illegal transition status from=%s to=%s", latestState, newState);
-    if (newState.getTimestamp().isBefore(latestState.getTimestamp())) {
-      throw new IllegalArgumentException(errorMessage);
-    }
-    actualStates.add(this.to(latestState, newState, errorMessage));
+    actualStates.add(newState);
     return actualStates;
   }
 
