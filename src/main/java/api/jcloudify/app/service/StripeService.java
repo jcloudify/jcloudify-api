@@ -158,12 +158,30 @@ public class StripeService {
     }
   }
 
+  public Invoice payInvoice(String invoiceId, String paymentMethodId) {
+    try {
+      Invoice resource = Invoice.retrieve(invoiceId);
+      var params = InvoicePayParams.builder().setPaymentMethod(paymentMethodId).build();
+      return resource.pay(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
   public PaymentIntent retrievePaymentIntent(String paymentIntentId) {
     try {
       return PaymentIntent.retrieve(paymentIntentId);
     } catch (StripeException e) {
       throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
+  }
+
+  public String getPaymentStatus(Invoice invoice) {
+    if (invoice.getStatus() != "paid") {
+      var paymentIntent = retrievePaymentIntent(invoice.getPaymentIntent());
+      return paymentIntent.getStatus();
+    }
+    return invoice.getStatus();
   }
 
   private RequestOptions getRequestOption() {

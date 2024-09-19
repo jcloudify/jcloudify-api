@@ -10,7 +10,10 @@ import api.jcloudify.app.endpoint.rest.model.PaymentCustomer;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
 import api.jcloudify.app.repository.model.PaymentRequest;
 import api.jcloudify.app.repository.model.User;
+import api.jcloudify.app.repository.model.UserPaymentRequest;
+import api.jcloudify.app.repository.model.enums.InvoiceStatus;
 import com.stripe.model.Customer;
+import com.stripe.model.Invoice;
 import com.stripe.model.PaymentMethod;
 import java.time.Instant;
 import java.time.Month;
@@ -26,6 +29,7 @@ public class PaymentService {
   private final StripeService stripeService;
   private final UserService userService;
   private final PaymentRequestService paymentRequestService;
+  private final UserPaymentRequestService userPaymentRequestService;
 
   public String createCustomer(CreateUser createUser) {
     String name = createUser.getFirstName() + " " + createUser.getLastName();
@@ -82,5 +86,13 @@ public class PaymentService {
         .userId(user.getId())
         .customerId(user.getStripeId())
         .build();
+  }
+
+  private UserPaymentRequest payInvoiceManually(String paymentId, String invoiceId, String paymentMethodId) {
+    Invoice invoice = stripeService.payInvoice(invoiceId, paymentMethodId);
+    String paymentStatus = stripeService.getPaymentStatus(invoice);
+    var payment = userPaymentRequestService.getById(paymentId);
+    payment.setInvoiceStatus(InvoiceStatus.valueOf(paymentStatus));
+    return userPaymentRequestService.save(payment);
   }
 }

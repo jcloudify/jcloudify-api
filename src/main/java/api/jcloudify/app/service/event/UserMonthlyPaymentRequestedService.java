@@ -25,7 +25,7 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
     Invoice invoice =
         createAndPayInvoice(
             userMonthlyPaymentRequested.getUserId(), userMonthlyPaymentRequested.getCustomerId());
-    String paymentStatus = getPaymentStatus(invoice);
+    String paymentStatus = stripeService.getPaymentStatus(invoice);
     var paymentRequest =
         userPaymentRequestService.save(
             UserPaymentRequest.builder()
@@ -46,13 +46,5 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
         });
     stripeService.finalizeInvoice(invoice.getId());
     return stripeService.payInvoice(invoice.getId());
-  }
-
-  private String getPaymentStatus(Invoice invoice) {
-    if (invoice.getStatus() != "paid") {
-      var paymentIntent = stripeService.retrievePaymentIntent(invoice.getPaymentIntent());
-      return paymentIntent.getStatus();
-    }
-    return invoice.getStatus();
   }
 }
