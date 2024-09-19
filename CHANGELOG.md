@@ -1,3 +1,13 @@
+# [3.24.0](https://github.com/jcloudify/jcloudify-api/compare/v3.23.0...v3.24.0) (2024-09-19)
+
+
+### Features
+
+* configure state machine ([54d3503](https://github.com/jcloudify/jcloudify-api/commit/54d3503d88df220496ca5c113bc6065fd5f70bb2))
+* get deployment progression list ([19a3e4e](https://github.com/jcloudify/jcloudify-api/commit/19a3e4e3f36c69aec673dc4ab9392a5b5af6a744))
+
+
+
 # [3.23.0](https://github.com/jcloudify/jcloudify-api/compare/v3.22.0...v3.23.0) (2024-09-13)
 
 
@@ -135,16 +145,6 @@
 
 * stack appname is not anymore given as parameter ([ae80005](https://github.com/jcloudify/jcloudify-api/commit/ae8000598c81468962fddb44a608d87284aca31c))
 * **tests:** correctly map nullable values for poja conf ([f37f583](https://github.com/jcloudify/jcloudify-api/commit/f37f583f2127efd03a692da70a8c69b1c5c0e539))
-
-
-
-# [3.15.0](https://github.com/jcloudify/jcloudify-api/compare/v3.14.0...v3.15.0) (2024-08-20)
-
-
-### Features
-
-* deploy needed stacks before compute stack ([a723796](https://github.com/jcloudify/jcloudify-api/commit/a723796d7d6c7cf469fe11eff19d1d45a3f0f31f))
-* **no-implementation:** make some poja conf nullable ([cb0fbf0](https://github.com/jcloudify/jcloudify-api/commit/cb0fbf0e87ec4f34f080528d3d23640c28beceb8))
 
 
 
