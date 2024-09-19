@@ -48,6 +48,9 @@ public class AppEnvDeployRequested extends PojaEvent {
   @JsonProperty("independent_stack_states")
   private final IndependentStacksStateEnum independentStacksStates;
 
+  @JsonProperty("app_env_deployment_id")
+  private String appEnvDeploymentId;
+
   @Override
   public Duration maxConsumerDuration() {
     return Duration.ofMinutes(5);

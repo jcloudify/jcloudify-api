@@ -24,6 +24,9 @@ public class ComputeStackCrupdated extends PojaEvent {
   @JsonProperty("stack_name")
   private String stackName;
 
+  @JsonProperty("app_env_deployment_id")
+  private String appEnvDeploymentId;
+
   @Override
   public Duration maxConsumerDuration() {
     return Duration.ofSeconds(30);

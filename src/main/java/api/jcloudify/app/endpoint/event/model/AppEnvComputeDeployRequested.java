@@ -38,6 +38,9 @@ public class AppEnvComputeDeployRequested extends PojaEvent {
   @JsonProperty("request_instant")
   private final Instant requestInstant;
 
+  @JsonProperty("app_env_deployment_id")
+  private String appEnvDeploymentId;
+
   @Override
   public Duration maxConsumerDuration() {
     return Duration.ofSeconds(50);

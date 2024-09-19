@@ -2,8 +2,7 @@ package api.jcloudify.app.service.event;
 
 import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.NOT_READY;
 import static api.jcloudify.app.endpoint.event.model.enums.TemplateIntegrityStatus.AUTHENTIC;
-import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.INDEPENDENT_STACK_DEPLOYMENT_INITIATED;
-import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.TEMPLATE_FILE_CHECK_FAILED;
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.*;
 import static java.time.Instant.now;
 
 import api.jcloudify.app.endpoint.event.EventProducer;
@@ -106,7 +105,8 @@ public class TemplateIntegrityCheckDoneService implements Consumer<TemplateInteg
                 .envId(envId)
                 .appId(appId)
                 .independentStacksStates(NOT_READY)
+                .appEnvDeploymentId(appEnvDeploymentId)
                 .build()));
-    deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACK_DEPLOYMENT_INITIATED);
+    deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYMENT_INITIATED);
   }
 }

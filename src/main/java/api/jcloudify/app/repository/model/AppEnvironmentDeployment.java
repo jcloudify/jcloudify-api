@@ -1,5 +1,7 @@
 package api.jcloudify.app.repository.model;
 
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS;
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -102,19 +104,31 @@ public class AppEnvironmentDeployment implements StateMachine<DeploymentState> {
     switch (latestStatus) {
       case TEMPLATE_FILE_CHECK_IN_PROGRESS -> {
         switch (newStatus) {
-          case TEMPLATE_FILE_CHECK_FAILED, INDEPENDENT_STACK_DEPLOYMENT_IN_PROGRESS -> {
+          case TEMPLATE_FILE_CHECK_FAILED, INDEPENDENT_STACKS_DEPLOYMENT_INITIATED -> {
             return newState;
           }
           default -> throw new IllegalArgumentException(errorMessage);
         }
       }
-      case INDEPENDENT_STACK_DEPLOYMENT_IN_PROGRESS -> {
+      case INDEPENDENT_STACKS_DEPLOYMENT_INITIATED -> {
+        if (newStatus == INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS) {
+          return newState;
+        }
+        throw new IllegalArgumentException(errorMessage);
+      }
+      case INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS -> {
         switch (newStatus) {
-          case INDEPENDENT_STACK_DEPLOYMENT_FAILED, COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS -> {
+          case INDEPENDENT_STACKS_DEPLOYMENT_FAILED, INDEPENDENT_STACKS_DEPLOYED -> {
             return newState;
           }
           default -> throw new IllegalArgumentException(errorMessage);
         }
+      }
+      case INDEPENDENT_STACKS_DEPLOYED -> {
+        if (newStatus == COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS) {
+          return newState;
+        }
+        throw new IllegalArgumentException(errorMessage);
       }
       case COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS -> {
         switch (newStatus) {
