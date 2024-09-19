@@ -13,6 +13,7 @@ import api.jcloudify.app.repository.model.User;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
 import java.time.Instant;
+import java.time.Month;
 import java.time.YearMonth;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -66,7 +67,7 @@ public class PaymentService {
 
   public void initiatePaymentAttempts() {
     String parentId = randomUUID().toString();
-    int period = YearMonth.now().minusMonths(1).getMonthValue();
+    Month period = YearMonth.now().minusMonths(1).getMonth();
     paymentRequestService.save(
         PaymentRequest.builder().requestInstant(Instant.now()).id(parentId).period(period).build());
     List<User> users = userService.getAllUsers();

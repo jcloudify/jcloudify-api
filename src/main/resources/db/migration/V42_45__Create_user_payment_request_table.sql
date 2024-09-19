@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS "user_payment_request" (
     id varchar constraint pk_user_payment_request primary key default uuid_generate_v4(),
     invoice_id varchar,
-    status varchar default 'PENDING',
+    invoice_status varchar default 'OPEN',
     invoice_url varchar,
     payment_request_id varchar,
     user_id varchar,

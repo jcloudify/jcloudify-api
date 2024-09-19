@@ -7,6 +7,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.Invoice;
 import com.stripe.model.InvoiceItem;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentMethod;
 import com.stripe.model.PaymentMethodCollection;
 import com.stripe.net.RequestOptions;
@@ -152,6 +153,14 @@ public class StripeService {
       Invoice resource = Invoice.retrieve(invoiceId);
       var params = InvoicePayParams.builder().build();
       return resource.pay(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  public PaymentIntent retrievePaymentIntent(String paymentIntentId) {
+    try {
+      return PaymentIntent.retrieve(paymentIntentId);
     } catch (StripeException e) {
       throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }

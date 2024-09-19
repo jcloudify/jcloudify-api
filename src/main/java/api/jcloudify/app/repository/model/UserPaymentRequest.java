@@ -1,8 +1,12 @@
 package api.jcloudify.app.repository.model;
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static org.hibernate.type.SqlTypes.NAMED_ENUM;
 
+import api.jcloudify.app.repository.model.enums.InvoiceStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -12,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
 
 @Entity
 @Builder(toBuilder = true)
@@ -26,10 +31,13 @@ public class UserPaymentRequest {
   @GeneratedValue(strategy = IDENTITY)
   private String id;
 
-  private String status;
+  private String invoiceId;
   private String invoiceUrl;
 
-  private String invoiceId;
+  @JdbcTypeCode(NAMED_ENUM)
+  @Enumerated(STRING)
+  private InvoiceStatus invoiceStatus;
+
   private String paymentRequestId;
   private String userId;
 }

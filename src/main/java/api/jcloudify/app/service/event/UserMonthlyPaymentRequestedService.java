@@ -3,6 +3,7 @@ package api.jcloudify.app.service.event;
 import api.jcloudify.app.endpoint.event.model.UserMonthlyPaymentRequested;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.UserPaymentRequest;
+import api.jcloudify.app.repository.model.enums.InvoiceStatus;
 import api.jcloudify.app.service.ApplicationService;
 import api.jcloudify.app.service.StripeService;
 import api.jcloudify.app.service.UserPaymentRequestService;
@@ -24,13 +25,14 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
     Invoice invoice =
         createAndPayInvoice(
             userMonthlyPaymentRequested.getUserId(), userMonthlyPaymentRequested.getCustomerId());
+    String paymentStatus = getPaymentStatus(invoice);
     var paymentRequest =
         userPaymentRequestService.save(
             UserPaymentRequest.builder()
                 .paymentRequestId(userMonthlyPaymentRequested.getParentId())
                 .invoiceId(invoice.getId())
                 .invoiceUrl(invoice.getInvoicePdf())
-                .status(invoice.getStatus())
+                .invoiceStatus(InvoiceStatus.valueOf(paymentStatus))
                 .userId(userMonthlyPaymentRequested.getUserId())
                 .build());
   }
@@ -44,5 +46,13 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
         });
     stripeService.finalizeInvoice(invoice.getId());
     return stripeService.payInvoice(invoice.getId());
+  }
+
+  private String getPaymentStatus(Invoice invoice) {
+    if (invoice.getStatus() != "paid") {
+      var paymentIntent = stripeService.retrievePaymentIntent(invoice.getPaymentIntent());
+      return paymentIntent.getStatus();
+    }
+    return invoice.getStatus();
   }
 }
