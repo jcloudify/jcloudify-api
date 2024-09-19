@@ -1,15 +1,9 @@
 do
 $$
-begin
-        if not exists(select from pg_type where typname = 'execution_type') then
-create type execution_type as enum ('SYNCHRONOUS','ASYNCHRONOUS');
-end if;
-end
-$$;
-
-do
-$$
     begin
+        if not exists(select from pg_type where typname = 'execution_type') then
+            create type execution_type as enum ('SYNCHRONOUS','ASYNCHRONOUS');
+        end if;
         if not exists(select from pg_type where typname = 'deployment_progression_status') then
             create type deployment_progression_status as enum (
                 'TEMPLATE_FILE_CHECK_IN_PROGRESS','TEMPLATE_FILE_CHECK_FAILED',
