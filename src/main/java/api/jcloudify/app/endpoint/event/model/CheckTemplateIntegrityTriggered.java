@@ -37,6 +37,9 @@ public class CheckTemplateIntegrityTriggered extends PojaEvent {
   @JsonProperty("deployment_conf_id")
   private String deploymentConfId;
 
+  @JsonProperty("app_env_deployment_id")
+  private String appEnvDeploymentId;
+
   @Override
   public Duration maxConsumerDuration() {
     return Duration.ofSeconds(50);

@@ -76,7 +76,8 @@ public class EventModelSerializationIT extends MockedThirdParties {
             MOCK_BUCKET_KEY,
             MOCK_BUCKET_KEY,
             builtEnvInfo(),
-            "deployment_conf_id");
+            "deployment_conf_id",
+            "deployment_1_id");
 
     var serialized = om.writeValueAsString(checkTemplateIntegrityTriggered);
     var deserialized = om.readValue(serialized, CheckTemplateIntegrityTriggered.class);

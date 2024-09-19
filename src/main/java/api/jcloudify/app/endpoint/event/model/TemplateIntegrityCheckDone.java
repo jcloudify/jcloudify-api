@@ -35,6 +35,9 @@ public class TemplateIntegrityCheckDone extends PojaEvent {
   @JsonProperty("status")
   private TemplateIntegrityStatus status;
 
+  @JsonProperty("app_env_deployment_id")
+  private String appEnvDeploymentId;
+
   @Override
   public Duration maxConsumerDuration() {
     return Duration.ofSeconds(30);
