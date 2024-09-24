@@ -2,9 +2,8 @@ package api.jcloudify.app.endpoint.rest.mapper;
 
 import api.jcloudify.app.endpoint.rest.model.Payment;
 import api.jcloudify.app.repository.model.UserPaymentRequest;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MonthlyPaymentMapper {
@@ -18,8 +17,7 @@ public class MonthlyPaymentMapper {
         .invoiceUrl(domain.getInvoiceUrl());
   }
 
-  public List<Payment> toRest (List<UserPaymentRequest> monthlyPaymentRequests){
+  public List<Payment> toRest(List<UserPaymentRequest> monthlyPaymentRequests) {
     return monthlyPaymentRequests.stream().map(this::toRest).toList();
   }
-
 }

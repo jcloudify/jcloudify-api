@@ -13,9 +13,8 @@ import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.service.PaymentService;
-import java.util.List;
-
 import api.jcloudify.app.service.UserPaymentRequestService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,13 +32,11 @@ public class PaymentController {
   private final PaymentCustomerMapper customerMapper;
   private final MonthlyPaymentMapper monthlyPaymentMapper;
 
-
   @GetMapping("/users/{userId}/payments")
   public PagedPayments getAllPayments(
       @PathVariable String userId,
       @RequestParam(required = false, defaultValue = "1") PageFromOne page,
-      @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize
-  ){
+      @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
     var pagedResults = monthlyPaymentService.getUsersMonthlyPayments(userId, page, pageSize);
     return new PagedPayments()
         .count(pagedResults.count())
@@ -50,8 +47,13 @@ public class PaymentController {
   }
 
   @PutMapping("/users/{userId}/payments/{paymentId}")
-  public Payment payInvoiceManually(@PathVariable String paymentId, @PathVariable String userId, @RequestBody PayInvoice payInvoice) {
-    return monthlyPaymentMapper.toRest(paymentService.payInvoiceManually(paymentId, payInvoice.getInvoiceId(), payInvoice.getPaymentMethod()));
+  public Payment payInvoiceManually(
+      @PathVariable String paymentId,
+      @PathVariable String userId,
+      @RequestBody PayInvoice payInvoice) {
+    return monthlyPaymentMapper.toRest(
+        paymentService.payInvoiceManually(
+            paymentId, payInvoice.getInvoiceId(), payInvoice.getPaymentMethod()));
   }
 
   @GetMapping("/users/{userId}/payment-details/payment-methods")

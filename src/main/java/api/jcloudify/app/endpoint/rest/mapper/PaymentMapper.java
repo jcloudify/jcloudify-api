@@ -1,8 +1,6 @@
 package api.jcloudify.app.endpoint.rest.mapper;
 
-import api.jcloudify.app.endpoint.rest.model.Payment;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethod;
-import api.jcloudify.app.repository.model.UserPaymentRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,6 +9,8 @@ public class PaymentMapper {
     com.stripe.model.PaymentMethod.Card card = domain.getCard();
     return new PaymentMethod()
         .id(domain.getId())
+        .expMonth(Math.toIntExact(card.getExpMonth()))
+        .expYear(Math.toIntExact(card.getExpYear()))
         .type(domain.getType())
         .brand(card.getBrand())
         .last4(card.getLast4());
