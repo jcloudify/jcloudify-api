@@ -1,6 +1,5 @@
 package api.jcloudify.app.endpoint.event.model;
 
-import api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Duration;
 import lombok.Builder;
@@ -12,7 +11,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
 @Builder
-public class ComputeStackCrupdated extends PojaEvent {
+public class ComputeStackCrupdateTriggered extends PojaEvent {
   @JsonProperty("user_id")
   private String userId;
 
@@ -28,9 +27,6 @@ public class ComputeStackCrupdated extends PojaEvent {
   @JsonProperty("app_env_deployment_id")
   private String appEnvDeploymentId;
 
-  @JsonProperty("stack_deployment_state")
-  private StackCrupdateStatus stackDeploymentState;
-
   @Override
   public Duration maxConsumerDuration() {
     return Duration.ofSeconds(30);
@@ -38,6 +34,6 @@ public class ComputeStackCrupdated extends PojaEvent {
 
   @Override
   public Duration maxConsumerBackoffBetweenRetries() {
-    return Duration.ofSeconds(5);
+    return Duration.ofSeconds(10);
   }
 }

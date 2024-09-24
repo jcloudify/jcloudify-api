@@ -12,6 +12,7 @@ import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_DATABASE_S
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.AppEnvComputeDeployRequested;
 import api.jcloudify.app.endpoint.event.model.AppEnvDeployRequested;
+import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateTriggered;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackDeployment;
@@ -21,6 +22,7 @@ import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.service.ApplicationService;
 import api.jcloudify.app.service.EnvDeploymentConfService;
+import api.jcloudify.app.service.EnvironmentService;
 import api.jcloudify.app.service.StackService;
 import api.jcloudify.app.service.workflows.DeploymentStateService;
 import java.time.Instant;
@@ -42,7 +44,10 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
   private final EnvDeploymentConfService envDeploymentConfService;
   private final StackService stackService;
   private final ApplicationService appService;
+  private final EnvironmentService environmentService;
   private final DeploymentStateService deploymentStateService;
+  private final EventProducer<ComputeStackCrupdateTriggered>
+      computeStackCrupdateTriggeredEventProducer;
 
   @Override
   public void accept(AppEnvDeployRequested appEnvDeployRequested) {
@@ -90,6 +95,17 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
                     .appEnvDeploymentId(appEnvDeploymentId)
                     .build()));
         deploymentStateService.save(appEnvDeploymentId, COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS);
+        var env = environmentService.getById(envId);
+        String stackName =
+            String.format("%s-compute-%s", env.getFormattedEnvironmentType(), app.getName());
+        computeStackCrupdateTriggeredEventProducer.accept(
+            List.of(
+                ComputeStackCrupdateTriggered.builder()
+                    .userId(userId)
+                    .appId(appId)
+                    .envId(envId)
+                    .stackName(stackName)
+                    .build()));
       }
     }
   }
