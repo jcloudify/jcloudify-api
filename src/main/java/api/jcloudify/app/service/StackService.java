@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.ssm.model.OperatingSystem;
 
 @AllArgsConstructor
 @Service
@@ -311,8 +312,9 @@ public class StackService {
     return tags;
   }
 
-  public String getCloudformationStackId(String stackName) {
-    return cloudformationComponent.getStackIdByName(stackName);
+  public Optional<String> getCloudformationStackId(String stackName) {
+    String cfStackId = cloudformationComponent.getStackIdByName(stackName);
+    return cfStackId == null ? Optional.empty() : Optional.of(cfStackId);
   }
 
   public Stack deleteAndArchiveStack(Stack stack) {

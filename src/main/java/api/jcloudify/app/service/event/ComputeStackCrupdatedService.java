@@ -30,24 +30,24 @@ public class ComputeStackCrupdatedService implements Consumer<ComputeStackCrupda
     String applicationId = computeStackCrupdated.getAppId();
     String environmentId = computeStackCrupdated.getEnvId();
     String stackName = computeStackCrupdated.getStackName();
-    String cfStackId = stackService.getCloudformationStackId(stackName);
+    Optional<String> cfStackId = stackService.getCloudformationStackId(stackName);
 
     Optional<Stack> stack = stackDao.findByCriteria(applicationId, environmentId, COMPUTE);
-    if (cfStackId == null) {
+    if (cfStackId.isEmpty()) {
       log.info("Stack({}) does not exist", stackName);
       throw new InternalServerErrorException(String.format("Stack(%s) doesn't exists", stackName));
     } else {
       Stack saved;
       if (stack.isPresent()) {
         Stack toUpdate = stack.get();
-        toUpdate.toBuilder().cfStackId(cfStackId).build();
+        toUpdate.toBuilder().cfStackId(cfStackId.get()).build();
         saved = stackService.save(toUpdate);
       } else {
         saved =
             stackService.save(
                 Stack.builder()
                     .name(stackName)
-                    .cfStackId(cfStackId)
+                    .cfStackId(cfStackId.get())
                     .applicationId(applicationId)
                     .environmentId(environmentId)
                     .type(COMPUTE)
