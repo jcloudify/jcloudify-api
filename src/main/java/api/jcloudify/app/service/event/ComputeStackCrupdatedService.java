@@ -24,9 +24,9 @@ public class ComputeStackCrupdatedService implements Consumer<ComputeStackCrupda
     String appEnvDeploymentId = computeStackCrupdated.getAppEnvDeploymentId();
     StackCrupdateStatus stackDeploymentState = computeStackCrupdated.getStackDeploymentState();
 
-    if (stackDeploymentState.equals(CRUPDATE_SUCCESS)) {
+    if (CRUPDATE_SUCCESS.equals(stackDeploymentState)) {
       deploymentStateService.save(appEnvDeploymentId, COMPUTE_STACK_DEPLOYED);
-    } else if (stackDeploymentState.equals(CRUPDATE_FAILED)) {
+    } else if (CRUPDATE_FAILED.equals(stackDeploymentState)) {
       deploymentStateService.save(appEnvDeploymentId, COMPUTE_STACK_DEPLOYMENT_FAILED);
     }
   }

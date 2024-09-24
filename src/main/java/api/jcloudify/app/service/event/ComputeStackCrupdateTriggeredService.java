@@ -44,7 +44,7 @@ public class ComputeStackCrupdateTriggeredService
     Optional<Stack> stack = stackDao.findByCriteria(applicationId, environmentId, COMPUTE);
     if (latestState.isPresent()) {
       DeploymentStateEnum latestStatus = latestState.get().getProgressionStatus();
-      if (latestStatus.equals(COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS)) {
+      if (COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS.equals(latestStatus)) {
         if (cfStackId.isPresent()) {
           Stack saved;
           if (stack.isPresent()) {
@@ -72,7 +72,7 @@ public class ComputeStackCrupdateTriggeredService
           stackService.crupdateStackEvents(stackName, stackEventsBucketKey);
         }
         computeStackCrupdateTriggeredEventProducer.accept(List.of(computeStackCrupdateTriggered));
-      } else if (latestStatus.equals(COMPUTE_STACK_DEPLOYED) && stack.isPresent()) {
+      } else if (COMPUTE_STACK_DEPLOYED.equals(latestStatus) && stack.isPresent()) {
         stackCrupdatedEventProducer.accept(
             List.of(StackCrupdated.builder().userId(userId).stack(stack.get()).build()));
       }
