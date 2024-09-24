@@ -40,7 +40,7 @@ public class PaymentController {
       @RequestParam(required = false, defaultValue = "1") PageFromOne page,
       @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize
   ){
-    var pagedResults = monthlyPaymentService.getMonthlyPayment(userId, page, pageSize);
+    var pagedResults = monthlyPaymentService.getUsersMonthlyPayments(userId, page, pageSize);
     return new PagedPayments()
         .count(pagedResults.count())
         .pageNumber(pagedResults.queryPage().getValue())

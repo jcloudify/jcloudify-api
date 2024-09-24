@@ -23,7 +23,7 @@ public class UserPaymentRequestService {
     return repository.save(userPaymentRequest);
   }
 
-  public Page<UserPaymentRequest> getMonthlyPayment(String userId, PageFromOne pageFromOne, BoundedPageSize boundedPageSize){
+  public Page<UserPaymentRequest> getUsersMonthlyPayments(String userId, PageFromOne pageFromOne, BoundedPageSize boundedPageSize){
     Pageable pageable = PageRequest.of(pageFromOne.getValue() - 1, boundedPageSize.getValue());
     var data = repository.findAllByUserId(userId, pageable);
     return new Page<>(pageFromOne, boundedPageSize, data);

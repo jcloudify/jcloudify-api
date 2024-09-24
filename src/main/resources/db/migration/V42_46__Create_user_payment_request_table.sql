@@ -16,6 +16,7 @@ $$;
 
 CREATE TABLE IF NOT EXISTS "user_payment_request" (
     id varchar constraint pk_user_payment_request primary key default uuid_generate_v4(),
+    amount numeric,
     invoice_id varchar,
     invoice_status invoice_status default 'OPEN',
     invoice_url varchar,

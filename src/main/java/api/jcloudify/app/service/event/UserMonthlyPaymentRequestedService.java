@@ -30,6 +30,7 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
         userPaymentRequestService.save(
             UserPaymentRequest.builder()
                 .paymentRequestId(userMonthlyPaymentRequested.getParentId())
+                .amount(invoice.getAmountDue())
                 .invoiceId(invoice.getId())
                 .invoiceUrl(invoice.getInvoicePdf())
                 .invoiceStatus(InvoiceStatus.valueOf(paymentStatus))

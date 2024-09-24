@@ -12,6 +12,7 @@ public class MonthlyPaymentMapper {
   public Payment toRest(UserPaymentRequest domain) {
     return new Payment()
         .id(domain.getId())
+        .amount(Math.toIntExact(domain.getAmount()))
         .invoiceId(domain.getInvoiceId())
         .invoiceStatus(Payment.InvoiceStatusEnum.valueOf(domain.getInvoiceStatus().name()))
         .invoiceUrl(domain.getInvoiceUrl());

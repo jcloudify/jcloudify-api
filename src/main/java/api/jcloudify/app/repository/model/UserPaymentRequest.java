@@ -30,6 +30,7 @@ public class UserPaymentRequest {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private String id;
+  private Long amount;
 
   private String invoiceId;
   private String invoiceUrl;
