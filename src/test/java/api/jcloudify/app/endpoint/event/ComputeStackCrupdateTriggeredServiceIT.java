@@ -7,21 +7,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import api.jcloudify.app.conf.MockedThirdParties;
-import api.jcloudify.app.endpoint.event.model.StackCrupdated;
-import api.jcloudify.app.repository.jpa.dao.StackDao;
+import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateTriggered;
+import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.StackService;
-import api.jcloudify.app.service.event.ComputeStackCrupdatedService;
+import api.jcloudify.app.service.event.ComputeStackCrupdateTriggeredService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-public class ComputeStackCrupdatedServiceIT extends MockedThirdParties {
+public class ComputeStackCrupdateTriggeredServiceIT extends MockedThirdParties {
   @Autowired StackService service;
-  @Autowired StackDao stackDao;
-  @MockBean EventProducer<StackCrupdated> eventProducer;
-  @Autowired ComputeStackCrupdatedService subject;
+  @MockBean ExtendedBucketComponent extendedBucketComponent;
+  @MockBean EventProducer<ComputeStackCrupdateTriggered> eventProducer;
+  @Autowired ComputeStackCrupdateTriggeredService subject;
 
   private List<Stack> ignoreIdsAndDatetime(List<Stack> stacks) {
     return stacks.stream()

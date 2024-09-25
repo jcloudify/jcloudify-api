@@ -2,6 +2,7 @@ package api.jcloudify.app.service.event;
 
 import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.PENDING;
 import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.READY;
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.*;
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE;
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE_PERMISSION;
 import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT;
@@ -11,6 +12,7 @@ import static api.jcloudify.app.endpoint.rest.model.StackType.STORAGE_DATABASE_S
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.AppEnvComputeDeployRequested;
 import api.jcloudify.app.endpoint.event.model.AppEnvDeployRequested;
+import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateTriggered;
 import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackDeployment;
@@ -20,7 +22,9 @@ import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.service.ApplicationService;
 import api.jcloudify.app.service.EnvDeploymentConfService;
+import api.jcloudify.app.service.EnvironmentService;
 import api.jcloudify.app.service.StackService;
+import api.jcloudify.app.service.workflows.DeploymentStateService;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +44,17 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
   private final EnvDeploymentConfService envDeploymentConfService;
   private final StackService stackService;
   private final ApplicationService appService;
+  private final EnvironmentService environmentService;
+  private final DeploymentStateService deploymentStateService;
+  private final EventProducer<ComputeStackCrupdateTriggered>
+      computeStackCrupdateTriggeredEventProducer;
 
   @Override
   public void accept(AppEnvDeployRequested appEnvDeployRequested) {
     String userId = appEnvDeployRequested.getUserId();
     String appId = appEnvDeployRequested.getAppId();
     String envId = appEnvDeployRequested.getEnvId();
+    String appEnvDeploymentId = appEnvDeployRequested.getAppEnvDeploymentId();
     switch (appEnvDeployRequested.getIndependentStacksStates()) {
       case NOT_READY -> {
         List<StackDeployment> toDeploy = retrieveStacksToDeploy(envId);
@@ -53,11 +62,14 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
         stackService.processDeployment(toDeploy, userId, appId, envId);
         appEnvDeployRequestedEventProducer.accept(
             List.of(appEnvDeployRequested.toBuilder().independentStacksStates(PENDING).build()));
+        deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS);
       }
+      // TODO: handle case where independent stacks are not deployed
       case PENDING -> {
         boolean readyToDeployCompute = checkStacksDeploymentState(userId, appId, envId);
         if (readyToDeployCompute) {
           log.info("Compute stack ready to be deployed");
+          deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYED);
           appEnvDeployRequestedEventProducer.accept(
               List.of(appEnvDeployRequested.toBuilder().independentStacksStates(READY).build()));
         } else {
@@ -80,6 +92,19 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
                     .formattedBucketKey(appEnvDeployRequested.getBuiltZipFormattedFilekey())
                     .requestInstant(Instant.now())
                     .environmentType(builtEnvInfo.getEnvironmentType())
+                    .appEnvDeploymentId(appEnvDeploymentId)
+                    .build()));
+        deploymentStateService.save(appEnvDeploymentId, COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS);
+        var env = environmentService.getById(envId);
+        String stackName =
+            String.format("%s-compute-%s", env.getFormattedEnvironmentType(), app.getName());
+        computeStackCrupdateTriggeredEventProducer.accept(
+            List.of(
+                ComputeStackCrupdateTriggered.builder()
+                    .userId(userId)
+                    .appId(appId)
+                    .envId(envId)
+                    .stackName(stackName)
                     .build()));
       }
     }

@@ -1,5 +1,6 @@
 package api.jcloudify.app.service;
 
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.TEMPLATE_FILE_CHECK_IN_PROGRESS;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getTempBucketKey;
 import static api.jcloudify.app.file.FileType.BUILT_PACKAGE;
@@ -22,6 +23,7 @@ import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvBuildRequest;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.repository.model.Environment;
+import api.jcloudify.app.service.workflows.DeploymentStateService;
 import java.time.Duration;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ public class EnvironmentBuildService {
   private final EnvBuildRequestService envBuildRequestService;
   private final BuiltEnvInfoValidator builtEnvInfoValidator;
   private final AppEnvironmentDeploymentService appEnvironmentDeploymentService;
+  private final DeploymentStateService deploymentStateService;
 
   public BuildUploadRequestResponse getZippedBuildUploadRequestDetails(
       EnvironmentType environmentType) {
@@ -119,7 +122,9 @@ public class EnvironmentBuildService {
                 .builtProjectBucketKey(builtPackageBucketKey)
                 .templateFileBucketKey(formattedOriginalTemplateFilename)
                 .deploymentConfId(latestDeploymentConf.getId())
+                .appEnvDeploymentId(savedAppEnvironmentDepl.getId())
                 .build()));
+    deploymentStateService.save(savedAppEnvironmentDepl.getId(), TEMPLATE_FILE_CHECK_IN_PROGRESS);
   }
 
   private AppEnvironmentDeployment saveAppEnvironmentDeployment(

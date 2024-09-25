@@ -55,7 +55,8 @@ public class EventModelSerializationIT extends MockedThirdParties {
             MOCK_BUCKET_KEY,
             "mock_app_name",
             PROD,
-            MOCK_INSTANT);
+            MOCK_INSTANT,
+            null);
 
     var serialized = om.writeValueAsString(appEnvComputeRequested);
     var deserialized = om.readValue(serialized, AppEnvComputeDeployRequested.class);
@@ -76,7 +77,8 @@ public class EventModelSerializationIT extends MockedThirdParties {
             MOCK_BUCKET_KEY,
             MOCK_BUCKET_KEY,
             builtEnvInfo(),
-            "deployment_conf_id");
+            "deployment_conf_id",
+            "deployment_1_id");
 
     var serialized = om.writeValueAsString(checkTemplateIntegrityTriggered);
     var deserialized = om.readValue(serialized, CheckTemplateIntegrityTriggered.class);

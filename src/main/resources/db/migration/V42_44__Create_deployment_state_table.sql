@@ -7,7 +7,8 @@ $$
         if not exists(select from pg_type where typname = 'deployment_progression_status') then
             create type deployment_progression_status as enum (
                 'TEMPLATE_FILE_CHECK_IN_PROGRESS','TEMPLATE_FILE_CHECK_FAILED',
-                'INDEPENDENT_STACK_DEPLOYMENT_IN_PROGRESS', 'INDEPENDENT_STACK_DEPLOYMENT_FAILED',
+                'INDEPENDENT_STACKS_DEPLOYMENT_INITIATED', 'INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS',
+                'INDEPENDENT_STACKS_DEPLOYED', 'INDEPENDENT_STACKS_DEPLOYMENT_FAILED',
                 'COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS', 'COMPUTE_STACK_DEPLOYMENT_FAILED', 'COMPUTE_STACK_DEPLOYED');
         end if;
     end

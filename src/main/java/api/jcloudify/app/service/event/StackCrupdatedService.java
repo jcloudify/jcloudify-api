@@ -28,6 +28,7 @@ import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.model.exception.NotImplementedException;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.repository.model.User;
+import api.jcloudify.app.service.StackService;
 import api.jcloudify.app.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,6 +55,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
   private final EventProducer<PojaEvent> eventProducer;
   private final UserService userService;
   private final Mailer mailer;
+  private final StackService stackService;
 
   @Override
   public void accept(StackCrupdated stackCrupdated) {
@@ -113,35 +115,20 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
   }
 
   private StackCrupdateStatus crupdateStackEvent(String stackName, String bucketKey) {
-    List<StackEvent> stackEvents =
-        cloudformationComponent.getStackEvents(stackName).stream().map(mapper::toRest).toList();
-    try {
-      File stackEventJsonFile;
-      if (bucketComponent.doesExist(bucketKey)) {
-        stackEventJsonFile = bucketComponent.download(bucketKey);
-        List<StackEvent> actual = om.readValue(stackEventJsonFile, new TypeReference<>() {});
-        stackEvents = mergeAndSortStackEventList(actual, stackEvents);
-      } else {
-        stackEventJsonFile = createTempFile("log", ".json");
-      }
-      om.writeValue(stackEventJsonFile, stackEvents);
-      bucketComponent.upload(stackEventJsonFile, bucketKey);
-      StackEvent latestEvent = stackEvents.getFirst();
-      StackResourceStatusType status = latestEvent.getResourceStatus();
-      if (status != null
-          && status.toString().contains("COMPLETE")
-          && Objects.equals(latestEvent.getLogicalResourceId(), stackName)) {
-        return (status.equals(CREATE_COMPLETE) || status.equals(UPDATE_COMPLETE))
-            ? CRUPDATE_SUCCESS
-            : CRUPDATE_FAILED;
-      }
-      return CRUPDATE_IN_PROGRESS;
-    } catch (IOException e) {
-      throw new InternalServerErrorException(e);
+    List<StackEvent> stackEvents = stackService.crupdateStackEvents(stackName, bucketKey);
+    StackEvent latestEvent = stackEvents.getFirst();
+    StackResourceStatusType status = latestEvent.getResourceStatus();
+    if (status != null
+        && status.toString().contains("COMPLETE")
+        && Objects.equals(latestEvent.getLogicalResourceId(), stackName)) {
+      return (status.equals(CREATE_COMPLETE) || status.equals(UPDATE_COMPLETE))
+          ? CRUPDATE_SUCCESS
+          : CRUPDATE_FAILED;
     }
+    return CRUPDATE_IN_PROGRESS;
   }
 
-  private List<StackEvent> mergeAndSortStackEventList(
+  public static List<StackEvent> mergeAndSortStackEventList(
       List<StackEvent> actual, List<StackEvent> newEvents) {
     Set<StackEvent> mergedSet = new HashSet<>(actual);
     mergedSet.addAll(newEvents);

@@ -1,5 +1,7 @@
 package api.jcloudify.app.service;
 
+import static api.jcloudify.app.service.event.StackCrupdatedService.mergeAndSortStackEventList;
+import static java.io.File.createTempFile;
 import static java.lang.Math.min;
 
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
@@ -23,6 +25,7 @@ import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
 import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.repository.model.Stack;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -311,8 +314,9 @@ public class StackService {
     return tags;
   }
 
-  public String getCloudformationStackId(String stackName) {
-    return cloudformationComponent.getStackIdByName(stackName);
+  public Optional<String> getCloudformationStackId(String stackName) {
+    String cfStackId = cloudformationComponent.getStackIdByName(stackName);
+    return cfStackId == null ? Optional.empty() : Optional.of(cfStackId);
   }
 
   public Stack deleteAndArchiveStack(Stack stack) {
@@ -343,5 +347,25 @@ public class StackService {
     return archivedStacks.stream()
         .map(stack -> mapper.toRest(stack, application, environment))
         .toList();
+  }
+
+  public List<StackEvent> crupdateStackEvents(String stackName, String bucketKey) {
+    List<StackEvent> stackEvents =
+        cloudformationComponent.getStackEvents(stackName).stream().map(mapper::toRest).toList();
+    try {
+      File stackEventJsonFile;
+      if (bucketComponent.doesExist(bucketKey)) {
+        stackEventJsonFile = bucketComponent.download(bucketKey);
+        List<StackEvent> actual = om.readValue(stackEventJsonFile, new TypeReference<>() {});
+        stackEvents = mergeAndSortStackEventList(actual, stackEvents);
+      } else {
+        stackEventJsonFile = createTempFile("log", ".json");
+      }
+      om.writeValue(stackEventJsonFile, stackEvents);
+      bucketComponent.upload(stackEventJsonFile, bucketKey);
+    } catch (IOException e) {
+      throw new InternalServerErrorException(e);
+    }
+    return stackEvents;
   }
 }

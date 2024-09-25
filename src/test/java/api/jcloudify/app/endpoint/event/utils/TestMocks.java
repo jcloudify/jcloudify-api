@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import api.jcloudify.app.endpoint.event.model.ApplicationCrupdated;
-import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdated;
+import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateTriggered;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.github.GithubService;
 import api.jcloudify.app.service.github.model.CreateRepoResponse;
@@ -64,12 +64,13 @@ public class TestMocks {
     when(mock.createRepoFor(any(), any())).thenReturn(createRepoResponse());
   }
 
-  public static ComputeStackCrupdated computeStackCreated() {
-    return ComputeStackCrupdated.builder()
+  public static ComputeStackCrupdateTriggered computeStackCreated() {
+    return ComputeStackCrupdateTriggered.builder()
         .userId(JOE_DOE_ID)
         .appId(POJA_APPLICATION_ID)
         .envId(POJA_APPLICATION_ENVIRONMENT_ID)
         .stackName("poja_app_compute_stack")
+        .appEnvDeploymentId("poja_deployment_1_id")
         .build();
   }
 
