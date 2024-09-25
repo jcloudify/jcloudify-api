@@ -9,7 +9,9 @@ import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateTriggered;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum;
+import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.dao.StackDao;
+import api.jcloudify.app.repository.model.AppEnvironmentDeployment;
 import api.jcloudify.app.repository.model.DeploymentState;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.AppEnvironmentDeploymentService;
@@ -39,8 +41,14 @@ public class ComputeStackCrupdateTriggeredService
     String stackName = computeStackCrupdateTriggered.getStackName();
     String appEnvDeploymentId = computeStackCrupdateTriggered.getAppEnvDeploymentId();
     Optional<String> cfStackId = stackService.getCloudformationStackId(stackName);
-    Optional<DeploymentState> latestState =
-        appEnvironmentDeploymentService.getById(appEnvDeploymentId).getLatestState();
+    Optional<DeploymentState> latestState;
+    try {
+      AppEnvironmentDeployment appEnvironmentDeployment =
+          appEnvironmentDeploymentService.getById(appEnvDeploymentId);
+      latestState = appEnvironmentDeployment.getLatestState();
+    } catch (NotFoundException e) {
+      latestState = Optional.empty();
+    }
     Optional<Stack> stack = stackDao.findByCriteria(applicationId, environmentId, COMPUTE);
     if (latestState.isPresent()) {
       DeploymentStateEnum latestStatus = latestState.get().getProgressionStatus();

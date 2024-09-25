@@ -105,6 +105,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
                     .appId(appId)
                     .envId(envId)
                     .stackName(stackName)
+                    .appEnvDeploymentId(appEnvDeploymentId)
                     .build()));
       }
     }

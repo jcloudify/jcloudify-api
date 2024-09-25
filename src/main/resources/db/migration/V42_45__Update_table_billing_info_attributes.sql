@@ -1,1 +1,1 @@
-alter table "billing_info" drop column computed_memory_used_in_mo;
+alter table "billing_info" drop column if exists computed_memory_used_in_mo;
