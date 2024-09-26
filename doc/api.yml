@@ -29,94 +29,9 @@ paths:
   /token:
     $ref: "./security-api.yml#/operations/token"
   /gh-repos/{repo_owner}/{repo_name}/upload-build-uri:
-    get:
-      tags:
-        - Env_Deploy
-      summary: creates an URI for zip package build upload
-      operationId: createFileUploadUri
-      parameters:
-        - name: repo_owner
-          description: github repository owner containing the app
-          schema:
-            type: string
-          required: true
-          in: path
-        - name: repo_name
-          description: github repository name containing the app
-          schema:
-            type: string
-          required: true
-          in: path
-        - name: environment_type
-          description: environment type
-          schema:
-            $ref: "./environment-api.yml#/components/schemas/EnvironmentType"
-          required: true
-          in: query
-      responses:
-        '200':
-          description: the presigned code uri
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BuildUploadRequestResponse'
-        '400':
-          $ref: './api.yml#/components/responses/400'
-        '403':
-          $ref: './api.yml#/components/responses/403'
-        '404':
-          $ref: './api.yml#/components/responses/404'
-        '429':
-          $ref: './api.yml#/components/responses/429'
-        '500':
-          $ref: './api.yml#/components/responses/500'
+    $ref: "./env-deploy-api.yml#/operations/uploadUri"
   /gh-repos/{repo_owner}/{repo_name}/env-deploys:
-    put:
-      tags:
-        - Env_Deploy
-      summary: deploys all of the app env stacks
-      operationId: deployEnv
-      parameters:
-        - name: repo_owner
-          description: github repository owner containing the app
-          schema:
-            type: string
-          required: true
-          in: path
-        - name: repo_name
-          description: github repository name containing the app
-          schema:
-            type: string
-          required: true
-          in: path
-        - name: environment_type
-          description: environment type
-          schema:
-            $ref: "./environment-api.yml#/components/schemas/EnvironmentType"
-          required: true
-          in: query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BuiltEnvInfo"
-      responses:
-        '200':
-          description: OK if the deployment request has no issue
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BuiltEnvInfo"
-        '400':
-          $ref: './api.yml#/components/responses/400'
-        '403':
-          $ref: './api.yml#/components/responses/403'
-        '404':
-          $ref: './api.yml#/components/responses/404'
-        '429':
-          $ref: './api.yml#/components/responses/429'
-        '500':
-          $ref: './api.yml#/components/responses/500'
+    $ref: "./env-deploy-api.yml#/operations/deploys"
   /users:
     $ref: "./user-api.yaml#/operations/users"
   /poja-versions:
@@ -651,17 +566,6 @@ components:
         set_default:
           type: boolean
           default: false
-    BuildUploadRequestResponse:
-      type: object
-      properties:
-        build_template_file_uri:
-          type: string
-          format: uri
-        uri:
-          type: string
-          format: uri
-        filename:
-          type: string
     PaymentCustomer:
       type: object
       properties:
@@ -675,23 +579,6 @@ components:
           type: string
         default_payment_method:
           $ref: "#/components/schemas/PaymentMethod"
-    BuiltEnvInfo:
-      type: object
-      properties:
-        formatted_bucket_key:
-          type: string
-        id:
-          type: string
-        environment_type:
-          $ref: "./environment-api.yml#/components/schemas/EnvironmentType"
-        commit_sha:
-          type: string
-    BillingInfoRequestGroupByEnum:
-      type: string
-      default: APP
-      enum:
-        - APP
-        - ENV
     BillingInfo:
       type: object
       properties:
@@ -721,7 +608,6 @@ components:
       type: string
       enum:
         - MINUTES
-
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
