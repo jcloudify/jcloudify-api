@@ -16,7 +16,7 @@ public class DeploymentStateMapper {
       if (restDeploymentStates.size() == 1) {
         return restDeploymentStates.getFirst();
       } else {
-        for (int i = restDeploymentStates.size() - 1; i > 1; i--) {
+        for (int i = restDeploymentStates.size() - 1; i > 0; i--) {
           result = setNextState(restDeploymentStates.get(i - 1), restDeploymentStates.get(i));
         }
         return result;
@@ -52,15 +52,13 @@ public class DeploymentStateMapper {
       case COMPUTE_STACK_DEPLOYED, COMPUTE_STACK_DEPLOYMENT_FAILED ->
           COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS.equals(previousStatus);
       case COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS ->
-          INDEPENDENT_STACKS_DEPLOYMENT_FAILED.equals(previousStatus)
-              || INDEPENDENT_STACKS_DEPLOYED.equals(previousStatus);
+          INDEPENDENT_STACKS_DEPLOYED.equals(previousStatus);
       case INDEPENDENT_STACKS_DEPLOYED, INDEPENDENT_STACKS_DEPLOYMENT_FAILED ->
           INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS.equals(previousStatus);
       case INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS ->
           INDEPENDENT_STACKS_DEPLOYMENT_INITIATED.equals(previousStatus);
-      case INDEPENDENT_STACKS_DEPLOYMENT_INITIATED ->
-          TEMPLATE_FILE_CHECK_FAILED.equals(previousStatus);
-      case TEMPLATE_FILE_CHECK_FAILED -> TEMPLATE_FILE_CHECK_IN_PROGRESS.equals(previousStatus);
+      case INDEPENDENT_STACKS_DEPLOYMENT_INITIATED, TEMPLATE_FILE_CHECK_FAILED ->
+          TEMPLATE_FILE_CHECK_IN_PROGRESS.equals(previousStatus);
       default -> false;
     };
   }
