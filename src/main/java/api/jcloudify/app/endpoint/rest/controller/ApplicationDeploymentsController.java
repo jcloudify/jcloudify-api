@@ -3,9 +3,9 @@ package api.jcloudify.app.endpoint.rest.controller;
 import api.jcloudify.app.endpoint.rest.mapper.AppEnvDeploymentsRestMapper;
 import api.jcloudify.app.endpoint.rest.mapper.DeploymentStateMapper;
 import api.jcloudify.app.endpoint.rest.model.AppEnvDeployment;
+import api.jcloudify.app.endpoint.rest.model.DeploymentState;
 import api.jcloudify.app.endpoint.rest.model.EnvironmentType;
 import api.jcloudify.app.endpoint.rest.model.OneOfPojaConf;
-import api.jcloudify.app.endpoint.rest.model.PagedDeploymentStates;
 import api.jcloudify.app.endpoint.rest.model.PagedDeploymentsResponse;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
@@ -61,20 +61,14 @@ public class ApplicationDeploymentsController {
   }
 
   @GetMapping("/users/{userId}/applications/{applicationId}/deployments/{deploymentId}/states")
-  public PagedDeploymentStates getApplicationDeploymentProgression(
+  public DeploymentState getApplicationDeploymentProgression(
       @PathVariable String userId,
       @PathVariable String applicationId,
       @PathVariable String deploymentId,
       @RequestParam(required = false, defaultValue = "1") PageFromOne page,
       @RequestParam(required = false, defaultValue = "10") BoundedPageSize pageSize) {
-    var pagedResults =
+    return deploymentStateMapper.toRest(
         deploymentStateService.getDeploymentStatesByDeploymentId(
-            userId, applicationId, deploymentId, page, pageSize);
-    return new PagedDeploymentStates()
-        .count(pagedResults.count())
-        .hasPrevious(pagedResults.hasPrevious())
-        .pageSize(pagedResults.queryPageSize().getValue())
-        .pageNumber(pagedResults.queryPage().getValue())
-        .data(deploymentStateMapper.toRest(pagedResults.data().stream().toList()));
+            userId, applicationId, deploymentId, page, pageSize));
   }
 }
