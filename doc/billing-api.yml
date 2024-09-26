@@ -1,0 +1,143 @@
+openapi: 3.1.0
+operations:
+  userBilling:
+    parameters:
+      - $ref: "./api.yml#/components/parameters/userId"
+      - $ref: "./api.yml#/components/parameters/startTime"
+      - $ref: "./api.yml#/components/parameters/endTime"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - User
+        - Billing
+      operationId: getUserBillingInfo
+      summary: get user latest computed billing info
+      description: >
+        get user latest computed billing info .
+        current day's data might not be accurate as resource usage
+        might still occur at the moment and computation takes much time
+        hence, the most accurate data will be of the past days.
+      responses:
+        '200':
+          description: latest billing info summary before the date-time interval, range is inclusive
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/BillingInfo"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  appBilling:
+    parameters:
+      - $ref: "./api.yml#/components/parameters/userId"
+      - $ref: "./api.yml#/components/parameters/applicationId"
+      - $ref: "./api.yml#/components/parameters/startTime"
+      - $ref: "./api.yml#/components/parameters/endTime"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+        - Billing
+      operationId: getUserApplicationBillingInfo
+      summary: get user latest computed billing info grouped by app
+      description: >
+        get user latest computed billing info grouped by app.
+        current day's data might not be accurate as resource usage
+        might still occur at the moment and computation takes much time
+        hence, the most accurate data will be of the past days.
+      responses:
+        '200':
+          description: latest billing info summary before the date-time interval, range is inclusive
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BillingInfo"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  envBilling:
+    parameters:
+      - $ref: "./api.yml#/components/parameters/userId"
+      - $ref: "./api.yml#/components/parameters/applicationId"
+      - $ref: "./api.yml#/components/parameters/environmentId"
+      - $ref: "./api.yml#/components/parameters/startTime"
+      - $ref: "./api.yml#/components/parameters/endTime"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+        - Billing
+      operationId: getUserAppEnvironmentBillingInfo
+      summary: get user latest computed billing info grouped by env
+      description: >
+        get user latest computed billing info grouped by env.
+        current day's data might not be accurate as resource usage
+        might still occur at the moment and computation takes much time
+        hence, the most accurate data will be of the past days.
+      responses:
+        '200':
+          description: latest billing info summary before the date-time interval, range is inclusive
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/BillingInfo"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+components:
+  schemas:
+    BillingInfo:
+      type: object
+      properties:
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        pricing_method:
+          type: string
+        compute_time:
+          type: string
+          format: date-time
+        computed_price:
+          type: number
+        resource_invocation_total_duration:
+          $ref: "#/components/schemas/Duration"
+    Duration:
+      type: object
+      properties:
+        amount:
+          type: integer
+        unit:
+          $ref: "#/components/schemas/DurationUnit"
+    DurationUnit:
+      type: string
+      enum:
+        - MINUTES
