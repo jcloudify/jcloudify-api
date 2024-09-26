@@ -1,0 +1,218 @@
+openapi: 3.1.0
+operations: { }
+components:
+  schemas:
+    OneOfPojaConf:
+      oneOf:
+        - $ref: "#/components/schemas/PojaConf1"
+    ##############################################################
+    ###############  Poja Configurations #########################
+    ##############################################################
+    PojaVersionDiscriminator:
+      description: will be the discriminator, possible values are the ones available as poja_version
+      type: string
+
+    PojaConf:
+      type: object
+      description: will serve to type all poja confs
+      properties:
+        version:
+          $ref: "#/components/schemas/PojaVersionDiscriminator"
+      discriminator:
+        propertyName: 'version'
+        mapping:
+          '3.6.2': '#/components/schemas/PojaConf1'
+      required:
+        - version
+
+      ##############################################################
+      ###############  Poja Conf 1 ###########################
+      ##############################################################
+    ConcurrencyConf1:
+      type: object
+      properties:
+        frontal_reserved_concurrent_executions_nb:
+          type: integer
+          nullable: true
+        worker_reserved_concurrent_executions_nb:
+          type: integer
+          nullable: true
+
+    ComputeConf1:
+      type: object
+      properties:
+        frontal_memory:
+          type: number
+          example: 2048
+        frontal_function_timeout:
+          type: number
+          example: 30
+        worker_memory:
+          type: number
+          example: 1024
+        worker_batch:
+          type: number
+          example: 5
+        worker_function_1_timeout:
+          type: number
+          example: 600
+        worker_function_2_timeout:
+          type: number
+          example: 600
+
+    DatabaseConf1:
+      type: object
+      properties:
+        with_database:
+          type: string
+          enum:
+            - NONE
+            - SQLITE
+            - AURORA_POSTGRES
+            - NON_POJA_MANAGED_POSTGRES
+        database_non_root_username:
+          type: string
+          nullable: true
+        database_non_root_password:
+          type: string
+          nullable: true
+        prod_db_cluster_timeout:
+          type: number
+          nullable: true
+          example: 300
+        aurora_min_capacity:
+          type: number
+          nullable: true
+        aurora_max_capacity:
+          type: number
+          nullable: true
+        aurora_scale_point:
+          type: number
+          nullable: true
+        aurora_sleep:
+          type: number
+          nullable: true
+          example: 300
+        aurora_auto_pause:
+          type: boolean
+          example: false
+          nullable: true
+
+    StringMap:
+      type: object
+      additionalProperties:
+        type: string
+
+    StringList:
+      type: array
+      items:
+        type: string
+
+    WithQueuesNbEnum:
+      type: number
+      enum:
+        - 0
+        - 1
+        - 2
+    GeneralPojaConf1:
+      type: object
+      properties:
+        app_name:
+          type: string
+        with_snapstart:
+          type: boolean
+        with_queues_nb:
+          $ref: "#/components/schemas/WithQueuesNbEnum"
+        package_full_name:
+          type: string
+        custom_java_repositories:
+          $ref: "#/components/schemas/StringList"
+        custom_java_deps:
+          $ref: "#/components/schemas/StringList"
+        custom_java_env_vars:
+          $ref: "#/components/schemas/StringMap"
+    GenApiClient1:
+      type: object
+      properties:
+        aws_account_id:
+          type: string
+          nullable: true
+        with_publish_to_npm_registry:
+          type: boolean
+        ts_client_default_openapi_server_url:
+          type: string
+          nullable: true
+        ts_client_api_url_env_var_name:
+          type: string
+          nullable: true
+        codeartifact_repository_name:
+          type: string
+          nullable: true
+        codeartifact_domain_name:
+          type: string
+          nullable: true
+    Integration1:
+      type: object
+      properties:
+        with_sentry:
+          type: boolean
+          example: false
+        with_sonar:
+          type: boolean
+          example: false
+        with_codeql:
+          type: boolean
+          example: false
+        with_file_storage:
+          type: boolean
+          example: false
+        with_swagger_ui:
+          type: boolean
+          example: false
+    TestingConf1:
+      type: object
+      properties:
+        java_facade_it:
+          type: string
+          example: "FacadeIT"
+        jacoco_min_coverage:
+          type: number
+          example: 0.8
+    MailingConf1:
+      properties:
+        ses_source:
+          type: string
+          example: "noreply@nowhere.com"
+          nullable: true
+
+    PojaConf1:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PojaConf"
+      required:
+        - version
+      properties:
+        version:
+          $ref: "#/components/schemas/PojaVersionDiscriminator"
+        general:
+          $ref: "#/components/schemas/GeneralPojaConf1"
+        integration:
+          $ref: "#/components/schemas/Integration1"
+        gen_api_client:
+          $ref: "#/components/schemas/GenApiClient1"
+        concurrency:
+          $ref: '#/components/schemas/ConcurrencyConf1'
+        compute:
+          $ref: '#/components/schemas/ComputeConf1'
+        emailing:
+          $ref: "#/components/schemas/MailingConf1"
+        testing:
+          $ref: "#/components/schemas/TestingConf1"
+        database:
+          $ref: '#/components/schemas/DatabaseConf1'
+      ##############################################################
+      ###############  Poja Conf 1 ###########################
+      ##############################################################
+    ##############################################################
+    ###############  Poja Configurations #########################
+    ##############################################################
