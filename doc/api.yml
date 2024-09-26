@@ -23,7 +23,6 @@ paths:
           $ref: './api.yml#/components/responses/429'
         '500':
           $ref: './api.yml#/components/responses/500'
-
   /whoami:
     $ref: "./security-api.yml#/operations/whoami"
   /token:
@@ -89,119 +88,9 @@ paths:
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreamEvents:
     $ref: "./environment-api.yml#/operations/environmentLogStreamEvents"
   /users/{userId}/payment-details/payment-methods:
-    parameters:
-      - $ref: "#/components/parameters/userId"
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Payment
-      operationId: getPaymentMethods
-      summary: Get customer's payment methods
-      responses:
-        '200':
-          description: List of customer's payment methods
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentMethodResponse'
-        '400':
-          $ref: './api.yml#/components/responses/400'
-        '403':
-          $ref: './api.yml#/components/responses/403'
-        '404':
-          $ref: './api.yml#/components/responses/404'
-        '429':
-          $ref: './api.yml#/components/responses/429'
-        '500':
-          $ref: './api.yml#/components/responses/500'
-    put:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Payment
-      operationId: managePaymentMethods
-      summary: Manage user's payment methods
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PaymentMethodsAction"
-      responses:
-        '200':
-          description: Updated payment methods
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentMethodResponse'
-        '400':
-          $ref: './api.yml#/components/responses/400'
-        '403':
-          $ref: './api.yml#/components/responses/403'
-        '404':
-          $ref: './api.yml#/components/responses/404'
-        '429':
-          $ref: './api.yml#/components/responses/429'
-        '500':
-          $ref: './api.yml#/components/responses/500'
+    $ref: "./payment-api.yml#/operations/methods"
   /users/{userId}/payment-details:
-    parameters:
-      - $ref: "#/components/parameters/userId"
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Payment
-      operationId: getCustomer
-      summary: Get payment details from payment service provider
-      responses:
-        '200':
-          description: paymnet service customer object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentCustomer'
-        '400':
-          $ref: './api.yml#/components/responses/400'
-        '403':
-          $ref: './api.yml#/components/responses/403'
-        '404':
-          $ref: './api.yml#/components/responses/404'
-        '429':
-          $ref: './api.yml#/components/responses/429'
-        '500':
-          $ref: './api.yml#/components/responses/500'
-    put:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Payment
-      operationId: updatePaymentCustomer
-      summary: Update Customer in payment service provider
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PaymentCustomer"
-      responses:
-        '200':
-          description: Updated payment customer
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentCustomer'
-        '400':
-          $ref: './api.yml#/components/responses/400'
-        '403':
-          $ref: './api.yml#/components/responses/403'
-        '404':
-          $ref: './api.yml#/components/responses/404'
-        '429':
-          $ref: './api.yml#/components/responses/429'
-        '500':
-          $ref: './api.yml#/components/responses/500'
+    $ref: "./payment-api.yml#/operations/details"
 
 components:
   securitySchemes:
@@ -324,46 +213,6 @@ components:
             $ref: '#/components/schemas/InternalServerException'
 
   schemas:
-    #############################################
-    ###############  Components #################
-    #############################################
-    PaymentMethod:
-      type: object
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-        brand:
-          type: string
-        last4:
-          type: string
-    PaymentMethodsAction:
-      type: object
-      properties:
-        payment_method_id:
-          type: string
-        action:
-          type: string
-          enum:
-            - ATTACH
-            - DETACH
-        set_default:
-          type: boolean
-          default: false
-    PaymentCustomer:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        default_payment_method:
-          $ref: "#/components/schemas/PaymentMethod"
     ##############################################################
     ###############  RequestBodies And Responses #################
     ##############################################################
@@ -378,13 +227,6 @@ components:
           type: boolean
         count:
           type: integer
-    PaymentMethodResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/PaymentMethod"
     #############################################
     ###############  Exceptions #################
     #############################################
