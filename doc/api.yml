@@ -20,88 +20,14 @@ paths:
                 type: string
                 example: pong
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /whoami:
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Security
-      summary: Who am I? Tells you who you are.
-      operationId: whoami
-      responses:
-        '200':
-          description: Who you are
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Whoami'
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '429':
-          $ref: '#/components/responses/429'
-        '500':
-          $ref: '#/components/responses/500'
+    $ref: "./security-api.yml#/operations/whoami"
   /token:
-    get:
-      tags:
-        - Security
-      summary: Exchange Github code into token
-      operationId: exchangeCode
-      parameters:
-        - in: query
-          name: code
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Github access token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-        '400':
-          $ref: '#/components/responses/400'
-        '404':
-          $ref: '#/components/responses/404'
-        '429':
-          $ref: '#/components/responses/429'
-        '500':
-          $ref: '#/components/responses/500'
-    post:
-      tags:
-        - Security
-      summary: Refresh a token
-      operationId: refreshToken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RefreshToken'
-        required: true
-      responses:
-        '200':
-          description: Github access token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-        '400':
-          $ref: '#/components/responses/400'
-        '404':
-          $ref: '#/components/responses/404'
-        '429':
-          $ref: '#/components/responses/429'
-        '500':
-          $ref: '#/components/responses/500'
+    $ref: "./security-api.yml#/operations/token"
   /gh-repos/{repo_owner}/{repo_name}/upload-build-uri:
     get:
       tags:
@@ -135,15 +61,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/BuildUploadRequestResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /gh-repos/{repo_owner}/{repo_name}/env-deploys:
     put:
       tags:
@@ -182,15 +108,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/BuiltEnvInfo"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users:
     post:
       tags:
@@ -212,11 +138,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreateUsersResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /poja-versions:
     get:
       security:
@@ -233,15 +159,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/PojaVersionsResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users/{userId}/installations:
     parameters:
       - $ref: "#/components/parameters/userId"
@@ -260,15 +186,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/GithubAppInstallationsResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     put:
       security:
         - bearerAuth: [ ]
@@ -289,15 +215,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/CrupdateGithubAppInstallationsResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/billing:
     parameters:
@@ -325,15 +251,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/BillingInfo"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications:
     parameters:
@@ -361,15 +287,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/PagedApplicationsResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     put:
       security:
         - bearerAuth: [ ]
@@ -392,15 +318,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/CrupdateApplicationsResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}:
     parameters:
@@ -421,15 +347,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/billing:
     parameters:
@@ -460,15 +386,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/BillingInfo"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments:
     parameters:
@@ -490,15 +416,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/EnvironmentsResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     put:
       security:
         - bearerAuth: [ ]
@@ -524,15 +450,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/CrupdateEnvironmentsResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}:
     parameters:
@@ -554,15 +480,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Environment'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/billing:
     parameters:
@@ -592,15 +518,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/BillingInfo"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/config:
     parameters:
@@ -622,15 +548,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/OneOfPojaConf'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     put:
       tags:
         - Environment
@@ -689,15 +615,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/PagedDeploymentsResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users/{userId}/applications/{applicationId}/deployments/{deploymentId}:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -718,15 +644,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/AppEnvDeployment'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users/{userId}/applications/{applicationId}/deployments/{deploymentId}/config:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -747,15 +673,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/OneOfPojaConf'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users/{userId}/applications/{applicationId}/deployments/{deploymentId}/states:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -778,15 +704,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/PagedDeploymentStates"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/deletionInitiation:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -813,15 +739,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/InitiateStackDeletionResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/deploymentInitiation:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -849,15 +775,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/InitiateStackDeploymentResponse"
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks:
     parameters:
@@ -882,15 +808,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedStacksResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}:
     parameters:
@@ -913,15 +839,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Stack'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}/events:
     parameters:
@@ -947,15 +873,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedStackEvents'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/stacks/{stackId}/outputs:
     parameters:
@@ -981,15 +907,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedStackOutputs'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/computeStackResources:
     parameters:
@@ -1014,15 +940,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedComputeStackResource'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/variables:
     parameters:
@@ -1047,15 +973,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedEnvironmentVariables'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     put:
       security:
         - bearerAuth: [ ]
@@ -1079,15 +1005,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/CrupdateEnvironmentVariablesResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/variables/{variableId}:
     parameters:
@@ -1110,15 +1036,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/EnvironmentVariable'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/ssmparameters:
     parameters:
       - $ref: '#/components/parameters/userId'
@@ -1148,15 +1074,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedEnvironmentSsmParameters'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     post:
       security:
         - bearerAuth: [ ]
@@ -1178,15 +1104,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/crupdateEnvironmentSsmParametersResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     put:
       security:
         - bearerAuth: [ ]
@@ -1208,15 +1134,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/crupdateEnvironmentSsmParametersResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logGroups:
     parameters:
@@ -1242,15 +1168,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedLogGroups'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreams:
     parameters:
@@ -1277,15 +1203,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedLogStreams'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreamEvents:
     parameters:
@@ -1313,15 +1239,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PagedLogStreamEvents'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
   /users/{userId}/payment-details/payment-methods:
     parameters:
@@ -1341,15 +1267,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaymentMethodResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     put:
       security:
         - bearerAuth: [ ]
@@ -1371,15 +1297,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaymentMethodResponse'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
   /users/{userId}/payment-details:
     parameters:
       - $ref: "#/components/parameters/userId"
@@ -1398,15 +1324,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaymentCustomer'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
     put:
       security:
         - bearerAuth: [ ]
@@ -1428,15 +1354,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaymentCustomer'
         '400':
-          $ref: '#/components/responses/400'
+          $ref: './api.yml#/components/responses/400'
         '403':
-          $ref: '#/components/responses/403'
+          $ref: './api.yml#/components/responses/403'
         '404':
-          $ref: '#/components/responses/404'
+          $ref: './api.yml#/components/responses/404'
         '429':
-          $ref: '#/components/responses/429'
+          $ref: './api.yml#/components/responses/429'
         '500':
-          $ref: '#/components/responses/500'
+          $ref: './api.yml#/components/responses/500'
 
 components:
   securitySchemes:
@@ -1586,20 +1512,6 @@ components:
     #############################################
     ###############  Components #################
     #############################################
-    RefreshToken:
-      type: object
-      properties:
-        refresh_token:
-          type: string
-    Token:
-      type: object
-      properties:
-        access_token:
-          type: string
-        refresh_token:
-          type: string
-        token_type:
-          type: string
     CreateUser:
       type: object
       properties:
@@ -1644,11 +1556,6 @@ components:
           type: string
         stripe_id:
           type: string
-
-    Whoami:
-      properties:
-        user:
-          $ref: '#/components/schemas/User'
 
     ApplicationBase:
       type: object

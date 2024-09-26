@@ -1,0 +1,99 @@
+operations:
+  token:
+    get:
+      tags:
+        - Security
+      summary: Exchange Github code into token
+      operationId: exchangeCode
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Github access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+    post:
+      tags:
+        - Security
+      summary: Refresh a token
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+        required: true
+      responses:
+        '200':
+          description: Github access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  whoami:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Security
+      summary: Who am I? Tells you who you are.
+      operationId: whoami
+      responses:
+        '200':
+          description: Who you are
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Whoami'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+components:
+  schemas:
+    RefreshToken:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+    Whoami:
+      properties:
+        user:
+          $ref: './api.yml#/components/schemas/User'
