@@ -1,5 +1,10 @@
 package api.jcloudify.app.integration;
 
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS;
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.INDEPENDENT_STACKS_DEPLOYED;
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.INDEPENDENT_STACKS_DEPLOYMENT_INITIATED;
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS;
+import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.TEMPLATE_FILE_CHECK_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
@@ -21,6 +26,7 @@ import api.jcloudify.app.endpoint.rest.api.ApplicationApi;
 import api.jcloudify.app.endpoint.rest.client.ApiClient;
 import api.jcloudify.app.endpoint.rest.client.ApiException;
 import api.jcloudify.app.endpoint.rest.model.AppEnvDeployment;
+import api.jcloudify.app.endpoint.rest.model.DeploymentState;
 import api.jcloudify.app.endpoint.rest.model.GithubMeta;
 import api.jcloudify.app.endpoint.rest.model.GithubMetaCommit;
 import api.jcloudify.app.endpoint.rest.model.GithubMetaRepo;
@@ -119,6 +125,39 @@ class ApplicationEnvironmentDeploymentsIT extends MockedThirdParties {
     var actual =
         api.getApplicationDeploymentConfig(JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, DEPLOYMENT_1_ID);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  void read_deployment_states_ok() throws ApiException {
+    var apiClient = anApiClient();
+    var api = new ApplicationApi(apiClient);
+
+    var actual =
+        api.getApplicationDeploymentStates(JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, DEPLOYMENT_1_ID);
+    assertEquals(deploymentState(), actual);
+  }
+
+  DeploymentState deploymentState() {
+    return new DeploymentState()
+        .timestamp(Instant.parse("2024-09-01T08:50:00Z"))
+        .progressionStatus(TEMPLATE_FILE_CHECK_IN_PROGRESS)
+        .nextState(
+            new DeploymentState()
+                .timestamp(Instant.parse("2024-09-01T08:51:00Z"))
+                .progressionStatus(INDEPENDENT_STACKS_DEPLOYMENT_INITIATED)
+                .nextState(
+                    new DeploymentState()
+                        .timestamp(Instant.parse("2024-09-01T08:51:15Z"))
+                        .progressionStatus(INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS)
+                        .nextState(
+                            new DeploymentState()
+                                .timestamp(Instant.parse("2024-09-01T08:51:35Z"))
+                                .progressionStatus(INDEPENDENT_STACKS_DEPLOYED)
+                                .nextState(
+                                    new DeploymentState()
+                                        .timestamp(Instant.parse("2024-09-01T08:52:00Z"))
+                                        .progressionStatus(COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS)
+                                        .nextState(null)))));
   }
 
   GithubUserMeta johnDoeMetaGhUser() {
