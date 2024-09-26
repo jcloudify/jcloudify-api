@@ -1,0 +1,682 @@
+openapi: 3.1.0
+operations:
+  environments:
+    parameters:
+        - $ref: './api.yml#/components/parameters/userId'
+        - $ref: './api.yml#/components/parameters/applicationId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getApplicationEnvironments
+      summary: Get environment list of an application
+      description: list of environments, pagination was omitted because we might not have that many environments for a single app
+      responses:
+        '200':
+          description: list of environments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentsResponse'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: crupdateApplicationEnvironments
+      summary: Crupdate environments of an application.
+      description: for each environment in the payload, it creates an environment if given id exists, updates it otherwise
+      requestBody:
+        description: >
+          - All application relative properties such as SSM parameters are computed from the environment's application
+          - Resource relative properties are linked to the plan of the Environment and can be set by using a different endpoint for plan upgrade with enum values such as 1024 or 2048 for memory, etc...
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrupdateEnvironmentsRequestBody'
+        required: true
+      responses:
+        '200':
+          description: The crupdated environments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrupdateEnvironmentsResponse'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  environmentsById:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getApplicationEnvironmentById
+      summary: Get an environment by its identifier
+      responses:
+        '200':
+          description: the specified environment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Environment'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  environmentConfig:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getApplicationEnvironmentConfig
+      summary: Get the config of an environment
+      responses:
+        '200':
+          description: the config for the queried environment
+          content:
+            application/json:
+              schema:
+                $ref: './poja-components.yml#/components/schemas/OneOfPojaConf'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+    put:
+      tags:
+        - Environment
+      operationId: configureApplicationEnv
+      summary: configure an application's environment
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: the config to apply
+        content:
+          'application/json':
+            schema:
+              $ref: "./poja-components.yml#/components/schemas/OneOfPojaConf"
+      responses:
+        '200':
+          description: the applied config
+          content:
+            'application/json':
+              schema:
+                $ref: "./poja-components.yml#/components/schemas/OneOfPojaConf"
+  environmentVariables:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getApplicationEnvironmentVariables
+      summary: Get environment variables of an environment
+      parameters:
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of environment variables
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedEnvironmentVariables'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: crupdateApplicationEnvironmentVariables
+      summary: Crupdate environment variables
+      description: update if id is provided, create otherwise.
+      requestBody:
+        required: true
+        description: Environment variable to crupdate
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrupdateEnvironmentVariablesRequestBody'
+      responses:
+        '200':
+          description: The created environment variables
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrupdateEnvironmentVariablesResponse'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  environmentVariablesById:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+      - $ref: './api.yml#/components/parameters/variableId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getApplicationEnvironmentVariableById
+      summary: Get a environment variables by identifier
+      responses:
+        '200':
+          description: The specified environment variable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentVariable'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  environmentSsmParameters:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: name
+          in: query
+          description: Filter ssm parameters by name
+          schema:
+            type: string
+          required: false
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      tags:
+        - Environment
+      operationId: getApplicationEnvironmentSsmParameters
+      summary: Get list of ssm parameters and their values by environment
+      responses:
+        '200':
+          description: Get list of ssm parameters for an application environment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedEnvironmentSsmParameters'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: createApplicationEnvironmentSsmParameters
+      summary: create ssm parameters for an application environment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEnvironmentSsmParameters'
+        required: true
+      responses:
+        '200':
+          description: The created ssm parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrupdateEnvironmentSsmParametersResponse'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: updateApplicationEnvironmentSsmParameters
+      summary: update ssm parameters for an application environment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEnvironmentSsmParameters'
+        required: true
+      responses:
+        '200':
+          description: The updated ssm parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrupdateEnvironmentSsmParametersResponse'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  environmentLogGroups:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/functionName'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getFunctionLogGroups
+      summary: Get an environment's function log groups
+      parameters:
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of environment's function log groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedLogGroups'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  environmentLogStreams:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/functionName'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getFunctionLogStreams
+      summary: Get log streams of a given log group
+      parameters:
+        - $ref: '#/components/parameters/logGroupName'
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of log streams of a given log group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedLogStreams'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  environmentLogStreamEvents:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+      - $ref: '#/components/parameters/functionName'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Environment
+      operationId: getFunctionLogStreamEvents
+      summary: Get log event of a given log stream
+      parameters:
+        - $ref: '#/components/parameters/logGroupName'
+        - $ref: '#/components/parameters/logStreamName'
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of log events of a given log stream
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedLogStreamEvents'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+components:
+  parameters:
+    functionName:
+      name: functionName
+      in: path
+      description: The physical resource name of the lambda function
+      schema:
+        type: string
+        example: prod-compute-jcloudify-poja-app-FrontalFunction-rPbLaYfitwSO
+      required: true
+    logGroupName:
+      name: logGroupName
+      in: query
+      description: The physical resource name of the log group
+      schema:
+        type: string
+        example: /aws/lambda/prod-compute-jcloudify-poja-app-FrontalFunction-rPbLaYfitwSO
+      required: true
+    logStreamName:
+      name: logStreamName
+      in: query
+      description: The physical resource name of the log stream
+      schema:
+        type: string
+        example: 2024/01/01/[$LATEST]12345
+      required: true
+  schemas:
+    EnvironmentsResponse:
+      type: object
+      allOf:
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Environment"
+    CrupdateEnvironmentsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Environment"
+    CrupdateEnvironmentsRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CrupdateEnvironment"
+    EnvironmentType:
+      type: string
+      enum:
+        - PROD
+        - PREPROD
+    Environment:
+      allOf:
+        - $ref: '#/components/schemas/CrupdateEnvironment'
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - HEALTHY
+            - UNHEALTHY
+            - UNKNOWN
+    CrupdateEnvironment:
+      type: object
+      properties:
+        id:
+          type: string
+        environment_type:
+          $ref: '#/components/schemas/EnvironmentType'
+        archived:
+          type: boolean
+          default: false
+    CrupdateEnvironmentVariablesRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CrupdateEnvironmentVariable"
+    CrupdateEnvironmentVariablesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/EnvironmentVariable"
+    EnvironmentVariable:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: ENV_EXAMPLE
+        value:
+          type: string
+        archived:
+          type: boolean
+          default: false
+    CrupdateEnvironmentVariable:
+      allOf:
+        - $ref: '#/components/schemas/EnvironmentVariable'
+      properties:
+        environmentId:
+          type: string
+    PagedEnvironmentVariables:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/EnvironmentVariable"
+    CreateEnvironmentSsmParameters:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSsmParameter'
+    UpdateEnvironmentSsmParameters:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SsmParameter'
+    CrupdateEnvironmentSsmParametersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SsmParameter'
+    CreateSsmParameter:
+      type: object
+      properties:
+        name:
+          type: string
+          example: /poja/app/env/name
+        value:
+          type: string
+    SsmParameter:
+      allOf:
+        - $ref: '#/components/schemas/CreateSsmParameter'
+      type: object
+      properties:
+        id:
+          type: string
+    PagedEnvironmentSsmParameters:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/SsmParameter'
+    PagedLogGroups:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/LogGroup"
+    PagedLogStreams:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/LogStream"
+    PagedLogStreamEvents:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/LogStreamEvent"
+    PagedLogs:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Log"
+    LogGroup:
+      type: object
+      properties:
+        name:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+
+    LogStream:
+      type: object
+      properties:
+        name:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+        first_event_datetime:
+          type: string
+          format: date-time
+        last_event_datetime:
+          type: string
+          format: date-time
+    LogStreamEvent:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        message:
+          type: string
+    Log:
+      type: object
+      properties:
+        id:
+          type: string
+        log_file_uri:
+          type: string
+          example: https://examplebucket.s3.eu-west-3.amazonaws.com/logfile
+        log_datetime:
+          type: string
+          format: date-time
+        log_type:
+          type: string
+          enum:
+            - DEPLOYMENT_LOG
+            - APPLICATION_LOG
