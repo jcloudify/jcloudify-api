@@ -49,6 +49,8 @@ public class UserService {
     User user = mapper.toModel(createUser, githubUser, customerId);
     if (repository.existsByEmail(user.getEmail()))
       throw new BadRequestException("An account with the same email already exists");
+    if (repository.existsByGithubId(user.getGithubId()))
+      throw new BadRequestException("An account with the same github id already exists");
     return user;
   }
 

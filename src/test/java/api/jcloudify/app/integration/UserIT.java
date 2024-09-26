@@ -1,14 +1,10 @@
 package api.jcloudify.app.integration;
 
-import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_AVATAR;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_GITHUB_ID;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_STRIPE_ID;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_USERNAME;
-import static api.jcloudify.app.integration.conf.utils.TestMocks.joeDoeUser;
+import static api.jcloudify.app.integration.conf.utils.TestMocks.*;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpStripe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import api.jcloudify.app.conf.MockedThirdParties;
 import api.jcloudify.app.endpoint.rest.api.SecurityApi;
@@ -23,6 +19,7 @@ import api.jcloudify.app.integration.conf.utils.TestUtils;
 import api.jcloudify.app.service.StripeService;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHMyself;
@@ -46,12 +43,12 @@ class UserIT extends MockedThirdParties {
 
   @BeforeEach
   void setup() {
-    setUpGithub(githubComponent, githubUser);
     setUpStripe(stripeService);
   }
 
   @Test
   void whoami_ok() throws ApiException {
+    setUpGithub(githubComponent, githubUser);
     ApiClient joeDoeClient = anApiClient();
     SecurityApi api = new SecurityApi(joeDoeClient);
 
@@ -62,6 +59,12 @@ class UserIT extends MockedThirdParties {
 
   @Test
   void signup_ok() throws ApiException {
+    when(githubComponent.getGithubUserId(NEW_USER_TOKEN))
+        .thenReturn(Optional.of(NEW_USER_GITHUB_ID));
+    when(githubComponent.getCurrentUserByToken(NEW_USER_TOKEN)).thenReturn(Optional.of(githubUser));
+    when(githubUser.getLogin()).thenReturn(JOE_DOE_USERNAME);
+    when(githubUser.getId()).thenReturn(Long.valueOf(NEW_USER_GITHUB_ID));
+    when(githubUser.getAvatarUrl()).thenReturn(JOE_DOE_AVATAR);
     ApiClient joeDoeClient = anApiClient();
     UserApi api = new UserApi(joeDoeClient);
 
@@ -70,7 +73,7 @@ class UserIT extends MockedThirdParties {
             .firstName("firstName")
             .lastName("lastName")
             .email("test@example.com")
-            .token(JOE_DOE_TOKEN);
+            .token(NEW_USER_TOKEN);
 
     User actual =
         Objects.requireNonNull(
@@ -79,7 +82,7 @@ class UserIT extends MockedThirdParties {
 
     assertEquals("test@example.com", actual.getEmail());
     assertEquals(JOE_DOE_AVATAR, actual.getAvatar());
-    assertEquals(JOE_DOE_GITHUB_ID, actual.getGithubId());
+    assertEquals(NEW_USER_GITHUB_ID, actual.getGithubId());
     assertEquals(JOE_DOE_USERNAME, actual.getUsername());
     assertEquals(JOE_DOE_STRIPE_ID, actual.getStripeId());
   }

@@ -1,0 +1,1 @@
+alter table "user" add constraint unique_gh_id unique (github_id);
