@@ -1,7 +1,51 @@
 openapi: 3.1.0
-operations: { }
+operations:
+  versions:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - PojaVersions
+      operationId: getPojaVersions
+      summary: get all ready poja versions
+      responses:
+        '200':
+          description: the poja versions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PojaVersionsResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
 components:
   schemas:
+    PojaVersion:
+      type: object
+      properties:
+        major:
+          type: integer
+        minor:
+          type: integer
+        patch:
+          type: integer
+        human_readable_value:
+          type: string
+
+    PojaVersionsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PojaVersion"
     OneOfPojaConf:
       oneOf:
         - $ref: "#/components/schemas/PojaConf1"

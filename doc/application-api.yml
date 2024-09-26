@@ -188,7 +188,7 @@ operations:
           content:
             application/json:
               schema:
-                $ref: './poja-components.yml#/components/schemas/OneOfPojaConf'
+                $ref: './poja-related-api.yml#/components/schemas/OneOfPojaConf'
         '400':
           $ref: './api.yml#/components/responses/400'
         '403':

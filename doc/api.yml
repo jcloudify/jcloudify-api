@@ -35,30 +35,7 @@ paths:
   /users:
     $ref: "./user-api.yaml#/operations/users"
   /poja-versions:
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - PojaVersions
-      operationId: getPojaVersions
-      summary: get all ready poja versions
-      responses:
-        '200':
-          description: the poja versions
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PojaVersionsResponse"
-        '400':
-          $ref: './api.yml#/components/responses/400'
-        '403':
-          $ref: './api.yml#/components/responses/403'
-        '404':
-          $ref: './api.yml#/components/responses/404'
-        '429':
-          $ref: './api.yml#/components/responses/429'
-        '500':
-          $ref: './api.yml#/components/responses/500'
+    $ref: "./poja-related-api.yml#/operations/versions"
   /users/{userId}/installations:
     parameters:
       - $ref: "#/components/parameters/userId"
@@ -512,17 +489,6 @@ components:
     #############################################
     ###############  Components #################
     #############################################
-    PojaVersion:
-      type: object
-      properties:
-        major:
-          type: integer
-        minor:
-          type: integer
-        patch:
-          type: integer
-        human_readable_value:
-          type: string
     CreateGithubAppInstallation:
       type: object
       properties:
@@ -650,14 +616,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PaymentMethod"
-
-    PojaVersionsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/PojaVersion"
     #############################################
     ###############  Exceptions #################
     #############################################
