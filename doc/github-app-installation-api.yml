@@ -1,0 +1,100 @@
+openapi: 3.1.0
+operations:
+  installations:
+    parameters:
+      - $ref: "./api.yml#/components/parameters/userId"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - GithubAppInstallation
+      operationId: getUserInstallations
+      summary: get all user installations of jcloudify app
+      responses:
+        '200':
+          description: list of installations
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/GithubAppInstallationsResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - GithubAppInstallation
+      operationId: crupdateGithubAppInstallations
+      summary: for each installation, it will create if id exist, update it otherwise
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/CrupdateGithubAppInstallationsRequestBody"
+      responses:
+        '200':
+          description: created or updated installations
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CrupdateGithubAppInstallationsResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+components:
+  schemas:
+    CreateGithubAppInstallation:
+      type: object
+      properties:
+        id:
+          type: string
+        gh_installation_id:
+          type: integer
+          format: int64
+    GithubAppInstallation:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/CreateGithubAppInstallation"
+      properties:
+        owner:
+          type: string
+        type:
+          type: string
+        gh_avatar_url:
+          type: string
+    GithubAppInstallationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/GithubAppInstallation"
+    CrupdateGithubAppInstallationsRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateGithubAppInstallation"
+    CrupdateGithubAppInstallationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/GithubAppInstallation"
