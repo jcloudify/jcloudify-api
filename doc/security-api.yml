@@ -96,4 +96,4 @@ components:
     Whoami:
       properties:
         user:
-          $ref: './api.yml#/components/schemas/User'
+          $ref: './user-api.yaml#/components/schemas/User'

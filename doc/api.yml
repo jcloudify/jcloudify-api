@@ -1098,7 +1098,7 @@ components:
     PagedComputeStackResource:
       type: object
       allOf:
-        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - $ref: "#/components/schemas/PagedResponse"
         - properties:
             data:
               type: array
@@ -1144,7 +1144,7 @@ components:
     PagedStacksResponse:
       type: object
       allOf:
-        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - $ref: "#/components/schemas/PagedResponse"
         - properties:
             data:
               type: array
@@ -1153,7 +1153,7 @@ components:
     PagedStackEvents:
       type: object
       allOf:
-        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - $ref: "#/components/schemas/PagedResponse"
         - properties:
             data:
               type: array
@@ -1162,7 +1162,7 @@ components:
     PagedStackOutputs:
       type: object
       allOf:
-        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - $ref: "#/components/schemas/PagedResponse"
         - properties:
             data:
               type: array

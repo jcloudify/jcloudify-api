@@ -102,7 +102,7 @@ operations:
         in: query
         required: false
         schema:
-          $ref: "./api.yml#/components/schemas/EnvironmentType"
+          $ref: "./environment-api.yml#/components/schemas/EnvironmentType"
       - name: startDatetime
         in: query
         required: false
