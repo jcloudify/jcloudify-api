@@ -1,3 +1,36 @@
+# [4.0.0](https://github.com/jcloudify/jcloudify-api/compare/v3.24.0...v4.0.0) (2024-09-27)
+
+
+### Bug Fixes
+
+* ComputeStackCrupdateTriggeredServiceIT ([8d2908c](https://github.com/jcloudify/jcloudify-api/commit/8d2908c45b6b87c739094274703abc0ab1c2d3d7))
+* remove unused total memory used ([ddaa0d6](https://github.com/jcloudify/jcloudify-api/commit/ddaa0d6bf59f8ffe5501b4fe963e7997eacaffa0))
+* unique github id per user ([7eabc78](https://github.com/jcloudify/jcloudify-api/commit/7eabc788f118e9e95bbe0d52db4c03579093195e))
+* update progression_status type values ([fd4bf70](https://github.com/jcloudify/jcloudify-api/commit/fd4bf7023e592a8c796abc1b7fc7e1246c4c3810))
+
+
+### Features
+
+* save computed billed duration and computed price in billing info ([29f90df](https://github.com/jcloudify/jcloudify-api/commit/29f90df2aa024c4177e81fd90f0ee0025965ea89))
+* save deployment progression history ([8a9a437](https://github.com/jcloudify/jcloudify-api/commit/8a9a437327a731ced5774dc332de962f839b9e88))
+
+
+### BREAKING CHANGES
+
+* compute stack events retrieving starts when compute stack deployment is initiated but not anymore once it is completed.
+
+* chore: establish deployment progression historization
+
+* chore: refactor DeploymentStateEnum value
+
+* chore: getCloudformationStackId returns Optional of String
+
+* chore: get compute stack events during its deployment
+
+* fix: ComputeStackCrupdateTriggeredServiceIT unit test
+
+
+
 # [3.24.0](https://github.com/jcloudify/jcloudify-api/compare/v3.23.0...v3.24.0) (2024-09-19)
 
 
@@ -135,16 +168,6 @@
 ### Features
 
 * save stack events for compute stack ([471546b](https://github.com/jcloudify/jcloudify-api/commit/471546b9a308e508ca2f19cf21baf3dbd1480d4f))
-
-
-
-## [3.15.1](https://github.com/jcloudify/jcloudify-api/compare/v3.15.0...v3.15.1) (2024-08-21)
-
-
-### Bug Fixes
-
-* stack appname is not anymore given as parameter ([ae80005](https://github.com/jcloudify/jcloudify-api/commit/ae8000598c81468962fddb44a608d87284aca31c))
-* **tests:** correctly map nullable values for poja conf ([f37f583](https://github.com/jcloudify/jcloudify-api/commit/f37f583f2127efd03a692da70a8c69b1c5c0e539))
 
 
 
