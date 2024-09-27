@@ -22,4 +22,11 @@ VALUES
  'https://example.com/deploy3', '2024-08-02 09:00:00',
  'Final deployment', 'mno345pqr678', 'repo3', 'poja-org',
  'sam.brown@example.com', 'Sam Brown', '98765432', 'https://avatars.githubusercontent.com/u/98765432',
+ 'https://github.com/poja-org/repo3/commit/mno345pqr678', 'sambrown', 'organization'),
+
+-- First entry on 01 September 2024 for poja_application_id
+('poja_deployment_1_id', 'poja_application_id', 'poja_application_environment_id', 'env_1_depl_files_2_id',
+ null, '2024-09-01 09:00:00',
+ 'Final deployment', 'mno345pqr6780', 'repo4', 'poja-org',
+ 'sam.brown@example.com', 'Sam Brown', '98765432', 'https://avatars.githubusercontent.com/u/98765432',
  'https://github.com/poja-org/repo3/commit/mno345pqr678', 'sambrown', 'organization');

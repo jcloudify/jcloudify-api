@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @PrimaryKeyJoinColumn(name = "id")
@@ -19,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
 @Getter
+@ToString
 @Setter
 public class DeploymentState extends State<DeploymentStateEnum> {
   @JoinColumn(referencedColumnName = "id")

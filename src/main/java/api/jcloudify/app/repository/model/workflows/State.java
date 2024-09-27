@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -24,18 +25,19 @@ import org.hibernate.annotations.JdbcTypeCode;
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public abstract class State<T extends Enum<T>> {
   @Id
   @GeneratedValue(strategy = IDENTITY)
-  private String id;
+  protected String id;
 
   @JdbcTypeCode(NAMED_ENUM)
   @Enumerated(STRING)
-  private T progressionStatus;
+  protected T progressionStatus;
 
   @CreationTimestamp private Instant timestamp;
 
   @JdbcTypeCode(NAMED_ENUM)
   @Enumerated(STRING)
-  private ExecutionType executionType;
+  protected ExecutionType executionType;
 }

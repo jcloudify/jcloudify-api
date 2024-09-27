@@ -9,6 +9,7 @@ import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateTriggered;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum;
+import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.dao.StackDao;
 import api.jcloudify.app.repository.model.AppEnvironmentDeployment;
@@ -84,6 +85,9 @@ public class ComputeStackCrupdateTriggeredService
         stackCrupdatedEventProducer.accept(
             List.of(StackCrupdated.builder().userId(userId).stack(stack.get()).build()));
       }
+    } else {
+      throw new InternalServerErrorException(
+          "No state has been found for deployment id=" + appEnvDeploymentId);
     }
   }
 }
