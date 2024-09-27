@@ -1,0 +1,87 @@
+operations:
+  users:
+    post:
+      tags:
+        - User
+      summary: User signup
+      operationId: createUser
+      requestBody:
+        required: true
+        description: The users to create
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUsersRequestBody"
+      responses:
+        '200':
+          description: The created user accounts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUsersResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+components:
+  schemas:
+    CreateUser:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: Hajatiana
+        last_name:
+          type: string
+          example: Randrianary
+        email:
+          type: string
+          format: email
+        token:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+          example: leonardo
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum:
+            - USER
+            - ADMIN
+        github_id:
+          type: string
+        avatar:
+          type: string
+        first_name:
+          type: string
+          example: Hajatiana
+        last_name:
+          type: string
+          example: Randrianary
+        plan_name:
+          type: string
+        stripe_id:
+          type: string
+    CreateUsersRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateUser"
+    CreateUsersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"

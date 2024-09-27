@@ -1,0 +1,406 @@
+openapi: 3.1.0
+operations:
+  deleteStack:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      summary: Delete existing stacks
+      operationId: initiateStackDeletion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitiateStackDeletionRequestBody'
+      responses:
+        '200':
+          description: Deployment successfully initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InitiateStackDeletionResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  deployStack:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      summary: Update if stack already exists, create new one otherwise
+      description: Only COMPUTE_PERMISSION, EVENT, STORAGE_BUCKET, STORAGE_DATABASE_SQLITE stack type crupdate can be manually triggered
+      operationId: initiateStackDeployment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InitiateStackDeploymentRequestBody"
+      responses:
+        '200':
+          description: Deployment successfully initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InitiateStackDeploymentResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  stacks:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      operationId: getEnvironmentStacks
+      summary: Get list of stacks for a given environment
+      parameters:
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of stacks of an environment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedStacksResponse'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  stacksById:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+      - $ref: './api.yml#/components/parameters/stackId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      operationId: getStackById
+      summary: Get the identified stack
+      responses:
+        '200':
+          description: The identified stack
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stack'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  events:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+      - $ref: './api.yml#/components/parameters/stackId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      operationId: getStackEvents
+      summary: Get detailed events of a the identified stack
+      parameters:
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of stack events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedStackEvents'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  outputs:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+      - $ref: './api.yml#/components/parameters/stackId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      operationId: getStackOutputs
+      summary: Get outputs of a the identified stack
+      parameters:
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of stack outputs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedStackOutputs'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  computeStackResources:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/environmentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Stack
+      operationId: getComputeStackResources
+      summary: Get function names of an environment compute stack
+      parameters:
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      responses:
+        '200':
+          description: paged list of an environment compute stack
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedComputeStackResource'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+components:
+  schemas:
+    ComputeStackResource:
+      type: object
+      properties:
+        id:
+          type: string
+        environment_id:
+          type: string
+        frontal_function_name:
+          type: string
+        worker_1_function_name:
+          type: string
+        worker_2_function_name:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+
+    StackDeployment:
+      type: object
+      properties:
+        stack_type:
+          $ref: '#/components/schemas/StackType'
+    Stack:
+      allOf:
+        - $ref: '#/components/schemas/StackDeployment'
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cf_stack_id:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+        update_datetime:
+          type: string
+          format: date-time
+        application:
+          $ref: './application-api.yml#/components/schemas/ApplicationBase'
+        environment:
+          $ref: './environment-api.yml#/components/schemas/Environment'
+        archived:
+          type: boolean
+          default: false
+    StackType:
+      type: string
+      enum:
+        - EVENT
+        - COMPUTE_PERMISSION
+        - STORAGE_BUCKET
+        - STORAGE_DATABASE_SQLITE
+        - COMPUTE
+    StackEvent:
+      type: object
+      properties:
+        event_id:
+          type: string
+        logical_resource_id:
+          type: string
+          description: The AWS identifier of the resource
+        resource_type:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        resource_status:
+          $ref: '#/components/schemas/StackResourceStatusType'
+        status_message:
+          type: string
+          description: Detailed reason of the status
+    StackResourceStatusType:
+      type: string
+      enum:
+        - CREATE_IN_PROGRESS
+        - CREATE_FAILED
+        - CREATE_COMPLETE
+        - DELETE_IN_PROGRESS
+        - DELETE_FAILED
+        - DELETE_COMPLETE
+        - DELETE_SKIPPED
+        - UPDATE_IN_PROGRESS
+        - UPDATE_FAILED
+        - UPDATE_COMPLETE
+        - IMPORT_FAILED
+        - IMPORT_COMPLETE
+        - IMPORT_IN_PROGRESS
+        - IMPORT_ROLLBACK_IN_PROGRESS
+        - IMPORT_ROLLBACK_FAILED
+        - IMPORT_ROLLBACK_COMPLETE
+        - UPDATE_ROLLBACK_IN_PROGRESS
+        - UPDATE_ROLLBACK_COMPLETE
+        - UPDATE_ROLLBACK_FAILED
+        - ROLLBACK_IN_PROGRESS
+        - ROLLBACK_COMPLETE
+        - ROLLBACK_FAILED
+        - UNKNOWN_TO_SDK_VERSION
+    StackOutput:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        description:
+          type: string
+    InitiateStackDeploymentRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/StackDeployment"
+    InitiateStackDeploymentResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Stack"
+    InitiateStackDeletionRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/StackDeployment"
+    InitiateStackDeletionResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Stack"
+    PagedComputeStackResource:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ComputeStackResource"
+    PagedStacksResponse:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Stack'
+    PagedStackEvents:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/StackEvent'
+    PagedStackOutputs:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/StackOutput'

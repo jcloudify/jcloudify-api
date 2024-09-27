@@ -1,0 +1,115 @@
+openapi: 3.1.0
+operations:
+  uploadUri:
+    get:
+      tags:
+        - Env_Deploy
+      summary: creates an URI for zip package build upload
+      operationId: createFileUploadUri
+      parameters:
+        - name: repo_owner
+          description: github repository owner containing the app
+          schema:
+            type: string
+          required: true
+          in: path
+        - name: repo_name
+          description: github repository name containing the app
+          schema:
+            type: string
+          required: true
+          in: path
+        - name: environment_type
+          description: environment type
+          schema:
+            $ref: "./environment-api.yml#/components/schemas/EnvironmentType"
+          required: true
+          in: query
+      responses:
+        '200':
+          description: the presigned code uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildUploadRequestResponse'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  deploys:
+    put:
+      tags:
+        - Env_Deploy
+      summary: deploys all of the app env stacks
+      operationId: deployEnv
+      parameters:
+        - name: repo_owner
+          description: github repository owner containing the app
+          schema:
+            type: string
+          required: true
+          in: path
+        - name: repo_name
+          description: github repository name containing the app
+          schema:
+            type: string
+          required: true
+          in: path
+        - name: environment_type
+          description: environment type
+          schema:
+            $ref: "./environment-api.yml#/components/schemas/EnvironmentType"
+          required: true
+          in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BuiltEnvInfo"
+      responses:
+        '200':
+          description: OK if the deployment request has no issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuiltEnvInfo"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+components:
+  schemas:
+    BuiltEnvInfo:
+      type: object
+      properties:
+        formatted_bucket_key:
+          type: string
+        id:
+          type: string
+        environment_type:
+          $ref: "./environment-api.yml#/components/schemas/EnvironmentType"
+        commit_sha:
+          type: string
+    BuildUploadRequestResponse:
+      type: object
+      properties:
+        build_template_file_uri:
+          type: string
+          format: uri
+        uri:
+          type: string
+          format: uri
+        filename:
+          type: string

@@ -1,0 +1,397 @@
+openapi: '3.0.2'
+operations:
+  applications:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: name
+          in: query
+          description: Filter applications by name, case insensitive
+          schema:
+            type: string
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      tags:
+        - Application
+      operationId: getApplications
+      summary: Get all applications
+      responses:
+        '200':
+          description: paged list of applications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedApplicationsResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: crupdateApplications
+      summary: Create or update applications
+      requestBody:
+        required: true
+        description: Application to crupdate
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CrupdateApplicationsRequestBody"
+      responses:
+        '200':
+          description: The created applications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrupdateApplicationsResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  applicationsById:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationById
+      summary: Get an application by identifier
+      responses:
+        '200':
+          description: The specified application
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  applicationDeployments:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - name: environmentType
+        in: query
+        required: false
+        schema:
+          $ref: "./environment-api.yml#/components/schemas/EnvironmentType"
+      - name: startDatetime
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: endDatetime
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - $ref: "./api.yml#/components/parameters/page"
+      - $ref: "./api.yml#/components/parameters/page_size"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationDeployments
+      summary: Get application deployments, ordered by creationDatetime
+      responses:
+        '200':
+          description: Application deployments ordered by creation datetime
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedDeploymentsResponse"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  applicationDeploymentsById:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/deploymentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationDeployment
+      summary: Get a specific application deployment
+      responses:
+        '200':
+          description: the queried deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppEnvDeployment'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  applicationDeploymentConfig:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/deploymentId'
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationDeploymentConfig
+      summary: Get a specific application deployment config
+      responses:
+        '200':
+          description: the config for the queried deployment
+          content:
+            application/json:
+              schema:
+                $ref: './poja-related-api.yml#/components/schemas/OneOfPojaConf'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+  applicationDeploymentStates:
+    parameters:
+      - $ref: './api.yml#/components/parameters/userId'
+      - $ref: './api.yml#/components/parameters/applicationId'
+      - $ref: './api.yml#/components/parameters/deploymentId'
+      - $ref: "./api.yml#/components/parameters/page"
+      - $ref: "./api.yml#/components/parameters/page_size"
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Application
+      operationId: getApplicationDeploymentStates
+      summary: Get the state list of a deployment
+      responses:
+        '200':
+          description: The list of state for the queried deployment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedDeploymentStates"
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
+components:
+  schemas:
+    CrupdateApplicationsRequestBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationBase"
+    CrupdateApplicationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+    ApplicationBase:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        archived:
+          type: boolean
+          default: false
+        user_id:
+          type: string
+        github_repository:
+          $ref: "#/components/schemas/GithubRepository"
+    GithubRepository:
+      type: object
+      properties:
+        name:
+          type: string
+        is_private:
+          type: boolean
+        description:
+          type: string
+        installation_id:
+          type: string
+    Application:
+      allOf:
+        - $ref: '#/components/schemas/ApplicationBase'
+      properties:
+        creation_datetime:
+          type: string
+          format: date-time
+        environments:
+          type: array
+          items:
+            $ref: './environment-api.yml#/components/schemas/Environment'
+        repositoryUrl:
+          type: string
+    PagedApplicationsResponse:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Application"
+    PagedDeploymentsResponse:
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppEnvDeployment"
+    PagedDeploymentStates:
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeploymentState"
+    DeploymentState:
+      type: object
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        progressionStatus:
+          $ref: '#/components/schemas/DeploymentStateEnum'
+        ExecutionType:
+          $ref: '#/components/schemas/ExecutionType'
+    DeploymentStateEnum:
+      type: string
+      enum:
+        - TEMPLATE_FILE_CHECK_IN_PROGRESS
+        - TEMPLATE_FILE_CHECK_FAILED
+        - INDEPENDENT_STACKS_DEPLOYMENT_INITIATED
+        - INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS
+        - INDEPENDENT_STACKS_DEPLOYED
+        - INDEPENDENT_STACKS_DEPLOYMENT_FAILED
+        - COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS
+        - COMPUTE_STACK_DEPLOYMENT_FAILED
+        - COMPUTE_STACK_DEPLOYED
+    ExecutionType:
+      type: string
+      enum:
+        - SYNCHRONOUS
+        - ASYNCHRONOUS
+    GithubUserMeta:
+      type: object
+      properties:
+        login:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        github_id:
+          type: string
+        avatar_url:
+          type: string
+          format: uri
+        is_jc_bot:
+          type: boolean
+    GithubMeta:
+      type: object
+      properties:
+        commit:
+          type: object
+          properties:
+            branch:
+              type: string
+            committer:
+              $ref: "#/components/schemas/GithubUserMeta"
+            message:
+              type: string
+            sha:
+              type: string
+            url:
+              type: string
+              format: uri
+        repo:
+          type: object
+          properties:
+            name:
+              type: string
+            owner_name:
+              type: string
+    AppEnvDeployment:
+      type: object
+      properties:
+        id:
+          type: string
+        github_meta:
+          $ref: "#/components/schemas/GithubMeta"
+        application_id:
+          type: string
+        environment_id:
+          type: string
+        deployed_url:
+          type: string
+          format: uri
+        creation_datetime:
+          type: string
+          format: date-time
