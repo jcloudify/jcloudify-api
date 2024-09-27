@@ -204,22 +204,20 @@ operations:
       - $ref: './api.yml#/components/parameters/userId'
       - $ref: './api.yml#/components/parameters/applicationId'
       - $ref: './api.yml#/components/parameters/deploymentId'
-      - $ref: "./api.yml#/components/parameters/page"
-      - $ref: "./api.yml#/components/parameters/page_size"
     get:
       security:
         - bearerAuth: [ ]
       tags:
         - Application
       operationId: getApplicationDeploymentStates
-      summary: Get the state list of a deployment
+      summary: Get the states of a deployment
       responses:
         '200':
-          description: The list of state for the queried deployment
+          description: The states for the queried deployment
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PagedDeploymentStates"
+                $ref: "#/components/schemas/DeploymentState"
         '400':
           $ref: './api.yml#/components/responses/400'
         '403':
@@ -301,14 +299,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AppEnvDeployment"
-    PagedDeploymentStates:
-      allOf:
-        - $ref: "./api.yml#/components/schemas/PagedResponse"
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/DeploymentState"
     DeploymentState:
       type: object
       properties:
@@ -319,8 +309,10 @@ components:
           format: date-time
         progressionStatus:
           $ref: '#/components/schemas/DeploymentStateEnum'
-        ExecutionType:
+        executionType:
           $ref: '#/components/schemas/ExecutionType'
+        nextState:
+          $ref: '#/components/schemas/DeploymentState'
     DeploymentStateEnum:
       type: string
       enum:
