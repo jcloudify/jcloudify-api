@@ -9,7 +9,6 @@ import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateTriggered;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum;
-import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.dao.StackDao;
 import api.jcloudify.app.repository.model.AppEnvironmentDeployment;
@@ -21,8 +20,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ComputeStackCrupdateTriggeredService
@@ -42,6 +43,48 @@ public class ComputeStackCrupdateTriggeredService
     String stackName = computeStackCrupdateTriggered.getStackName();
     String appEnvDeploymentId = computeStackCrupdateTriggered.getAppEnvDeploymentId();
     Optional<String> cfStackId = stackService.getCloudformationStackId(stackName);
+    Optional<DeploymentState> latestState = getDeploymentLatestState(appEnvDeploymentId);
+    Optional<Stack> stack = stackDao.findByCriteria(applicationId, environmentId, COMPUTE);
+    if (latestState.isEmpty()) {
+      log.error("No state has been found for deployment id={}", appEnvDeploymentId);
+      return;
+    }
+    DeploymentStateEnum latestStatus = latestState.get().getProgressionStatus();
+    if (COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS.equals(latestStatus)) {
+      if (cfStackId.isPresent()) {
+        Stack saved;
+        if (stack.isPresent()) {
+          Stack toUpdate = stack.get();
+          toUpdate.toBuilder().cfStackId(cfStackId.get()).name(stackName).build();
+          saved = stackService.save(toUpdate);
+        } else {
+          saved =
+              stackService.save(
+                  Stack.builder()
+                      .name(stackName)
+                      .cfStackId(cfStackId.get())
+                      .applicationId(applicationId)
+                      .environmentId(environmentId)
+                      .type(COMPUTE)
+                      .build());
+        }
+        String stackEventsBucketKey =
+            getStackEventsBucketKey(
+                userId,
+                saved.getApplicationId(),
+                saved.getEnvironmentId(),
+                saved.getId(),
+                STACK_EVENT_FILENAME);
+        stackService.crupdateStackEvents(stackName, stackEventsBucketKey);
+      }
+      computeStackCrupdateTriggeredEventProducer.accept(List.of(computeStackCrupdateTriggered));
+    } else if (COMPUTE_STACK_DEPLOYED.equals(latestStatus) && stack.isPresent()) {
+      stackCrupdatedEventProducer.accept(
+          List.of(StackCrupdated.builder().userId(userId).stack(stack.get()).build()));
+    }
+  }
+
+  private Optional<DeploymentState> getDeploymentLatestState(String appEnvDeploymentId) {
     Optional<DeploymentState> latestState;
     try {
       AppEnvironmentDeployment appEnvironmentDeployment =
@@ -50,44 +93,6 @@ public class ComputeStackCrupdateTriggeredService
     } catch (NotFoundException e) {
       latestState = Optional.empty();
     }
-    Optional<Stack> stack = stackDao.findByCriteria(applicationId, environmentId, COMPUTE);
-    if (latestState.isPresent()) {
-      DeploymentStateEnum latestStatus = latestState.get().getProgressionStatus();
-      if (COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS.equals(latestStatus)) {
-        if (cfStackId.isPresent()) {
-          Stack saved;
-          if (stack.isPresent()) {
-            Stack toUpdate = stack.get();
-            toUpdate.toBuilder().cfStackId(cfStackId.get()).name(stackName).build();
-            saved = stackService.save(toUpdate);
-          } else {
-            saved =
-                stackService.save(
-                    Stack.builder()
-                        .name(stackName)
-                        .cfStackId(cfStackId.get())
-                        .applicationId(applicationId)
-                        .environmentId(environmentId)
-                        .type(COMPUTE)
-                        .build());
-          }
-          String stackEventsBucketKey =
-              getStackEventsBucketKey(
-                  userId,
-                  saved.getApplicationId(),
-                  saved.getEnvironmentId(),
-                  saved.getId(),
-                  STACK_EVENT_FILENAME);
-          stackService.crupdateStackEvents(stackName, stackEventsBucketKey);
-        }
-        computeStackCrupdateTriggeredEventProducer.accept(List.of(computeStackCrupdateTriggered));
-      } else if (COMPUTE_STACK_DEPLOYED.equals(latestStatus) && stack.isPresent()) {
-        stackCrupdatedEventProducer.accept(
-            List.of(StackCrupdated.builder().userId(userId).stack(stack.get()).build()));
-      }
-    } else {
-      throw new InternalServerErrorException(
-          "No state has been found for deployment id=" + appEnvDeploymentId);
-    }
+    return latestState;
   }
 }
