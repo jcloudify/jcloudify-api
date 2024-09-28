@@ -27,7 +27,9 @@ public class DeploymentStateMapper {
 
   public DeploymentState uniqueToRest(api.jcloudify.app.repository.model.DeploymentState domain) {
     return new DeploymentState()
+        .id(domain.getId())
         .progressionStatus(domain.getProgressionStatus())
+        .executionType(domain.getExecutionType())
         .timestamp(domain.getTimestamp());
   }
 
