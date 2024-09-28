@@ -7,7 +7,6 @@ import static api.jcloudify.app.service.StackService.getStackEventsBucketKey;
 
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateTriggered;
-import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.dao.StackDao;
@@ -31,7 +30,6 @@ public class ComputeStackCrupdateTriggeredService
   private final StackService stackService;
   private final AppEnvironmentDeploymentService appEnvironmentDeploymentService;
   private final StackDao stackDao;
-  private final EventProducer<StackCrupdated> stackCrupdatedEventProducer;
   private final EventProducer<ComputeStackCrupdateTriggered>
       computeStackCrupdateTriggeredEventProducer;
 
@@ -82,8 +80,6 @@ public class ComputeStackCrupdateTriggeredService
       log.info(
           "Compute stack named={} successfully deployed, retrieving resources and outputs",
           stackName);
-      stackCrupdatedEventProducer.accept(
-          List.of(StackCrupdated.builder().userId(userId).stack(stack.get()).build()));
     }
   }
 
