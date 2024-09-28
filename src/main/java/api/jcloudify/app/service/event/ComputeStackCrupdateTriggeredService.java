@@ -79,6 +79,7 @@ public class ComputeStackCrupdateTriggeredService
       }
       computeStackCrupdateTriggeredEventProducer.accept(List.of(computeStackCrupdateTriggered));
     } else if (COMPUTE_STACK_DEPLOYED.equals(latestStatus) && stack.isPresent()) {
+      log.info("Compute stack named={} successfully deployed, retrieving resources and outputs", stackName);
       stackCrupdatedEventProducer.accept(
           List.of(StackCrupdated.builder().userId(userId).stack(stack.get()).build()));
     }
