@@ -7,6 +7,7 @@ import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.INDEPEND
 import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.TEMPLATE_FILE_CHECK_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PREPROD;
 import static api.jcloudify.app.endpoint.rest.model.EnvironmentType.PROD;
+import static api.jcloudify.app.endpoint.rest.model.ExecutionType.ASYNCHRONOUS;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_ID;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.JOE_DOE_TOKEN;
 import static api.jcloudify.app.integration.conf.utils.TestMocks.OTHER_POJA_APPLICATION_ID;
@@ -139,24 +140,34 @@ class ApplicationEnvironmentDeploymentsIT extends MockedThirdParties {
 
   DeploymentState deploymentState() {
     return new DeploymentState()
+        .id("other_poja_application_deployment_state_1_id")
         .timestamp(Instant.parse("2024-09-01T08:50:00Z"))
         .progressionStatus(TEMPLATE_FILE_CHECK_IN_PROGRESS)
+        .executionType(ASYNCHRONOUS)
         .nextState(
             new DeploymentState()
+                .id("other_poja_application_deployment_state_2_id")
                 .timestamp(Instant.parse("2024-09-01T08:51:00Z"))
                 .progressionStatus(INDEPENDENT_STACKS_DEPLOYMENT_INITIATED)
+                .executionType(ASYNCHRONOUS)
                 .nextState(
                     new DeploymentState()
+                        .id("other_poja_application_deployment_state_3_id")
                         .timestamp(Instant.parse("2024-09-01T08:51:15Z"))
                         .progressionStatus(INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS)
+                        .executionType(ASYNCHRONOUS)
                         .nextState(
                             new DeploymentState()
+                                .id("other_poja_application_deployment_state_4_id")
                                 .timestamp(Instant.parse("2024-09-01T08:51:35Z"))
                                 .progressionStatus(INDEPENDENT_STACKS_DEPLOYED)
+                                .executionType(ASYNCHRONOUS)
                                 .nextState(
                                     new DeploymentState()
+                                        .id("other_poja_application_deployment_state_5_id")
                                         .timestamp(Instant.parse("2024-09-01T08:52:00Z"))
                                         .progressionStatus(COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS)
+                                        .executionType(ASYNCHRONOUS)
                                         .nextState(null)))));
   }
 
