@@ -22,4 +22,6 @@ public interface ApplicationRepository extends JpaRepository<Application, String
   void updateApplicationRepoUrl(String id, String githubRepositoryUrl, String githubRepositoryId);
 
   List<Application> findAllByUserId(String userId);
+
+  boolean existsByName(String name);
 }
