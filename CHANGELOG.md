@@ -1,3 +1,14 @@
+## [4.0.1](https://github.com/jcloudify/jcloudify-api/compare/v4.0.0...v4.0.1) (2024-09-30)
+
+
+### Bug Fixes
+
+* cannot create different applications with the same name ([c3efbab](https://github.com/jcloudify/jcloudify-api/commit/c3efbab754124422c58384090fb0b7c460b8ca5d))
+* crupdate compute stack outputs after stack deployment succeded ([f0fd8c8](https://github.com/jcloudify/jcloudify-api/commit/f0fd8c84a4f6dfab3a8210c69765f7df2a208808))
+* read deployment states IT tests and reformat code ([c3a40bb](https://github.com/jcloudify/jcloudify-api/commit/c3a40bba64581438877c5c28463f3c4c817d7381))
+
+
+
 # [4.0.0](https://github.com/jcloudify/jcloudify-api/compare/v3.24.0...v4.0.0) (2024-09-27)
 
 
@@ -151,23 +162,6 @@
 * only start deployment after template file check ([76e732d](https://github.com/jcloudify/jcloudify-api/commit/76e732d5095d7914f3577757ffe8e85a451a3e2b))
 * save stack outputs ([1ca3f27](https://github.com/jcloudify/jcloudify-api/commit/1ca3f27a4a22e1c06e6f8e69e7cef072c9068970))
 * set cli-version to 17.1.2 ([a8f0468](https://github.com/jcloudify/jcloudify-api/commit/a8f0468534cda8d554798605646ec6f14c6c33a2))
-
-
-
-# [3.16.0](https://github.com/jcloudify/jcloudify-api/compare/v3.15.1...v3.16.0) (2024-08-23)
-
-
-### Bug Fixes
-
-* destination filename for cd-compute ([d7bd301](https://github.com/jcloudify/jcloudify-api/commit/d7bd301d211b670aabaad6de4caddf40c4fa5854))
-* do not remove reconfigured cd-compute from code to be pushed ([4bccc55](https://github.com/jcloudify/jcloudify-api/commit/4bccc558225bb4897fb38dd368860755d9c9ddee))
-* do not save event stack file if there's not and save sqlite stack file to s3 ([a16123c](https://github.com/jcloudify/jcloudify-api/commit/a16123c0594d34809b22105bfa063caf99fb50f8))
-* environment variable is case sensitive ([5ad9467](https://github.com/jcloudify/jcloudify-api/commit/5ad946700b86b875b17cc7cb9be3791c918b2015))
-
-
-### Features
-
-* save stack events for compute stack ([471546b](https://github.com/jcloudify/jcloudify-api/commit/471546b9a308e508ca2f19cf21baf3dbd1480d4f))
 
 
 
