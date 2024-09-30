@@ -104,7 +104,7 @@ public class TemplateIntegrityCheckDoneService implements Consumer<TemplateInteg
                 .builtZipFormattedFilekey(builtProjectBucketKey)
                 .envId(envId)
                 .appId(appId)
-                .independentStacksStates(NOT_READY)
+                .currentIndependentStacksState(NOT_READY)
                 .appEnvDeploymentId(appEnvDeploymentId)
                 .build()));
     deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYMENT_INITIATED);

@@ -45,8 +45,8 @@ public class AppEnvDeployRequested extends PojaEvent {
   private final String deploymentConfId;
 
   // Used to check if able to correctly deploy compute stack or not
-  @JsonProperty("independent_stack_states")
-  private final IndependentStacksStateEnum independentStacksStates;
+  @JsonProperty("current_independent_stacks_state")
+  private final IndependentStacksStateEnum currentIndependentStacksState;
 
   @JsonProperty("app_env_deployment_id")
   private String appEnvDeploymentId;
