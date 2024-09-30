@@ -6,6 +6,7 @@ import api.jcloudify.app.endpoint.rest.model.ApplicationBase;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.Page;
 import api.jcloudify.app.model.PageFromOne;
+import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.ApplicationRepository;
 import api.jcloudify.app.repository.jpa.dao.ApplicationDao;
@@ -48,7 +49,13 @@ public class ApplicationService {
     List<ApplicationCrupdated> events = new ArrayList<>();
     List<Application> entities = toSave.stream().map(mapper::toDomain).toList();
     for (Application app : entities) {
-      if (repository.existsById(app.getId())) {
+      String appName = app.getName();
+      String appId = app.getId();
+      boolean repositoryDoesExists = repository.existsById(appId);
+      if (!repositoryDoesExists && repository.existsByName(appName)) {
+        throw new BadRequestException("Application with name=" + appName + " already exists");
+      }
+      if (repositoryDoesExists) {
         var persisted = getById(app.getId());
         app.setPreviousGithubRepositoryName(persisted.getGithubRepositoryName());
         if (app.isArchived()) {
