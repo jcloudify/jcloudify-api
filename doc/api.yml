@@ -87,6 +87,10 @@ paths:
     $ref: "./environment-api.yml#/operations/environmentLogStreams"
   /users/{userId}/applications/{applicationId}/environments/{environmentId}/functions/{functionName}/logStreamEvents:
     $ref: "./environment-api.yml#/operations/environmentLogStreamEvents"
+  /users/{userId}/payments:
+    $ref: "./payment-api.yml#/operations/payments"
+  /users/{userId}/payments/{paymentId}:
+    $ref: "./payment-api.yml#/operations/updatePayment"
   /users/{userId}/payment-details/payment-methods:
     $ref: "./payment-api.yml#/operations/methods"
   /users/{userId}/payment-details:
@@ -178,6 +182,13 @@ components:
       schema:
         type: string
         format: date-time
+      required: true
+    paymentId:
+      name: paymentId
+      in: path
+      description: The identifier of the payment
+      schema:
+        type: string
       required: true
 
   responses:
