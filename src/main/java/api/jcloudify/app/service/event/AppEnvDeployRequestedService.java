@@ -3,6 +3,14 @@ package api.jcloudify.app.service.event;
 import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.PENDING;
 import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.READY;
 import static api.jcloudify.app.endpoint.rest.model.DeploymentStateEnum.*;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_FAILED;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.ROLLBACK_COMPLETE;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.ROLLBACK_FAILED;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_COMPLETE;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_FAILED;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_ROLLBACK_COMPLETE;
+import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_ROLLBACK_FAILED;
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE;
 import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE_PERMISSION;
 import static api.jcloudify.app.endpoint.rest.model.StackType.EVENT;
@@ -17,6 +25,7 @@ import api.jcloudify.app.endpoint.rest.model.BuiltEnvInfo;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.endpoint.rest.model.StackDeployment;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
+import api.jcloudify.app.endpoint.rest.model.StackResourceStatusType;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
@@ -55,27 +64,41 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
     String appId = appEnvDeployRequested.getAppId();
     String envId = appEnvDeployRequested.getEnvId();
     String appEnvDeploymentId = appEnvDeployRequested.getAppEnvDeploymentId();
-    switch (appEnvDeployRequested.getIndependentStacksStates()) {
+    switch (appEnvDeployRequested.getCurrentIndependentStacksState()) {
       case NOT_READY -> {
         List<StackDeployment> toDeploy = retrieveStacksToDeploy(envId);
         log.info("Cloudformation stacks to deploy: {}", toDeploy);
         stackService.processDeployment(toDeploy, userId, appId, envId);
         appEnvDeployRequestedEventProducer.accept(
-            List.of(appEnvDeployRequested.toBuilder().independentStacksStates(PENDING).build()));
+            List.of(
+                appEnvDeployRequested.toBuilder().currentIndependentStacksState(PENDING).build()));
         deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYMENT_IN_PROGRESS);
       }
-      // TODO: handle case where independent stacks are not deployed
       case PENDING -> {
-        boolean readyToDeployCompute = checkStacksDeploymentState(userId, appId, envId);
-        if (readyToDeployCompute) {
-          log.info("Compute stack ready to be deployed");
-          deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYED);
-          appEnvDeployRequestedEventProducer.accept(
-              List.of(appEnvDeployRequested.toBuilder().independentStacksStates(READY).build()));
-        } else {
-          log.info("Waiting for independent stacks to be deployed");
-          appEnvDeployRequestedEventProducer.accept(
-              List.of(appEnvDeployRequested.toBuilder().independentStacksStates(PENDING).build()));
+        IndependentStacksDeploymentStateEnum independentStacksDeploymentState =
+            checkStacksDeploymentState(userId, appId, envId);
+        switch (independentStacksDeploymentState) {
+          case PENDING -> {
+            log.info("Waiting for independent stacks to be deployed");
+            appEnvDeployRequestedEventProducer.accept(
+                List.of(
+                    appEnvDeployRequested.toBuilder()
+                        .currentIndependentStacksState(PENDING)
+                        .build()));
+          }
+          case DEPLOYED -> {
+            log.info("Compute stack ready to be deployed");
+            deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYED);
+            appEnvDeployRequestedEventProducer.accept(
+                List.of(
+                    appEnvDeployRequested.toBuilder()
+                        .currentIndependentStacksState(READY)
+                        .build()));
+          }
+          case NOT_DEPLOYED -> {
+            log.info("Independent stacks deployment failed");
+            deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYMENT_FAILED);
+          }
         }
       }
       case READY -> {
@@ -127,7 +150,8 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
     return stacksToDeploy;
   }
 
-  private boolean checkStacksDeploymentState(String userId, String appId, String envId) {
+  private IndependentStacksDeploymentStateEnum checkStacksDeploymentState(
+      String userId, String appId, String envId) {
     List<Stack> environmentStacks =
         stackService
             .findAllBy(userId, appId, envId, new PageFromOne(1), new BoundedPageSize(5))
@@ -135,14 +159,20 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
             .stream()
             .filter(stack -> !Objects.equals(stack.getStackType(), COMPUTE))
             .toList();
-    List<Boolean> areStacksReady =
+    List<IndependentStacksDeploymentStateEnum> stackDeploymentStates =
         environmentStacks.stream()
-            .map(stack -> this.isLatestStackEventComplete(userId, appId, envId, stack))
+            .map(stack -> this.checkStackDeploymentState(userId, appId, envId, stack))
             .toList();
-    return areStacksReady.stream().allMatch(state -> state == Boolean.TRUE);
+    if (stackDeploymentStates.stream()
+        .allMatch(IndependentStacksDeploymentStateEnum.PENDING::equals))
+      return IndependentStacksDeploymentStateEnum.PENDING;
+    if (stackDeploymentStates.stream()
+        .allMatch(IndependentStacksDeploymentStateEnum.DEPLOYED::equals))
+      return IndependentStacksDeploymentStateEnum.DEPLOYED;
+    return IndependentStacksDeploymentStateEnum.NOT_DEPLOYED;
   }
 
-  private boolean isLatestStackEventComplete(
+  private IndependentStacksDeploymentStateEnum checkStackDeploymentState(
       String userId, String appId, String envId, Stack stack) {
     List<StackEvent> stackEvents =
         stackService
@@ -151,16 +181,30 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
             .data()
             .stream()
             .toList();
-    if (stackEvents.isEmpty()) {
-      return false;
+    if (!stackEvents.isEmpty()) {
+      StackEvent latestEvent = stackEvents.getFirst();
+      if (Objects.equals(stack.getName(), latestEvent.getLogicalResourceId())) {
+        StackResourceStatusType latestResourceStatus = latestEvent.getResourceStatus();
+        if (CREATE_COMPLETE.equals(latestResourceStatus)
+            || UPDATE_COMPLETE.equals(latestResourceStatus)) {
+          return IndependentStacksDeploymentStateEnum.DEPLOYED;
+        }
+        if (CREATE_FAILED.equals(latestResourceStatus)
+            || UPDATE_FAILED.equals(latestResourceStatus)
+            || ROLLBACK_COMPLETE.equals(latestResourceStatus)
+            || ROLLBACK_FAILED.equals(latestResourceStatus)
+            || UPDATE_ROLLBACK_COMPLETE.equals(latestResourceStatus)
+            || UPDATE_ROLLBACK_FAILED.equals(latestResourceStatus)) {
+          return IndependentStacksDeploymentStateEnum.NOT_DEPLOYED;
+        }
+      }
     }
-    StackEvent latestEvent = stackEvents.getFirst();
-    return Objects.equals(latestEvent.getLogicalResourceId(), stack.getName())
-            && Objects.requireNonNull(latestEvent.getResourceStatus())
-                .toString()
-                .contains("UPDATE_COMPLETE")
-        || Objects.requireNonNull(latestEvent.getResourceStatus())
-            .toString()
-            .contains("CREATE_COMPLETE");
+    return IndependentStacksDeploymentStateEnum.PENDING;
+  }
+
+  private enum IndependentStacksDeploymentStateEnum {
+    PENDING,
+    DEPLOYED,
+    NOT_DEPLOYED
   }
 }
