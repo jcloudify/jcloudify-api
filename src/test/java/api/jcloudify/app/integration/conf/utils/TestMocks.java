@@ -410,7 +410,7 @@ public class TestMocks {
   }
 
   public static BillingInfo joeDoeBillingInfo1() {
-    var duration = new Duration().amount(60).unit(MINUTES);
+    var duration = new Duration().amount(60.0).unit(MINUTES);
     return new BillingInfo()
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)
@@ -421,7 +421,7 @@ public class TestMocks {
   }
 
   public static BillingInfo joeDoeBillingInfo2() {
-    var duration = new Duration().amount(120).unit(MINUTES);
+    var duration = new Duration().amount(120.0).unit(MINUTES);
     return new BillingInfo()
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)
@@ -432,7 +432,7 @@ public class TestMocks {
   }
 
   public static BillingInfo joeDoeTotalBillingInfo() {
-    var duration = new Duration().amount(180).unit(MINUTES);
+    var duration = new Duration().amount(180.0).unit(MINUTES);
     return new BillingInfo()
         .startTime(BILLING_INFO_START_TIME_QUERY)
         .endTime(BILLING_INFO_END_TIME_QUERY)

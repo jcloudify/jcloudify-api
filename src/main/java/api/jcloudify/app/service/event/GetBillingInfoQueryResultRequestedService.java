@@ -53,11 +53,10 @@ public class GetBillingInfoQueryResultRequestedService
       var computedPrice =
           pricingCalculator.computePrice(
               pricingMethod, new BigDecimal(billedMemoryDuration.value()));
-      billingInfo.setComputeDatetime(now());
-      billingInfo.setComputedPriceInUsd(computedPrice);
-      billingInfo.setComputedDurationInMinutes(Integer.valueOf(computedBilledDuration.value()));
-      billingInfo.setStatus(FINISHED);
-      billingInfoService.crupdateBillingInfo(billingInfo);
+      var computedDurationInMinutes = Double.valueOf(computedBilledDuration.value());
+      billingInfoService.updateBillingInfoAfterCalculation(
+          FINISHED, now(), computedDurationInMinutes, computedPrice, billingInfo.getId());
+      log.info("Successfully completed calculation for billing info {}", billingInfo.getId());
     } else if (FAILED.equals(status)) {
       log.info("query with ID {} failed, please inspect cloudwatch", event.getQueryId());
       // what do we do on query fail?

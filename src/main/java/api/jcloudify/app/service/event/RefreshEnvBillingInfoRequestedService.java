@@ -1,5 +1,7 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus.PENDING;
+
 import api.jcloudify.app.aws.cloudwatch.CloudwatchComponent;
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.GetBillingInfoQueryResultRequested;
@@ -64,8 +66,10 @@ fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000
             .appId(app.getId())
             .envId(env.getId())
             .pricingMethod(user.getPricingMethod())
+            .status(PENDING)
             .build();
-    billingInfoService.crupdateBillingInfo(billingInfoToSave);
+    var savedBillingInfo = billingInfoService.crupdateBillingInfo(billingInfoToSave);
+    log.info("Successfully initiated calculation for billing info {}", savedBillingInfo.getId());
     eventProducer.accept(List.of(new GetBillingInfoQueryResultRequested(queryId)));
   }
 

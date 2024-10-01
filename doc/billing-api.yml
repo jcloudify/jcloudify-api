@@ -134,7 +134,8 @@ components:
       type: object
       properties:
         amount:
-          type: integer
+          type: number
+          format: double
         unit:
           $ref: "#/components/schemas/DurationUnit"
     DurationUnit:
