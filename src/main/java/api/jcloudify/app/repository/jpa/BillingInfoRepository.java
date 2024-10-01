@@ -2,9 +2,11 @@ package api.jcloudify.app.repository.jpa;
 
 import api.jcloudify.app.repository.model.BillingInfo;
 import api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface BillingInfoRepository extends JpaRepository<BillingInfo, String> {
@@ -22,4 +24,15 @@ public interface BillingInfoRepository extends JpaRepository<BillingInfo, String
       Instant endTime);
 
   Optional<BillingInfo> findByQueryId(String queryId);
+
+  @Modifying
+  @Query(
+      "UPDATE BillingInfo b SET b.status = ?1, b.computeDatetime = ?2, b.computedDurationInMinutes"
+          + " = ?3, b.computedPriceInUsd = ?4 WHERE b.id = ?5")
+  void updateBillingInfoAttributes(
+      BillingInfoComputeStatus status,
+      Instant computeDatetime,
+      double computedDurationInMinutes,
+      BigDecimal computedPriceInUsd,
+      String id);
 }
