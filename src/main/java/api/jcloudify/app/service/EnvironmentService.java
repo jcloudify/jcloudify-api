@@ -116,9 +116,10 @@ public class EnvironmentService {
   }
 
   public Environment getUserApplicationEnvironmentByIdAndType(
-      String userId, String applicationId, EnvironmentType environmentType) {
+      String applicationId, EnvironmentType environmentType) {
     return repository
-        .findByCriteria(userId, applicationId, environmentType)
+        .findFirstByApplicationIdAndEnvironmentTypeAndArchived(
+            applicationId, environmentType, false)
         .orElseThrow(
             () ->
                 new NotFoundException(
@@ -126,8 +127,6 @@ public class EnvironmentService {
                         + environmentType
                         + " for application "
                         + applicationId
-                        + " of user "
-                        + userId
                         + " not found"));
   }
 }

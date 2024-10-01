@@ -50,7 +50,7 @@ public class EnvironmentBuildService {
     String appId = authenticatedApplication.getId();
     String userId = authenticatedApplication.getUserId();
     Environment env =
-        environmentService.getUserApplicationEnvironmentByIdAndType(userId, appId, environmentType);
+        environmentService.getUserApplicationEnvironmentByIdAndType(appId, environmentType);
     String environmentId = env.getId();
     String bucketKey = getTempBucketKey(ZIP_FILE_EXTENSION);
     Duration fifteenMinutes = Duration.ofMinutes(15);
@@ -79,7 +79,7 @@ public class EnvironmentBuildService {
     String userId = authenticatedApplication.getUserId();
     var environment =
         environmentService.getUserApplicationEnvironmentByIdAndType(
-            userId, appId, builtEnvInfo.getEnvironmentType());
+            appId, builtEnvInfo.getEnvironmentType());
     var latestDeploymentConf = environment.getLatestDeploymentConf();
     var formattedOriginalTemplateFilename =
         getBucketKey(
