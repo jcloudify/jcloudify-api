@@ -1,5 +1,7 @@
 package api.jcloudify.app.service.event;
 
+import static java.math.BigDecimal.ZERO;
+
 import api.jcloudify.app.endpoint.event.model.UserMonthlyPaymentRequested;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.BillingInfo;
@@ -67,7 +69,7 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
             .getUserBillingInfoByApplication(userId, app.getId(), startTime, endTime)
             .stream()
             .map(BillingInfo::getComputedPriceInUsd)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+            .reduce(ZERO, BigDecimal::add);
 
     return stripeService.createInvoiceItem(
         invoiceId, amountToDue.multiply(new BigDecimal(100)).longValue(), app.getName());
