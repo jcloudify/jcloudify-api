@@ -10,14 +10,12 @@ import api.jcloudify.app.service.BillingInfoService;
 import api.jcloudify.app.service.StripeService;
 import api.jcloudify.app.service.UserPaymentRequestService;
 import com.stripe.model.Invoice;
-
+import com.stripe.model.InvoiceItem;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.Consumer;
-
-import com.stripe.model.InvoiceItem;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -54,20 +52,24 @@ public class UserMonthlyPaymentRequestedService implements Consumer<UserMonthlyP
     Invoice invoice = stripeService.createInvoice(customerId);
     app.forEach(
         item -> {
-          createInvoiceItem(userId, invoice.getId(), item, currentDate.minus(1, ChronoUnit.MONTHS), currentDate);
+          createInvoiceItem(
+              userId, invoice.getId(), item, currentDate.minus(1, ChronoUnit.MONTHS), currentDate);
         });
     stripeService.finalizeInvoice(invoice.getId());
     return stripeService.payInvoice(invoice.getId());
   }
 
-  private InvoiceItem createInvoiceItem(String userId, String invoiceId, Application app, Instant startTime, Instant endTime) {
+  private InvoiceItem createInvoiceItem(
+      String userId, String invoiceId, Application app, Instant startTime, Instant endTime) {
 
-    var amountToDue = billingInfoService
-        .getUserBillingInfoByApplication(userId, app.getId(), startTime, endTime)
-        .stream()
-        .map(BillingInfo::getComputedPriceInUsd)
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    var amountToDue =
+        billingInfoService
+            .getUserBillingInfoByApplication(userId, app.getId(), startTime, endTime)
+            .stream()
+            .map(BillingInfo::getComputedPriceInUsd)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    return stripeService.createInvoiceItem(invoiceId, amountToDue.multiply(new BigDecimal(100)).longValue(), app.getName());
+    return stripeService.createInvoiceItem(
+        invoiceId, amountToDue.multiply(new BigDecimal(100)).longValue(), app.getName());
   }
 }

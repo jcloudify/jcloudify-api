@@ -53,7 +53,7 @@ public class PaymentController {
       @RequestBody PayInvoice payInvoice) {
     return monthlyPaymentMapper.toRest(
         paymentService.payInvoiceManually(
-            paymentId, payInvoice.getInvoiceId(), payInvoice.getPaymentMethod()));
+            paymentId, payInvoice.getInvoiceId(), payInvoice.getPaymentMethodId()));
   }
 
   @GetMapping("/users/{userId}/payment-details/payment-methods")

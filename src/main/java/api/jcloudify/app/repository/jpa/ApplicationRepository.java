@@ -16,6 +16,8 @@ public interface ApplicationRepository extends JpaRepository<Application, String
 
   List<Application> findAllByUserId(String userId);
 
+  boolean existsByName(String appName);
+
   @Modifying
   @Query(
       """

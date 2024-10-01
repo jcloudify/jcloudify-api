@@ -39,10 +39,6 @@ public class Application implements Serializable {
   private boolean isGithubRepositoryPrivate;
   private String installationId;
 
-  public long getPrice() {
-    return 100L;
-  }
-
   @Transient private String previousGithubRepositoryName;
 
   @CreationTimestamp private Instant creationDatetime;

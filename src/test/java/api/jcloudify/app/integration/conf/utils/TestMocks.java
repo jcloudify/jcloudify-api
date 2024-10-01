@@ -119,6 +119,8 @@ public class TestMocks {
     PaymentMethod.Card card = new PaymentMethod.Card();
     card.setBrand("visa");
     card.setLast4("4242");
+    card.setExpMonth(12L);
+    card.setExpYear(2025L);
 
     PaymentMethod paymentMethod = new PaymentMethod();
     paymentMethod.setId("payment_method_id");
