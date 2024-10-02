@@ -50,7 +50,7 @@ public class EnvironmentDeploymentDao {
     }
     query
         .where(predicates.toArray(new Predicate[0]))
-        .orderBy(builder.asc(root.get("creationDatetime")));
+        .orderBy(builder.desc(root.get("creationDatetime")));
     return entityManager
         .createQuery(query)
         .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())

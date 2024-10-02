@@ -120,7 +120,9 @@ class ApplicationEnvironmentDeploymentsIT extends MockedThirdParties {
             JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, null, null, null, 1, 10);
     List<AppEnvDeployment> data = allDepls.getData();
     var sorted =
-        data.stream().sorted(Comparator.comparing(AppEnvDeployment::getCreationDatetime)).toList();
+        data.stream()
+            .sorted(Comparator.comparing(AppEnvDeployment::getCreationDatetime).reversed())
+            .toList();
 
     assertEquals(sorted, data);
   }
