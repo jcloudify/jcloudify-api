@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -49,11 +48,9 @@ public class EnvironmentDeploymentDao {
     if (envType != null) {
       predicates.add(builder.and(builder.equal(envDeplEnvJoin.get("environmentType"), envType)));
     }
-
     query
-        .orderBy(builder.asc(root.get("creationDatetime")))
-        .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder))
-        .where(predicates.toArray(new Predicate[0]));
+        .where(predicates.toArray(new Predicate[0]))
+        .orderBy(builder.asc(root.get("creationDatetime")));
     return entityManager
         .createQuery(query)
         .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())

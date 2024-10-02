@@ -38,6 +38,8 @@ import api.jcloudify.app.integration.conf.utils.TestUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
+import java.util.Comparator;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,35 +77,52 @@ class ApplicationEnvironmentDeploymentsIT extends MockedThirdParties {
 
     var prodDepls =
         api.getApplicationDeployments(
-            JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, PROD, null, null, 1, 10);
+                JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, PROD, null, null, 1, 10)
+            .getData();
     var preprodDepls =
         api.getApplicationDeployments(
-            JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, PREPROD, null, null, 1, 10);
+                JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, PREPROD, null, null, 1, 10)
+            .getData();
+    // allDepls pageSize is set to max pageSize=500 in order to get all prod and preprod depls
+    // although testData should not reach 500
+    var allDepls =
+        api.getApplicationDeployments(
+                JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, null, null, null, 1, 500)
+            .getData();
+    var instantFilteredDepls =
+        api.getApplicationDeployments(
+                JOE_DOE_ID,
+                OTHER_POJA_APPLICATION_ID,
+                null,
+                Instant.parse("2024-08-01T00:00:00Z"),
+                Instant.parse("2024-08-01T23:59:00Z"),
+                1,
+                10)
+            .getData();
+
+    assertTrue(requireNonNull(allDepls).containsAll(requireNonNull(prodDepls)));
+    assertTrue(allDepls.containsAll(requireNonNull(preprodDepls)));
+    assertTrue(preprodDepls.contains(preprodDepl()));
+    assertFalse(preprodDepls.contains(prodDepl()));
+    assertTrue(prodDepls.contains(prodDepl()));
+    assertFalse(prodDepls.contains(preprodDepl()));
+    assertTrue(requireNonNull(instantFilteredDepls).contains(prodDepl()));
+    assertFalse(instantFilteredDepls.contains(preprodDepl()));
+  }
+
+  @Test
+  void read_deployments_is_well_ordered_ok() throws ApiException {
+    var apiClient = anApiClient();
+    var api = new ApplicationApi(apiClient);
+
     var allDepls =
         api.getApplicationDeployments(
             JOE_DOE_ID, OTHER_POJA_APPLICATION_ID, null, null, null, 1, 10);
-    var instantFilteredDepls =
-        api.getApplicationDeployments(
-            JOE_DOE_ID,
-            OTHER_POJA_APPLICATION_ID,
-            null,
-            Instant.parse("2024-08-01T00:00:00Z"),
-            Instant.parse("2024-08-01T23:59:00Z"),
-            1,
-            10);
+    List<AppEnvDeployment> data = allDepls.getData();
+    var sorted =
+        data.stream().sorted(Comparator.comparing(AppEnvDeployment::getCreationDatetime)).toList();
 
-    log.info("prod {}", prodDepls);
-    log.info("preprod {}", preprodDepls);
-    log.info("instant {}", instantFilteredDepls);
-
-    assertTrue(requireNonNull(allDepls.getData()).containsAll(requireNonNull(prodDepls.getData())));
-    assertTrue(allDepls.getData().containsAll(requireNonNull(preprodDepls.getData())));
-    assertTrue(preprodDepls.getData().contains(preprodDepl()));
-    assertFalse(preprodDepls.getData().contains(prodDepl()));
-    assertTrue(prodDepls.getData().contains(prodDepl()));
-    assertFalse(prodDepls.getData().contains(preprodDepl()));
-    assertTrue(requireNonNull(instantFilteredDepls.getData()).contains(prodDepl()));
-    assertFalse(instantFilteredDepls.getData().contains(preprodDepl()));
+    assertEquals(sorted, data);
   }
 
   @Test
