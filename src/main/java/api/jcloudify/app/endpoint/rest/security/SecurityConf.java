@@ -262,7 +262,6 @@ public class SecurityConf {
         // Sec 13.3
         .csrf(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
-        .cors(AbstractHttpConfigurer::disable)
         .logout(AbstractHttpConfigurer::disable);
     // formatter:on
     return http.build();
