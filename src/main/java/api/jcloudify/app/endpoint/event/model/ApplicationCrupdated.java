@@ -17,7 +17,7 @@ public class ApplicationCrupdated extends PojaEvent {
   private final String applicationRepoName;
   private final String previousApplicationRepoName;
   private final String description;
-  private final boolean isRepoPrivate;
+  private final boolean repoPrivate;
   private final String installationId;
   private final boolean isArchived;
   private final CrupdateType crupdateType;
@@ -29,7 +29,7 @@ public class ApplicationCrupdated extends PojaEvent {
       String applicationRepoName,
       String previousApplicationRepoName,
       String description,
-      boolean isRepoPrivate,
+      boolean repoPrivate,
       String installationId,
       boolean isArchived,
       String repoUrl) {
@@ -37,7 +37,7 @@ public class ApplicationCrupdated extends PojaEvent {
     this.applicationRepoName = applicationRepoName;
     this.previousApplicationRepoName = previousApplicationRepoName;
     this.description = description;
-    this.isRepoPrivate = isRepoPrivate;
+    this.repoPrivate = repoPrivate;
     this.installationId = installationId;
     this.isArchived = isArchived;
     this.repoUrl = repoUrl;

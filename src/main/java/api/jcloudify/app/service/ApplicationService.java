@@ -83,7 +83,7 @@ public class ApplicationService {
         .repoUrl(entity.getGithubRepositoryUrl())
         .installationId(entity.getInstallationId())
         .description(entity.getDescription())
-        .isRepoPrivate(entity.isGithubRepositoryPrivate())
+        .repoPrivate(entity.isGithubRepositoryPrivate())
         .previousApplicationRepoName(entity.getPreviousGithubRepositoryName())
         .isArchived(entity.isArchived())
         .build();
