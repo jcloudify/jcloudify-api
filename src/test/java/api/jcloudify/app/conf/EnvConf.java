@@ -23,5 +23,6 @@ public class EnvConf {
     registry.add("stripe.api.key", () -> "dummy");
     registry.add("env", () -> "test");
     registry.add("beta.users", () -> BETA_USERS);
+    registry.add("private.beta.test", () -> true);
   }
 }

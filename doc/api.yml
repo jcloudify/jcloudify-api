@@ -23,6 +23,25 @@ paths:
           $ref: './api.yml#/components/responses/429'
         '500':
           $ref: './api.yml#/components/responses/500'
+  /beta-ping:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Health
+      operationId: beta-ping
+      responses:
+        '200':
+          description: pong
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: pong
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
   /whoami:
     $ref: "./security-api.yml#/operations/whoami"
   /token:

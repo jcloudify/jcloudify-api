@@ -14,6 +14,7 @@ import api.jcloudify.app.model.exception.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,18 +35,63 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 public class SecurityConf {
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
+  private static final OrRequestMatcher REQUIRES_AUTHENTICATION_REQUEST_MATCHER =
+      new OrRequestMatcher(
+          antMatcher(GET, "/whoami"),
+          antMatcher(GET, "/beta-ping"),
+          antMatcher(GET, "/users/*/installations"),
+          antMatcher(PUT, "/users/*/installations"),
+          antMatcher(PUT, "/users/*/applications/*/environments/*/deploymentInitiation"),
+          antMatcher(POST, "/users/*/applications/*/environments/*/deletionInitiation"),
+          antMatcher(PUT, "/users/*/applications"),
+          antMatcher(GET, "/users/*/applications"),
+          antMatcher(GET, "/users/*/applications/*"),
+          antMatcher(GET, "/users/*/applications/*/deployments"),
+          antMatcher(GET, "/users/*/applications/*/deployments/*"),
+          antMatcher(GET, "/users/*/applications/*/deployments/*/config"),
+          antMatcher(GET, "/users/*/applications/*/deployments/*/states"),
+          antMatcher(GET, "/poja-versions"),
+          antMatcher(GET, "/users/*/applications/*/environments"),
+          antMatcher(PUT, "/users/*/applications/*/environments"),
+          antMatcher(GET, "/users/*/applications/*/environments/*"),
+          antMatcher(PUT, "/users/*/applications/*/environments/*/ssmparameters"),
+          antMatcher(POST, "/users/*/applications/*/environments/*/ssmparameters"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/ssmparameters"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/stacks"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/events"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/outputs"),
+          antMatcher(PUT, "/users/*/applications/*/environments/*/config"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/config"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/computeStackResources"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/functions/*/logGroups"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/functions/*/logStreams"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/functions/*/logStreamEvents"),
+          antMatcher(GET, "/users/*/payment-methods"),
+          antMatcher(GET, "/gh-repos/*/*/upload-build-uri"),
+          antMatcher(GET, "/users/*/payment-details"),
+          antMatcher(PUT, "/users/*/payment-details"),
+          antMatcher(GET, "/users/*/payment-details/payment-methods"),
+          antMatcher(PUT, "/users/*/payment-details/payment-methods"),
+          antMatcher(PUT, "/gh-repos/*/*/env-deploys"),
+          antMatcher(GET, "/users/*/billing"),
+          antMatcher(GET, "/users/*/applications/*/billing"),
+          antMatcher(GET, "/users/*/applications/*/environments/*/billing"));
   private final AuthProvider authProvider;
   private final HandlerExceptionResolver exceptionResolver;
   private final AuthenticatedResourceProvider authenticatedResourceProvider;
+  private final boolean isPrivateBetaTest;
 
   public SecurityConf(
       AuthProvider authProvider,
       // InternalToExternalErrorHandler behind
       @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver,
-      AuthenticatedResourceProvider authenticatedResourceProvider) {
+      AuthenticatedResourceProvider authenticatedResourceProvider,
+      @Value("${private.beta.test}") boolean isPrivateBetaTest) {
     this.exceptionResolver = exceptionResolver;
     this.authProvider = authProvider;
     this.authenticatedResourceProvider = authenticatedResourceProvider;
+    this.isPrivateBetaTest = isPrivateBetaTest;
   }
 
   @Bean
@@ -69,50 +115,12 @@ public class SecurityConf {
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .authenticationProvider(authProvider)
         .addFilterBefore(
-            bearerFilter(
-                new OrRequestMatcher(
-                    antMatcher(GET, "/whoami"),
-                    antMatcher(GET, "/users/*/installations"),
-                    antMatcher(PUT, "/users/*/installations"),
-                    antMatcher(PUT, "/users/*/applications/*/environments/*/deploymentInitiation"),
-                    antMatcher(POST, "/users/*/applications/*/environments/*/deletionInitiation"),
-                    antMatcher(PUT, "/users/*/applications"),
-                    antMatcher(GET, "/users/*/applications"),
-                    antMatcher(GET, "/users/*/applications/*"),
-                    antMatcher(GET, "/users/*/applications/*/deployments"),
-                    antMatcher(GET, "/users/*/applications/*/deployments/*"),
-                    antMatcher(GET, "/users/*/applications/*/deployments/*/config"),
-                    antMatcher(GET, "/users/*/applications/*/deployments/*/states"),
-                    antMatcher(GET, "/poja-versions"),
-                    antMatcher(GET, "/users/*/applications/*/environments"),
-                    antMatcher(PUT, "/users/*/applications/*/environments"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*"),
-                    antMatcher(PUT, "/users/*/applications/*/environments/*/ssmparameters"),
-                    antMatcher(POST, "/users/*/applications/*/environments/*/ssmparameters"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/ssmparameters"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/stacks"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/events"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/stacks/*/outputs"),
-                    antMatcher(PUT, "/users/*/applications/*/environments/*/config"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/config"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/computeStackResources"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/functions/*/logGroups"),
-                    antMatcher(
-                        GET, "/users/*/applications/*/environments/*/functions/*/logStreams"),
-                    antMatcher(
-                        GET, "/users/*/applications/*/environments/*/functions/*/logStreamEvents"),
-                    antMatcher(GET, "/users/*/payment-methods"),
-                    antMatcher(GET, "/gh-repos/*/*/upload-build-uri"),
-                    antMatcher(GET, "/users/*/payment-details"),
-                    antMatcher(PUT, "/users/*/payment-details"),
-                    antMatcher(GET, "/users/*/payment-details/payment-methods"),
-                    antMatcher(PUT, "/users/*/payment-details/payment-methods"),
-                    antMatcher(PUT, "/gh-repos/*/*/env-deploys"),
-                    antMatcher(GET, "/users/*/billing"),
-                    antMatcher(GET, "/users/*/applications/*/billing"),
-                    antMatcher(GET, "/users/*/applications/*/environments/*/billing"))),
+            bearerFilter(REQUIRES_AUTHENTICATION_REQUEST_MATCHER),
             AnonymousAuthenticationFilter.class)
+        .addFilterAfter(
+            betaActivationFilter(REQUIRES_AUTHENTICATION_REQUEST_MATCHER), BearerAuthFilter.class)
+        .addFilterAfter(
+            new BetaUserFilter(antMatcher(GET, "/beta-ping")), BetaActivationFilter.class)
         .authorizeHttpRequests(
             (authorize) ->
                 authorize
@@ -120,6 +128,8 @@ public class SecurityConf {
                     .permitAll()
                     .requestMatchers(GET, "/ping")
                     .permitAll()
+                    .requestMatchers(GET, "/beta-ping")
+                    .authenticated()
                     .requestMatchers(GET, "/token")
                     .permitAll()
                     .requestMatchers(POST, "/token")
@@ -302,5 +312,9 @@ public class SecurityConf {
             // not handled by AccessDeniedException and AuthenticationEntryPoint
             exceptionResolver.resolveException(req, res, null, forbiddenWithRemoteInfo(e, req)));
     return bearerFilter;
+  }
+
+  private BetaActivationFilter betaActivationFilter(RequestMatcher requestMatcher) {
+    return new BetaActivationFilter(requestMatcher, isPrivateBetaTest);
   }
 }

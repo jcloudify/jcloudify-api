@@ -8,15 +8,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.AllArgsConstructor;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-public class BetaTestUserFilter extends OncePerRequestFilter {
+@AllArgsConstructor
+public class BetaUserFilter extends OncePerRequestFilter {
   private final RequestMatcher requiresIsBetaTestUserRequestMatchers;
-
-  public BetaTestUserFilter(RequestMatcher requiresIsBetaTestUserRequestMatchers) {
-    this.requiresIsBetaTestUserRequestMatchers = requiresIsBetaTestUserRequestMatchers;
-  }
 
   @Override
   protected void doFilterInternal(
