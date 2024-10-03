@@ -15,6 +15,7 @@ public class Principal implements UserDetails {
   private final User user;
 
   private final String bearer;
+  private final boolean betaTester;
 
   @Override
   public Collection<UserRole> getAuthorities() {
