@@ -1,7 +1,7 @@
 package api.jcloudify.app.endpoint.rest.security;
 
+import api.jcloudify.app.model.User;
 import api.jcloudify.app.repository.model.Application;
-import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.service.ApplicationService;
 import java.util.Optional;
 import lombok.AllArgsConstructor;

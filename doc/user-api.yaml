@@ -71,6 +71,9 @@ components:
           type: string
         stripe_id:
           type: string
+        isBetaTester:
+          type: boolean
+          nullable: false
     CreateUsersRequestBody:
       type: object
       properties:

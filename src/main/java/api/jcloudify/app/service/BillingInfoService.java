@@ -3,11 +3,11 @@ package api.jcloudify.app.service;
 import static api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus.FINISHED;
 import static java.math.BigDecimal.ZERO;
 
+import api.jcloudify.app.model.User;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.BillingInfoRepository;
 import api.jcloudify.app.repository.model.BillingInfo;
 import api.jcloudify.app.repository.model.Environment;
-import api.jcloudify.app.repository.model.User;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
