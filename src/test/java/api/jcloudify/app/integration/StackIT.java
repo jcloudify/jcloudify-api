@@ -253,7 +253,7 @@ public class StackIT extends MockedThirdParties {
         () ->
             api.getEnvironmentStacks(
                 JANE_DOE_ID, POJA_APPLICATION_ID, POJA_APPLICATION_ENVIRONMENT_ID, null, null),
-        "Bad credentials");
+        "Access Denied");
   }
 
   @Test
@@ -290,7 +290,7 @@ public class StackIT extends MockedThirdParties {
                 POJA_APPLICATION_ID,
                 POJA_APPLICATION_ENVIRONMENT_ID,
                 COMPUTE_PERM_STACK_ID),
-        "Bad credentials");
+        "Access Denied");
   }
 
   @Test
@@ -325,7 +325,7 @@ public class StackIT extends MockedThirdParties {
                 COMPUTE_PERM_STACK_ID,
                 null,
                 null),
-        "Bad credentials");
+        "Access Denied");
   }
 
   @Test
@@ -360,6 +360,6 @@ public class StackIT extends MockedThirdParties {
                 COMPUTE_PERM_STACK_ID,
                 null,
                 null),
-        "Bad credentials");
+        "Access Denied");
   }
 }
