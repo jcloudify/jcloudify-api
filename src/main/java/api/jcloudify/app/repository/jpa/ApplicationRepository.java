@@ -14,14 +14,14 @@ public interface ApplicationRepository extends JpaRepository<Application, String
 
   Optional<Application> findByGithubRepositoryId(String repositoryId);
 
+  List<Application> findAllByUserId(String userId);
+
+  boolean existsByName(String appName);
+
   @Modifying
   @Query(
       """
       update Application a set a.githubRepositoryUrl = ?2,
       a.githubRepositoryId = ?3  where a.id = ?1""")
   void updateApplicationRepoUrl(String id, String githubRepositoryUrl, String githubRepositoryId);
-
-  List<Application> findAllByUserId(String userId);
-
-  boolean existsByName(String name);
 }

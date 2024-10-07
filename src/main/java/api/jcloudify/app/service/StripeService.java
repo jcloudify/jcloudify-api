@@ -5,13 +5,18 @@ import static api.jcloudify.app.model.exception.ApiException.ExceptionType.SERVE
 import api.jcloudify.app.model.exception.ApiException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
+import com.stripe.model.Invoice;
+import com.stripe.model.InvoiceItem;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentMethod;
 import com.stripe.model.PaymentMethodCollection;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerUpdateParams;
-import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.param.InvoiceCreateParams;
+import com.stripe.param.InvoiceFinalizeInvoiceParams;
+import com.stripe.param.InvoiceItemCreateParams;
+import com.stripe.param.InvoicePayParams;
 import com.stripe.param.PaymentMethodAttachParams;
 import com.stripe.param.PaymentMethodDetachParams;
 import java.util.List;
@@ -110,24 +115,73 @@ public class StripeService {
     }
   }
 
-  public PaymentIntent createPaymentIntent(Long amount, String returnUrl, String customerId) {
+  public Invoice createInvoice(String customerId) {
     try {
-      Customer customer = Customer.retrieve(customerId);
-      PaymentIntentCreateParams params =
-          PaymentIntentCreateParams.builder()
-              .setAmount(amount)
-              .setCurrency("usd")
-              .setCustomer(customer.getId())
-              .setConfirm(true)
-              .setReceiptEmail(customer.getEmail())
-              .setPaymentMethod(customer.getInvoiceSettings().getDefaultPaymentMethod())
-              .setReturnUrl(returnUrl)
-              .build();
-
-      return PaymentIntent.create(params);
+      var params = InvoiceCreateParams.builder().setCustomer(customerId).setCurrency("usd").build();
+      return Invoice.create(params);
     } catch (StripeException e) {
       throw new ApiException(SERVER_EXCEPTION, e.getMessage());
     }
+  }
+
+  public InvoiceItem createInvoiceItem(String invoiceId, Long amount, String appName) {
+    try {
+      InvoiceItemCreateParams params =
+          InvoiceItemCreateParams.builder()
+              .setInvoice(invoiceId)
+              .setAmount(amount)
+              .setDescription(appName)
+              .build();
+      return InvoiceItem.create(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  public Invoice finalizeInvoice(String invoiceId) {
+    try {
+      Invoice resource = Invoice.retrieve(invoiceId);
+      var params = InvoiceFinalizeInvoiceParams.builder().build();
+      return resource.finalizeInvoice(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  public Invoice payInvoice(String invoiceId) {
+    try {
+      Invoice resource = Invoice.retrieve(invoiceId);
+      var params = InvoicePayParams.builder().build();
+      return resource.pay(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  public Invoice payInvoice(String invoiceId, String paymentMethodId) {
+    try {
+      Invoice resource = Invoice.retrieve(invoiceId);
+      var params = InvoicePayParams.builder().setPaymentMethod(paymentMethodId).build();
+      return resource.pay(params);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  public PaymentIntent retrievePaymentIntent(String paymentIntentId) {
+    try {
+      return PaymentIntent.retrieve(paymentIntentId);
+    } catch (StripeException e) {
+      throw new ApiException(SERVER_EXCEPTION, e.getMessage());
+    }
+  }
+
+  public String getPaymentStatus(Invoice invoice) {
+    if (invoice.getStatus() != "paid") {
+      var paymentIntent = retrievePaymentIntent(invoice.getPaymentIntent());
+      return paymentIntent.getStatus();
+    }
+    return invoice.getStatus();
   }
 
   private RequestOptions getRequestOption() {
