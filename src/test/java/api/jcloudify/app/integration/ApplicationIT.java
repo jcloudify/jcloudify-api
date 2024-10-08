@@ -12,6 +12,7 @@ import static api.jcloudify.app.integration.conf.utils.TestUtils.assertThrowsNot
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpBucketComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpCloudformationComponent;
 import static api.jcloudify.app.integration.conf.utils.TestUtils.setUpGithub;
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -108,6 +109,11 @@ class ApplicationIT extends MockedThirdParties {
     assertFalse(userIdFilteredPagedResponseData.contains(janePojaApplication()));
     assertTrue(nameFilteredPagedResponseData.contains(joePojaApplication2()));
     assertFalse(nameFilteredPagedResponseData.contains(joePojaApplication1()));
+    assertEquals(
+        userIdFilteredPagedResponseData,
+        userIdFilteredPagedResponseData.stream()
+            .sorted(comparing(Application::getCreationDatetime).reversed())
+            .toList());
   }
 
   @Test

@@ -37,9 +37,8 @@ public class ApplicationDao {
     }
 
     query
-        .orderBy(builder.asc(root.get("name")))
-        .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder))
-        .where(predicates.toArray(new Predicate[0]));
+        .where(predicates.toArray(new Predicate[0]))
+        .orderBy(builder.desc(root.get("creationDatetime")));
     return entityManager
         .createQuery(query)
         .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())
