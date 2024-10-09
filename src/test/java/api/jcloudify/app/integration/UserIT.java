@@ -37,7 +37,7 @@ class UserIT extends MockedThirdParties {
     return TestUtils.anApiClient(JOE_DOE_TOKEN, port);
   }
 
-  private static Whoami authenticated() {
+  private static Whoami joeDoeWhoami() {
     return new Whoami().user(joeDoeUser());
   }
 
@@ -54,7 +54,7 @@ class UserIT extends MockedThirdParties {
 
     Whoami actual = api.whoami();
 
-    assertEquals(authenticated(), actual);
+    assertEquals(joeDoeWhoami(), actual);
   }
 
   @Test

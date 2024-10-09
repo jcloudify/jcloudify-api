@@ -5,7 +5,7 @@ import static java.lang.Boolean.TRUE;
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.model.PaymentCustomer;
 import api.jcloudify.app.endpoint.rest.model.PaymentMethodsAction;
-import api.jcloudify.app.repository.model.User;
+import api.jcloudify.app.model.User;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
 import java.util.List;

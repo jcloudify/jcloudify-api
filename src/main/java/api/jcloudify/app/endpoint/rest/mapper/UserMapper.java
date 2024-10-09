@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
   private final UserRoleMapper userRoleMapper;
 
-  public User toRest(api.jcloudify.app.repository.model.User domain) {
+  public User toRest(api.jcloudify.app.model.User domain) {
     return new User()
         .id(domain.getId())
         .username(domain.getUsername())
@@ -19,6 +19,7 @@ public class UserMapper {
         .lastName(domain.getLastName())
         .role(userRoleMapper.toRest(domain.getRoles()[0]))
         .avatar(domain.getAvatar())
-        .stripeId(domain.getStripeId());
+        .stripeId(domain.getStripeId())
+        .isBetaTester(domain.isBetaTester());
   }
 }

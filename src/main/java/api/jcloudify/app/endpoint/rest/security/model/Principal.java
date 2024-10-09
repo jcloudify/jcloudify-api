@@ -1,6 +1,6 @@
 package api.jcloudify.app.endpoint.rest.security.model;
 
-import api.jcloudify.app.repository.model.User;
+import api.jcloudify.app.model.User;
 import java.util.Arrays;
 import java.util.Collection;
 import lombok.AllArgsConstructor;
@@ -51,5 +51,9 @@ public class Principal implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  public boolean isBetaTester() {
+    return user.isBetaTester();
   }
 }

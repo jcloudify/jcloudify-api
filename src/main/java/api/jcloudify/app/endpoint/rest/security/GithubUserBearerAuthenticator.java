@@ -4,8 +4,8 @@ import static api.jcloudify.app.endpoint.rest.security.Utils.getBearerFromHeader
 
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
 import api.jcloudify.app.endpoint.rest.security.model.Principal;
+import api.jcloudify.app.model.User;
 import api.jcloudify.app.model.exception.NotFoundException;
-import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.service.UserService;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
