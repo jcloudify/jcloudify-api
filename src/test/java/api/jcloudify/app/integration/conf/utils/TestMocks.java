@@ -146,7 +146,8 @@ public class TestMocks {
         .lastName("Doe")
         .githubId(JOE_DOE_GITHUB_ID)
         .avatar(JOE_DOE_AVATAR)
-        .stripeId(JOE_DOE_STRIPE_ID);
+        .stripeId(JOE_DOE_STRIPE_ID)
+        .isBetaTester(true);
   }
 
   public static User janeDoeUser() {
@@ -158,7 +159,8 @@ public class TestMocks {
         .firstName("Jane")
         .lastName("Doe")
         .githubId(JANE_DOE_GITHUB_ID)
-        .avatar(JANE_DOE_AVATAR);
+        .avatar(JANE_DOE_AVATAR)
+        .isBetaTester(false);
   }
 
   public static Environment pojaAppProdEnvironment() {

@@ -2,11 +2,11 @@ package api.jcloudify.app.service;
 
 import api.jcloudify.app.endpoint.rest.model.CreateUser;
 import api.jcloudify.app.endpoint.rest.security.github.GithubComponent;
+import api.jcloudify.app.model.User;
 import api.jcloudify.app.model.exception.BadRequestException;
 import api.jcloudify.app.model.exception.ForbiddenException;
 import api.jcloudify.app.model.exception.NotFoundException;
-import api.jcloudify.app.repository.jpa.UserRepository;
-import api.jcloudify.app.repository.model.User;
+import api.jcloudify.app.repository.UserRepository;
 import api.jcloudify.app.repository.model.mapper.UserMapper;
 import java.util.List;
 import java.util.Optional;

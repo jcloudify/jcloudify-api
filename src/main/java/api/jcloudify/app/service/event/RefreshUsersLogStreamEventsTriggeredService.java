@@ -11,9 +11,9 @@ import api.jcloudify.app.endpoint.event.model.RefreshUsersLogStreamEventsTrigger
 import api.jcloudify.app.endpoint.rest.model.LogGroup;
 import api.jcloudify.app.endpoint.rest.model.LogStream;
 import api.jcloudify.app.file.ExtendedBucketComponent;
+import api.jcloudify.app.model.User;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.Environment;
-import api.jcloudify.app.repository.model.User;
 import api.jcloudify.app.service.ApplicationService;
 import api.jcloudify.app.service.ComputeStackResourceService;
 import api.jcloudify.app.service.EnvironmentService;

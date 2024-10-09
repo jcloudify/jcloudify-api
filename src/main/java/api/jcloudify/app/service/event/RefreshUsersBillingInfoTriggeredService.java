@@ -3,7 +3,7 @@ package api.jcloudify.app.service.event;
 import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.RefreshUserBillingInfoRequested;
 import api.jcloudify.app.endpoint.event.model.RefreshUsersBillingInfoTriggered;
-import api.jcloudify.app.repository.model.User;
+import api.jcloudify.app.model.User;
 import api.jcloudify.app.service.UserService;
 import java.util.List;
 import java.util.function.Consumer;

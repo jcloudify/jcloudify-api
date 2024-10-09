@@ -20,15 +20,16 @@ public class AuthProvider extends AbstractUserDetailsAuthenticationProvider {
   private final UsernamePasswordAuthenticator authenticator;
 
   public static Principal getPrincipal() {
+    return (Principal) getAuthentication().getPrincipal();
+  }
+
+  public static Authentication getAuthentication() {
     SecurityContext context = SecurityContextHolder.getContext();
-    Authentication authentication = context.getAuthentication();
-    return (Principal) authentication.getPrincipal();
+    return context.getAuthentication();
   }
 
   public static ApplicationPrincipal getApplicationPrincipal() {
-    SecurityContext context = SecurityContextHolder.getContext();
-    Authentication authentication = context.getAuthentication();
-    return (ApplicationPrincipal) authentication.getPrincipal();
+    return (ApplicationPrincipal) getAuthentication().getPrincipal();
   }
 
   @Override
