@@ -1,5 +1,7 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.endpoint.event.model.NotifyPojaConfUploaded.Status.FAILURE;
+import static api.jcloudify.app.endpoint.event.model.NotifyPojaConfUploaded.Status.SUCCESS;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.FileType.DEPLOYMENT_FILE;
 import static api.jcloudify.app.file.FileType.POJA_CONF;
@@ -10,13 +12,13 @@ import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.SET_UPS
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.OK;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.UP_TO_DATE;
 
+import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.NotifyPojaConfUploaded;
 import api.jcloudify.app.endpoint.event.model.PojaConfUploaded;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileUnzipper;
-import api.jcloudify.app.mail.Email;
 import api.jcloudify.app.mail.Mailer;
 import api.jcloudify.app.model.PojaVersion;
-import api.jcloudify.app.model.User;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
@@ -28,7 +30,6 @@ import api.jcloudify.app.service.EnvironmentService;
 import api.jcloudify.app.service.UserService;
 import api.jcloudify.app.service.api.pojaSam.PojaSamApi;
 import api.jcloudify.app.service.github.GithubService;
-import jakarta.mail.internet.InternetAddress;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -89,6 +90,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private final EnvDeploymentConfService envDeploymentConfService;
   private final Mailer mailer;
   private final UserService userService;
+  private final EventProducer<NotifyPojaConfUploaded> eventProducer;
 
   @Override
   public void accept(PojaConfUploaded pojaConfUploaded) {
@@ -107,44 +109,23 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   }
 
   private void handleEventFailure(PojaConfUploaded pojaConfUploaded) {
-    Application app = appService.getById(pojaConfUploaded.getAppId());
-    String userId = app.getUserId();
-    User user = userService.getUserById(userId);
-    String address = user.getEmail();
-    log.info("mailing {}", address);
-    mailer.accept(
-        new Email(
-            internetAddressFrom(address),
-            List.of(),
-            List.of(),
-            "failed push [Jcloudify]",
-            "<p> [jcloudifybot] has failed to push the generated code to your repository"
-                + app.getGithubRepositoryUrl()
-                + " </p>",
-            List.of()));
+    eventProducer.accept(
+        List.of(
+            NotifyPojaConfUploaded.builder()
+                .status(FAILURE)
+                .appId(pojaConfUploaded.getAppId())
+                .envId(pojaConfUploaded.getEnvironmentId())
+                .build()));
   }
 
   private void handleEventSuccess(PojaConfUploaded pojaConfUploaded) {
-    Application app = appService.getById(pojaConfUploaded.getAppId());
-    String userId = app.getUserId();
-    User user = userService.getUserById(userId);
-    String address = user.getEmail();
-    log.info("mailing {}", address);
-    mailer.accept(
-        new Email(
-            internetAddressFrom(address),
-            List.of(),
-            List.of(),
-            "successful push [Jcloudify]",
-            "<p> [jcloudifybot] has successfully pushed the generated code to your repository"
-                + app.getGithubRepositoryUrl()
-                + " </p>",
-            List.of()));
-  }
-
-  @SneakyThrows
-  private static InternetAddress internetAddressFrom(String address) {
-    return new InternetAddress(address);
+    eventProducer.accept(
+        List.of(
+            NotifyPojaConfUploaded.builder()
+                .status(SUCCESS)
+                .appId(pojaConfUploaded.getAppId())
+                .envId(pojaConfUploaded.getEnvironmentId())
+                .build()));
   }
 
   private Callable<Void> handlePojaConfUploaded(PojaConfUploaded pojaConfUploaded) {
@@ -156,7 +137,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       Application app = appService.getById(appId);
       var generatedCode = generateCodeFromPojaConf(pojaConfUploaded, userId, appId, environmentId);
       var appInstallationToken = getInstallationToken(pojaConfUploaded, appId);
-      UsernamePasswordCredentialsProvider ghCredentialsProvider =
+      CredentialsProvider ghCredentialsProvider =
           new UsernamePasswordCredentialsProvider("x-access-token", appInstallationToken);
       var cloneDirPath = createTempDir("github_clone");
       pushChangesFromCodeToAppRepository(
@@ -237,42 +218,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     return false;
   }
 
-  /**
-   * ensures repository branches already exist before the real clone and the real code changes.
-   * should be do-able in one go but it _SEEMS_ like git checkout doesn't handle it properly
-   */
-  private void prepareRepository(
-      UsernamePasswordCredentialsProvider ghCredentialsProvider, Application app, Environment env) {
-    var cloneDirPath = createTempDir("pre-clone");
-    String githubRepositoryUrl = app.getGithubRepositoryUrl();
-    log.info("BEGIN [branch-check] pre-cloning {}", githubRepositoryUrl);
-    String branchName = formatShortBranchName(env);
-    try (Git git =
-        Git.cloneRepository()
-            .setCredentialsProvider(ghCredentialsProvider)
-            .setDirectory(cloneDirPath.toFile())
-            .setURI(githubRepositoryUrl)
-            .setDepth(1)
-            .setNoCheckout(true)
-            .call()) {
-      if (doesBranchExistInRemote(git, branchName)) {
-        log.info("branch already exists");
-        return;
-      }
-      log.info("branch does not exist");
-      createBranch(git, branchName);
-      pushAndCheckResult(ghCredentialsProvider, branchName, git);
-    } catch (InvalidRemoteException e) {
-      throw new RuntimeException(e);
-    } catch (TransportException e) {
-      throw new RuntimeException(e);
-    } catch (GitAPIException e) {
-      throw new RuntimeException(e);
-    }
-    log.info("END [branch-check] pre-cloning {}", githubRepositoryUrl);
-  }
-
-  private static void createBranch(Git git, String branchName) {
+  private static void checkoutAndCreateBranch(Git git, String branchName) {
     try {
       git.checkout().setCreateBranch(true).setName(branchName).setUpstreamMode(SET_UPSTREAM).call();
       log.info("successfully created and checked out branch {}", branchName);
@@ -287,21 +233,20 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     }
   }
 
-  private static boolean doesBranchExistInRemote(Git git, String branchName) {
-    String formattedBranchName = getFormattedBranchName(branchName);
+  private static FetchResult fetchAllRefs(Git git, CredentialsProvider credentialsProvider) {
     try {
-      FetchResult fetchResult =
-          git.fetch().setRemote(REMOTE_ORIGIN).setRefSpecs(FETCH_ALL_AND_UPDATE_REFSPEC).call();
-      // Check if the branch exists in the remote repository
-      return fetchResult.getAdvertisedRefs().stream()
-          .anyMatch(ref -> ref.getName().equals(formattedBranchName));
+      return git.fetch()
+          .setCredentialsProvider(credentialsProvider)
+          .setRemote(REMOTE_ORIGIN)
+          .setRefSpecs(FETCH_ALL_AND_UPDATE_REFSPEC)
+          .call();
     } catch (GitAPIException e) {
       throw new RuntimeException(e);
     }
   }
 
   private void pushAndCheckResult(
-      UsernamePasswordCredentialsProvider ghCredentialsProvider, String branchName, Git git)
+      CredentialsProvider ghCredentialsProvider, String branchName, Git git)
       throws GitAPIException {
     var results =
         git.push()
@@ -324,22 +269,31 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   }
 
   private void pushChangesFromCodeToAppRepository(
-      UsernamePasswordCredentialsProvider ghCredentialsProvider,
+      CredentialsProvider ghCredentialsProvider,
       PojaVersion pojaVersion,
       Application app,
       Environment env,
       File toUnzip,
       Path cloneDirPath) {
-    prepareRepository(ghCredentialsProvider, app, env);
     String branchName = formatShortBranchName(env);
     try (Git git =
         Git.cloneRepository()
             .setCredentialsProvider(ghCredentialsProvider)
             .setDirectory(cloneDirPath.toFile())
             .setURI(app.getGithubRepositoryUrl())
-            .setBranch(branchName)
             .setDepth(1)
+            .setNoCheckout(true)
             .call()) {
+      var fetchResult = fetchAllRefs(git, ghCredentialsProvider);
+      var doesBranchExist =
+          fetchResult.getAdvertisedRefs().stream()
+              .anyMatch(ref -> ref.getName().equals(getFormattedBranchName(branchName)));
+      if (!doesBranchExist) {
+        log.info("branch does not exist");
+        checkoutAndCreateBranch(git, branchName);
+      } else {
+        git.checkout().setUpstreamMode(SET_UPSTREAM).setName(branchName).call();
+      }
       log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
       unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
