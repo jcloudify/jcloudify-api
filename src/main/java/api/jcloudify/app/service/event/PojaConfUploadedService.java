@@ -1,5 +1,7 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.endpoint.event.model.NotifyPojaConfUploaded.Status.FAILURE;
+import static api.jcloudify.app.endpoint.event.model.NotifyPojaConfUploaded.Status.SUCCESS;
 import static api.jcloudify.app.file.ExtendedBucketComponent.getBucketKey;
 import static api.jcloudify.app.file.FileType.DEPLOYMENT_FILE;
 import static api.jcloudify.app.file.FileType.POJA_CONF;
@@ -10,13 +12,13 @@ import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.SET_UPS
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.OK;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.UP_TO_DATE;
 
+import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.NotifyPojaConfUploaded;
 import api.jcloudify.app.endpoint.event.model.PojaConfUploaded;
 import api.jcloudify.app.file.ExtendedBucketComponent;
 import api.jcloudify.app.file.FileUnzipper;
-import api.jcloudify.app.mail.Email;
 import api.jcloudify.app.mail.Mailer;
 import api.jcloudify.app.model.PojaVersion;
-import api.jcloudify.app.model.User;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
 import api.jcloudify.app.repository.model.Application;
 import api.jcloudify.app.repository.model.EnvDeploymentConf;
@@ -28,7 +30,6 @@ import api.jcloudify.app.service.EnvironmentService;
 import api.jcloudify.app.service.UserService;
 import api.jcloudify.app.service.api.pojaSam.PojaSamApi;
 import api.jcloudify.app.service.github.GithubService;
-import jakarta.mail.internet.InternetAddress;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -89,6 +90,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   private final EnvDeploymentConfService envDeploymentConfService;
   private final Mailer mailer;
   private final UserService userService;
+  private final EventProducer<NotifyPojaConfUploaded> eventProducer;
 
   @Override
   public void accept(PojaConfUploaded pojaConfUploaded) {
@@ -107,44 +109,23 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   }
 
   private void handleEventFailure(PojaConfUploaded pojaConfUploaded) {
-    Application app = appService.getById(pojaConfUploaded.getAppId());
-    String userId = app.getUserId();
-    User user = userService.getUserById(userId);
-    String address = user.getEmail();
-    log.info("mailing {}", address);
-    mailer.accept(
-        new Email(
-            internetAddressFrom(address),
-            List.of(),
-            List.of(),
-            "failed push [Jcloudify]",
-            "<p> [jcloudifybot] has failed to push the generated code to your repository"
-                + app.getGithubRepositoryUrl()
-                + " </p>",
-            List.of()));
+    eventProducer.accept(
+        List.of(
+            NotifyPojaConfUploaded.builder()
+                .status(FAILURE)
+                .appId(pojaConfUploaded.getAppId())
+                .envId(pojaConfUploaded.getEnvironmentId())
+                .build()));
   }
 
   private void handleEventSuccess(PojaConfUploaded pojaConfUploaded) {
-    Application app = appService.getById(pojaConfUploaded.getAppId());
-    String userId = app.getUserId();
-    User user = userService.getUserById(userId);
-    String address = user.getEmail();
-    log.info("mailing {}", address);
-    mailer.accept(
-        new Email(
-            internetAddressFrom(address),
-            List.of(),
-            List.of(),
-            "successful push [Jcloudify]",
-            "<p> [jcloudifybot] has successfully pushed the generated code to your repository"
-                + app.getGithubRepositoryUrl()
-                + " </p>",
-            List.of()));
-  }
-
-  @SneakyThrows
-  private static InternetAddress internetAddressFrom(String address) {
-    return new InternetAddress(address);
+    eventProducer.accept(
+        List.of(
+            NotifyPojaConfUploaded.builder()
+                .status(SUCCESS)
+                .appId(pojaConfUploaded.getAppId())
+                .envId(pojaConfUploaded.getEnvironmentId())
+                .build()));
   }
 
   private Callable<Void> handlePojaConfUploaded(PojaConfUploaded pojaConfUploaded) {
