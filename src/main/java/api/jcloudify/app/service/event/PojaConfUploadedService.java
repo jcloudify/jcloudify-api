@@ -156,7 +156,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
       Application app = appService.getById(appId);
       var generatedCode = generateCodeFromPojaConf(pojaConfUploaded, userId, appId, environmentId);
       var appInstallationToken = getInstallationToken(pojaConfUploaded, appId);
-      UsernamePasswordCredentialsProvider ghCredentialsProvider =
+      CredentialsProvider ghCredentialsProvider =
           new UsernamePasswordCredentialsProvider("x-access-token", appInstallationToken);
       var cloneDirPath = createTempDir("github_clone");
       pushChangesFromCodeToAppRepository(
@@ -237,42 +237,7 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     return false;
   }
 
-  /**
-   * ensures repository branches already exist before the real clone and the real code changes.
-   * should be do-able in one go but it _SEEMS_ like git checkout doesn't handle it properly
-   */
-  private void prepareRepository(
-      UsernamePasswordCredentialsProvider ghCredentialsProvider, Application app, Environment env) {
-    var cloneDirPath = createTempDir("pre-clone");
-    String githubRepositoryUrl = app.getGithubRepositoryUrl();
-    log.info("BEGIN [branch-check] pre-cloning {}", githubRepositoryUrl);
-    String branchName = formatShortBranchName(env);
-    try (Git git =
-        Git.cloneRepository()
-            .setCredentialsProvider(ghCredentialsProvider)
-            .setDirectory(cloneDirPath.toFile())
-            .setURI(githubRepositoryUrl)
-            .setDepth(1)
-            .setNoCheckout(true)
-            .call()) {
-      if (doesBranchExistInRemote(git, branchName)) {
-        log.info("branch already exists");
-        return;
-      }
-      log.info("branch does not exist");
-      createBranch(git, branchName);
-      pushAndCheckResult(ghCredentialsProvider, branchName, git);
-    } catch (InvalidRemoteException e) {
-      throw new RuntimeException(e);
-    } catch (TransportException e) {
-      throw new RuntimeException(e);
-    } catch (GitAPIException e) {
-      throw new RuntimeException(e);
-    }
-    log.info("END [branch-check] pre-cloning {}", githubRepositoryUrl);
-  }
-
-  private static void createBranch(Git git, String branchName) {
+  private static void checkoutAndCreateBranch(Git git, String branchName) {
     try {
       git.checkout().setCreateBranch(true).setName(branchName).setUpstreamMode(SET_UPSTREAM).call();
       log.info("successfully created and checked out branch {}", branchName);
@@ -287,21 +252,20 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
     }
   }
 
-  private static boolean doesBranchExistInRemote(Git git, String branchName) {
-    String formattedBranchName = getFormattedBranchName(branchName);
+  private static FetchResult fetchAllRefs(Git git, CredentialsProvider credentialsProvider) {
     try {
-      FetchResult fetchResult =
-          git.fetch().setRemote(REMOTE_ORIGIN).setRefSpecs(FETCH_ALL_AND_UPDATE_REFSPEC).call();
-      // Check if the branch exists in the remote repository
-      return fetchResult.getAdvertisedRefs().stream()
-          .anyMatch(ref -> ref.getName().equals(formattedBranchName));
+      return git.fetch()
+          .setCredentialsProvider(credentialsProvider)
+          .setRemote(REMOTE_ORIGIN)
+          .setRefSpecs(FETCH_ALL_AND_UPDATE_REFSPEC)
+          .call();
     } catch (GitAPIException e) {
       throw new RuntimeException(e);
     }
   }
 
   private void pushAndCheckResult(
-      UsernamePasswordCredentialsProvider ghCredentialsProvider, String branchName, Git git)
+      CredentialsProvider ghCredentialsProvider, String branchName, Git git)
       throws GitAPIException {
     var results =
         git.push()
@@ -324,22 +288,31 @@ public class PojaConfUploadedService implements Consumer<PojaConfUploaded> {
   }
 
   private void pushChangesFromCodeToAppRepository(
-      UsernamePasswordCredentialsProvider ghCredentialsProvider,
+      CredentialsProvider ghCredentialsProvider,
       PojaVersion pojaVersion,
       Application app,
       Environment env,
       File toUnzip,
       Path cloneDirPath) {
-    prepareRepository(ghCredentialsProvider, app, env);
     String branchName = formatShortBranchName(env);
     try (Git git =
         Git.cloneRepository()
             .setCredentialsProvider(ghCredentialsProvider)
             .setDirectory(cloneDirPath.toFile())
             .setURI(app.getGithubRepositoryUrl())
-            .setBranch(branchName)
             .setDepth(1)
+            .setNoCheckout(true)
             .call()) {
+      var fetchResult = fetchAllRefs(git, ghCredentialsProvider);
+      var doesBranchExist =
+          fetchResult.getAdvertisedRefs().stream()
+              .anyMatch(ref -> ref.getName().equals(getFormattedBranchName(branchName)));
+      if (!doesBranchExist) {
+        log.info("branch does not exist");
+        checkoutAndCreateBranch(git, branchName);
+      } else {
+        git.checkout().setUpstreamMode(SET_UPSTREAM).setName(branchName).call();
+      }
       log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
       unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
