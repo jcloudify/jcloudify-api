@@ -10,7 +10,7 @@ plugins {
 
     id 'jacoco'
 
-    
+
 }
 
 jacoco {
@@ -221,6 +221,11 @@ implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
 implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
 implementation 'software.amazon.awssdk:ssm:2.26.25'
 implementation 'com.stripe:stripe-java:26.3.0'
+implementation 'org.apache.poi:poi:5.3.0'
+implementation 'org.apache.poi:poi-ooxml:5.3.0'
+implementation 'org.jxls:jxls-jexcel:1.0.9'
+implementation 'org.dhatim:fastexcel-reader:0.18.4'
+implementation 'org.dhatim:fastexcel:0.18.4'
 implementation 'software.amazon.awssdk:cloudwatchlogs:2.27.16'
 
 
