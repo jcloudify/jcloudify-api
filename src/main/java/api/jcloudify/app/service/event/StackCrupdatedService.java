@@ -26,7 +26,6 @@ import api.jcloudify.app.mail.Email;
 import api.jcloudify.app.mail.Mailer;
 import api.jcloudify.app.model.User;
 import api.jcloudify.app.model.exception.InternalServerErrorException;
-import api.jcloudify.app.model.exception.NotImplementedException;
 import api.jcloudify.app.repository.model.Stack;
 import api.jcloudify.app.service.StackService;
 import api.jcloudify.app.service.UserService;
@@ -43,8 +42,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class StackCrupdatedService implements Consumer<StackCrupdated> {
@@ -163,7 +164,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
                     .build()));
       }
       case COMPUTE_PERMISSION, STORAGE_BUCKET, EVENT, STORAGE_DATABASE_SQLITE -> {
-        throw new NotImplementedException("Not implemented");
+        log.error("Get resources for stack type={} not implemented", stack.getType());
       }
     }
   }

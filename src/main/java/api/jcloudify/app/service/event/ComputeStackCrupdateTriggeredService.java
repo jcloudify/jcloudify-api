@@ -26,12 +26,12 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class ComputeStackCrupdateTriggeredService
-        implements Consumer<ComputeStackCrupdateTriggered> {
+    implements Consumer<ComputeStackCrupdateTriggered> {
   private final StackService stackService;
   private final AppEnvironmentDeploymentService appEnvironmentDeploymentService;
   private final StackDao stackDao;
   private final EventProducer<ComputeStackCrupdateTriggered>
-          computeStackCrupdateTriggeredEventProducer;
+      computeStackCrupdateTriggeredEventProducer;
 
   @Override
   public void accept(ComputeStackCrupdateTriggered computeStackCrupdateTriggered) {
@@ -58,22 +58,22 @@ public class ComputeStackCrupdateTriggeredService
             saved = stackService.save(toUpdate);
           } else {
             saved =
-                    stackService.save(
-                            Stack.builder()
-                                    .name(stackName)
-                                    .cfStackId(cfStackId.get())
-                                    .applicationId(applicationId)
-                                    .environmentId(environmentId)
-                                    .type(COMPUTE)
-                                    .build());
+                stackService.save(
+                    Stack.builder()
+                        .name(stackName)
+                        .cfStackId(cfStackId.get())
+                        .applicationId(applicationId)
+                        .environmentId(environmentId)
+                        .type(COMPUTE)
+                        .build());
           }
           String stackEventsBucketKey =
-                  getStackEventsBucketKey(
-                          userId,
-                          saved.getApplicationId(),
-                          saved.getEnvironmentId(),
-                          saved.getId(),
-                          STACK_EVENT_FILENAME);
+              getStackEventsBucketKey(
+                  userId,
+                  saved.getApplicationId(),
+                  saved.getEnvironmentId(),
+                  saved.getId(),
+                  STACK_EVENT_FILENAME);
           stackService.crupdateStackEvents(stackName, stackEventsBucketKey);
         }
       } catch (Exception e) {
@@ -82,8 +82,8 @@ public class ComputeStackCrupdateTriggeredService
       }
     } else if (COMPUTE_STACK_DEPLOYED.equals(latestStatus) && stack.isPresent()) {
       log.info(
-              "Compute stack named={} successfully deployed, retrieving resources and outputs",
-              stackName);
+          "Compute stack named={} successfully deployed, retrieving resources and outputs",
+          stackName);
     }
   }
 
@@ -91,7 +91,7 @@ public class ComputeStackCrupdateTriggeredService
     Optional<DeploymentState> latestState;
     try {
       AppEnvironmentDeployment appEnvironmentDeployment =
-              appEnvironmentDeploymentService.getById(appEnvDeploymentId);
+          appEnvironmentDeploymentService.getById(appEnvDeploymentId);
       latestState = appEnvironmentDeployment.getLatestState();
     } catch (NotFoundException e) {
       latestState = Optional.empty();
