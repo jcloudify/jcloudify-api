@@ -26,12 +26,12 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class ComputeStackCrupdateTriggeredService
-    implements Consumer<ComputeStackCrupdateTriggered> {
+        implements Consumer<ComputeStackCrupdateTriggered> {
   private final StackService stackService;
   private final AppEnvironmentDeploymentService appEnvironmentDeploymentService;
   private final StackDao stackDao;
   private final EventProducer<ComputeStackCrupdateTriggered>
-      computeStackCrupdateTriggeredEventProducer;
+          computeStackCrupdateTriggeredEventProducer;
 
   @Override
   public void accept(ComputeStackCrupdateTriggered computeStackCrupdateTriggered) {
@@ -40,7 +40,6 @@ public class ComputeStackCrupdateTriggeredService
     String environmentId = computeStackCrupdateTriggered.getEnvId();
     String stackName = computeStackCrupdateTriggered.getStackName();
     String appEnvDeploymentId = computeStackCrupdateTriggered.getAppEnvDeploymentId();
-    Optional<String> cfStackId = stackService.getCloudformationStackId(stackName);
     Optional<DeploymentState> latestState = getDeploymentLatestState(appEnvDeploymentId);
     Optional<Stack> stack = stackDao.findByCriteria(applicationId, environmentId, COMPUTE);
     if (latestState.isEmpty()) {
@@ -49,37 +48,42 @@ public class ComputeStackCrupdateTriggeredService
     }
     DeploymentStateEnum latestStatus = latestState.get().getProgressionStatus();
     if (COMPUTE_STACK_DEPLOYMENT_IN_PROGRESS.equals(latestStatus)) {
-      if (cfStackId.isPresent()) {
-        Stack saved;
-        if (stack.isPresent()) {
-          Stack toUpdate = stack.get();
-          toUpdate.toBuilder().cfStackId(cfStackId.get()).name(stackName).build();
-          saved = stackService.save(toUpdate);
-        } else {
-          saved =
-              stackService.save(
-                  Stack.builder()
-                      .name(stackName)
-                      .cfStackId(cfStackId.get())
-                      .applicationId(applicationId)
-                      .environmentId(environmentId)
-                      .type(COMPUTE)
-                      .build());
+      try {
+        Optional<String> cfStackId = stackService.getCloudformationStackId(stackName);
+        if (cfStackId.isPresent()) {
+          Stack saved;
+          if (stack.isPresent()) {
+            Stack toUpdate = stack.get();
+            toUpdate.toBuilder().cfStackId(cfStackId.get()).name(stackName).build();
+            saved = stackService.save(toUpdate);
+          } else {
+            saved =
+                    stackService.save(
+                            Stack.builder()
+                                    .name(stackName)
+                                    .cfStackId(cfStackId.get())
+                                    .applicationId(applicationId)
+                                    .environmentId(environmentId)
+                                    .type(COMPUTE)
+                                    .build());
+          }
+          String stackEventsBucketKey =
+                  getStackEventsBucketKey(
+                          userId,
+                          saved.getApplicationId(),
+                          saved.getEnvironmentId(),
+                          saved.getId(),
+                          STACK_EVENT_FILENAME);
+          stackService.crupdateStackEvents(stackName, stackEventsBucketKey);
         }
-        String stackEventsBucketKey =
-            getStackEventsBucketKey(
-                userId,
-                saved.getApplicationId(),
-                saved.getEnvironmentId(),
-                saved.getId(),
-                STACK_EVENT_FILENAME);
-        stackService.crupdateStackEvents(stackName, stackEventsBucketKey);
+      } catch (Exception e) {
+        log.error("Stack named={} does not exist yet.", stackName, e);
+        computeStackCrupdateTriggeredEventProducer.accept(List.of(computeStackCrupdateTriggered));
       }
-      computeStackCrupdateTriggeredEventProducer.accept(List.of(computeStackCrupdateTriggered));
     } else if (COMPUTE_STACK_DEPLOYED.equals(latestStatus) && stack.isPresent()) {
       log.info(
-          "Compute stack named={} successfully deployed, retrieving resources and outputs",
-          stackName);
+              "Compute stack named={} successfully deployed, retrieving resources and outputs",
+              stackName);
     }
   }
 
@@ -87,7 +91,7 @@ public class ComputeStackCrupdateTriggeredService
     Optional<DeploymentState> latestState;
     try {
       AppEnvironmentDeployment appEnvironmentDeployment =
-          appEnvironmentDeploymentService.getById(appEnvDeploymentId);
+              appEnvironmentDeploymentService.getById(appEnvDeploymentId);
       latestState = appEnvironmentDeployment.getLatestState();
     } catch (NotFoundException e) {
       latestState = Optional.empty();
