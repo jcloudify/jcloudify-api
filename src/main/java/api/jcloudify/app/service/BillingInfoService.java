@@ -56,6 +56,7 @@ public class BillingInfoService {
   }
 
   public BillingInfo getUserBillingInfo(String userId, Instant startTime, Instant endTime) {
+    var pricingMethod = userService.getUserById(userId).getPricingMethod();
     List<BillingInfo> userBillingInfos =
         applicationService.findAllByUserId(userId).stream()
             .map(
@@ -76,7 +77,7 @@ public class BillingInfoService {
     return BillingInfo.builder()
         .computedPriceInUsd(totalPrice)
         .computedDurationInMinutes(totalDuration)
-        .pricingMethod(userBillingInfos.getFirst().getPricingMethod())
+        .pricingMethod(pricingMethod)
         .build();
   }
 
