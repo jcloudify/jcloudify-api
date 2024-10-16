@@ -53,11 +53,21 @@ fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000
     var env = environmentService.getById(rebirEvent.getEnvId());
     Instant startTime = rebirEvent.getPricingCalculationRequestStartTime();
     Instant endTime = rebirEvent.getPricingCalculationRequestEndTime();
-    var logGroups = getLogGroupNamesBetweenDatesRangeInclusive(app, env, startTime, endTime);
+    var logGroups = getLogGroupNamesBetweenDatesRangeInclusive(app, env);
+    if (logGroups.isEmpty()) {
+      log.info("empty log groups");
+      // TODO: maybe save 0$ billed
+      return;
+    }
     var queryId =
         cloudwatchComponent.initiateLogInsightsQuery(
             LOG_INSIGHTS_QUERY_TOTAL_MEMORY_DURATION, startTime, endTime, logGroups);
     log.info("query {} initiated", queryId);
+    saveBillingInfo(app, queryId, env);
+    eventProducer.accept(List.of(new GetBillingInfoQueryResultRequested(queryId)));
+  }
+
+  private void saveBillingInfo(Application app, String queryId, Environment env) {
     var user = userService.getUserById(app.getUserId());
     var billingInfoToSave =
         BillingInfo.builder()
@@ -70,7 +80,6 @@ fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000
             .build();
     var savedBillingInfo = billingInfoService.crupdateBillingInfo(billingInfoToSave);
     log.info("Successfully initiated calculation for billing info {}", savedBillingInfo.getId());
-    eventProducer.accept(List.of(new GetBillingInfoQueryResultRequested(queryId)));
   }
 
   private static String formatEnvTypeToLogGroupPattern(Environment env) {
@@ -88,7 +97,7 @@ fields @timestamp, @billedDuration/60000 as durationInMinutes, @memorySize/(1000
   }
 
   private List<String> getLogGroupNamesBetweenDatesRangeInclusive(
-      Application app, Environment env, Instant startTime, Instant endTime) {
+      Application app, Environment env) {
     String frontalFunctionLogGroupNamePattern = formatFrontalFunctionLogGroupNamePattern(app, env);
     List<LogGroup> rawFrontalLogGroups = getAllLogGroups(frontalFunctionLogGroupNamePattern);
     String workerFunctionLogGroupNamePattern = formatWorkerFunctionLogGroupNamePattern(app, env);
