@@ -28,6 +28,10 @@ public class UserService {
     return repository.saveAll(toSave);
   }
 
+  public List<User> getAllUsers() {
+    return repository.findAll();
+  }
+
   public User getUserById(String userId) {
     return findById(userId)
         .orElseThrow(

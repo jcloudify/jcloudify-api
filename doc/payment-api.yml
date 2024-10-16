@@ -1,5 +1,59 @@
 openapi: 3.1.0
 operations:
+  updatePayment:
+    parameters:
+      - $ref: "./api.yml#/components/parameters/userId"
+      - $ref: "./api.yml#/components/parameters/paymentId"
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payment
+      operationId: payInvoice
+      summary: Pay invoice manually in case of failure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PayInvoice"
+      responses:
+        '200':
+          description: Payment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+  payments:
+    parameters:
+      - $ref: "./api.yml#/components/parameters/userId"
+    get:
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - $ref: "./api.yml#/components/parameters/page"
+        - $ref: "./api.yml#/components/parameters/page_size"
+      tags:
+        - Payment
+      operationId: getPayments
+      summary: Get customer's payment list
+      responses:
+        '200':
+          description: List of customer's payments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedPayments'
+        '400':
+          $ref: './api.yml#/components/responses/400'
+        '403':
+          $ref: './api.yml#/components/responses/403'
+        '404':
+          $ref: './api.yml#/components/responses/404'
+        '429':
+          $ref: './api.yml#/components/responses/429'
+        '500':
+          $ref: './api.yml#/components/responses/500'
   methods:
     parameters:
       - $ref: "./api.yml#/components/parameters/userId"
@@ -125,6 +179,10 @@ components:
           type: string
         brand:
           type: string
+        exp_month:
+          type: integer
+        exp_year:
+          type: integer
         last4:
           type: string
     PaymentMethodsAction:
@@ -153,6 +211,40 @@ components:
           type: string
         default_payment_method:
           $ref: "#/components/schemas/PaymentMethod"
+    PayInvoice:
+      type: object
+      properties:
+        invoiceId:
+          type: string
+        payment_method_id:
+          type: string
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: integer
+        invoice_id:
+          type: string
+        invoice_url:
+          type: string
+        invoice_status:
+          type: string
+          enum:
+            - DRAFT
+            - OPEN
+            - PAID
+            - PROCESSING
+            - REQUIRES_ACTION
+            - REQUIRES_CAPTURE
+            - REQUIRES_CONFIRMATION
+            - REQUIRES_PAYMENT_METHOD
+        period:
+          type: string
+        request_instant:
+          type: string
+          format: date-time
     PaymentMethodResponse:
       type: object
       properties:
@@ -160,3 +252,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PaymentMethod"
+    PagedPayments:
+      type: object
+      allOf:
+        - $ref: "./api.yml#/components/schemas/PagedResponse"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Payment"
+

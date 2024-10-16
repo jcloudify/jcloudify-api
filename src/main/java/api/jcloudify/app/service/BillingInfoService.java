@@ -8,6 +8,7 @@ import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.BillingInfoRepository;
 import api.jcloudify.app.repository.model.BillingInfo;
 import api.jcloudify.app.repository.model.Environment;
+import api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +38,7 @@ public class BillingInfoService {
                 .envId(envId)
                 .pricingMethod(user.getPricingMethod())
                 .computedPriceInUsd(ZERO)
-                .computedDurationInMinutes(0)
+                .computedDurationInMinutes(0.0)
                 .build());
   }
 
@@ -54,6 +56,7 @@ public class BillingInfoService {
   }
 
   public BillingInfo getUserBillingInfo(String userId, Instant startTime, Instant endTime) {
+    var pricingMethod = userService.getUserById(userId).getPricingMethod();
     List<BillingInfo> userBillingInfos =
         applicationService.findAllByUserId(userId).stream()
             .map(
@@ -62,10 +65,10 @@ public class BillingInfoService {
                         userId, application.getId(), startTime, endTime))
             .flatMap(List::stream)
             .toList();
-    int totalDuration =
+    double totalDuration =
         userBillingInfos.stream()
             .map(BillingInfo::getComputedDurationInMinutes)
-            .reduce(0, Integer::sum);
+            .reduce(0.0, Double::sum);
     BigDecimal totalPrice =
         userBillingInfos.stream()
             .map(BillingInfo::getComputedPriceInUsd)
@@ -74,12 +77,23 @@ public class BillingInfoService {
     return BillingInfo.builder()
         .computedPriceInUsd(totalPrice)
         .computedDurationInMinutes(totalDuration)
-        .pricingMethod(userBillingInfos.getFirst().getPricingMethod())
+        .pricingMethod(pricingMethod)
         .build();
   }
 
   public BillingInfo crupdateBillingInfo(BillingInfo toSave) {
     return repository.save(toSave);
+  }
+
+  @Transactional
+  public void updateBillingInfoAfterCalculation(
+      BillingInfoComputeStatus status,
+      Instant computeDatetime,
+      Double computedDurationInMinutes,
+      BigDecimal computedPriceInUsd,
+      String id) {
+    repository.updateBillingInfoAttributes(
+        status, computeDatetime, computedDurationInMinutes, computedPriceInUsd, id);
   }
 
   public BillingInfo getByQueryId(String queryId) {

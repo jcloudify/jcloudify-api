@@ -9,6 +9,8 @@ public class PaymentMapper {
     com.stripe.model.PaymentMethod.Card card = domain.getCard();
     return new PaymentMethod()
         .id(domain.getId())
+        .expMonth(Math.toIntExact(card.getExpMonth()))
+        .expYear(Math.toIntExact(card.getExpYear()))
         .type(domain.getType())
         .brand(card.getBrand())
         .last4(card.getLast4());

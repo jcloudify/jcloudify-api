@@ -43,21 +43,28 @@ public class GetBillingInfoQueryResultRequestedService
     }
     if (COMPLETE.equals(status)) {
       log.info("query with ID {} completed successfully", event.getQueryId());
-      List<List<ResultField>> results = getQueryResultsResponse.results();
-      List<ResultField> first = results.getFirst();
-      assert first.size() == 2;
-      var billedMemoryDuration = first.getFirst();
-      var computedBilledDuration = first.get(1);
-      assert "billedMemoryDuration".equals(billedMemoryDuration.field());
-      assert "computedBilledDuration".equals(computedBilledDuration.field());
-      var computedPrice =
-          pricingCalculator.computePrice(
-              pricingMethod, new BigDecimal(billedMemoryDuration.value()));
-      billingInfo.setComputeDatetime(now());
-      billingInfo.setComputedPriceInUsd(computedPrice);
-      billingInfo.setComputedDurationInMinutes(Integer.valueOf(computedBilledDuration.value()));
-      billingInfo.setStatus(FINISHED);
-      billingInfoService.crupdateBillingInfo(billingInfo);
+      if (getQueryResultsResponse.hasResults()) {
+        List<List<ResultField>> results = getQueryResultsResponse.results();
+        if (!results.isEmpty()) {
+          List<ResultField> first = results.getFirst();
+          assert first.size() == 2;
+          var billedMemoryDuration = first.getFirst();
+          var computedBilledDuration = first.get(1);
+          assert "billedMemoryDuration".equals(billedMemoryDuration.field());
+          assert "computedBilledDuration".equals(computedBilledDuration.field());
+          var computedPrice =
+              pricingCalculator.computePrice(
+                  pricingMethod, new BigDecimal(billedMemoryDuration.value()));
+          var computedDurationInMinutes = Double.valueOf(computedBilledDuration.value());
+          billingInfoService.updateBillingInfoAfterCalculation(
+              FINISHED, now(), computedDurationInMinutes, computedPrice, billingInfo.getId());
+          log.info("Successfully completed calculation for billing info {}", billingInfo.getId());
+        } else {
+          log.info("Query returned empty result");
+        }
+      } else {
+        log.info("query with ID {} has no result", event.getQueryId());
+      }
     } else if (FAILED.equals(status)) {
       log.info("query with ID {} failed, please inspect cloudwatch", event.getQueryId());
       // what do we do on query fail?

@@ -15,12 +15,16 @@ public class PaymentCustomerMapper {
 
   public PaymentCustomer toRest(Customer domain) {
     var invoiceSettings = domain.getInvoiceSettings();
+    PaymentMethod defaultPaymentMethod =
+        invoiceSettings.getDefaultPaymentMethod() != null
+            ? getDefaultPaymentMethod(invoiceSettings.getDefaultPaymentMethod())
+            : null;
     return new PaymentCustomer()
         .id(domain.getId())
         .name(domain.getName())
         .email(domain.getEmail())
         .phone(domain.getPhone())
-        .defaultPaymentMethod(getDefaultPaymentMethod(invoiceSettings.getDefaultPaymentMethod()));
+        .defaultPaymentMethod(defaultPaymentMethod);
   }
 
   private PaymentMethod getDefaultPaymentMethod(String paymentMethodId) {
