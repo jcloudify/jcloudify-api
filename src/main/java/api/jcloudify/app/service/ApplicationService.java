@@ -11,7 +11,6 @@ import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.ApplicationRepository;
 import api.jcloudify.app.repository.jpa.dao.ApplicationDao;
 import api.jcloudify.app.repository.model.Application;
-import api.jcloudify.app.repository.model.Environment;
 import api.jcloudify.app.repository.model.mapper.ApplicationMapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,19 +28,16 @@ public class ApplicationService {
   private final ApplicationDao dao;
   private final ApplicationMapper mapper;
   private final EventProducer<ApplicationCrupdated> applicationCrupdatedEventProducer;
-  private final EnvironmentService environmentService;
 
   public ApplicationService(
       ApplicationRepository repository,
       ApplicationDao dao,
       @Qualifier("DomainApplicationMapper") ApplicationMapper mapper,
-      EventProducer<ApplicationCrupdated> applicationCrupdatedEventProducer,
-      EnvironmentService environmentService) {
+      EventProducer<ApplicationCrupdated> applicationCrupdatedEventProducer) {
     this.repository = repository;
     this.dao = dao;
     this.mapper = mapper;
     this.applicationCrupdatedEventProducer = applicationCrupdatedEventProducer;
-    this.environmentService = environmentService;
   }
 
   @Transactional
@@ -58,22 +54,12 @@ public class ApplicationService {
       if (existsById) {
         var persisted = getById(id);
         app.setPreviousGithubRepositoryName(persisted.getGithubRepositoryName());
-        if (app.isArchived()) {
-          archiveApplication(app.getId());
-        }
       }
       events.add(toApplicationCrupdatedEvent(app));
     }
     var saved = repository.saveAll(entities);
     applicationCrupdatedEventProducer.accept(events);
     return saved;
-  }
-
-  private void archiveApplication(String applicationId) {
-    List<Environment> applicationEnvironments =
-        environmentService.findAllByApplicationId(applicationId);
-    applicationEnvironments.forEach(env -> env.setArchived(true));
-    environmentService.crupdateEnvironments(applicationId, applicationEnvironments);
   }
 
   private ApplicationCrupdated toApplicationCrupdatedEvent(Application entity) {
