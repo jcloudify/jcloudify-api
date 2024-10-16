@@ -50,13 +50,13 @@ public class ApplicationService {
     List<Application> entities = toSave.stream().map(mapper::toDomain).toList();
     for (Application app : entities) {
       String appName = app.getName();
-      String appId = app.getId();
-      boolean repositoryDoesExists = repository.existsById(appId);
-      if (!repositoryDoesExists && repository.existsByName(appName)) {
+      String id = app.getId();
+      boolean existsById = repository.existsById(id);
+      if (!existsById && repository.existsByName(appName)) {
         throw new BadRequestException("Application with name=" + appName + " already exists");
       }
-      if (repositoryDoesExists) {
-        var persisted = getById(app.getId());
+      if (existsById) {
+        var persisted = getById(id);
         app.setPreviousGithubRepositoryName(persisted.getGithubRepositoryName());
         if (app.isArchived()) {
           archiveApplication(app.getId());
@@ -85,7 +85,7 @@ public class ApplicationService {
         .description(entity.getDescription())
         .repoPrivate(entity.isGithubRepositoryPrivate())
         .previousApplicationRepoName(entity.getPreviousGithubRepositoryName())
-        .isArchived(entity.isArchived())
+        .archived(entity.isArchived())
         .build();
   }
 
