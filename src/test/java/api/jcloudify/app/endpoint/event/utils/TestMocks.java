@@ -31,7 +31,7 @@ public class TestMocks {
         .description(null)
         .repoPrivate(true)
         .installationId(GH_APP_INSTALL_4_ID)
-        .isArchived(false)
+        .archived(false)
         .repoUrl("http://github.com/user/repo")
         .build();
   }
@@ -44,7 +44,7 @@ public class TestMocks {
         .description(null)
         .repoPrivate(true)
         .installationId(GH_APP_INSTALL_4_ID)
-        .isArchived(false)
+        .archived(false)
         .repoUrl(null)
         .build();
   }
