@@ -1,6 +1,7 @@
 package api.jcloudify.app.service.event;
 
 import static api.jcloudify.app.repository.model.enums.BillingInfoComputeStatus.FINISHED;
+import static java.math.BigDecimal.ZERO;
 import static java.time.Instant.now;
 import static software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus.COMPLETE;
 import static software.amazon.awssdk.services.cloudwatchlogs.model.QueryStatus.FAILED;
@@ -60,7 +61,9 @@ public class GetBillingInfoQueryResultRequestedService
               FINISHED, now(), computedDurationInMinutes, computedPrice, billingInfo.getId());
           log.info("Successfully completed calculation for billing info {}", billingInfo.getId());
         } else {
-          log.info("Query returned empty result");
+          log.info("Query returned empty result, saving zero billing");
+          billingInfoService.updateBillingInfoAfterCalculation(
+              FINISHED, now(), 0.0, ZERO, billingInfo.getId());
         }
       } else {
         log.info("query with ID {} has no result", event.getQueryId());
