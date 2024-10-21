@@ -11,6 +11,7 @@ import api.jcloudify.app.endpoint.rest.model.Integration1;
 import api.jcloudify.app.endpoint.rest.model.MailingConf1;
 import api.jcloudify.app.endpoint.rest.model.TestingConf1;
 import api.jcloudify.app.endpoint.rest.model.WithQueuesNbEnum;
+import api.jcloudify.app.model.PojaVersion;
 import api.jcloudify.app.model.pojaConf.NetworkingConfig;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,11 +32,17 @@ public record PojaConf1(
     @JsonProperty("emailing") MailingConf mailing,
     @JsonProperty("testing") TestingConf testing,
     @JsonProperty("database") Database database,
-    @JsonProperty("networking") NetworkingConfig networking) {
+    @JsonProperty("networking") NetworkingConfig networking)
+    implements PojaConf {
 
   @JsonGetter
   public String version() {
-    return POJA_1.toHumanReadableValue();
+    return getVersion().toHumanReadableValue();
+  }
+
+  @Override
+  public PojaVersion getVersion() {
+    return POJA_1;
   }
 
   public record General(
