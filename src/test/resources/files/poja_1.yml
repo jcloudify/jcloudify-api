@@ -39,7 +39,7 @@ general:
   poja_python_repository_name: null
   poja_python_repository_domain: null
   poja_domain_owner: null
-  cli_version: "17.1.2"
+  cli_version: "18.1.2"
 integration:
   with_sentry: false
   with_sonar: false
