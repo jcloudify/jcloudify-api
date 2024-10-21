@@ -61,4 +61,20 @@ public class AppEnvConfigurerService {
     var file = bucketComponent.download(bucketKey);
     return mapper.read(file);
   }
+
+  public api.jcloudify.app.model.pojaConf.conf1.PojaConf readConfigAsDomain(
+      String userId, String appId, String environmentId, String filename) {
+    String bucketKey = getBucketKey(userId, appId, environmentId, POJA_CONF, filename);
+    if (!bucketComponent.doesExist(bucketKey)) {
+      throw new NotFoundException(
+          "config not found in S3 for user.Id = "
+              + userId
+              + " app.Id = "
+              + appId
+              + " environment.Id = "
+              + environmentId);
+    }
+    var file = bucketComponent.download(bucketKey);
+    return mapper.readAsDomain(file);
+  }
 }
