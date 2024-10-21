@@ -164,11 +164,11 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
             .map(stack -> this.checkStackDeploymentState(userId, appId, envId, stack))
             .toList();
     if (stackDeploymentStates.stream()
-        .allMatch(IndependentStacksDeploymentStateEnum.PENDING::equals))
-      return IndependentStacksDeploymentStateEnum.PENDING;
-    if (stackDeploymentStates.stream()
         .allMatch(IndependentStacksDeploymentStateEnum.DEPLOYED::equals))
       return IndependentStacksDeploymentStateEnum.DEPLOYED;
+    if (stackDeploymentStates.stream()
+        .noneMatch(IndependentStacksDeploymentStateEnum.NOT_DEPLOYED::equals))
+      return IndependentStacksDeploymentStateEnum.PENDING;
     return IndependentStacksDeploymentStateEnum.NOT_DEPLOYED;
   }
 
