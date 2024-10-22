@@ -60,6 +60,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
 
   @Override
   public void accept(StackCrupdated stackCrupdated) {
+    log.info("StackCrupdated: {}", stackCrupdated);
     Stack stack = stackCrupdated.getStack();
     String userId = stackCrupdated.getUserId();
     String stackEventsBucketKey =
@@ -71,11 +72,13 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
             STACK_EVENT_FILENAME);
     StackCrupdateStatus stackCrupdateStatus =
         crupdateStackEvent(stack.getName(), stackEventsBucketKey);
+    log.info("Current status: {}", stackCrupdateStatus);
     switch (stackCrupdateStatus) {
       case CRUPDATE_IN_PROGRESS ->
           eventProducer.accept(
               List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
       case CRUPDATE_SUCCESS -> {
+        log.info("CRUPDATE_SUCCESS for {}", stackCrupdated);
         String stackOutputsBucketKey =
             getStackOutputsBucketKey(
                 userId,
@@ -119,9 +122,12 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
     List<StackEvent> stackEvents = stackService.crupdateStackEvents(stackName, bucketKey);
     StackEvent latestEvent = stackEvents.getFirst();
     StackResourceStatusType status = latestEvent.getResourceStatus();
+    log.info("Latest status: {}", status);
+    log.info("Logical resource id: {}", latestEvent.getLogicalResourceId());
     if (status != null
         && status.toString().contains("COMPLETE")
         && Objects.equals(latestEvent.getLogicalResourceId(), stackName)) {
+      log.info("Success or Fails :{}", stackEvents);
       return (status.equals(CREATE_COMPLETE) || status.equals(UPDATE_COMPLETE))
           ? CRUPDATE_SUCCESS
           : CRUPDATE_FAILED;
