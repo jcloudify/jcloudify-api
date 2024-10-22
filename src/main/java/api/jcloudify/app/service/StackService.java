@@ -35,11 +35,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
+@Slf4j
 public class StackService {
   public static final String STACK_EVENT_FILENAME = "log.json";
   public static final String STACK_OUTPUT_FILENAME = "output.json";
@@ -352,6 +354,7 @@ public class StackService {
   public List<StackEvent> crupdateStackEvents(String stackName, String bucketKey) {
     List<StackEvent> stackEvents =
         cloudformationComponent.getStackEvents(stackName).stream().map(mapper::toRest).toList();
+    log.info("latest event {}", stackEvents.getFirst());
     try {
       File stackEventJsonFile;
       if (bucketComponent.doesExist(bucketKey)) {
