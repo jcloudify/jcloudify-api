@@ -361,15 +361,18 @@ public class StackService {
       if (bucketComponent.doesExist(bucketKey)) {
         stackEventJsonFile = bucketComponent.download(bucketKey);
         List<StackEvent> actual = om.readValue(stackEventJsonFile, new TypeReference<>() {});
-        stackEvents = mergeAndSortStackEventList(actual, stackEvents);
+        List<StackEvent> merged = mergeAndSortStackEventList(actual, stackEvents);
+        om.writeValue(stackEventJsonFile, merged);
+        bucketComponent.upload(stackEventJsonFile, bucketKey);
+        return merged;
       } else {
         stackEventJsonFile = createTempFile("log", ".json");
+        om.writeValue(stackEventJsonFile, stackEvents);
+        bucketComponent.upload(stackEventJsonFile, bucketKey);
+        return stackEvents;
       }
-      om.writeValue(stackEventJsonFile, stackEvents);
-      bucketComponent.upload(stackEventJsonFile, bucketKey);
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
     }
-    return stackEvents;
   }
 }
