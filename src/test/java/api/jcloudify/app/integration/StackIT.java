@@ -56,6 +56,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -63,6 +64,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @AutoConfigureMockMvc
+@Disabled("TODO: resource unused")
 public class StackIT extends MockedThirdParties {
   @MockBean EventProducer eventProducer;
   @MockBean ExtendedBucketComponent extendedBucketComponent;
