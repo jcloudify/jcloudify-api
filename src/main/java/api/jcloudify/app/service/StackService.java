@@ -196,6 +196,7 @@ public class StackService {
         eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(saved).build()));
         return mapper.toRest(saved, application, environment);
       }
+      log.info("cfStackId was null {}", stack);
       return mapper.toRest(toUpdate, application, environment);
     } else {
       String stackName =
