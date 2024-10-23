@@ -68,7 +68,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
       case NOT_READY -> {
         List<StackDeployment> toDeploy = retrieveStacksToDeploy(envId);
         log.info("Cloudformation stacks to deploy: {}", toDeploy);
-        stackService.processDeployment(toDeploy, userId, appId, envId);
+        stackService.processDeployment(toDeploy, userId, appId, envId, appEnvDeployRequested);
         appEnvDeployRequestedEventProducer.accept(
             List.of(
                 appEnvDeployRequested.toBuilder().currentIndependentStacksState(PENDING).build()));
@@ -80,11 +80,11 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
         switch (independentStacksDeploymentState) {
           case PENDING -> {
             log.info("Waiting for independent stacks to be deployed");
-            appEnvDeployRequestedEventProducer.accept(
-                List.of(
-                    appEnvDeployRequested.toBuilder()
-                        .currentIndependentStacksState(PENDING)
-                        .build()));
+            /*appEnvDeployRequestedEventProducer.accept(
+            List.of(
+                appEnvDeployRequested.toBuilder()
+                    .currentIndependentStacksState(PENDING)
+                    .build()));*/
           }
           case DEPLOYED -> {
             log.info("Compute stack ready to be deployed");

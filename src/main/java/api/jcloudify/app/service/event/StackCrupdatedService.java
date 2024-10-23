@@ -5,6 +5,7 @@ import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.C
 import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_SUCCESS;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_COMPLETE;
+import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE;
 import static api.jcloudify.app.service.StackService.STACK_EVENT_FILENAME;
 import static api.jcloudify.app.service.StackService.STACK_OUTPUT_FILENAME;
 import static api.jcloudify.app.service.StackService.getStackEventsBucketKey;
@@ -86,6 +87,14 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
                 stack.getEnvironmentId(),
                 stack.getId(),
                 STACK_OUTPUT_FILENAME);
+        if (!COMPUTE.equals(stack.getType())) {
+          // TODO: could be better if we create a new service to verify if allStacks except compute
+          // were deployed, then send ComputeDeployRequested
+          eventProducer.accept(List.of(stackCrupdated.getParentAppEnvDeployRequested()));
+          crupdateOutputs(stack.getName(), stackOutputsBucketKey);
+          triggerStackResourcesRetrieving(userId, stack);
+          return;
+        }
         crupdateOutputs(stack.getName(), stackOutputsBucketKey);
         triggerStackResourcesRetrieving(userId, stack);
       }
