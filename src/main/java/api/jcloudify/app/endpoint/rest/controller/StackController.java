@@ -11,6 +11,7 @@ import api.jcloudify.app.endpoint.rest.model.PagedStacksResponse;
 import api.jcloudify.app.endpoint.rest.model.Stack;
 import api.jcloudify.app.model.BoundedPageSize;
 import api.jcloudify.app.model.PageFromOne;
+import api.jcloudify.app.model.exception.NotImplementedException;
 import api.jcloudify.app.service.StackService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -100,10 +101,7 @@ public class StackController {
       @PathVariable String applicationId,
       @PathVariable String environmentId,
       @RequestBody InitiateStackDeploymentRequestBody deploymentsToInitiate) {
-    var data =
-        service.processDeployment(
-            requireNonNull(deploymentsToInitiate.getData()), userId, applicationId, environmentId);
-    return new InitiateStackDeploymentResponse().data(data);
+    throw new NotImplementedException("Not implemented");
   }
 
   @PostMapping(
