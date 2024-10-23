@@ -25,6 +25,6 @@ public class StackCrupdated extends PojaEvent {
 
   @Override
   public Duration maxConsumerBackoffBetweenRetries() {
-    return Duration.ofSeconds(5);
+    return Duration.ofSeconds(20);
   }
 }

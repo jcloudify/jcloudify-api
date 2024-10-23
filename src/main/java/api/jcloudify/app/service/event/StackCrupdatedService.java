@@ -75,9 +75,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
         crupdateStackEvent(stack.getName(), stackEventsBucketKey);
     log.info("Current status: {}", stackCrupdateStatus);
     switch (stackCrupdateStatus) {
-      case CRUPDATE_IN_PROGRESS ->
-          eventProducer.accept(
-              List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
+      case CRUPDATE_IN_PROGRESS -> throw new RuntimeException("fail to trigger event backoff.");
       case CRUPDATE_SUCCESS -> {
         log.info("CRUPDATE_SUCCESS for {}", stackCrupdated);
         String stackOutputsBucketKey =
