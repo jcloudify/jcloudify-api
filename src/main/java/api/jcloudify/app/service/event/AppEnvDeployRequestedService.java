@@ -80,6 +80,7 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
         switch (independentStacksDeploymentState) {
           case PENDING -> {
             log.info("Waiting for independent stacks to be deployed");
+            throw new RuntimeException("fail to trigger event backoff.");
             /*appEnvDeployRequestedEventProducer.accept(
             List.of(
                 appEnvDeployRequested.toBuilder()
