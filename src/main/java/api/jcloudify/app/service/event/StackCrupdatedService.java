@@ -1,5 +1,6 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.PENDING;
 import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_FAILED;
 import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_SUCCESS;
@@ -17,6 +18,7 @@ import api.jcloudify.app.endpoint.event.EventProducer;
 import api.jcloudify.app.endpoint.event.model.ComputeStackCrupdateCompleted;
 import api.jcloudify.app.endpoint.event.model.PojaEvent;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
+import api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum;
 import api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.StackEvent;
@@ -88,7 +90,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
         if (!COMPUTE.equals(stack.getType())) {
           // TODO: could be better if we create a new service to verify if allStacks except compute
           // were deployed, then send ComputeDeployRequested
-          eventProducer.accept(List.of(stackCrupdated.getParentAppEnvDeployRequested()));
+          eventProducer.accept(List.of(stackCrupdated.getParentAppEnvDeployRequested().toBuilder().currentIndependentStacksState(PENDING).build()));
           crupdateOutputs(stack.getName(), stackOutputsBucketKey);
           triggerStackResourcesRetrieving(userId, stack);
           return;
