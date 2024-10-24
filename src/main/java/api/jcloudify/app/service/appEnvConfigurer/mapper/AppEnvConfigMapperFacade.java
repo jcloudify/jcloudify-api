@@ -32,16 +32,33 @@ public final class AppEnvConfigMapperFacade extends AbstractAppEnvConfigMapper {
     this.conf1Mapper = conf1Mapper;
   }
 
-  @Override
-  public OneOfPojaConf read(File file) {
-    var pojaVersion = readToPojaConf(file);
+  private AbstractAppEnvConfigMapper getMapper(PojaVersion pojaVersion) {
     if (POJA_1.equals(pojaVersion)) {
-      return conf1Mapper.read(file);
+      return conf1Mapper;
     }
     throw new NotImplementedException("not implemented yet");
   }
 
-  private PojaVersion readToPojaConf(File file) {
+  private AbstractAppEnvConfigMapper getMapper(String humanReadableVersion) {
+    if (POJA_1.toHumanReadableValue().equals(humanReadableVersion)) {
+      return conf1Mapper;
+    }
+    throw new NotImplementedException("not implemented yet");
+  }
+
+  @Override
+  public OneOfPojaConf read(File file) {
+    var pojaVersion = getPojaVersionFrom(file);
+    return getMapper(pojaVersion).read(file);
+  }
+
+  @Override
+  public api.jcloudify.app.model.pojaConf.conf1.PojaConf readAsDomain(File file) {
+    var pojaVersion = getPojaVersionFrom(file);
+    return getMapper(pojaVersion).readAsDomain(file);
+  }
+
+  private PojaVersion getPojaVersionFrom(File file) {
     try {
       JsonNode jsonNode = yamlObjectMapper.readTree(file);
       String cliVersion =
@@ -60,17 +77,11 @@ public final class AppEnvConfigMapperFacade extends AbstractAppEnvConfigMapper {
   @Override
   public File write(OneOfPojaConf oneOfPojaConf) {
     var casted = (PojaConf) oneOfPojaConf.getActualInstance();
-    if (POJA_1.toHumanReadableValue().equals(casted.getVersion())) {
-      return conf1Mapper.write(oneOfPojaConf);
-    }
-    throw new NotImplementedException("not implemented yet");
+    return getMapper(casted.getVersion()).write(oneOfPojaConf);
   }
 
   @Override
   protected File writeToTempFile(PojaConf pojaConf) {
-    if (POJA_1.toHumanReadableValue().equals(pojaConf.getVersion())) {
-      return conf1Mapper.writeToTempFile(pojaConf);
-    }
-    throw new NotImplementedException("not implemented yet");
+    return getMapper(pojaConf.getVersion()).writeToTempFile(pojaConf);
   }
 }

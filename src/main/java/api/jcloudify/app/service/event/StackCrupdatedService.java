@@ -1,10 +1,12 @@
 package api.jcloudify.app.service.event;
 
+import static api.jcloudify.app.endpoint.event.model.enums.IndependentStacksStateEnum.PENDING;
 import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_FAILED;
 import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_IN_PROGRESS;
 import static api.jcloudify.app.endpoint.event.model.enums.StackCrupdateStatus.CRUPDATE_SUCCESS;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.CREATE_COMPLETE;
 import static api.jcloudify.app.endpoint.rest.model.StackResourceStatusType.UPDATE_COMPLETE;
+import static api.jcloudify.app.endpoint.rest.model.StackType.COMPUTE;
 import static api.jcloudify.app.service.StackService.STACK_EVENT_FILENAME;
 import static api.jcloudify.app.service.StackService.STACK_OUTPUT_FILENAME;
 import static api.jcloudify.app.service.StackService.getStackEventsBucketKey;
@@ -74,9 +76,7 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
         crupdateStackEvent(stack.getName(), stackEventsBucketKey);
     log.info("Current status: {}", stackCrupdateStatus);
     switch (stackCrupdateStatus) {
-      case CRUPDATE_IN_PROGRESS ->
-          eventProducer.accept(
-              List.of(StackCrupdated.builder().userId(userId).stack(stack).build()));
+      case CRUPDATE_IN_PROGRESS -> throw new RuntimeException("fail to trigger event backoff.");
       case CRUPDATE_SUCCESS -> {
         log.info("CRUPDATE_SUCCESS for {}", stackCrupdated);
         String stackOutputsBucketKey =
@@ -86,6 +86,18 @@ public class StackCrupdatedService implements Consumer<StackCrupdated> {
                 stack.getEnvironmentId(),
                 stack.getId(),
                 STACK_OUTPUT_FILENAME);
+        if (!COMPUTE.equals(stack.getType())) {
+          // TODO: could be better if we create a new service to verify if allStacks except compute
+          // were deployed, then send ComputeDeployRequested
+          eventProducer.accept(
+              List.of(
+                  stackCrupdated.getParentAppEnvDeployRequested().toBuilder()
+                      .currentIndependentStacksState(PENDING)
+                      .build()));
+          crupdateOutputs(stack.getName(), stackOutputsBucketKey);
+          triggerStackResourcesRetrieving(userId, stack);
+          return;
+        }
         crupdateOutputs(stack.getName(), stackOutputsBucketKey);
         triggerStackResourcesRetrieving(userId, stack);
       }

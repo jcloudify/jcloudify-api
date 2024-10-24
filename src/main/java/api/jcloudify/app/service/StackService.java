@@ -7,6 +7,7 @@ import static java.lang.Math.min;
 import api.jcloudify.app.aws.cloudformation.CloudformationComponent;
 import api.jcloudify.app.aws.cloudformation.CloudformationTemplateConf;
 import api.jcloudify.app.endpoint.event.EventProducer;
+import api.jcloudify.app.endpoint.event.model.AppEnvDeployRequested;
 import api.jcloudify.app.endpoint.event.model.StackCrupdated;
 import api.jcloudify.app.endpoint.rest.mapper.StackMapper;
 import api.jcloudify.app.endpoint.rest.model.StackDeployment;
@@ -109,9 +110,13 @@ public class StackService {
       List<StackDeployment> deployments,
       String userId,
       String applicationId,
-      String environmentId) {
+      String environmentId,
+      AppEnvDeployRequested appEnvDeployRequested) {
     return deployments.stream()
-        .map(stack -> this.deployStack(stack, userId, applicationId, environmentId))
+        .map(
+            stack ->
+                this.deployStack(
+                    stack, userId, applicationId, environmentId, appEnvDeployRequested))
         .toList();
   }
 
@@ -159,7 +164,11 @@ public class StackService {
   }
 
   private api.jcloudify.app.endpoint.rest.model.Stack deployStack(
-      StackDeployment toDeploy, String userId, String applicationId, String environmentId) {
+      StackDeployment toDeploy,
+      String userId,
+      String applicationId,
+      String environmentId,
+      AppEnvDeployRequested appEnvDeployRequested) {
     Application application = applicationService.getById(applicationId);
     Environment environment = environmentService.getById(environmentId);
     String environmentType = environment.getFormattedEnvironmentType();
@@ -193,9 +202,10 @@ public class StackService {
                     .type(toUpdate.getType())
                     .creationDatetime(toUpdate.getCreationDatetime())
                     .build());
-        eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(saved).build()));
+        fireEvent(userId, saved, appEnvDeployRequested);
         return mapper.toRest(saved, application, environment);
       }
+      log.info("cfStackId was null {}", stack);
       return mapper.toRest(toUpdate, application, environment);
     } else {
       String stackName =
@@ -223,9 +233,19 @@ public class StackService {
                   .environmentId(environmentId)
                   .type(toDeploy.getStackType())
                   .build());
-      eventProducer.accept(List.of(StackCrupdated.builder().userId(userId).stack(saved).build()));
+      fireEvent(userId, saved, appEnvDeployRequested);
       return mapper.toRest(saved, application, environment);
     }
+  }
+
+  private void fireEvent(String userId, Stack saved, AppEnvDeployRequested appEnvDeployRequested) {
+    eventProducer.accept(
+        List.of(
+            StackCrupdated.builder()
+                .userId(userId)
+                .stack(saved)
+                .parentAppEnvDeployRequested(appEnvDeployRequested)
+                .build()));
   }
 
   public static String getStackEventsBucketKey(
@@ -360,15 +380,18 @@ public class StackService {
       if (bucketComponent.doesExist(bucketKey)) {
         stackEventJsonFile = bucketComponent.download(bucketKey);
         List<StackEvent> actual = om.readValue(stackEventJsonFile, new TypeReference<>() {});
-        stackEvents = mergeAndSortStackEventList(actual, stackEvents);
+        List<StackEvent> merged = mergeAndSortStackEventList(actual, stackEvents);
+        om.writeValue(stackEventJsonFile, merged);
+        bucketComponent.upload(stackEventJsonFile, bucketKey);
+        return merged;
       } else {
         stackEventJsonFile = createTempFile("log", ".json");
+        om.writeValue(stackEventJsonFile, stackEvents);
+        bucketComponent.upload(stackEventJsonFile, bucketKey);
+        return stackEvents;
       }
-      om.writeValue(stackEventJsonFile, stackEvents);
-      bucketComponent.upload(stackEventJsonFile, bucketKey);
     } catch (IOException e) {
       throw new InternalServerErrorException(e);
     }
-    return stackEvents;
   }
 }

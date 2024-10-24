@@ -51,6 +51,15 @@ final class PojaConf1Mapper extends AbstractAppEnvConfigMapper {
   }
 
   @Override
+  public api.jcloudify.app.model.pojaConf.conf1.PojaConf readAsDomain(File file) {
+    try {
+      return yamlObjectMapper.readValue(file, PojaConf1.class);
+    } catch (IOException e) {
+      throw new ApiException(SERVER_EXCEPTION, e);
+    }
+  }
+
+  @Override
   public File write(OneOfPojaConf oneOfPojaConf) {
     return writeToTempFile(oneOfPojaConf.getPojaConf1());
   }
