@@ -88,6 +88,14 @@ public class AppEnvDeployRequestedService implements Consumer<AppEnvDeployReques
           }
           case DEPLOYED -> {
             log.info("Compute stack ready to be deployed");
+            var currentState =
+                deploymentStateService
+                    .getLatestDeploymentStateByDeploymentId(appEnvDeploymentId)
+                    .getProgressionStatus();
+            if (INDEPENDENT_STACKS_DEPLOYED.equals(currentState)) {
+              log.info("independent stacks were already deployed");
+              return;
+            }
             deploymentStateService.save(appEnvDeploymentId, INDEPENDENT_STACKS_DEPLOYED);
             appEnvDeployRequestedEventProducer.accept(
                 List.of(
