@@ -9,6 +9,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.util.Locale.ROOT;
 import static org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM;
+import static org.eclipse.jgit.api.ResetCommand.ResetType.HARD;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.OK;
 import static org.eclipse.jgit.transport.RemoteRefUpdate.Status.UP_TO_DATE;
 
@@ -38,6 +39,7 @@ import java.util.zip.ZipFile;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
@@ -240,6 +242,7 @@ class Poja1UploadedHandler extends AbstractPojaConfUploadedHandler {
         log.info("branch does not exist");
         checkoutAndCreateBranch(git, branchName);
       } else {
+        git.reset().setRef(branchName).setMode(HARD).call(); // avoid CheckoutConflictException
         git.checkout().setUpstreamMode(SET_UPSTREAM).setName(branchName).call();
       }
       log.info("successfully cloned in {}", cloneDirPath.toAbsolutePath());
