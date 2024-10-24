@@ -32,7 +32,7 @@ public class DeploymentStateService {
 
   public Optional<DeploymentState> getOptionalLatestDeploymentStateByDeploymentId(
       String appEnvDeploymentId) {
-    return repository.findByAppEnvDeploymentId(appEnvDeploymentId);
+    return repository.findTopByAppEnvDeploymentIdOrderByTimestampDesc(appEnvDeploymentId);
   }
 
   public DeploymentState getLatestDeploymentStateByDeploymentId(String appEnvDeploymentId) {
