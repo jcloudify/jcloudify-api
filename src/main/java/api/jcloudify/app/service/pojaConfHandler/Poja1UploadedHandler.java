@@ -248,6 +248,7 @@ class Poja1UploadedHandler extends AbstractPojaConfUploadedHandler {
       unzip(asZipFile(toUnzip), cloneDirPath);
       configureGitRepositoryGpg(git);
       getAndConfigureCdCompute(cloneDirPath);
+      addExecutePermissionToFormat(cloneDirPath);
       gitAddAllChanges(git);
       unsignedCommitAsBot(
           git,
@@ -264,6 +265,10 @@ class Poja1UploadedHandler extends AbstractPojaConfUploadedHandler {
       log.info("Git Api Exception");
       throw new RuntimeException(e);
     }
+  }
+
+  private static void addExecutePermissionToFormat(Path cloneDirPath) {
+    cloneDirPath.resolve("format.sh").toFile().setExecutable(true);
   }
 
   @SneakyThrows
