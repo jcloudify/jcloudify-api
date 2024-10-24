@@ -8,17 +8,21 @@ import api.jcloudify.app.model.PageFromOne;
 import api.jcloudify.app.model.exception.NotFoundException;
 import api.jcloudify.app.repository.jpa.DeploymentStateRepository;
 import api.jcloudify.app.repository.model.DeploymentState;
+import api.jcloudify.app.service.AppEnvironmentDeploymentService;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class DeploymentStateService {
   private final DeploymentStateRepository repository;
+  private final AppEnvironmentDeploymentService appEnvironmentDeploymentService;
 
   public List<DeploymentState> getDeploymentStatesByDeploymentId(
       String userId,
@@ -44,11 +48,18 @@ public class DeploymentStateService {
   }
 
   public void save(String appEnvDeploymentId, DeploymentStateEnum status) {
-    repository.save(
+    var appEnvDepl = appEnvironmentDeploymentService.getById(appEnvDeploymentId);
+    DeploymentState toBeAdded =
         DeploymentState.builder()
             .appEnvDeploymentId(appEnvDeploymentId)
             .progressionStatus(status)
             .executionType(ASYNCHRONOUS)
-            .build());
+            .build();
+    try {
+      appEnvDepl.addState(toBeAdded);
+      repository.save(toBeAdded);
+    } catch (Exception e) {
+      log.error("An error occurred when saving deployment state: {}", e.getMessage(), e);
+    }
   }
 }
